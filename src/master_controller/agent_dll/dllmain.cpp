@@ -1,0 +1,42 @@
+#include <Windows.h>
+#include "parse.h"
+#include "cnn.h"
+#include "api_set.h"
+
+extern AsynAPISet api_agent;
+
+void Start()
+{
+    MC::Config::GetInst()->Parse();
+    MC::Cnn::GetInst()->SetAgent(&api_agent);
+    MC::Cnn::GetInst()->Start();
+}
+
+void Stop()
+{
+    MC::Cnn::GetInst()->Stop();
+}
+
+BOOL APIENTRY DllMain(
+    HMODULE hModule,
+    DWORD  ul_reason_for_call,
+    LPVOID lpReserved
+    )
+{
+    switch (ul_reason_for_call) {
+    case DLL_PROCESS_ATTACH:
+        Start();
+        break;
+    case DLL_THREAD_ATTACH:
+        break;
+    case DLL_THREAD_DETACH:
+        break;
+    case DLL_PROCESS_DETACH:
+        Stop();
+        break;
+    default:
+        break;
+    }
+
+    return TRUE;
+}
