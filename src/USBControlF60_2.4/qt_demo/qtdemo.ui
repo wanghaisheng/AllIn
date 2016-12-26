@@ -1,0 +1,3469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QtDemoClass</class>
+ <widget class="QMainWindow" name="QtDemoClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1161</width>
+    <height>735</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>QtDemo</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QPushButton" name="btn_open_dev">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>20</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>打开设备</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_close_dev">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>20</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>关闭设备</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_dev_num">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>设备连接数：</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_show_dev_">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>20</y>
+      <width>31</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>0</string>
+    </property>
+   </widget>
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>1151</width>
+      <height>601</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="currentIndex">
+     <number>5</number>
+    </property>
+    <property name="movable">
+     <bool>false</bool>
+    </property>
+    <widget class="QWidget" name="tab_control_dev">
+     <attribute name="title">
+      <string>设备控制</string>
+     </attribute>
+     <widget class="QPushButton" name="pb_reset_">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>60</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>复位</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_restart_">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>20</y>
+        <width>60</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>重启</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_enter_maintain_mode_">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>70</y>
+        <width>101</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>进入维护模式</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_open_safe_door_">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>120</y>
+        <width>141</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>打开安全门</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_close_safe_door_">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>160</y>
+        <width>141</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>关闭安全门</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_device_status_">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>200</y>
+        <width>141</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>获取设备状态</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_system_info_">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>20</y>
+        <width>101</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>系统信息</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_version_">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>70</y>
+        <width>101</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>固件版本号</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_set_sn_">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>120</y>
+        <width>101</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>设置序列号</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_door_status_">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>200</y>
+        <width>101</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>获取门状态</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_get_sn_">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>160</y>
+        <width>101</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>获取序列号</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="combo_led_ctrl_">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>330</y>
+        <width>141</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="te_led_luminance_">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>250</x>
+        <y>380</y>
+        <width>81</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_open_led_">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>390</y>
+        <width>61</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开灯</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_close_led_">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>390</y>
+        <width>61</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>关灯</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_11">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>440</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>蜂鸣器：</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_12">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>470</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>间隔(1~100, 秒)：</string>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="te_beep_interval_">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>460</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_beep_interval_">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>510</y>
+        <width>61</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>间隔响</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_disable_beep_">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>510</y>
+        <width>91</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>关闭蜂鸣器</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_beep_always_">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>510</y>
+        <width>61</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>长鸣</string>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="te_show_sn_">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>140</y>
+        <width>181</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_infrared_status_">
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>20</y>
+        <width>141</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>获取红外状态</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_19">
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>70</y>
+        <width>141</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>校正</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_abc_check_">
+      <property name="geometry">
+       <rect>
+        <x>690</x>
+        <y>70</y>
+        <width>141</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>农行校正</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_get_stamper_status_">
+      <property name="geometry">
+       <rect>
+        <x>1020</x>
+        <y>20</y>
+        <width>101</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>获取章状态</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_13">
+      <property name="geometry">
+       <rect>
+        <x>1030</x>
+        <y>70</y>
+        <width>41</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>1号：</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_stamper1_des_">
+      <property name="geometry">
+       <rect>
+        <x>1090</x>
+        <y>70</y>
+        <width>21</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>无</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_stamper2_des_">
+      <property name="geometry">
+       <rect>
+        <x>1090</x>
+        <y>100</y>
+        <width>21</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>无</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_16">
+      <property name="geometry">
+       <rect>
+        <x>1030</x>
+        <y>100</y>
+        <width>41</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>2号：</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_stamper3_des_">
+      <property name="geometry">
+       <rect>
+        <x>1090</x>
+        <y>130</y>
+        <width>21</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>无</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_18">
+      <property name="geometry">
+       <rect>
+        <x>1030</x>
+        <y>130</y>
+        <width>41</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>3号：</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_stamper4_des_">
+      <property name="geometry">
+       <rect>
+        <x>1090</x>
+        <y>160</y>
+        <width>21</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>无</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_20">
+      <property name="geometry">
+       <rect>
+        <x>1030</x>
+        <y>160</y>
+        <width>41</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>4号：</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_stamper5_des_">
+      <property name="geometry">
+       <rect>
+        <x>1090</x>
+        <y>190</y>
+        <width>21</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>无</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_22">
+      <property name="geometry">
+       <rect>
+        <x>1030</x>
+        <y>190</y>
+        <width>41</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>5号：</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_stamper6_des_">
+      <property name="geometry">
+       <rect>
+        <x>1090</x>
+        <y>220</y>
+        <width>21</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>无</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_24">
+      <property name="geometry">
+       <rect>
+        <x>1030</x>
+        <y>220</y>
+        <width>41</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>6号：</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_read_saved_mac_">
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>180</y>
+        <width>151</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>读取设备保存的MAC</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="combo_list_bound_mac_">
+      <property name="geometry">
+       <rect>
+        <x>690</x>
+        <y>180</y>
+        <width>161</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_25">
+      <property name="geometry">
+       <rect>
+        <x>1000</x>
+        <y>250</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>机械手臂:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_mechanical_arm_">
+      <property name="geometry">
+       <rect>
+        <x>1090</x>
+        <y>250</y>
+        <width>21</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>无</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_21">
+      <property name="geometry">
+       <rect>
+        <x>690</x>
+        <y>120</y>
+        <width>141</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>更新映射</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_read_local_mac_">
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>230</y>
+        <width>141</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>获取本机MAC地址</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_binding_mac_">
+      <property name="geometry">
+       <rect>
+        <x>690</x>
+        <y>230</y>
+        <width>121</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>绑定MAC地址</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_set_auth_code_">
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>270</y>
+        <width>141</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>设置设备认证码</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_get_auth_code_">
+      <property name="geometry">
+       <rect>
+        <x>690</x>
+        <y>270</y>
+        <width>121</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>获取设备认证码</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_open_safe_door_alarm_">
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>310</y>
+        <width>141</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开启开门报警</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_close_safe_door_alarm_">
+      <property name="geometry">
+       <rect>
+        <x>690</x>
+        <y>310</y>
+        <width>121</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>关闭开门报警</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_open_vibration_alarm_">
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>350</y>
+        <width>141</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开启振动报警</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_close_vibration_alarm_">
+      <property name="geometry">
+       <rect>
+        <x>690</x>
+        <y>350</y>
+        <width>121</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>关闭振动报警</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_turn_stamper_">
+      <property name="geometry">
+       <rect>
+        <x>690</x>
+        <y>490</y>
+        <width>131</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>转章</string>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="te_move_x_">
+      <property name="geometry">
+       <rect>
+        <x>840</x>
+        <y>410</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="te_move_y_">
+      <property name="geometry">
+       <rect>
+        <x>840</x>
+        <y>450</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="te_turn_stamper_">
+      <property name="geometry">
+       <rect>
+        <x>840</x>
+        <y>490</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_27">
+      <property name="geometry">
+       <rect>
+        <x>950</x>
+        <y>410</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0~250</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_28">
+      <property name="geometry">
+       <rect>
+        <x>950</x>
+        <y>450</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0~275</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_29">
+      <property name="geometry">
+       <rect>
+        <x>950</x>
+        <y>490</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0~360</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_enable_debug_">
+      <property name="geometry">
+       <rect>
+        <x>520</x>
+        <y>530</y>
+        <width>151</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开启Debug输出信息</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_disable_debug_">
+      <property name="geometry">
+       <rect>
+        <x>690</x>
+        <y>530</y>
+        <width>151</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>关闭Debug输出信息</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_open_paper_door_">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>270</y>
+        <width>101</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>弹出纸门</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_mac_unbinding_">
+      <property name="geometry">
+       <rect>
+        <x>860</x>
+        <y>180</y>
+        <width>101</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>解绑</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_exit_maintain_mode_">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>70</y>
+        <width>101</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>退出维护模式</string>
+      </property>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_9">
+      <property name="geometry">
+       <rect>
+        <x>520</x>
+        <y>390</y>
+        <width>301</width>
+        <height>91</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="title">
+       <string>功能测试</string>
+      </property>
+      <widget class="QPushButton" name="pb_inside_test_mode_">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>20</y>
+         <width>111</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>进入测试模式</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_outside_test_mode_">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>60</y>
+         <width>111</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>退出测试模式</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_move_x_">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>20</y>
+         <width>121</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>X轴移动</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_move_y_">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>60</y>
+         <width>121</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Y轴移动</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QSlider" name="hori_sli_luminance_">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>350</y>
+        <width>160</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>320</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>亮度调节(1~100):</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="le_mac_">
+      <property name="geometry">
+       <rect>
+        <x>820</x>
+        <y>231</y>
+        <width>161</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="le_auth_code_">
+      <property name="geometry">
+       <rect>
+        <x>820</x>
+        <y>270</y>
+        <width>161</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="le_paper_timeout_">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>270</y>
+        <width>71</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_set_paper_timeout_">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>270</y>
+        <width>51</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>设置</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>240</y>
+        <width>141</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>进纸门超时提示(秒)：</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="le_stamper_idx_">
+      <property name="geometry">
+       <rect>
+        <x>730</x>
+        <y>40</y>
+        <width>61</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_stamper">
+     <attribute name="title">
+      <string>拍照/盖章</string>
+     </attribute>
+     <widget class="QLabel" name="label_37">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>30</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>盖章位置选取：</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_open_camera_">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>10</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>打开摄像头</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_close_camera_">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>50</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>关闭摄像头</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_capture_">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>10</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>拍照</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_select_picture_">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>50</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>选取图片</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_preview_">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>10</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>预览</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_close_preivew_">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>50</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>停止预览</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_38">
+      <property name="geometry">
+       <rect>
+        <x>760</x>
+        <y>40</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>章号：</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="combo_select_stamper_">
+      <property name="geometry">
+       <rect>
+        <x>810</x>
+        <y>40</y>
+        <width>73</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_39">
+      <property name="geometry">
+       <rect>
+        <x>930</x>
+        <y>40</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>用印次数：</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="le_times_stampering_">
+      <property name="geometry">
+       <rect>
+        <x>1010</x>
+        <y>40</y>
+        <width>81</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cb_stamp_ink_">
+      <property name="geometry">
+       <rect>
+        <x>760</x>
+        <y>80</y>
+        <width>71</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>印油</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_pre_stamper_">
+      <property name="geometry">
+       <rect>
+        <x>830</x>
+        <y>80</y>
+        <width>61</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>选章</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_image_">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>110</y>
+        <width>701</width>
+        <height>451</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <strikeout>false</strikeout>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_update">
+     <attribute name="title">
+      <string>升级</string>
+     </attribute>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>861</width>
+        <height>471</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>升级</string>
+      </property>
+      <widget class="QLineEdit" name="le_display_path_">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>60</y>
+         <width>491</width>
+         <height>31</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_select_updatefile_">
+       <property name="geometry">
+        <rect>
+         <x>570</x>
+         <y>60</y>
+         <width>131</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>选择升级文件</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_start_update_">
+       <property name="geometry">
+        <rect>
+         <x>450</x>
+         <y>130</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>开始升级</string>
+       </property>
+      </widget>
+      <widget class="QProgressBar" name="pb_display_progress_">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>260</y>
+         <width>481</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="value">
+        <number>24</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_5">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>30</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>文件路径：</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_eeprom">
+     <attribute name="title">
+      <string>EEPROM存储</string>
+     </attribute>
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>511</width>
+        <height>281</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>EEPROM大小</string>
+      </property>
+      <widget class="QLabel" name="label_30">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>100</y>
+         <width>171</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>EEPROM大小（字节）：</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_capacity_">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>100</y>
+         <width>113</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_31">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>150</y>
+         <width>55</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>版本：</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_version_">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>150</y>
+         <width>113</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_read_capacity_version_">
+       <property name="geometry">
+        <rect>
+         <x>340</x>
+         <y>120</y>
+         <width>121</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>读大小及版本号</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_3">
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>20</y>
+        <width>591</width>
+        <height>281</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>存储操作</string>
+      </property>
+      <widget class="QLabel" name="label_32">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>起始位置：</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_write_offset_">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>50</y>
+         <width>71</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_33">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>90</y>
+         <width>55</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>长度：</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_write_len">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>90</y>
+         <width>71</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QTextEdit" name="te_write_data_">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>50</y>
+         <width>301</width>
+         <height>61</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_write_data_">
+       <property name="geometry">
+        <rect>
+         <x>480</x>
+         <y>70</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>写数据</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_34">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>220</y>
+         <width>55</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>长度：</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_read_data_">
+       <property name="geometry">
+        <rect>
+         <x>480</x>
+         <y>200</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>读数据</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_35">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>180</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>起始位置：</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_read_len_">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>220</y>
+         <width>71</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_read_offset_">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>180</y>
+         <width>71</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QTextEdit" name="te_read_data_">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>180</y>
+         <width>301</width>
+         <height>61</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_4">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>310</y>
+        <width>511</width>
+        <height>251</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>章位号</string>
+      </property>
+      <widget class="QRadioButton" name="radioButton">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>50</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="radioButton_2">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>80</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="radioButton_3">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>110</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="radioButton_4">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>140</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="radioButton_5">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>170</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>5</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="radioButton_6">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>200</y>
+         <width>41</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>6</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_stamper1_rfid_">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>50</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_stamper2_rfid_">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>80</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_stamper3_rfid_">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>110</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_stamper4_rfid_">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>140</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_stamper5_rfid_">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>170</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_stamper6_rfid_">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>200</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_read_stamper_">
+       <property name="geometry">
+        <rect>
+         <x>330</x>
+         <y>30</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>读取章状态</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_load_stamper_mapping_">
+       <property name="geometry">
+        <rect>
+         <x>330</x>
+         <y>110</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>加载章映射</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_save_stamper_mapping_">
+       <property name="geometry">
+        <rect>
+         <x>330</x>
+         <y>190</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>保存章映射</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_8">
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>320</y>
+        <width>251</width>
+        <height>241</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>图像转换倍率</string>
+      </property>
+      <widget class="QLineEdit" name="le_conv_ratio_x_">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>40</y>
+         <width>113</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_conv_ratio_y_">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>80</y>
+         <width>113</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_2">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>30</y>
+         <width>31</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>x:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_4">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>80</y>
+         <width>21</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>y:</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_write_conv_ratio_">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>160</y>
+         <width>71</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>存储</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_read_conv_ratio_">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>160</y>
+         <width>71</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>读取</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_16">
+      <property name="geometry">
+       <rect>
+        <x>790</x>
+        <y>330</y>
+        <width>351</width>
+        <height>231</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>设备KEY</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_read_key_">
+      <property name="geometry">
+       <rect>
+        <x>800</x>
+        <y>450</y>
+        <width>71</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>读key</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_write_key_">
+      <property name="geometry">
+       <rect>
+        <x>800</x>
+        <y>370</y>
+        <width>71</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>写key</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="le_read_key_">
+      <property name="geometry">
+       <rect>
+        <x>800</x>
+        <y>490</y>
+        <width>311</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="le_write_key_">
+      <property name="geometry">
+       <rect>
+        <x>800</x>
+        <y>410</y>
+        <width>311</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_2">
+     <attribute name="title">
+      <string>RFID操作</string>
+     </attribute>
+     <widget class="QGroupBox" name="groupBox_6">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>60</y>
+        <width>671</width>
+        <height>491</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>基本操作</string>
+      </property>
+      <widget class="QLabel" name="label_40">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>40</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>密钥类型:</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="combo_key_type_">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>40</y>
+         <width>73</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_41">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>90</y>
+         <width>55</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>密钥：</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="line_key_">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>90</y>
+         <width>151</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_key_verify_">
+       <property name="geometry">
+        <rect>
+         <x>370</x>
+         <y>90</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>卡密码校验</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_rfid_code_">
+       <property name="geometry">
+        <rect>
+         <x>530</x>
+         <y>90</y>
+         <width>111</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>RFID出厂密码</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_42">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>40</y>
+         <width>121</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>操作块绝对地址：</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_set_block_addr_">
+       <property name="geometry">
+        <rect>
+         <x>510</x>
+         <y>40</y>
+         <width>131</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>设置卡绝对地址</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_43">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>190</y>
+         <width>55</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>写数据</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_write_block_data_">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>190</y>
+         <width>421</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_write_block_">
+       <property name="geometry">
+        <rect>
+         <x>570</x>
+         <y>190</y>
+         <width>61</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>写块</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_block_add_">
+       <property name="geometry">
+        <rect>
+         <x>380</x>
+         <y>40</y>
+         <width>81</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_read_block_">
+       <property name="geometry">
+        <rect>
+         <x>570</x>
+         <y>330</y>
+         <width>61</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>读块</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_44">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>330</y>
+         <width>55</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>读数据</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_read_block_data_">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>330</y>
+         <width>421</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_7">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>441</width>
+        <height>491</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>RFID章</string>
+      </property>
+      <widget class="QRadioButton" name="rb_stamper3_">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>110</y>
+         <width>61</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>3号章</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="rb_stamper6_">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>200</y>
+         <width>71</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>6号章</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="rb_stamper4_">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>140</y>
+         <width>71</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>4号章</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="rb_stamper5_">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>170</y>
+         <width>61</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>5号章</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="rb_stamper2_">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>80</y>
+         <width>61</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>2号章</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="rb_stamper1_">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>50</y>
+         <width>71</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>1号章</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="rb_side_door_">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>250</y>
+         <width>101</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>侧门锁章</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_all_stampers_">
+       <property name="geometry">
+        <rect>
+         <x>280</x>
+         <y>90</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>所有章状态</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_request_all_card_">
+       <property name="geometry">
+        <rect>
+         <x>280</x>
+         <y>180</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>请求所有卡</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_get_rfid_">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>330</y>
+         <width>111</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>获取ID(卡请求)</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_select_stamper_">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>330</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>选择RFID章</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QPushButton" name="pb_rfid_tutorial_">
+      <property name="geometry">
+       <rect>
+        <x>420</x>
+        <y>20</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>操作说明</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>盖章操作</string>
+     </attribute>
+     <widget class="QPushButton" name="pb_enable_factory_">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>20</y>
+        <width>141</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开启工厂测试模式</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_disable_factory_">
+      <property name="geometry">
+       <rect>
+        <x>630</x>
+        <y>20</y>
+        <width>141</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>关闭工厂测试模式</string>
+      </property>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_5">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>1121</width>
+        <height>421</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>盖章测试</string>
+      </property>
+      <widget class="QLabel" name="label_3">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>30</y>
+         <width>55</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>选章：</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_6">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>350</y>
+         <width>131</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>章到位等待时间：</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_wait_time_">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>380</y>
+         <width>101</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_7">
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>380</y>
+         <width>31</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>(秒)</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_stamp_read_stampers_">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>250</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>读取章状态</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="cb_stamp_stamp_ink_">
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>249</y>
+         <width>81</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>蘸印油</string>
+       </property>
+      </widget>
+      <widget class="QSlider" name="hori_sli_x_">
+       <property name="geometry">
+        <rect>
+         <x>300</x>
+         <y>60</y>
+         <width>160</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_8">
+       <property name="geometry">
+        <rect>
+         <x>250</x>
+         <y>60</y>
+         <width>41</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>X轴</string>
+       </property>
+      </widget>
+      <widget class="QSlider" name="hori_sli_y_">
+       <property name="geometry">
+        <rect>
+         <x>300</x>
+         <y>120</y>
+         <width>160</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_9">
+       <property name="geometry">
+        <rect>
+         <x>250</x>
+         <y>120</y>
+         <width>41</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Y轴</string>
+       </property>
+      </widget>
+      <widget class="QSlider" name="hori_sli_angle_">
+       <property name="geometry">
+        <rect>
+         <x>300</x>
+         <y>180</y>
+         <width>160</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_14">
+       <property name="geometry">
+        <rect>
+         <x>250</x>
+         <y>180</y>
+         <width>41</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>转章</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_stamp_">
+       <property name="geometry">
+        <rect>
+         <x>470</x>
+         <y>250</y>
+         <width>81</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>确认盖章</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_cancel_stamp_">
+       <property name="geometry">
+        <rect>
+         <x>470</x>
+         <y>350</y>
+         <width>81</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>取消</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_stamp_x_">
+       <property name="geometry">
+        <rect>
+         <x>480</x>
+         <y>60</y>
+         <width>71</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_stamp_angle_">
+       <property name="geometry">
+        <rect>
+         <x>480</x>
+         <y>180</y>
+         <width>71</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_stamp_y_">
+       <property name="geometry">
+        <rect>
+         <x>480</x>
+         <y>120</y>
+         <width>71</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_check_mark_">
+       <property name="geometry">
+        <rect>
+         <x>470</x>
+         <y>300</y>
+         <width>81</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>骑缝章</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_sel_seal_">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>300</y>
+         <width>91</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>选章</string>
+       </property>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_13">
+       <property name="geometry">
+        <rect>
+         <x>580</x>
+         <y>30</y>
+         <width>531</width>
+         <height>101</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>读盖章信息</string>
+       </property>
+       <widget class="QPushButton" name="pb_read_stamp_">
+        <property name="geometry">
+         <rect>
+          <x>220</x>
+          <y>20</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>读盖章</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QPushButton" name="pb_ordinary_stamp_">
+       <property name="geometry">
+        <rect>
+         <x>290</x>
+         <y>300</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>普通盖章</string>
+       </property>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_20">
+       <property name="geometry">
+        <rect>
+         <x>580</x>
+         <y>150</y>
+         <width>341</width>
+         <height>191</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>农行电子标签</string>
+       </property>
+       <widget class="QPushButton" name="pb_read_abc_">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>40</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>读标签</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="le_abc_stamper_idx_">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>110</y>
+          <width>91</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="le_abc_stamper_">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>110</y>
+          <width>181</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_47">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>90</y>
+          <width>91</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>印章ID(1~6):</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pb_read_abc_index_">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>150</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>印章仓位</string>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+     <widget class="QRadioButton" name="radio_stamper5_">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>240</y>
+        <width>81</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>5号章</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radio_stamper6_">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>270</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>6号章</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radio_stamper4_">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>210</y>
+        <width>81</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>4号章</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radio_stamper2_">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>150</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>2号章</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radio_stamper3_">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>180</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>3号章</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radio_stamper1_">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>120</y>
+        <width>81</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>1号章</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_3">
+     <attribute name="title">
+      <string>其他接口</string>
+     </attribute>
+     <widget class="QPushButton" name="pb_lock_">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>50</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>锁定印控仪</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_unlock_">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>50</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>解锁印控仪</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_stamper_lock_">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>120</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>印控仪状态</string>
+      </property>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_10">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>20</y>
+        <width>461</width>
+        <height>151</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>印控仪编号</string>
+      </property>
+      <widget class="QPushButton" name="pb_write_id_">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>40</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>写编号</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_read_id_">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>90</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>读编号</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_write_id_">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>40</y>
+         <width>311</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_read_id_">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>90</y>
+         <width>311</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_11">
+      <property name="geometry">
+       <rect>
+        <x>730</x>
+        <y>30</y>
+        <width>411</width>
+        <height>141</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>备用板</string>
+      </property>
+      <widget class="QLineEdit" name="le_write_backup_sn_">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>30</y>
+         <width>311</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_write_backup_sn_">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>71</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>写序列号</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_read_backup_sn_">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>90</y>
+         <width>311</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_read_backup_sn_">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>90</y>
+         <width>71</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>读序列号</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_12">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>190</y>
+        <width>321</width>
+        <height>161</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>安全门</string>
+      </property>
+      <widget class="QLabel" name="label_15">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>141</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>侧门锁关闭时间(s)：</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_17">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>120</y>
+         <width>121</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>侧门提示超时(s)：</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_sidedoor_close_">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>40</y>
+         <width>71</width>
+         <height>31</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_set_sidedoor_">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>80</y>
+         <width>51</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>设置</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_sidedoor_timeout_">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>110</y>
+         <width>71</width>
+         <height>31</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_14">
+      <property name="geometry">
+       <rect>
+        <x>350</x>
+        <y>190</y>
+        <width>551</width>
+        <height>161</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>MAC</string>
+      </property>
+      <widget class="QLineEdit" name="le_write_mac1_">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>241</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_write_mac_">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>120</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>写MAC</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_write_mac2_">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>241</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_read_mac1_">
+       <property name="geometry">
+        <rect>
+         <x>300</x>
+         <y>30</y>
+         <width>241</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_read_mac_">
+       <property name="geometry">
+        <rect>
+         <x>380</x>
+         <y>120</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>读MAC</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_read_mac2_">
+       <property name="geometry">
+        <rect>
+         <x>300</x>
+         <y>70</y>
+         <width>241</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_15">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>360</y>
+        <width>131</width>
+        <height>201</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>校准点</string>
+      </property>
+      <widget class="QPushButton" name="pb_write_cal_points_">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>60</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>写校准点</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_read_cal_points_">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>120</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>读校准点</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_17">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>370</y>
+        <width>431</width>
+        <height>191</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>盖章物理尺寸</string>
+      </property>
+      <widget class="QLabel" name="label_19">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>40</y>
+         <width>91</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>X方向宽度：</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_x_width_">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>101</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_21">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>100</y>
+         <width>91</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Y方向宽度：</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_y_width_">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>120</y>
+         <width>101</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_23">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>40</y>
+         <width>131</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>X盖章范围最小值：</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_x_min_">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>60</y>
+         <width>101</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_x_max_">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>120</y>
+         <width>101</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_26">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>100</y>
+         <width>131</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>X盖章范围最大值：</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_y_max_">
+       <property name="geometry">
+        <rect>
+         <x>280</x>
+         <y>120</y>
+         <width>101</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="le_y_min_">
+       <property name="geometry">
+        <rect>
+         <x>280</x>
+         <y>60</y>
+         <width>101</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_36">
+       <property name="geometry">
+        <rect>
+         <x>280</x>
+         <y>100</y>
+         <width>131</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Y盖章范围最大值：</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_45">
+       <property name="geometry">
+        <rect>
+         <x>280</x>
+         <y>40</y>
+         <width>131</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Y盖章范围最小值：</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_read_range_">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>160</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>读数据</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_18">
+      <property name="geometry">
+       <rect>
+        <x>920</x>
+        <y>190</y>
+        <width>211</width>
+        <height>161</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>报警器电压</string>
+      </property>
+      <widget class="QPushButton" name="pb_read_voltage_">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>50</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>读电压</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="le_voltage_">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>110</y>
+         <width>71</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_19">
+      <property name="geometry">
+       <rect>
+        <x>590</x>
+        <y>370</y>
+        <width>221</width>
+        <height>191</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>报警器状态</string>
+      </property>
+      <widget class="QLabel" name="label_46">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>门报警：</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_door_alarm_">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>100</y>
+         <width>55</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_48">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>130</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>振动报警：</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_vibration_alarm_">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>160</y>
+         <width>55</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_read_alarm_">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>30</y>
+         <width>71</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>读报警器</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QPushButton" name="pb_hardware_ver_">
+      <property name="geometry">
+       <rect>
+        <x>910</x>
+        <y>380</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>硬件版本号</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1161</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="qtdemo.qrc"/>
+ </resources>
+ <connections/>
+</ui>
