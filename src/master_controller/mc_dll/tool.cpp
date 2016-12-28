@@ -19,8 +19,8 @@ void MC::Tool::SetStat(const DeviceStat& stat)
     device_stat_.status_ = stat.status_;
     device_stat_.cause_ = stat.cause_;
 
-    Log::WriteLog(LL_DEBUG, "Tool::SetStat->¸üĞÂÉè±¸×´Ì¬ = (%s, %s, %s)",
-        device_stat_.conn_ ? "Á¬½Ó" : "¶Ï¿ª",
+    Log::WriteLog(LL_DEBUG, "Tool::SetStat->æ›´æ–°è®¾å¤‡çŠ¶æ€ = (%s, %s, %s)",
+        device_stat_.conn_ ? "è¿æ¥" : "æ–­å¼€",
         MC::ConnDes[device_stat_.status_].c_str(),
         device_stat_.cause_.c_str());
 }
@@ -43,26 +43,26 @@ std::string MC::Tool::GetCause()
     return device_stat_.cause_;
 }
 
-// 0--¹Ø, 1--¿ª
+// 0--å…³, 1--å¼€
 void MC::Tool::SetTop(int top)
 {
     boost::lock_guard<boost::mutex> lk(door_mtx_);
     doors_stat_.top_door_closed_ = top == 0;
-    Log::WriteLog(LL_DEBUG, "MC::Tool::SetTop->¶¥¸ÇÃÅ%s", top == 0? "¹Ø±Õ": "¿ª");
+    Log::WriteLog(LL_DEBUG, "MC::Tool::SetTop->é¡¶ç›–é—¨%s", top == 0? "å…³é—­": "å¼€");
 }
 
 void MC::Tool::SeteSafe(int safe)
 {
     boost::lock_guard<boost::mutex> lk(door_mtx_);
     doors_stat_.safe_door_closed_ = safe == 0;
-    Log::WriteLog(LL_DEBUG, "MC::Tool::SeteSafe->°²È«ÃÅ%s", safe == 0 ? "¹Ø±Õ" : "¿ª");
+    Log::WriteLog(LL_DEBUG, "MC::Tool::SeteSafe->å®‰å…¨é—¨%s", safe == 0 ? "å…³é—­" : "å¼€");
 }
 
 void MC::Tool::SetPaper(int paper)
 {
     boost::lock_guard<boost::mutex> lk(door_mtx_);
     doors_stat_.paper_door_closed_ = paper == 0;
-    Log::WriteLog(LL_DEBUG, "MC::Tool::SetPaper->½øÖ½ÃÅ%s", paper == 0 ? "¹Ø±Õ" : "¿ª");
+    Log::WriteLog(LL_DEBUG, "MC::Tool::SetPaper->è¿›çº¸é—¨%s", paper == 0 ? "å…³é—­" : "å¼€");
     if (0 == paper)
         SetEvent(paper_door_ev_);
 }
@@ -70,11 +70,11 @@ void MC::Tool::SetPaper(int paper)
 const MC::AllDoorStat& MC::Tool::GetDoors()
 {
     boost::lock_guard<boost::mutex> lk(door_mtx_);
-    //0x0B, »ñÈ¡ÃÅ×´Ì¬(len = 4)
-    //P1:   ÍÆÖ½ÃÅ×´Ì¬  0 ¹Ø±Õ£¬1 ¿ªÆô£¬ 2¼ì²â´íÎó
-    //P2:   µç×ÓËø×´Ì¬£¬Í¬ÉÏ
-    //P3:   »úĞµËø×´Ì¬£¬Í¬ÉÏ
-    //P4:   ¶¥¸Ç×´Ì¬£¬Í¬ÉÏ
+    //0x0B, è·å–é—¨çŠ¶æ€(len = 4)
+    //P1:   æ¨çº¸é—¨çŠ¶æ€  0 å…³é—­ï¼Œ1 å¼€å¯ï¼Œ 2æ£€æµ‹é”™è¯¯
+    //P2:   ç”µå­é”çŠ¶æ€ï¼ŒåŒä¸Š
+    //P3:   æœºæ¢°é”çŠ¶æ€ï¼ŒåŒä¸Š
+    //P4:   é¡¶ç›–çŠ¶æ€ï¼ŒåŒä¸Š
     char doors[4] = { 0 };
     int ret = FGetDoorsPresent(doors, 4);
     if (0 == ret) {
@@ -86,30 +86,30 @@ const MC::AllDoorStat& MC::Tool::GetDoors()
     return doors_stat_;
 }
 
-/////////////////////////////// À´×ÔÓ¡¿Ø»úµÄÒì²½»Øµ÷ /////////////////////////////////
+/////////////////////////////// æ¥è‡ªå°æ§æœºçš„å¼‚æ­¥å›è°ƒ /////////////////////////////////
 
 int PrepareCamera() 
 {
     int ret = FLightCtrl(2, 1);
     if (0 != ret)
-        Log::WriteLog(LL_ERROR, "PrepareCamera->´ò¿ªÆ¾Ö¤²¹¹âµÆÊ§°Ü, er: %d", ret);
+        Log::WriteLog(LL_ERROR, "PrepareCamera->æ‰“å¼€å‡­è¯è¡¥å…‰ç¯å¤±è´¥, er: %d", ret);
 
     ret = FLightBrightness(2, MC::SvrConfig::GetInst()->brightness_);
     if (0 != ret)
-        Log::WriteLog(LL_ERROR, "PrepareCamera->Æ¾Ö¤²¹¹âµÆÁÁ¶Èµ÷½ÚÊ§°Ü, er: %d", ret);
+        Log::WriteLog(LL_ERROR, "PrepareCamera->å‡­è¯è¡¥å…‰ç¯äº®åº¦è°ƒèŠ‚å¤±è´¥, er: %d", ret);
 
     ret = OpenCamera(PAPERCAMERA);
     if (0 != ret)
-        Log::WriteLog(LL_ERROR, "PrepareCamera->´ò¿ªÆ¾Ö¤ÉãÏñÍ·Ê§°Ü, er: %d", ret);
+        Log::WriteLog(LL_ERROR, "PrepareCamera->æ‰“å¼€å‡­è¯æ‘„åƒå¤´å¤±è´¥, er: %d", ret);
 
     ret = SetResolution(
         PAPERCAMERA,
         MC::SvrConfig::GetInst()->resolution_width_,
         MC::SvrConfig::GetInst()->resolution_height_);
     if (0 != ret)
-        Log::WriteLog(LL_ERROR, "PrepareCamera->ÉèÖÃÆ¾Ö¤ÉãÏñÍ··Ö±æÂÊÊ§°Ü, er: %d", ret);
+        Log::WriteLog(LL_ERROR, "PrepareCamera->è®¾ç½®å‡­è¯æ‘„åƒå¤´åˆ†è¾¨ç‡å¤±è´¥, er: %d", ret);
 
-    Log::WriteLog(LL_DEBUG, "PrepareCamera->Æ¾Ö¤ÉãÏñÍ·ÒÑ×¼±¸ºÃ, ret: %d", ret);
+    Log::WriteLog(LL_DEBUG, "PrepareCamera->å‡­è¯æ‘„åƒå¤´å·²å‡†å¤‡å¥½, ret: %d", ret);
     return ret;
 }
 
@@ -126,7 +126,7 @@ int _stdcall ConnectCallBack(const char* dev_path, unsigned int msg)
         MC::DeviceStat stat;
         stat.conn_ = !(0 == ret);
         stat.status_ = 0 == ret ? MC::CS_DISCONN_SUC : MC::CS_RECONN_FAIL;
-        stat.cause_ = "¶Ï¿ªÉè±¸";
+        stat.cause_ = "æ–­å¼€è®¾å¤‡";
         MC::Tool::GetInst()->SetStat(stat);
 
         DisableCamera();
@@ -137,7 +137,7 @@ int _stdcall ConnectCallBack(const char* dev_path, unsigned int msg)
         MC::DeviceStat stat;
         stat.conn_ = 0 == ret;
         stat.status_ = 0 == ret ? MC::CS_RECON_SUC : MC::CS_RECON_FAIL;
-        stat.cause_ = "ÖØÁ¬Éè±¸";
+        stat.cause_ = "é‡è¿è®¾å¤‡";
         MC::Tool::GetInst()->SetStat(stat);
 
         PrepareCamera();
@@ -159,21 +159,21 @@ int _stdcall DevMsgCallBack(
 {
     switch (uMsg) {
     case 0xA3:  {
-        // Ó¡ÕÂµôÂäÍ¨Öª
+        // å°ç« æ‰è½é€šçŸ¥
         MC::DeviceStat stat;
         stat.conn_ = true;
         stat.status_ = MC::CS_STAMPER_DROP;
-        stat.cause_ = "Ó¡ÕÂµôÂä";
+        stat.cause_ = "å°ç« æ‰è½";
         MC::Tool::GetInst()->SetStat(stat);
     }
         break;
-    case 0xA4: // Ö½ÃÅĞÅºÅ
+    case 0xA4: // çº¸é—¨ä¿¡å·
         MC::Tool::GetInst()->SetPaper(wParam);
         break;
-    case 0xA6: // ²àÃÅĞÅºÅ
+    case 0xA6: // ä¾§é—¨ä¿¡å·
         MC::Tool::GetInst()->SeteSafe(wParam);
         break;
-    case 0xA7: // ¶¥¸ÇÃÅĞÅºÅ
+    case 0xA7: // é¡¶ç›–é—¨ä¿¡å·
         MC::Tool::GetInst()->SetTop(wParam);
         break;
     default:

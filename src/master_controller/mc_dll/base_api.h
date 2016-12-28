@@ -7,10 +7,14 @@
 #include "parse.h"
 #include "USBControlF60.h"
 
+#ifdef _WIN32
 #ifdef MASTERCTRL_EXPORTS
 #define MASTERCTRL_API _declspec(dllexport)
 #else
 #define MASTERCTRL_API _declspec(dllimport)
+#endif
+#else
+#define MASTERCTRL_API
 #endif
 
 namespace MC {
@@ -22,7 +26,7 @@ public:
         MC::DeviceStat stat;
         stat.conn_ = ret == 0;
         stat.status_ = 0 == ret ? MC::CS_FREE : MC::CS_OPEN_FAIL;
-        stat.cause_ = "³õÊ¼»¯´ò¿ªÉè±¸";
+        stat.cause_ = "åˆå§‹åŒ–æ‰“å¼€è®¾å¤‡";
         MC::Tool::GetInst()->SetStat(stat);
 
         PrepareCamera();
@@ -33,7 +37,7 @@ public:
         MC::DeviceStat stat;
         stat.conn_ = !(ret == 0);
         stat.status_ = 0 == ret ? MC::CS_CLOSE_SUC : MC::CS_CLOSE_FAIL;
-        stat.cause_ = "Õı³£¶Ï¿ªÉè±¸";
+        stat.cause_ = "æ­£å¸¸æ–­å¼€è®¾å¤‡";
         MC::Tool::GetInst()->SetStat(stat);
 
         DisableCamera();
@@ -43,17 +47,17 @@ private:
     std::string des_;
 };
 
-// ¸ù¾İÇĞÍ¼ÓÃÓ¡µãÏñËØ×ø±ê»ñÈ¡¸ÇÕÂµã»ùÓÚÇĞÍ¼ÖĞĞÄµãÎ»ÖÃ, ÏñËØ×ø±ê
+// æ ¹æ®åˆ‡å›¾ç”¨å°ç‚¹åƒç´ åæ ‡è·å–ç›–ç« ç‚¹åŸºäºåˆ‡å›¾ä¸­å¿ƒç‚¹ä½ç½®, åƒç´ åæ ‡
 void CaculatePos(
-    int pCenterX,   // Ô­Í¼¿í/2
-    int pCenterY,   // Ô­Í¼¸ß/2
-    int inX,        // ÇĞÍ¼ÓÃÓ¡µãÏñËØx×ø±ê
-    int inY,        // ÇĞÍ¼ÓÃÓ¡µãÏñËØy×ø±ê
+    int pCenterX,   // åŸå›¾å®½/2
+    int pCenterY,   // åŸå›¾é«˜/2
+    int inX,        // åˆ‡å›¾ç”¨å°ç‚¹åƒç´ xåæ ‡
+    int inY,        // åˆ‡å›¾ç”¨å°ç‚¹åƒç´ yåæ ‡
     int& outX,
     int& outY,
     int& angle);
 
-// ¸ù¾İÇĞÍ¼ÖĞĞÄµã×ø±ê»ñÈ¡Ô­Í¼ÏñËØ×ø±êºÍÓÃÓ¡½Ç¶È
+// æ ¹æ®åˆ‡å›¾ä¸­å¿ƒç‚¹åæ ‡è·å–åŸå›¾åƒç´ åæ ‡å’Œç”¨å°è§’åº¦
 int STSeachSealPoint(
     const char* in_src_img_name,
     int in_x,
@@ -63,46 +67,46 @@ int STSeachSealPoint(
     int &out_y,
     double &out_angle);
 
-// ½«Ô­Í¼ÓÃÓ¡ÏñËØ×ø±ê×ª»»ÎªÉè±¸(Ó¡¿Ø»ú)ÓÃÓ¡×ø±ê(ºÁÃ×)
+// å°†åŸå›¾ç”¨å°åƒç´ åæ ‡è½¬æ¢ä¸ºè®¾å¤‡(å°æ§æœº)ç”¨å°åæ ‡(æ¯«ç±³)
 MC::Point* GetSealCoord(int nX, int nY);
 
-// Í¼Æ¬Ğ£Õı²¢ÇĞ¸îºÚ±ß
+// å›¾ç‰‡æ ¡æ­£å¹¶åˆ‡å‰²é»‘è¾¹
 int CutImage(
     const std::string&  ori,
     std::string&        cut);
 
-// ºÏ²¢Í¼Æ¬
+// åˆå¹¶å›¾ç‰‡
 int MergeImage(
     const std::string& img1,
     const std::string& img2,
     const std::string& merged);
 
-// Ä£°åÀàĞÍ¡¢½Ç¶È¡¢ÓÃÓ¡µãÊ¶±ğ
-// ÊäÈë²ÎÊı:
-// @img_path    --- Ô­Í¼Æ¬Â·¾¶
-// Êä³ö²ÎÊı:
-// @model_type  --- Ä£°åÀàĞÍ
-// @outangle    --- Ğı×ª½Ç¶È
-// @x           --- ÓÃÓ¡µãµÄ x ×ø±ê(Ä£°åÉÏµÄ)
-// @y           --- ÓÃÓ¡µãµÄ y ×ø±ê(Ä£°åÉÏµÄ)
+// æ¨¡æ¿ç±»å‹ã€è§’åº¦ã€ç”¨å°ç‚¹è¯†åˆ«
+// è¾“å…¥å‚æ•°:
+// @img_path    --- åŸå›¾ç‰‡è·¯å¾„
+// è¾“å‡ºå‚æ•°:
+// @model_type  --- æ¨¡æ¿ç±»å‹
+// @outangle    --- æ—‹è½¬è§’åº¦
+// @x           --- ç”¨å°ç‚¹çš„ x åæ ‡(æ¨¡æ¿ä¸Šçš„)
+// @y           --- ç”¨å°ç‚¹çš„ y åæ ‡(æ¨¡æ¿ä¸Šçš„)
 int GetModelTypeAnglePoint(
-    const std::string&  img_path,       // Ô­Í¼Æ¬Â·¾¶
-    std::string&        model_type,     // Ä£°åÀàĞÍ
-    double&             outangle,       // Ğı×ª½Ç¶È
+    const std::string&  img_path,       // åŸå›¾ç‰‡è·¯å¾„
+    std::string&        model_type,     // æ¨¡æ¿ç±»å‹
+    double&             outangle,       // æ—‹è½¬è§’åº¦
     int&                x,
     int&                y);
 
-// °æÃæ¡¢ÑéÖ¤ÂëÊ¶±ğ
-// ÊäÈë²ÎÊı:
-// @cut_img     --- ²Ã¼ôºóµÄÍ¼Æ¬Â·¾¶
-// @model_type  --- ÊäÈëµÄÄ£°åÀàĞÍ
-// Êä³ö²ÎÊı:
-// @out_model_type  --- Ê¶±ğ³öµÄÄ£°åÀàĞÍ
-// @voucher_no      --- Æ¾Ö¤±àºÅ
-// @trace_no        --- ×·ËİÂë
-// @x               --- Ïà¶ÔÓÚ²Ã¼ôºóÍ¼Æ¬µÄÓÃÓ¡x×ø±ê
-// @y               --- Ïà¶ÔÓÚ²Ã¼ôºóÍ¼Æ¬µÄÓÃÓ¡y×ø±ê
-// @angle           --- Ğı×ª½Ç¶È
+// ç‰ˆé¢ã€éªŒè¯ç è¯†åˆ«
+// è¾“å…¥å‚æ•°:
+// @cut_img     --- è£å‰ªåçš„å›¾ç‰‡è·¯å¾„
+// @model_type  --- è¾“å…¥çš„æ¨¡æ¿ç±»å‹
+// è¾“å‡ºå‚æ•°:
+// @out_model_type  --- è¯†åˆ«å‡ºçš„æ¨¡æ¿ç±»å‹
+// @voucher_no      --- å‡­è¯ç¼–å·
+// @trace_no        --- è¿½æº¯ç 
+// @x               --- ç›¸å¯¹äºè£å‰ªåå›¾ç‰‡çš„ç”¨å°xåæ ‡
+// @y               --- ç›¸å¯¹äºè£å‰ªåå›¾ç‰‡çš„ç”¨å°yåæ ‡
+// @angle           --- æ—‹è½¬è§’åº¦
 int IdentifyImage(
     const std::string&  cut_img,
     const std::string&  model_type,
@@ -113,14 +117,14 @@ int IdentifyImage(
     int&                y,
     int&                angle);
 
-// ÒªËØÇøÓòÊ¶±ğ
-// img      --- Ô­Í¼Â·¾¶
-// x        --- ×óÉÏ½Çx×ø±ê
-// y        --- ×óÉÏ½Çy×ø±ê
-// width    --- ¿í
-// height   --- ¸ß
-// angle    --- Ğı×ª½Ç¶È
-// result   --- Ê¶±ğ½á¹û
+// è¦ç´ åŒºåŸŸè¯†åˆ«
+// img      --- åŸå›¾è·¯å¾„
+// x        --- å·¦ä¸Šè§’xåæ ‡
+// y        --- å·¦ä¸Šè§’yåæ ‡
+// width    --- å®½
+// height   --- é«˜
+// angle    --- æ—‹è½¬è§’åº¦
+// result   --- è¯†åˆ«ç»“æœ
 int IdentifyArea(
     const std::string&  img,
     int                 x,

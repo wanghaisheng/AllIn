@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include <Windows.h>
 #include "tool.h"
 #include "event_cpu.h"

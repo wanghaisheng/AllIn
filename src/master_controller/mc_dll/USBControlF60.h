@@ -3,12 +3,12 @@
 
 #include <string>
 
-// ÏÂÁĞ ifdef ¿éÊÇ´´½¨Ê¹´Ó DLL µ¼³ö¸ü¼òµ¥µÄ
-// ºêµÄ±ê×¼·½·¨¡£´Ë DLL ÖĞµÄËùÓĞÎÄ¼ş¶¼ÊÇÓÃÃüÁîĞĞÉÏ¶¨ÒåµÄ USBCONTROLF60_EXPORTS
-// ·ûºÅ±àÒëµÄ¡£ÔÚÊ¹ÓÃ´Ë DLL µÄ
-// ÈÎºÎÆäËûÏîÄ¿ÉÏ²»Ó¦¶¨Òå´Ë·ûºÅ¡£ÕâÑù£¬Ô´ÎÄ¼şÖĞ°üº¬´ËÎÄ¼şµÄÈÎºÎÆäËûÏîÄ¿¶¼»á½«
-// USBCONTROLF60_API º¯ÊıÊÓÎªÊÇ´Ó DLL µ¼ÈëµÄ£¬¶ø´Ë DLL Ôò½«ÓÃ´Ëºê¶¨ÒåµÄ
-// ·ûºÅÊÓÎªÊÇ±»µ¼³öµÄ¡£
+// ä¸‹åˆ— ifdef å—æ˜¯åˆ›å»ºä½¿ä» DLL å¯¼å‡ºæ›´ç®€å•çš„
+// å®çš„æ ‡å‡†æ–¹æ³•ã€‚æ­¤ DLL ä¸­çš„æ‰€æœ‰æ–‡ä»¶éƒ½æ˜¯ç”¨å‘½ä»¤è¡Œä¸Šå®šä¹‰çš„ USBCONTROLF60_EXPORTS
+// ç¬¦å·ç¼–è¯‘çš„ã€‚åœ¨ä½¿ç”¨æ­¤ DLL çš„
+// ä»»ä½•å…¶ä»–é¡¹ç›®ä¸Šä¸åº”å®šä¹‰æ­¤ç¬¦å·ã€‚è¿™æ ·ï¼Œæºæ–‡ä»¶ä¸­åŒ…å«æ­¤æ–‡ä»¶çš„ä»»ä½•å…¶ä»–é¡¹ç›®éƒ½ä¼šå°†
+// USBCONTROLF60_API å‡½æ•°è§†ä¸ºæ˜¯ä» DLL å¯¼å…¥çš„ï¼Œè€Œæ­¤ DLL åˆ™å°†ç”¨æ­¤å®å®šä¹‰çš„
+// ç¬¦å·è§†ä¸ºæ˜¯è¢«å¯¼å‡ºçš„ã€‚
 #ifdef USBCONTROLF60_EXPORTS
 #define USBCONTROLF60_API _declspec(dllexport)
 #else
@@ -16,32 +16,32 @@
 #endif
 
 
-//Éè±¸´ò¿ªÊ§°Ü£¬·¢ËÍÊı¾İ´íÎó£¬£¬Ó¦´ğÃüÁî³ö´í£¬Éı¼¶ÎÄ¼ş´íÎó£¬ÏÂÎ»»úĞ£Ñé³ö´í
-//Éı¼¶Êı¾İ·¢ËÍÊ§°Ü£¬ÏµÍ³´íÎó
+//è®¾å¤‡æ‰“å¼€å¤±è´¥ï¼Œå‘é€æ•°æ®é”™è¯¯ï¼Œï¼Œåº”ç­”å‘½ä»¤å‡ºé”™ï¼Œå‡çº§æ–‡ä»¶é”™è¯¯ï¼Œä¸‹ä½æœºæ ¡éªŒå‡ºé”™
+//å‡çº§æ•°æ®å‘é€å¤±è´¥ï¼Œç³»ç»Ÿé”™è¯¯
 
-// º¯Êı·µ»ØÖµ¶¨Òå
-#define STF_SUCCESS									((int)0)  //²Ù×÷³É¹¦
-#define STF_ERR_OPENDEVFAIL					        ((int)-1) //Éè±¸´ò¿ªÊ§°Ü
-#define STF_ERR_SENDFAIL						    ((int)-2) //·¢ËÍÊı¾İ´íÎó
-#define STF_ERR_RECVFAIL						    ((int)-3) //Ó¦´ğ´íÎó
-#define STF_ERR_COMMUNICATION				        ((int)-4) //Ó¦´ğÃüÁî³ö´í
-#define STF_ERR_INVLIDATEBINFILE		            ((int)-5) //Éı¼¶ÎÄ¼ş´íÎó
-#define STF_ERR_FIREWARE_FILECHECK	                ((int)-6) //ÏÂÎ»»úĞ£Ñé³ö´í
-#define STF_INVALID_PARAMETER                       ((int)-7) //²ÎÊı·Ç·¨
-#define STF_ERR_INTERNEL						    ((int)-99) //Éı¼¶ÏµÍ³´íÎó
-#define STF_STAMPER_LOSS                            ((int)-100)//È±ÕÂ
-#define STF_INVALID_STAMPER                         ((int)-101)//·Ç±¾»ú°ó¶¨Ó¡ÕÂ
-#define STF_DUPLICATE_STAMPER                       ((int)-102)//Ó¡ÕÂIDÖØ¸´
-#define STF_STAMPER_SEQ_CHANGE                      ((int)-103)//Ó¡ÕÂË³Ğò·¢Éú¸Ä±ä
-#define STF_ALLOCATE_MEM_FAIL                       ((int)-104)//·ÖÅäÄÚ´æÊ§°Ü
-#define STF_WRITE_MAC_FAIL                          ((int)-105)//±£´æMACµØÖ·Ê§°Ü
-#define STF_READ_MAC_FAIL                           ((int)-106)//¶ÁÈ¡MACµØÖ·Ê§°Ü
+// å‡½æ•°è¿”å›å€¼å®šä¹‰
+#define STF_SUCCESS									((int)0)  //æ“ä½œæˆåŠŸ
+#define STF_ERR_OPENDEVFAIL					        ((int)-1) //è®¾å¤‡æ‰“å¼€å¤±è´¥
+#define STF_ERR_SENDFAIL						    ((int)-2) //å‘é€æ•°æ®é”™è¯¯
+#define STF_ERR_RECVFAIL						    ((int)-3) //åº”ç­”é”™è¯¯
+#define STF_ERR_COMMUNICATION				        ((int)-4) //åº”ç­”å‘½ä»¤å‡ºé”™
+#define STF_ERR_INVLIDATEBINFILE		            ((int)-5) //å‡çº§æ–‡ä»¶é”™è¯¯
+#define STF_ERR_FIREWARE_FILECHECK	                ((int)-6) //ä¸‹ä½æœºæ ¡éªŒå‡ºé”™
+#define STF_INVALID_PARAMETER                       ((int)-7) //å‚æ•°éæ³•
+#define STF_ERR_INTERNEL						    ((int)-99) //å‡çº§ç³»ç»Ÿé”™è¯¯
+#define STF_STAMPER_LOSS                            ((int)-100)//ç¼ºç« 
+#define STF_INVALID_STAMPER                         ((int)-101)//éæœ¬æœºç»‘å®šå°ç« 
+#define STF_DUPLICATE_STAMPER                       ((int)-102)//å°ç« IDé‡å¤
+#define STF_STAMPER_SEQ_CHANGE                      ((int)-103)//å°ç« é¡ºåºå‘ç”Ÿæ”¹å˜
+#define STF_ALLOCATE_MEM_FAIL                       ((int)-104)//åˆ†é…å†…å­˜å¤±è´¥
+#define STF_WRITE_MAC_FAIL                          ((int)-105)//ä¿å­˜MACåœ°å€å¤±è´¥
+#define STF_READ_MAC_FAIL                           ((int)-106)//è¯»å–MACåœ°å€å¤±è´¥
 
 #define OUT
 
-//RFID°æĞŞ¸Ä
+//RFIDç‰ˆä¿®æ”¹
 typedef struct _stamperparam{
-    unsigned int        serial_number;  //¸ÇÕÂÁ÷Ë®ºÅ
+    unsigned int        serial_number;  //ç›–ç« æµæ°´å·
 	char				seal[4];
 	char				isPadInk; 
 
@@ -49,7 +49,7 @@ typedef struct _stamperparam{
 	unsigned short		y_point; 
 	unsigned short		angle;
 	unsigned short		w_time; 
-    unsigned char       type;           //¸ÇÕÂ·½Ê½(0---ÆÕÍ¨¸ÇÕÂ, 1---Æï·ìÕÂ)
+    unsigned char       type;           //ç›–ç« æ–¹å¼(0---æ™®é€šç›–ç« , 1---éª‘ç¼ç« )
 
 	_stamperparam()
 	{
@@ -82,22 +82,22 @@ typedef struct _stamperparam{
 
 }STAMPERPARAM, *PSTAMPERPARAM;
 
-//Éè±¸Á¬½Ó×´Ì¬»Øµ÷º¯Êı
-//DevPath   Éè±¸Â·¾¶
-//uMsg		1 Á¬½Ó, 0 ¶Ï¿ª
+//è®¾å¤‡è¿æ¥çŠ¶æ€å›è°ƒå‡½æ•°
+//DevPath   è®¾å¤‡è·¯å¾„
+//uMsg		1 è¿æ¥, 0 æ–­å¼€
 typedef int ( _stdcall *pDevConnectCallBack)(const char* DevPath, unsigned int uMsg);
 
-/*USBÍ¨ĞÅ»Øµ÷º¯Êı
+/*USBé€šä¿¡å›è°ƒå‡½æ•°
 	uMsg:
-		0xA0:¸ÇÕÂ¹ı³ÌÖĞÏÂÑ¹Í¨Öª
-		0xA1:¸ÇÕÂ¹ı³ÌÖĞ»úĞµÊÖ±Û»Øµ½Ó¡ÓÍÏß£¬ÌáÊ¾¿ÉÒÔÅÄÕÕ
-		0xA2:¸ÇÕÂÍê³ÉÍ¨Öª£¬wParam 0 ³É¹¦£¬ 1 Ê§°Ü
-		0xA3:¸ÇÕÂ¹ı³ÌÖĞ Ó¡ÕÂµôÂäÍ¨Öª
-		0xA4:Ö½ÃÅ¹Ø±ÕÍ¨Öª, (wParamÎª0±íÊ¾ÃÅ¹Ø±ÕÍ¨Öª)
-        0xA5:¸ÇÕÂ¹ı³Ì´íÎóÍ¨Öª
-        0xA6:²àÃÅ¹Ø±ÕÍ¨Öª, (wParamÎª0±íÊ¾²àÃÅ¹Ø±ÕÍ¨Öª; 1±íÊ¾²àÃÅ´ò¿ªÍ¨Öª)
-        0xA7:¶¥¸ÇÃÅ¹Ø±ÕÍ¨Öª, (wParamÎª0±íÊ¾¶¥¸Ç¹Ø±ÕÍ¨Öª; 1±íÊ¾¶¥¸Ç´ò¿ªÍ¨Öª)
-        0xA8:µç×ÓËøÉÏËøÍ¨Öª
+		0xA0:ç›–ç« è¿‡ç¨‹ä¸­ä¸‹å‹é€šçŸ¥
+		0xA1:ç›–ç« è¿‡ç¨‹ä¸­æœºæ¢°æ‰‹è‡‚å›åˆ°å°æ²¹çº¿ï¼Œæç¤ºå¯ä»¥æ‹ç…§
+		0xA2:ç›–ç« å®Œæˆé€šçŸ¥ï¼ŒwParam 0 æˆåŠŸï¼Œ 1 å¤±è´¥
+		0xA3:ç›–ç« è¿‡ç¨‹ä¸­ å°ç« æ‰è½é€šçŸ¥
+		0xA4:çº¸é—¨å…³é—­é€šçŸ¥, (wParamä¸º0è¡¨ç¤ºé—¨å…³é—­é€šçŸ¥)
+        0xA5:ç›–ç« è¿‡ç¨‹é”™è¯¯é€šçŸ¥
+        0xA6:ä¾§é—¨å…³é—­é€šçŸ¥, (wParamä¸º0è¡¨ç¤ºä¾§é—¨å…³é—­é€šçŸ¥; 1è¡¨ç¤ºä¾§é—¨æ‰“å¼€é€šçŸ¥)
+        0xA7:é¡¶ç›–é—¨å…³é—­é€šçŸ¥, (wParamä¸º0è¡¨ç¤ºé¡¶ç›–å…³é—­é€šçŸ¥; 1è¡¨ç¤ºé¡¶ç›–æ‰“å¼€é€šçŸ¥)
+        0xA8:ç”µå­é”ä¸Šé”é€šçŸ¥
 */
 #define STAMPER_DOWN				        (unsigned char)0xA0
 #define STAMPER_ARMBACK						(unsigned char)0xA1
@@ -109,8 +109,8 @@ typedef int ( _stdcall *pDevConnectCallBack)(const char* DevPath, unsigned int u
 #define STAMPER_TOP_CLOSE                   (unsigned char)0xA7
 #define STAMPER_ELEC_LOCK                   (unsigned char)0xA8
 
-//½öµ±uMsg==STAMPER_COMPLETE(¸ÇÕÂÍê³É)Ê±, data²»Îª¿Õ, lenÎª46, °´½Ó¿ÚĞ­ÒéÎÄµµ½âÎödata,
-//¿ÉÒÔµÃµ½¡°Á÷Ë®ºÅ¡±, "Ó¡ÕÂIDºÅ"µÈ.
+//ä»…å½“uMsg==STAMPER_COMPLETE(ç›–ç« å®Œæˆ)æ—¶, dataä¸ä¸ºç©º, lenä¸º46, æŒ‰æ¥å£åè®®æ–‡æ¡£è§£ædata,
+//å¯ä»¥å¾—åˆ°â€œæµæ°´å·â€, "å°ç« IDå·"ç­‰.
 typedef int (_stdcall *pfnDevMsgCallBack)(unsigned int uMsg, unsigned int wParam, long lParam,
                                         unsigned char* data, unsigned char len);
 
@@ -119,29 +119,29 @@ extern "C"{
 #endif
 
 /** 
-*  @brief    ×¢²áÉè±¸»Øµ÷º¯Êı(Éè±¸ÖØÁ¬Óë¶Ï¿ªÍ¨Öª)
+*  @brief    æ³¨å†Œè®¾å¤‡å›è°ƒå‡½æ•°(è®¾å¤‡é‡è¿ä¸æ–­å¼€é€šçŸ¥)
 *  @details  
-*  @param    [pDevConnectCallBack] func   »Øµ÷º¯Êı
+*  @param    [pDevConnectCallBack] func   å›è°ƒå‡½æ•°
 *  @return   =STF_SUCCESS
 *  @remark
 */
 USBCONTROLF60_API int F_RegisterDevCallBack(pDevConnectCallBack func);
 
 /** 
-*  @brief    ÈÕÖ¾¼ÇÂ¼
+*  @brief    æ—¥å¿—è®°å½•
 *  @details  
-*  @param    level,ÈÕÖ¾µÈ¼¶
-*            1--µ÷ÊÔ
-*            2--ÌáÊ¾
-*            3--¾¯¸æ
-*            4--´íÎó
-*  @param    [const char*] szLog   ÈÕÖ¾ÄÚÈİ
+*  @param    level,æ—¥å¿—ç­‰çº§
+*            1--è°ƒè¯•
+*            2--æç¤º
+*            3--è­¦å‘Š
+*            4--é”™è¯¯
+*  @param    [const char*] szLog   æ—¥å¿—å†…å®¹
 *  @return   =STF_SUCCESS
 *  @remark
 */
 USBCONTROLF60_API void F_RecordLog(int level, const char* szLog);
 
- // ´ËÀàÊÇ´Ó USBControlF60.dll µ¼³öµÄ
+ // æ­¤ç±»æ˜¯ä» USBControlF60.dll å¯¼å‡ºçš„
  class USBCONTROLF60_API CUSBControlF60 {
  public:
 	 CUSBControlF60(void);
@@ -152,87 +152,87 @@ USBCONTROLF60_API void F_RecordLog(int level, const char* szLog);
  USBCONTROLF60_API int fnUSBControlF60(void);
 
  /** 
- *  @brief    ×¢²á»Øµ÷º¯Êı(¸ÇÕÂ½á¹û, Ö½ÃÅ¹Ø±ÕÍ¨Öª)
+ *  @brief    æ³¨å†Œå›è°ƒå‡½æ•°(ç›–ç« ç»“æœ, çº¸é—¨å…³é—­é€šçŸ¥)
  *  @details  
- *  @param    [pfnDevMsgCallBack] pfn   »Øµ÷º¯ÊıµØÖ·
+ *  @param    [pfnDevMsgCallBack] pfn   å›è°ƒå‡½æ•°åœ°å€
  *  @return   =STF_SUCCESS
  *  @remark
  */
 USBCONTROLF60_API int FRegisterDevCallBack(pfnDevMsgCallBack pfn);
 
-//´ò¿ªÉè±¸, ²ÎÊıÎŞĞ§
+//æ‰“å¼€è®¾å¤‡, å‚æ•°æ— æ•ˆ
 USBCONTROLF60_API	int FOpenDev(const char *file);
 
-//¹Ø±ÕÉè±¸
+//å…³é—­è®¾å¤‡
 USBCONTROLF60_API	int FCloseDev(void);
 
-//0x01, ÍË³öÎ¬»¤Ä£Ê½
+//0x01, é€€å‡ºç»´æŠ¤æ¨¡å¼
 USBCONTROLF60_API	int FQuitMaintainMode(void);
 
-//0x02, ÖØÆôÓ¡¿Ø»úÖ÷°å
+//0x02, é‡å¯å°æ§æœºä¸»æ¿
 USBCONTROLF60_API int FRestart(void);
 
-//0x03, »ñÈ¡ÏµÍ³ĞÅÏ¢, ²ÎÕÕĞ­Òé
+//0x03, è·å–ç³»ç»Ÿä¿¡æ¯, å‚ç…§åè®®
 USBCONTROLF60_API int FGetSystemMsg(char *pRtn, int nLen);
 
-//0x04, »ñÈ¡Éè±¸¹Ì¼ş°æ±¾ºÅ(strVer, len=8)
+//0x04, è·å–è®¾å¤‡å›ºä»¶ç‰ˆæœ¬å·(strVer, len=8)
 USBCONTROLF60_API	int FGetFirwareVer(OUT char* strVer, int len);
 
-//0x05, ÉèÖÃÉè±¸ĞòÁĞºÅ(len=14)
+//0x05, è®¾ç½®è®¾å¤‡åºåˆ—å·(len=14)
 USBCONTROLF60_API	int FSetFirwareSN(char* strSN, int len);
 
-//0x06, »ñÈ¡Éè±¸ĞòÁĞºÅ(len=15)
-//len       --- ÖÁÉÙ15¸ö×Ö½Ú¿Õ¼ä
+//0x06, è·å–è®¾å¤‡åºåˆ—å·(len=15)
+//len       --- è‡³å°‘15ä¸ªå­—èŠ‚ç©ºé—´
 USBCONTROLF60_API	int FGetFirwareSN(OUT char* strSN, int len);
 
-//0x07, ²éÑ¯Éè±¸×´Ì¬(len=14, ÏêÏ¸¼ûĞ­Òé)
+//0x07, æŸ¥è¯¢è®¾å¤‡çŠ¶æ€(len=14, è¯¦ç»†è§åè®®)
 USBCONTROLF60_API	int FGetDevStatus(OUT unsigned char* strStatus, int len);
 
-//0x08, ½øÈëÎ¬»¤Ä£Ê½
+//0x08, è¿›å…¥ç»´æŠ¤æ¨¡å¼
 USBCONTROLF60_API	int FMaintenanceMode(void);
 
-//0x09, »ñÈ¡ºìÍâ×´Ì¬,len¼ûĞ­Òé
+//0x09, è·å–çº¢å¤–çŠ¶æ€,lenè§åè®®
 USBCONTROLF60_API	int FGetInfraRedStatus(OUT char* strInfraRed, int len);
 
-//0x0A, »ñÈ¡Ó¡ÕÂ×´Ì¬(len=30)
+//0x0A, è·å–å°ç« çŠ¶æ€(len=30)
 USBCONTROLF60_API int FGetSealPresent(OUT char* strSealStatus, int len);
 
-//0x0B, »ñÈ¡ÃÅ×´Ì¬(len = 4)
-//P1:   ÍÆÖ½ÃÅ×´Ì¬  0 ¹Ø±Õ£¬1 ¿ªÆô£¬ 2¼ì²â´íÎó
-//P2:   µç×ÓËø×´Ì¬£¬Í¬ÉÏ
-//P3:   »úĞµËø×´Ì¬£¬Í¬ÉÏ
-//P4:   ¶¥¸Ç×´Ì¬£¬Í¬ÉÏ
+//0x0B, è·å–é—¨çŠ¶æ€(len = 4)
+//P1:   æ¨çº¸é—¨çŠ¶æ€  0 å…³é—­ï¼Œ1 å¼€å¯ï¼Œ 2æ£€æµ‹é”™è¯¯
+//P2:   ç”µå­é”çŠ¶æ€ï¼ŒåŒä¸Š
+//P3:   æœºæ¢°é”çŠ¶æ€ï¼ŒåŒä¸Š
+//P4:   é¡¶ç›–çŠ¶æ€ï¼ŒåŒä¸Š
 USBCONTROLF60_API int FGetDoorsPresent(OUT char* strDoorsStatus, int len);
 
-//0x0C, ´ò¿ªÍÆÖ½ÃÅ
+//0x0C, æ‰“å¼€æ¨çº¸é—¨
 USBCONTROLF60_API	int FOpenDoorPaper();
 
-//0x0D, ´ò¿ª°²È«ÃÅ
+//0x0D, æ‰“å¼€å®‰å…¨é—¨
 USBCONTROLF60_API	int FOpenDoorSafe(void);
 
-//0x0E, ¹Ø±Õ°²È«ÃÅ
+//0x0E, å…³é—­å®‰å…¨é—¨
 USBCONTROLF60_API	int FCloseDoorSafe(void);
 
-//0x0F, ²¹¹âµÆ¿ØÖÆ
-//light     --- ²¹¹âµÆÀàĞÍ
-//              1 -- °²È«ÃÅÅÔ±ßµÄ²¹¹âµÆ; 
-//              2 -- Æ¾Ö¤ÉãÏñÍ·ÅÔ±ßµÄ²¹¹âµÆ
-//op        --- ²Ù×÷(0 -- ¹Ø; 1 -- ¿ª)
+//0x0F, è¡¥å…‰ç¯æ§åˆ¶
+//light     --- è¡¥å…‰ç¯ç±»å‹
+//              1 -- å®‰å…¨é—¨æ—è¾¹çš„è¡¥å…‰ç¯; 
+//              2 -- å‡­è¯æ‘„åƒå¤´æ—è¾¹çš„è¡¥å…‰ç¯
+//op        --- æ“ä½œ(0 -- å…³; 1 -- å¼€)
 USBCONTROLF60_API	int FLightCtrl(char light, int op);
 
-//0x10, XÒÆ¶¯, ĞèÒªÔÚ²âÊÔÄ£Ê½ÏÂ
+//0x10, Xç§»åŠ¨, éœ€è¦åœ¨æµ‹è¯•æ¨¡å¼ä¸‹
 USBCONTROLF60_API	int FMoveX(unsigned short x_point);
 
-//0x11, YÒÆ¶¯
+//0x11, Yç§»åŠ¨
 USBCONTROLF60_API	int FMoveY(unsigned short y_point);
 
-//0x12, ×ªÕÂ
+//0x12, è½¬ç« 
 USBCONTROLF60_API	int FTurnSeal(unsigned short angle);
 
-//0x13, ÆÕÍ¨¸ÇÕÂ
+//0x13, æ™®é€šç›–ç« 
 USBCONTROLF60_API	int FStartStamperstrc(STAMPERPARAM *pstamperparam);
 
-//¸ÇÕÂ
+//ç›–ç« 
 USBCONTROLF60_API	int FStartStamper(
     unsigned int serial,
     char *seal, 
@@ -243,15 +243,15 @@ USBCONTROLF60_API	int FStartStamper(
     unsigned short w_time,
     unsigned char type = 0);
 
-//Å©ĞĞ½Ó¿Ú¸ÇÕÂ
-//serial    --- ÓÃÓ¡Á÷Ë®ºÅ
-//id        --- Ó¡ÕÂµç×Ó±êÇ©(STDZ + 8Î»±àºÅ)
-//isPadInk  --- ÊÇ·ñÊ¹ÓÃÓ¡ÓÍ
-//x_point   --- ÓÃÓ¡X×ø±ê
-//y_point   --- ÓÃÓ¡Y×ø±ê
-//angle     --- ÓÃÓ¡½Ç¶È
-//w_time    --- ÓÃÓ¡Ê±¼ä
-//type      --- ¸ÇÕÂÀàĞÍ(0---Ä¬ÈÏÆÕÍ¨ÕÂ, 1---Æï·ìÕÂ)
+//å†œè¡Œæ¥å£ç›–ç« 
+//serial    --- ç”¨å°æµæ°´å·
+//id        --- å°ç« ç”µå­æ ‡ç­¾(STDZ + 8ä½ç¼–å·)
+//isPadInk  --- æ˜¯å¦ä½¿ç”¨å°æ²¹
+//x_point   --- ç”¨å°Xåæ ‡
+//y_point   --- ç”¨å°Yåæ ‡
+//angle     --- ç”¨å°è§’åº¦
+//w_time    --- ç”¨å°æ—¶é—´
+//type      --- ç›–ç« ç±»å‹(0---é»˜è®¤æ™®é€šç« , 1---éª‘ç¼ç« )
 USBCONTROLF60_API int FStartStamperABC(
     unsigned int serial,
     char* abc_id,
@@ -262,15 +262,15 @@ USBCONTROLF60_API int FStartStamperABC(
     short w_time,
     unsigned char type = 0);
 
-//ÓÃÓ¡
-//serial    --- ÓÃÓ¡Á÷Ë®ºÅ
-//sealNo    --- Ó¡ÕÂ±àºÅ[1-6]
-//isPadInk  --- ÊÇ·ñÊ¹ÓÃÓ¡ÓÍ
-//x_point   --- ÓÃÓ¡X×ø±ê
-//y_point   --- ÓÃÓ¡Y×ø±ê
-//angle     --- ÓÃÓ¡½Ç¶È
-//w_time    --- ÓÃÓ¡Ê±¼ä
-//type      --- ¸ÇÕÂÀàĞÍ(0---Ä¬ÈÏÆÕÍ¨ÕÂ, 1---Æï·ìÕÂ)
+//ç”¨å°
+//serial    --- ç”¨å°æµæ°´å·
+//sealNo    --- å°ç« ç¼–å·[1-6]
+//isPadInk  --- æ˜¯å¦ä½¿ç”¨å°æ²¹
+//x_point   --- ç”¨å°Xåæ ‡
+//y_point   --- ç”¨å°Yåæ ‡
+//angle     --- ç”¨å°è§’åº¦
+//w_time    --- ç”¨å°æ—¶é—´
+//type      --- ç›–ç« ç±»å‹(0---é»˜è®¤æ™®é€šç« , 1---éª‘ç¼ç« )
 USBCONTROLF60_API int FStartStamperEx(
     unsigned int serial,
     char sealNo, 
@@ -281,203 +281,203 @@ USBCONTROLF60_API int FStartStamperEx(
     short w_time,
     unsigned char type = 0);
 
-//0x14, Ñ¡ÕÂºÍÊÇ·ñÕ´Ó¡ÓÍ
-//serial    --- ÓÃÓ¡Á÷Ë®ºÅ
-//seal_id   --- Ó¡ÕÂID
-//isPadInk  --- ÊÇ·ñÕºÓ¡ÓÍ
+//0x14, é€‰ç« å’Œæ˜¯å¦æ²¾å°æ²¹
+//serial    --- ç”¨å°æµæ°´å·
+//seal_id   --- å°ç« ID
+//isPadInk  --- æ˜¯å¦è˜¸å°æ²¹
 USBCONTROLF60_API int FSelectStamper(
     unsigned int serial, 
     unsigned int seal_id, 
     char isPadInk);
 
-//0x15, È¡Ïû¸ÇÕÂ
+//0x15, å–æ¶ˆç›–ç« 
 USBCONTROLF60_API int FCancleStamper(void);
 
-//0x16, ·äÃùÆ÷¿ØÖÆ
-//beep      --- 0 ¹Ø±Õ; 1 ³¤Ãù; 2 ¼ä¸ôÏì
-//interval  --- µ±beep=2Ê±¸ÃÖµÓĞĞ§, ¼ä¸ôÏìÊ±³£(µ¥Î»Ãë)
+//0x16, èœ‚é¸£å™¨æ§åˆ¶
+//beep      --- 0 å…³é—­; 1 é•¿é¸£; 2 é—´éš”å“
+//interval  --- å½“beep=2æ—¶è¯¥å€¼æœ‰æ•ˆ, é—´éš”å“æ—¶å¸¸(å•ä½ç§’)
 USBCONTROLF60_API	int FBeepCtrl(char beep, char interval);
 
-//0x17, ²¹¹âµÆÁÁ¶Èµ÷½Ú
-//light         --- ²¹¹âµÆÀàĞÍ
-//                  1 °²È«ÃÅÅÔ±ßµÄ²¹¹âµÆ
-//                  2 Æ¾Ö¤ÉãÏñÍ·ÅÔ±ßµÄ²¹¹âµÆ
-//brightness    --- ÁÁ¶ÈÖµ(½¨Òé·¶Î§ 1-100, 1Îª×îÈõ, 100Îª×îÁÁ)
+//0x17, è¡¥å…‰ç¯äº®åº¦è°ƒèŠ‚
+//light         --- è¡¥å…‰ç¯ç±»å‹
+//                  1 å®‰å…¨é—¨æ—è¾¹çš„è¡¥å…‰ç¯
+//                  2 å‡­è¯æ‘„åƒå¤´æ—è¾¹çš„è¡¥å…‰ç¯
+//brightness    --- äº®åº¦å€¼(å»ºè®®èŒƒå›´ 1-100, 1ä¸ºæœ€å¼±, 100ä¸ºæœ€äº®)
 USBCONTROLF60_API	int FLightBrightness(char light, char brightness);
 
-//0x18, Ó¡ÕÂ¹éÎ»
+//0x18, å°ç« å½’ä½
 USBCONTROLF60_API	int FSealBack(void);
 
-//0x19, ½øÈë¹¦ÄÜ²âÊÔÄ£Ê½
+//0x19, è¿›å…¥åŠŸèƒ½æµ‹è¯•æ¨¡å¼
 USBCONTROLF60_API	int FInTestMode(void);
 
-//0x1A, ÍË³ö¹¦ÄÜ²âÊÔÄ£Ê½, Éè±¸»á×Ô¶¯ÖØÆô
+//0x1A, é€€å‡ºåŠŸèƒ½æµ‹è¯•æ¨¡å¼, è®¾å¤‡ä¼šè‡ªåŠ¨é‡å¯
 USBCONTROLF60_API	int FOutTestMode(void);
 
-//0x1B, »ñÈ¡MacµØÖ·
-//num       --- 1(»ñÈ¡µÚÒ»¸öMACµØÖ·),
-//              2(µÚ¶ş¸öMACµØÖ·)
-//strmac    --- ·µ»Ø¾ßÌåµÄMACµØÖ·
-//len       --- ´æ·ÅMACµØÖ·³¤¶È, MACµØÖ·×î´ó18¸ö×Ö½Ú
+//0x1B, è·å–Macåœ°å€
+//num       --- 1(è·å–ç¬¬ä¸€ä¸ªMACåœ°å€),
+//              2(ç¬¬äºŒä¸ªMACåœ°å€)
+//strmac    --- è¿”å›å…·ä½“çš„MACåœ°å€
+//len       --- å­˜æ”¾MACåœ°å€é•¿åº¦, MACåœ°å€æœ€å¤§18ä¸ªå­—èŠ‚
 USBCONTROLF60_API int GetMacAdress(char num, OUT char* strmac, int len);
 
-//0x1C, °ó¶¨MacµØÖ·
-//op        --- 1(°ó¶¨MAC)
-//              0(½â°óMAC)
-//num       --- ±íÊ¾²Ù×÷ÄÄ¸öMAC(1, 2)
-//strmac    --- MACµØÖ·´®
+//0x1C, ç»‘å®šMacåœ°å€
+//op        --- 1(ç»‘å®šMAC)
+//              0(è§£ç»‘MAC)
+//num       --- è¡¨ç¤ºæ“ä½œå“ªä¸ªMAC(1, 2)
+//strmac    --- MACåœ°å€ä¸²
 USBCONTROLF60_API	int FBindMac(char op, char num, char* strmac, int len);
 
-//0x1D, ÉèÖÃ±¨¾¯¹¦ÄÜ
-//alarm     --- 0(¿ªÃÅ±¨¾¯Æ÷)
-//              1(Õñ¶¯±¨¾¯Æ÷)
-//switchs   --- ±¨¾¯Æ÷¿ª¹Ø
-//              1(¿ªÆô);
-//              0(¹Ø±Õ)
+//0x1D, è®¾ç½®æŠ¥è­¦åŠŸèƒ½
+//alarm     --- 0(å¼€é—¨æŠ¥è­¦å™¨)
+//              1(æŒ¯åŠ¨æŠ¥è­¦å™¨)
+//switchs   --- æŠ¥è­¦å™¨å¼€å…³
+//              1(å¼€å¯);
+//              0(å…³é—­)
 USBCONTROLF60_API int SetAlarm(char alarm, char operation);
 
-//0x1E, ÉèÖÃÉè±¸ÈÏÖ¤Âë
-//×î¶àÖ§³ÖÉèÖÃ10¸ö×Ö½ÚµÄÈÏÖ¤Âë
+//0x1E, è®¾ç½®è®¾å¤‡è®¤è¯ç 
+//æœ€å¤šæ”¯æŒè®¾ç½®10ä¸ªå­—èŠ‚çš„è®¤è¯ç 
 USBCONTROLF60_API int SetDevCode(char* code, int len);
 
-//0x1F, »ñÈ¡Éè±¸ÈÏÖ¤Âë
-//ÈÏÖ¤Âë×î¶àÓĞ10¸ö×Ö½Ú
+//0x1F, è·å–è®¾å¤‡è®¤è¯ç 
+//è®¤è¯ç æœ€å¤šæœ‰10ä¸ªå­—èŠ‚
 USBCONTROLF60_API int GetDevCode(OUT char* code, int len);
 
-//0x20, ±£´æÊı¾İµ½Ó¡ÕÂ»ú´æ´¢Æ÷ÖĞ(×î¶àÖ§³Ö512×Ö½Ú)
-//Èç¹ûµ÷ÓÃ¸Ã½Ó¿ÚÇë´ÓÆ«ÒÆÁ¿150ÒÔºó¿ªÊ¼Ğ´.
+//0x20, ä¿å­˜æ•°æ®åˆ°å°ç« æœºå­˜å‚¨å™¨ä¸­(æœ€å¤šæ”¯æŒ512å­—èŠ‚)
+//å¦‚æœè°ƒç”¨è¯¥æ¥å£è¯·ä»åç§»é‡150ä»¥åå¼€å§‹å†™.
 //
-//offset    --- Ğ´Æ«ÒÆÁ¿
-//data      --- ´ıĞ´ÈëÊı¾İ
-//len       --- ´ıĞ´ÈëÊı¾İ³¤¶È
+//offset    --- å†™åç§»é‡
+//data      --- å¾…å†™å…¥æ•°æ®
+//len       --- å¾…å†™å…¥æ•°æ®é•¿åº¦
 USBCONTROLF60_API int WriteIntoStamper(
     unsigned short offset,
     const unsigned char* data,
     unsigned char len);
 
-//0x21, ¶ÁÈ¡Ó¡ÕÂ»úÄÚµÄ´æ´¢Æ÷Êı¾İ
-//Èç¹ûµ÷ÓÃ¸Ã½Ó¿ÚÇë´ÓÆ«ÒÆÁ¿150ÒÔºó¿ªÊ¼¶Á.
+//0x21, è¯»å–å°ç« æœºå†…çš„å­˜å‚¨å™¨æ•°æ®
+//å¦‚æœè°ƒç”¨è¯¥æ¥å£è¯·ä»åç§»é‡150ä»¥åå¼€å§‹è¯».
 //
-//offset    --- ¶ÁÆ«ÒÆÁ¿
-//size      --- ÇëÇó¶ÁÊı¾İ³¤¶È
-//data      --- ´æ·Å¶ÁÈ¡µ½µÄÊı¾İ
-//len       --- Êµ¼Ê·µ»ØÊı¾İ³¤¶È
+//offset    --- è¯»åç§»é‡
+//size      --- è¯·æ±‚è¯»æ•°æ®é•¿åº¦
+//data      --- å­˜æ”¾è¯»å–åˆ°çš„æ•°æ®
+//len       --- å®é™…è¿”å›æ•°æ®é•¿åº¦
 USBCONTROLF60_API int ReadStamperMem(
     unsigned short offset,
     unsigned short size,
     unsigned char* data,
     unsigned char& len);
 
-//0x22, ´æ´¢Æ÷°æ±¾ºÅ¼°¿ÉÓÃ¿Õ¼ä´óĞ¡
+//0x22, å­˜å‚¨å™¨ç‰ˆæœ¬å·åŠå¯ç”¨ç©ºé—´å¤§å°
 //
-//version   --- ´æ´¢Æ÷°æ±¾ºÅ
-//memz_size --- ´æ´¢Æ÷¿ÉÓÃ¿Õ¼ä
+//version   --- å­˜å‚¨å™¨ç‰ˆæœ¬å·
+//memz_size --- å­˜å‚¨å™¨å¯ç”¨ç©ºé—´
 USBCONTROLF60_API int GetStorageCapacity(unsigned char& version, unsigned short& mem_size);
 
-//0x23, ½øÈëÈÏÖ¤×´Ì¬, Ä¿Ç°Ä¬ÈÏ·µ»Ø-1(Ê§°Ü)
+//0x23, è¿›å…¥è®¤è¯çŠ¶æ€, ç›®å‰é»˜è®¤è¿”å›-1(å¤±è´¥)
 USBCONTROLF60_API int EnterAuthMode();
 
-//0x24, ÍË³öÈÏÖ¤×´Ì¬, Ä¿Ç°Ä¬ÈÏ·µ»Ø-1(Ê§°Ü)
+//0x24, é€€å‡ºè®¤è¯çŠ¶æ€, ç›®å‰é»˜è®¤è¿”å›-1(å¤±è´¥)
 USBCONTROLF60_API int ExitAuthMode();
 
-//0x25, Ñ¡È¡Ó¡ÕÂ
-//¸Ã½Ó¿Ú¹©¶ÁĞ´Ó¡ÕÂRFIDÊ±µ÷ÓÃ
+//0x25, é€‰å–å°ç« 
+//è¯¥æ¥å£ä¾›è¯»å†™å°ç« RFIDæ—¶è°ƒç”¨
 //
-//stamper  --- Ó¡ÕÂ²ÖÎ»ºÅ,´Ó0¿ªÊ¼
+//stamper  --- å°ç« ä»“ä½å·,ä»0å¼€å§‹
 USBCONTROLF60_API int SelectStamper(unsigned char stamper);
 
-//0x26, ¸ù¾İÓ¡ÕÂ²ÖÎ»ºÅ»ñÈ¡¶ÔÓ¦µÄRFIDºÅ
+//0x26, æ ¹æ®å°ç« ä»“ä½å·è·å–å¯¹åº”çš„RFIDå·
 //
-//stamper   --- Ó¡ÕÂ²ÖÎ»ºÅ, (ÏÂ±ê´Ó0¿ªÊ¼)
-//rfid      --- ¶ÔÓ¦µÄrfidºÅ
+//stamper   --- å°ç« ä»“ä½å·, (ä¸‹æ ‡ä»0å¼€å§‹)
+//rfid      --- å¯¹åº”çš„rfidå·
 USBCONTROLF60_API int GetStamperID(unsigned char stamper, unsigned int& rfid);
 
-//¸ù¾İÓ¡ÕÂ²ÖÎ»ºÅ»ñÈ¡°´Å©ĞĞÖ¸¶¨¹æÔòµÄÓ¡ÕÂµç×Ó±êÇ©(STDZ + 8Î»³¤¶È±àºÅ)
+//æ ¹æ®å°ç« ä»“ä½å·è·å–æŒ‰å†œè¡ŒæŒ‡å®šè§„åˆ™çš„å°ç« ç”µå­æ ‡ç­¾(STDZ + 8ä½é•¿åº¦ç¼–å·)
 //
-//stamper   --- Ó¡ÕÂ²ÖÎ»ºÅ, ´Ó1¿ªÊ¼
-//id        --- Å©ĞĞÓ¡ÕÂµç×Ó±êÇ©, STDZ00000001, 12¸ö×Ö½Ú
-//len       --- Å©ĞĞµç×Ó±êÇ©³¤¶È, ÖÁÉÙ13¸ö×Ö½Ú
+//stamper   --- å°ç« ä»“ä½å·, ä»1å¼€å§‹
+//id        --- å†œè¡Œå°ç« ç”µå­æ ‡ç­¾, STDZ00000001, 12ä¸ªå­—èŠ‚
+//len       --- å†œè¡Œç”µå­æ ‡ç­¾é•¿åº¦, è‡³å°‘13ä¸ªå­—èŠ‚
 //
-//·µ»ØÖµ:
-//      0   --- ³É¹¦
-//      1   --- »ñÈ¡Å©ĞĞÓ¡ÕÂµç×Ó±êÇ©Ê§°Ü
-//      2   --- Ö¸¶¨Ó¡ÕÂºÅÎ´°´Å©ĞĞÒªÇóĞ´Èë¹ıÓ¡ÕÂ±àºÅ
+//è¿”å›å€¼:
+//      0   --- æˆåŠŸ
+//      1   --- è·å–å†œè¡Œå°ç« ç”µå­æ ‡ç­¾å¤±è´¥
+//      2   --- æŒ‡å®šå°ç« å·æœªæŒ‰å†œè¡Œè¦æ±‚å†™å…¥è¿‡å°ç« ç¼–å·
 USBCONTROLF60_API int GetABCStamper(unsigned char stamper, char* id, unsigned char len);
 
-//¸ù¾İÅ©ĞĞÖ¸¶¨¹æÔòµÄÓ¡ÕÂµç×Ó±êÇ©»ñÈ¡Ó¡ÕÂ²ÖÎ»ºÅ
+//æ ¹æ®å†œè¡ŒæŒ‡å®šè§„åˆ™çš„å°ç« ç”µå­æ ‡ç­¾è·å–å°ç« ä»“ä½å·
 //
-//id        --- Å©ĞĞµç×Ó±êÇ©, Èç'STDZ00000002'
-//index     --- Ó¡ÕÂ²ÖÎ»ºÅ, ´Ó1¿ªÊ¼
+//id        --- å†œè¡Œç”µå­æ ‡ç­¾, å¦‚'STDZ00000002'
+//index     --- å°ç« ä»“ä½å·, ä»1å¼€å§‹
 //
-//·µ»ØÖµ:
-//      0   --- ³É¹¦
-//      1   --- Ê§°Ü
+//è¿”å›å€¼:
+//      0   --- æˆåŠŸ
+//      1   --- å¤±è´¥
 USBCONTROLF60_API int GetABCStamperIndex(const char* abc_id, char* index);
 
-//0x27, ²Ù×÷Ö¸¶¨¿éµÄ¾ø¶Ô, ²Ù×÷¿éÊ±Òª°´ÕÕÒÔÏÂÁ÷³Ì:
-//1. ¿¨Ñ¡Ôñ(SelectStamper),
-//2. ¿¨ÇëÇó(GetStamperID),
-//3. ÉèÖÃµØÖ·(OperateBlock),
-//4. ÃÜÂë±È½Ï(VerifyKey),
-//5. ¿¨¶ÁĞ´(WriteBlock, ReadBlock)
+//0x27, æ“ä½œæŒ‡å®šå—çš„ç»å¯¹, æ“ä½œå—æ—¶è¦æŒ‰ç…§ä»¥ä¸‹æµç¨‹:
+//1. å¡é€‰æ‹©(SelectStamper),
+//2. å¡è¯·æ±‚(GetStamperID),
+//3. è®¾ç½®åœ°å€(OperateBlock),
+//4. å¯†ç æ¯”è¾ƒ(VerifyKey),
+//5. å¡è¯»å†™(WriteBlock, ReadBlock)
 USBCONTROLF60_API int OperateBlock(unsigned char block);
 
-//0x28, ÑéÖ¤ÃÜÔ¿
+//0x28, éªŒè¯å¯†é’¥
 //
-//key_type  --- ÃÜÔ¿ÀàĞÍ(A¡¢BÃÜÂë)
-//              0¶ÔÓ¦AÃÜÂë
-//              1¶ÔÓ¦BÃÜÂë
-//key       --- key_type¶ÔÓ¦µÄÃÜÔ¿
-//len       --- ÃÜÔ¿Êı¾İ³¤¶È(6×Ö½Ú)
+//key_type  --- å¯†é’¥ç±»å‹(Aã€Bå¯†ç )
+//              0å¯¹åº”Aå¯†ç 
+//              1å¯¹åº”Bå¯†ç 
+//key       --- key_typeå¯¹åº”çš„å¯†é’¥
+//len       --- å¯†é’¥æ•°æ®é•¿åº¦(6å­—èŠ‚)
 USBCONTROLF60_API int VerifyKey(char key_type, const unsigned char* key, unsigned char len = 6);
 
-//0x29, ¶ÁÖ¸¶¨¿é
-//block     --- ¿éºÅ
-//data      --- ¶ÁÈ¡³É¹¦ºó±£´æ¶ÁÈ¡µÄÊı¾İ
-//len       --- Êı¾İ³¤¶È(Ó¦´óÓÚ17¸ö×Ö½Ú)
+//0x29, è¯»æŒ‡å®šå—
+//block     --- å—å·
+//data      --- è¯»å–æˆåŠŸåä¿å­˜è¯»å–çš„æ•°æ®
+//len       --- æ•°æ®é•¿åº¦(åº”å¤§äº17ä¸ªå­—èŠ‚)
 USBCONTROLF60_API int ReadBlock(unsigned char block, unsigned char* data, unsigned char len);
 
-//0x2A, Ğ´Ö¸¶¨¿é
-//block     --- ¿éºÅ
-//data      --- ´ıĞ´ÈëÊı¾İ
-//len       --- Êı¾İ³¤¶È(×î¶àÖ§³ÖĞ´17¸ö×Ö½Ú)
+//0x2A, å†™æŒ‡å®šå—
+//block     --- å—å·
+//data      --- å¾…å†™å…¥æ•°æ®
+//len       --- æ•°æ®é•¿åº¦(æœ€å¤šæ”¯æŒå†™17ä¸ªå­—èŠ‚)
 USBCONTROLF60_API int WriteBlock(unsigned char block, unsigned char* data, unsigned char len);
 
-//0x2B, »ñÈ¡ÎïÀí¸ÇÕÂ·¶Î§, ¾ßÌå½âÎö¼ûĞ­Òé
+//0x2B, è·å–ç‰©ç†ç›–ç« èŒƒå›´, å…·ä½“è§£æè§åè®®
 USBCONTROLF60_API int   GetPhsicalRange(char * phsicalOut, int len);
 
-//0x2C, ÉèÖÃÓ¡ÕÂÓ³Éä¹ØÏµ
+//0x2C, è®¾ç½®å°ç« æ˜ å°„å…³ç³»
 USBCONTROLF60_API int   SetStampMap();
 
-//0x2D, »ñÈ¡Ó¡ÕÂÓ³Éä¹ØÏµ
-//len       --- Êı¾İ³¤¶È, 52×Ö½Ú, Ã¿¸öÕÂ²ÛÕ¼ÓÃ8¸ö×Ö½Ú(Ç°4¸ö×Ö½ÚÎªÕÂID, ºó4¸ö×Ö½ÚÎª±£ÁôĞÅÏ¢),
-//              ×îºó4×Ö½ÚÎª32Î»ÕûĞÍºÍĞ£ÑéÂëÈ¡·´Öµ
+//0x2D, è·å–å°ç« æ˜ å°„å…³ç³»
+//len       --- æ•°æ®é•¿åº¦, 52å­—èŠ‚, æ¯ä¸ªç« æ§½å ç”¨8ä¸ªå­—èŠ‚(å‰4ä¸ªå­—èŠ‚ä¸ºç« ID, å4ä¸ªå­—èŠ‚ä¸ºä¿ç•™ä¿¡æ¯),
+//              æœ€å4å­—èŠ‚ä¸º32ä½æ•´å‹å’Œæ ¡éªŒç å–åå€¼
 USBCONTROLF60_API int   GetStampMap(char* mapout, int len);
 
-//0x30, ¶ÁÈ¡µ±Ç°ËùÓĞRFID, °üÀ¨²àÃÅ, ¹²7¸örfid, rfidÖµÎªËÄ×Ö½ÚÎŞ·ûºÅÕûĞÍ
-//rfids     --- ´æ·ÅrfidÖµ, ÔªËØÖµÎª0±íÊ¾ÎŞÕÂ, ·Ç0Îª¶ÔÓ¦µÄRFIDºÅ
-//len       --- rfid¸öÊı, ¹²ÓĞ7¸örfid(µÚ7¸öÎª²àÃÅrfid)
-//stampers  --- ·µ»ØÊµ¼ÊµÄrfidÕÂ¸öÊı
+//0x30, è¯»å–å½“å‰æ‰€æœ‰RFID, åŒ…æ‹¬ä¾§é—¨, å…±7ä¸ªrfid, rfidå€¼ä¸ºå››å­—èŠ‚æ— ç¬¦å·æ•´å‹
+//rfids     --- å­˜æ”¾rfidå€¼, å…ƒç´ å€¼ä¸º0è¡¨ç¤ºæ— ç« , é0ä¸ºå¯¹åº”çš„RFIDå·
+//len       --- rfidä¸ªæ•°, å…±æœ‰7ä¸ªrfid(ç¬¬7ä¸ªä¸ºä¾§é—¨rfid)
+//stampers  --- è¿”å›å®é™…çš„rfidç« ä¸ªæ•°
 USBCONTROLF60_API int ReadAllRFID(unsigned int* rfids, unsigned char len, unsigned char* stampers);
 
-//0x31, ¶Á±¨¾¯Æ÷µç³ØµçÑ¹Öµ
+//0x31, è¯»æŠ¥è­¦å™¨ç”µæ± ç”µå‹å€¼
 //
-//·µ»ØÖµÎª0Ê±µçÑ¹ÖµÓĞĞ§, µ¥Î»Îª0.1·ü
+//è¿”å›å€¼ä¸º0æ—¶ç”µå‹å€¼æœ‰æ•ˆ, å•ä½ä¸º0.1ä¼
 USBCONTROLF60_API int ReadAlarmVoltage(unsigned char* voltage);
 
-//0x32, Í³¼ÆĞÅÏ¢ÇåÁã
+//0x32, ç»Ÿè®¡ä¿¡æ¯æ¸…é›¶
 USBCONTROLF60_API int ClearStatistic();
 
-//0x33, ¸´Î», USB²»»á¶Ï¿ª
+//0x33, å¤ä½, USBä¸ä¼šæ–­å¼€
 USBCONTROLF60_API int Reset();
 
-//0x34, È·ÈÏ¸ÇÕÂ
-//ÏÈÑ¡ÕÂ, ÔÙÈ·ÈÏ¸ÇÕÂ
-//ÏÈµ÷ÓÃ½Ó¿ÚGetStamperIDÓÉÓ¡ÕÂºÅµÃµ½Ó¡ÕÂRFID, ÔÙµ÷ÓÃ½Ó¿ÚFSelectStamperÍê³ÉÑ¡ÕÂ, ×îºó
-//µ÷ÓÃ¸Ã½Ó¿ÚConfirmÊµÏÖ¸ÇÕÂÈ·ÈÏÍê³É¸ÇÕÂ.
+//0x34, ç¡®è®¤ç›–ç« 
+//å…ˆé€‰ç« , å†ç¡®è®¤ç›–ç« 
+//å…ˆè°ƒç”¨æ¥å£GetStamperIDç”±å°ç« å·å¾—åˆ°å°ç« RFID, å†è°ƒç”¨æ¥å£FSelectStamperå®Œæˆé€‰ç« , æœ€å
+//è°ƒç”¨è¯¥æ¥å£Confirmå®ç°ç›–ç« ç¡®è®¤å®Œæˆç›–ç« .
 //
-//serial    --- Á÷Ë®ºÅ,¸ÃÁ÷Ë®ºÅÓë½Ó¿ÚFSelectStamper´«ÈëµÄÁ÷Ë®ºÅ±ØĞëÒ»ÖÂ
-//rfid      --- Ó¡ÕÂIDºÅ,µ÷ÓÃ½Ó¿ÚGetStamperID»ñµÃ
+//serial    --- æµæ°´å·,è¯¥æµæ°´å·ä¸æ¥å£FSelectStamperä¼ å…¥çš„æµæ°´å·å¿…é¡»ä¸€è‡´
+//rfid      --- å°ç« IDå·,è°ƒç”¨æ¥å£GetStamperIDè·å¾—
 USBCONTROLF60_API int Confirm(
     unsigned int serial,
     unsigned int rfid,
@@ -488,53 +488,53 @@ USBCONTROLF60_API int Confirm(
     short w_time,
     unsigned char type = 0);
 
-//0x35, ¶Á¸ÇÕÂĞÅÏ¢, ÏêÏ¸Êı¾İ¸ñÊ½¼ûĞ­Òé
+//0x35, è¯»ç›–ç« ä¿¡æ¯, è¯¦ç»†æ•°æ®æ ¼å¼è§åè®®
 USBCONTROLF60_API int ReadStamp(unsigned char* info, unsigned char len = 47);
 
-//0x36, ÉèÖÃ²àÃÅ¿ªÃÅÌáÊ¾ĞÅÏ¢
-//keep_open     --- ´ò¿ª²àÃÅºóËø±£³Ö´ò¿ªµÄÊ±¼ä, µ¥Î»Ãë
-//timeout       --- Ö¸¶¨Ê±¼äÄÚÎ´¹Ø±Õ²àÃÅ, ·äÃùÆ÷ÌáÊ¾, µ¥Î»Ãë
+//0x36, è®¾ç½®ä¾§é—¨å¼€é—¨æç¤ºä¿¡æ¯
+//keep_open     --- æ‰“å¼€ä¾§é—¨åé”ä¿æŒæ‰“å¼€çš„æ—¶é—´, å•ä½ç§’
+//timeout       --- æŒ‡å®šæ—¶é—´å†…æœªå…³é—­ä¾§é—¨, èœ‚é¸£å™¨æç¤º, å•ä½ç§’
 USBCONTROLF60_API int SetSideDoor(unsigned short keep_open, unsigned short timeout);
 
-//0x37, ÉèÖÃÍÆÖ½ÃÅ¿ªÆôºó³¬Ê±ÌáÊ¾Ê±¼ä
-//timeout   --- ³¬Ê±Î´¹ØÃÅÌáÊ¾,Ä¬ÈÏ30Ãë
+//0x37, è®¾ç½®æ¨çº¸é—¨å¼€å¯åè¶…æ—¶æç¤ºæ—¶é—´
+//timeout   --- è¶…æ—¶æœªå…³é—¨æç¤º,é»˜è®¤30ç§’
 USBCONTROLF60_API int SetPaperDoor(unsigned short timeout = 30);
 
-//0x38, ¶ÁÈ¡±¨¾¯Æ÷¿ØÖÆ×´Ì¬(°üÀ¨Õñ¶¯±¨¾¯ºÍÃÅ±¨¾¯)
+//0x38, è¯»å–æŠ¥è­¦å™¨æ§åˆ¶çŠ¶æ€(åŒ…æ‹¬æŒ¯åŠ¨æŠ¥è­¦å’Œé—¨æŠ¥è­¦)
 //
-//door          --- ÃÅ±¨¾¯, 0ÊÇ¹Ø, 1ÊÇ¿ª
-//vibration     --- Õñ¶¯±¨¾¯, 0ÊÇ¹Ø, 1ÊÇ¿ª
+//door          --- é—¨æŠ¥è­¦, 0æ˜¯å…³, 1æ˜¯å¼€
+//vibration     --- æŒ¯åŠ¨æŠ¥è­¦, 0æ˜¯å…³, 1æ˜¯å¼€
 //
-//·µ»ØÖµ:
-//      0: ¶Á±¨¾¯Æ÷×´Ì¬³É¹¦
-//      1: Ê§°Ü
-//      2: Ã¦
+//è¿”å›å€¼:
+//      0: è¯»æŠ¥è­¦å™¨çŠ¶æ€æˆåŠŸ
+//      1: å¤±è´¥
+//      2: å¿™
 USBCONTROLF60_API int ReadAlarmStatus(char* door, char* vibration);
 
-//0x39, ¶ÁÈ¡Ó²¼ş°æ±¾ºÅ×Ö·û´®, ÓëÊµ¼Ê°æ±¾´úÂë×ö¹ØÁªÈç"master_2.41"
-//version       --- °æ±¾ºÅ×Ö·û´®
-//len           --- ×î³¤°æ±¾ºÅ³¤¶È(255¸ö×Ö½Ú)
+//0x39, è¯»å–ç¡¬ä»¶ç‰ˆæœ¬å·å­—ç¬¦ä¸², ä¸å®é™…ç‰ˆæœ¬ä»£ç åšå…³è”å¦‚"master_2.41"
+//version       --- ç‰ˆæœ¬å·å­—ç¬¦ä¸²
+//len           --- æœ€é•¿ç‰ˆæœ¬å·é•¿åº¦(255ä¸ªå­—èŠ‚)
 USBCONTROLF60_API int GetHardwareVer(char* version, unsigned char len = 255);
 
-//0x51, ¹¤³§²âÊÔÄ£Ê½, ¿ªÆôºó²»ĞèÒªµçÄÔÒ²¿ÉÑ­»·¸ÇÕÂ²âÊÔ
-//enable    --- 1(¿ªÆô¹¤³§Ä£Ê½), 0(¹Ø±Õ¹¤³§Ä£Ê½)
+//0x51, å·¥å‚æµ‹è¯•æ¨¡å¼, å¼€å¯åä¸éœ€è¦ç”µè„‘ä¹Ÿå¯å¾ªç¯ç›–ç« æµ‹è¯•
+//enable    --- 1(å¼€å¯å·¥å‚æ¨¡å¼), 0(å…³é—­å·¥å‚æ¨¡å¼)
 USBCONTROLF60_API int EnableFactoryMode(unsigned char enable);
 
-//0x52, USBµ÷ÊÔĞÅÏ¢Êä³ö¿ª¹Ø
-//op    --- 1 ¿ª; 0 ¹Ø
+//0x52, USBè°ƒè¯•ä¿¡æ¯è¾“å‡ºå¼€å…³
+//op    --- 1 å¼€; 0 å…³
 USBCONTROLF60_API int FDebugLogSwitch(char op);
 
-//(0xB1~0xB5) Éı¼¶Êı¾İ½Ó¿Ú
-// ÃüÁî£¬Êı¾İ£¬Êı¾İ³¤¶È
+//(0xB1~0xB5) å‡çº§æ•°æ®æ¥å£
+// å‘½ä»¤ï¼Œæ•°æ®ï¼Œæ•°æ®é•¿åº¦
 USBCONTROLF60_API int FfirewareUpdate(unsigned char cmd, unsigned char* data, int len);
 
-//0xD0, ¶Á±¸ÓÃ°åĞòÁĞºÅ, Ä¿Ç°Ö÷°åÒ²¿ÉÒÔÊ¹ÓÃ¸ÃÃüÁî
+//0xD0, è¯»å¤‡ç”¨æ¿åºåˆ—å·, ç›®å‰ä¸»æ¿ä¹Ÿå¯ä»¥ä½¿ç”¨è¯¥å‘½ä»¤
 USBCONTROLF60_API int ReadBackupSN(unsigned char* sn, unsigned char len = 48);
 
-//0xD1, Ğ´±¸ÓÃ°åĞòÁĞºÅ, Ä¿Ç°Ö÷°åÒ²¿ÉÒÔÊ¹ÓÃ¸ÃÃüÁî
+//0xD1, å†™å¤‡ç”¨æ¿åºåˆ—å·, ç›®å‰ä¸»æ¿ä¹Ÿå¯ä»¥ä½¿ç”¨è¯¥å‘½ä»¤
 USBCONTROLF60_API int WriteBackupSN(const unsigned char* sn, unsigned char len = 48);
 
-//Ó¡ÕÂĞ£×¼ 
+//å°ç« æ ¡å‡† 
 USBCONTROLF60_API  int Calibration( char* points, int len);
 
 USBCONTROLF60_API int  CalculatePos(double* x1, double* y1, double* x2, double* y2, 
@@ -544,84 +544,84 @@ USBCONTROLF60_API int  CalculatePosition(int stamperPointX,int stanperPointY,cha
 
 USBCONTROLF60_API  int  CalibrationMutiple(char * points,int len);
 
-//Ó¡ÕÂĞ£×¼Å©ĞĞ 
-//pStampid      --- Ó¡ÕÂID
+//å°ç« æ ¡å‡†å†œè¡Œ 
+//pStampid      --- å°ç« ID
 USBCONTROLF60_API int CalibrationEx(char * pStampid, char *points, int len);
 
-//´æ´¢MACµØÖ·, ²»°üÀ¨½áÎ²×Ö·û('\0')
-//MACµØÖ·Èç: "30-3A-64-D6-FD-30"
-//Ö§³ÖÖ±½ÓĞ´Èë(Õ¼ÓÃ17¸ö×Ö½Ú), »òÕß×ª»»ÎªÊ®½øÖÆĞ´Èë"48-58-100-214-253-48"(Õ¼ÓÃ11¸ö×Ö½Ú)
+//å­˜å‚¨MACåœ°å€, ä¸åŒ…æ‹¬ç»“å°¾å­—ç¬¦('\0')
+//MACåœ°å€å¦‚: "30-3A-64-D6-FD-30"
+//æ”¯æŒç›´æ¥å†™å…¥(å ç”¨17ä¸ªå­—èŠ‚), æˆ–è€…è½¬æ¢ä¸ºåè¿›åˆ¶å†™å…¥"48-58-100-214-253-48"(å ç”¨11ä¸ªå­—èŠ‚)
 USBCONTROLF60_API int WriteMAC(
     const unsigned char* mac1, 
     const unsigned char* mac2, 
     unsigned char max_mac1_len = 17,
     unsigned char max_mac2_len = 17);
 
-//¶ÁÈ¡MACµØÖ·
-//mac1,mac2     --- ´æ·Å¶ÁÈ¡µ½µÄ¶ÔÓ¦MACµØÖ·
-//max_len       --- Êı×é³¤¶È, ÖÁÉÙÎª18(MACµØÖ·×î´óÖ§³Ö17¸ö×Ö·û, ·µ»Ø×Ô¶¯Ìí¼ÓÒ»¸ö½áÎ²×Ö·û)
+//è¯»å–MACåœ°å€
+//mac1,mac2     --- å­˜æ”¾è¯»å–åˆ°çš„å¯¹åº”MACåœ°å€
+//max_len       --- æ•°ç»„é•¿åº¦, è‡³å°‘ä¸º18(MACåœ°å€æœ€å¤§æ”¯æŒ17ä¸ªå­—ç¬¦, è¿”å›è‡ªåŠ¨æ·»åŠ ä¸€ä¸ªç»“å°¾å­—ç¬¦)
 USBCONTROLF60_API int ReadMAC(
     unsigned char* mac1, 
     unsigned char* mac2, 
     unsigned char max_len = 18);
 
-//´æ´¢Éè±¸keyÖµ
+//å­˜å‚¨è®¾å¤‡keyå€¼
 USBCONTROLF60_API int WriteKey(const unsigned char* key, unsigned char key_len = 16);
 
-//¶ÁÈ¡Éè±¸Key
-//key_len       --- ÖÁÉÙ17¸ö×Ö½Ú¿Õ¼ä
+//è¯»å–è®¾å¤‡Key
+//key_len       --- è‡³å°‘17ä¸ªå­—èŠ‚ç©ºé—´
 USBCONTROLF60_API int ReadKey(unsigned char* key, unsigned char key_len = 17);
 
-//´æ´¢Í¼Ïñ×ª»»±¶ÂÊ
-//x,y×ø±ê, 8×Ö½Ú¸¡µãÊı
+//å­˜å‚¨å›¾åƒè½¬æ¢å€ç‡
+//x,yåæ ‡, 8å­—èŠ‚æµ®ç‚¹æ•°
 USBCONTROLF60_API int WriteImageConvRatio(float* x, float* y);
 
-//¶ÁÈ¡Í¼Ïñ×ª»»±¶ÂÊ
+//è¯»å–å›¾åƒè½¬æ¢å€ç‡
 USBCONTROLF60_API int ReadImageConvRatio(float* x, float* y);
 
-//¸ù¾İÓ¡ÕÂRFIDºÅ»ñÈ¡¶ÔÓ¦µÄ²ÖÎ»ºÅ
+//æ ¹æ®å°ç« RFIDå·è·å–å¯¹åº”çš„ä»“ä½å·
 //
-//rfid      --- rfidºÅ
-//stamper   --- rfid¶ÔÓ¦µÄÓ¡ÕÂ²ÖÎ»ºÅ, ´Ó1¿ªÊ¼
+//rfid      --- rfidå·
+//stamper   --- rfidå¯¹åº”çš„å°ç« ä»“ä½å·, ä»1å¼€å§‹
 USBCONTROLF60_API int GetStamper(unsigned int rfid, unsigned char& stamper);
 
-//´æ´¢Ğ£×¼µãÊı¾İ
-//¸ù¾İÓ²¼ş³ß´ç´óĞ¡,Ã¿¸öĞ£×¼µãµÄx,yÖµÓÃ2¸ö×Ö½Ú´æ·Å¼´¿É, ÓĞ5¸öĞ£×¼µã.
-//points    --- Ë³Ğò´æ·ÅÃ¿¸öµãµÄx,yÖµ,¼´x1,y1,x2,y2...x5,y5
-//len       --- Êı¾İ³¤¶È
+//å­˜å‚¨æ ¡å‡†ç‚¹æ•°æ®
+//æ ¹æ®ç¡¬ä»¶å°ºå¯¸å¤§å°,æ¯ä¸ªæ ¡å‡†ç‚¹çš„x,yå€¼ç”¨2ä¸ªå­—èŠ‚å­˜æ”¾å³å¯, æœ‰5ä¸ªæ ¡å‡†ç‚¹.
+//points    --- é¡ºåºå­˜æ”¾æ¯ä¸ªç‚¹çš„x,yå€¼,å³x1,y1,x2,y2...x5,y5
+//len       --- æ•°æ®é•¿åº¦
 USBCONTROLF60_API int WriteCalibrationPoint(unsigned short* points, unsigned char len = 10);
 
-//»ñÈ¡Ğ£×¼µãÊı¾İ
-//Êı¾İ¸ñÊ½²Î¼û´æ´¢Ğ£×¼µãÊı¾İ½Ó¿Ú
+//è·å–æ ¡å‡†ç‚¹æ•°æ®
+//æ•°æ®æ ¼å¼å‚è§å­˜å‚¨æ ¡å‡†ç‚¹æ•°æ®æ¥å£
 USBCONTROLF60_API int CalibrationPoint(unsigned short* points, unsigned char len = 10);
 
-//¼ì²éÓ¡ÕÂĞÅÏ¢
-//½«µ±Ç°Ó¡ÕÂidÓëÉè±¸´æ´¢µÄÓ¡ÕÂidĞÅÏ¢½øĞĞ±È¶Ô£¬
-//¸ù¾İ·µ»ØÖµ¿ÉÒÔÖªµÀµ±Ç°Éè±¸ÊÇ·ñ¿ÉÓÃ,¼°²»¿ÉÓÃµÄ¾ßÌåÔ­Òò,ÉÏ²ã¾ö¶¨´¦ÀíµÄ²ßÂÔ
-//·µ»ØÖµ:
-//      STF_STAMPER_LOSS        //È±ÕÂ
-//      STF_INVALID_STAMPER     //³öÏÖ·Ç±¾»ú°ó¶¨Ó¡ÕÂ
-//      STF_DUPLICATE_STAMPER   //Ó¡ÕÂIDÖØ¸´
-//      STF_STAMPER_SEQ_CHANGE  //Ó¡ÕÂË³Ğò·¢Éú¸Ä±ä,²»ÓÃÌØÊâ´¦Àí
+//æ£€æŸ¥å°ç« ä¿¡æ¯
+//å°†å½“å‰å°ç« idä¸è®¾å¤‡å­˜å‚¨çš„å°ç« idä¿¡æ¯è¿›è¡Œæ¯”å¯¹ï¼Œ
+//æ ¹æ®è¿”å›å€¼å¯ä»¥çŸ¥é“å½“å‰è®¾å¤‡æ˜¯å¦å¯ç”¨,åŠä¸å¯ç”¨çš„å…·ä½“åŸå› ,ä¸Šå±‚å†³å®šå¤„ç†çš„ç­–ç•¥
+//è¿”å›å€¼:
+//      STF_STAMPER_LOSS        //ç¼ºç« 
+//      STF_INVALID_STAMPER     //å‡ºç°éæœ¬æœºç»‘å®šå°ç« 
+//      STF_DUPLICATE_STAMPER   //å°ç« IDé‡å¤
+//      STF_STAMPER_SEQ_CHANGE  //å°ç« é¡ºåºå‘ç”Ÿæ”¹å˜,ä¸ç”¨ç‰¹æ®Šå¤„ç†
 USBCONTROLF60_API int CheckStampers();
 
-//Ó¡¿ØÒÇËø¶¨×´Ì¬
+//å°æ§ä»ªé”å®šçŠ¶æ€
 USBCONTROLF60_API bool IsLocked();
 
-//Ëø¶¨Ó¡¿ØÒÇ
+//é”å®šå°æ§ä»ª
 USBCONTROLF60_API int Lock();
 
-//½âËøÓ¡¿ØÒÇ
+//è§£é”å°æ§ä»ª
 USBCONTROLF60_API int Unlock();
 
-//Ğ´Ó¡¿ØÒÇ±àºÅ
-//id        --- Ó¡¿ØÒÇ±àºÅ
-//len       --- ±àºÅ³¤¶È, ×î¶àÖ§³Ö20¸ö×Ö½Ú
+//å†™å°æ§ä»ªç¼–å·
+//id        --- å°æ§ä»ªç¼–å·
+//len       --- ç¼–å·é•¿åº¦, æœ€å¤šæ”¯æŒ20ä¸ªå­—èŠ‚
 USBCONTROLF60_API int WriteStamperIdentifier(const unsigned char* id, unsigned char len);
 
-//¶ÁÈ¡Ó¡¿ØÒÇ±àºÅ
-//id        --- ±£´æÓ¡¿ØÒÇ±àºÅ
-//len       --- ×îĞ¡ÒªÓĞ20¸ö×Ö½Ú¿Õ¼ä
+//è¯»å–å°æ§ä»ªç¼–å·
+//id        --- ä¿å­˜å°æ§ä»ªç¼–å·
+//len       --- æœ€å°è¦æœ‰20ä¸ªå­—èŠ‚ç©ºé—´
 USBCONTROLF60_API int ReadStamperIdentifier(unsigned char* id, unsigned char len);
 
 #ifdef __cplusplus

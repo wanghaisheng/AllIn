@@ -515,7 +515,7 @@
         </font>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton_19">
+      <widget class="QPushButton" name="pb_cali_stamp_">
        <property name="geometry">
         <rect>
          <x>70</x>
@@ -2148,7 +2148,7 @@
      <x>0</x>
      <y>0</y>
      <width>1200</width>
-     <height>26</height>
+     <height>38</height>
     </rect>
    </property>
   </widget>

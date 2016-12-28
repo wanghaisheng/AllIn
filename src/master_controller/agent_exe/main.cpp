@@ -6,53 +6,53 @@
 
 int main(int argc, TCHAR *argv[])
 {
-    // »ñÈ¡Ó¡¿ØÒÇ±àºÅ
+    // è·å–å°æ§ä»ªç¼–å·
     std::string sn;
     int ret = QueryMachine(sn);
-    printf("main->»ñÈ¡Ó¡¿ØÒÇ±àºÅ: %d, ±àºÅ:%s\n", ret, sn.c_str());
+    printf("main->è·å–å°æ§ä»ªç¼–å·: %d, ç¼–å·:%s\n", ret, sn.c_str());
 
-    // ³õÊ¼»¯
+    // åˆå§‹åŒ–
     ret = InitMachine("51534sDf");
-    printf("main->³õÊ¼»¯Ó¡¿Ø»ú: %d\n", ret);
+    printf("main->åˆå§‹åŒ–å°æ§æœº: %d\n", ret);
 
-    // °ó¶¨MAC
+    // ç»‘å®šMAC
     int bind_times = 1;
     while (bind_times--) {
         ret = BindMAC("FFDE03AB");
-        printf("main->°ó¶¨MACµØÖ·: %d\n", ret);
+        printf("main->ç»‘å®šMACåœ°å€: %d\n", ret);
     }
 
-    // ½â°óMAC
+    // è§£ç»‘MAC
     ret = UnbindMAC("30-3A-64-D6-FD-30");
-    printf("main->½â°óMACµØÖ·: %d\n", ret);
+    printf("main->è§£ç»‘MACåœ°å€: %d\n", ret);
 
-    // ×¼±¸ÓÃÓ¡
+    // å‡†å¤‡ç”¨å°
     std::string task_id;
 //     ret = PrepareStamp(1, 20, task_id);
-//     printf("main->×¼±¸ÓÃÓ¡: %d, ÈÎÎñºÅ: %s\n",
+//     printf("main->å‡†å¤‡ç”¨å°: %d, ä»»åŠ¡å·: %s\n",
 //         ret,
 //         task_id.c_str());
 
-    // ÅÄÕÕ
+    // æ‹ç…§
     std::string ori = "G:\\pj\\src\\master_controller\\bin\\ori.jpg";
     std::string cut = "G:\\pj\\src\\master_controller\\bin\\cut.jpg";
     ret = Snapshot(200, 109, ori, cut);
-    printf("main->ÅÄÕÕ: %d\n", ret);
+    printf("main->æ‹ç…§: %d\n", ret);
 
-    // ÕÕÆ¬ºÏ³É
+    // ç…§ç‰‡åˆæˆ
     std::string p1 = "G:\\pj\\src\\master_controller\\bin\\ori.jpg";
     std::string p2 = "G:\\pj\\src\\master_controller\\bin\\cut.jpg";
     std::string merged = "G:\\pj\\src\\master_controller\\bin\\merged.jpg";
     ret = MergePhoto(p1, p2, merged);
-    printf("main->ºÏ³ÉÕÕÆ¬: %d\n", ret);
+    printf("main->åˆæˆç…§ç‰‡: %d\n", ret);
 
-    // ÑéÖ¤ÂëÊ¶±ğ
+    // éªŒè¯ç è¯†åˆ«
     std::string template_id;
     std::string trace_num;
     ret = RecognizeImage(p1, template_id, trace_num);
-    printf("main->ÑéÖ¤ÂëÊ¶±ğ: %d\n", ret);
+    printf("main->éªŒè¯ç è¯†åˆ«: %d\n", ret);
 
-    // ÒªËØÊ¶±ğ
+    // è¦ç´ è¯†åˆ«
     std::string result;
     ret = IdentifyElement(p1,
         100,
@@ -61,59 +61,59 @@ int main(int argc, TCHAR *argv[])
         30,
         90, 
         result);
-    printf("main->ÒªËØÊ¶±ğ: %d\n", ret);
+    printf("main->è¦ç´ è¯†åˆ«: %d\n", ret);
 
-    // ÆÕÍ¨ÓÃÓ¡
-    ret = OrdinaryStamp("OrdinaryStamp001", "±¾Æ±", 2, 200, 100, 180);
-    printf("main->ÆÕÍ¨ÓÃÓ¡: %d\n", ret);
+    // æ™®é€šç”¨å°
+    ret = OrdinaryStamp("OrdinaryStamp001", "æœ¬ç¥¨", 2, 200, 100, 180);
+    printf("main->æ™®é€šç”¨å°: %d\n", ret);
 
-    // ×Ô¶¯ÓÃÓ¡
-    ret = AutoStamp("AutoStamp001", "»ãÆ±", 1);
-    printf("main->×Ô¶¯ÓÃÓ¡: %d\n", ret);
+    // è‡ªåŠ¨ç”¨å°
+    ret = AutoStamp("AutoStamp001", "æ±‡ç¥¨", 1);
+    printf("main->è‡ªåŠ¨ç”¨å°: %d\n", ret);
 
-    // ÓÃÓ¡½áÊø
+    // ç”¨å°ç»“æŸ
     ret = FinishStamp("FinishStamp001");
-    printf("main->ÓÃÓ¡½áÊø: %d\n", ret);
+    printf("main->ç”¨å°ç»“æŸ: %d\n", ret);
 
-    // ÊÍ·ÅÓ¡¿Ø»ú
+    // é‡Šæ”¾å°æ§æœº
     ret = ReleaseStamp("STDZ_RELEASE_STAMPER_20161019_001");
-    printf("main->ÊÍ·ÅÓ¡¿Ø»ú: %d\n", ret);
+    printf("main->é‡Šæ”¾å°æ§æœº: %d\n", ret);
 
-    // »ñÈ¡´íÎóĞÅÏ¢
+    // è·å–é”™è¯¯ä¿¡æ¯
     std::string err_msg;
     std::string err_resolver;
     ret = GetError(10, err_msg, err_resolver);
-    printf("main->»ñÈ¡´íÎóĞÅÏ¢: %d, ´íÎóÃèÊö: %s, ½â¾ö·½°¸: %s\n", 
+    printf("main->è·å–é”™è¯¯ä¿¡æ¯: %d, é”™è¯¯æè¿°: %s, è§£å†³æ–¹æ¡ˆ: %s\n", 
         ret, 
         err_msg.c_str(), 
         err_resolver.c_str());
 
-    // Ğ£×¼Ó¡ÕÂ
+    // æ ¡å‡†å°ç« 
     ret = Calibrate(1);
-    printf("main->Ğ£×¼Ó¡ÕÂ: %d\n", ret);
+    printf("main->æ ¡å‡†å°ç« : %d\n", ret);
 
-    // Ó¡ÕÂ×´Ì¬²éÑ¯
+    // å°ç« çŠ¶æ€æŸ¥è¯¢
     int stamper_status[7] = { 0 };
     ret = QueryStampers(stamper_status);
-    printf("main->Ó¡ÕÂ×´Ì¬²éÑ¯: %d\n", ret);
+    printf("main->å°ç« çŠ¶æ€æŸ¥è¯¢: %d\n", ret);
 
-    // °²È«ÃÅ×´Ì¬²éÑ¯
+    // å®‰å…¨é—¨çŠ¶æ€æŸ¥è¯¢
     int safe_status;
     ret = QuerySafe(safe_status);
-    printf("main->°²È«ÃÅ×´Ì¬²éÑ¯: %d\n", ret);
+    printf("main->å®‰å…¨é—¨çŠ¶æ€æŸ¥è¯¢: %d\n", ret);
 
-    // ¿ª¹Ø°²È«ÃÅ
+    // å¼€å…³å®‰å…¨é—¨
     ret = ControlSafe(1);
-    printf("main->¿ª¹Ø°²È«ÃÅ: %d\n", ret);
+    printf("main->å¼€å…³å®‰å…¨é—¨: %d\n", ret);
 
-    // ¿ØÖÆ·äÃùÆ÷
+    // æ§åˆ¶èœ‚é¸£å™¨
     ret = ControlBeep(0);
-    printf("main->¿ØÖÆ·äÃùÆ÷: %d\n", ret);
+    printf("main->æ§åˆ¶èœ‚é¸£å™¨: %d\n", ret);
 
-    // »ñÈ¡¿¨²ÛÊı
+    // è·å–å¡æ§½æ•°
     int slot_num = 0;
     ret = QuerySlot(slot_num);
-    printf("main->»ñÈ¡¿¨²ÛÊı: %d, ¿¨²ÛÊı: %d\n", ret, slot_num);
+    printf("main->è·å–å¡æ§½æ•°: %d, å¡æ§½æ•°: %d\n", ret, slot_num);
 
     getchar();
     return ret;

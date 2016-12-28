@@ -8,7 +8,7 @@
 
 namespace MC { // MC for Master Controller
 
-//Í¬²½Ïß³Ì°²È«¶ÓÁĞ
+//åŒæ­¥çº¿ç¨‹å®‰å…¨é˜Ÿåˆ—
 template <typename T>
 class SynQueue {
 
@@ -17,11 +17,11 @@ public:
         queue_list_.clear();
     }
 
-    // ×èÈûµÈ´ıÓĞÊı¾İ¶Á³ö.
-    // ·µ»ØÖµ:
-    //      0 --- ÓĞÊı¾İ
-    //      1 --- ÎŞÊı¾İ
-    //      -1 --- ³¬Ê±
+    // é˜»å¡ç­‰å¾…æœ‰æ•°æ®è¯»å‡º.
+    // è¿”å›å€¼:
+    //      0 --- æœ‰æ•°æ®
+    //      1 --- æ— æ•°æ®
+    //      -1 --- è¶…æ—¶
     int WaitForRead(unsigned long milliseconds) {
         boost::unique_lock<boost::mutex> lk(mutex_);
         if (!queue_list_.empty())

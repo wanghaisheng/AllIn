@@ -1,6 +1,6 @@
 /*
 **	@file	SealLog.h
-**	ÓÃÓÚÈÕÖ¾Êä³ö
+**	ç”¨äºæ—¥å¿—è¾“å‡º
 **	@version 1.0 
 **	@date  
 **	@author 
@@ -22,31 +22,31 @@ extern "C"
 #endif
 
 /**
-* º¯Êı:WriteSealLog	
-* ¹¦ÄÜ:Ğ´ÈÕÖ¾ÎÄ¼ş
+* å‡½æ•°:WriteSealLog	
+* åŠŸèƒ½:å†™æ—¥å¿—æ–‡ä»¶
 * 
-* ²ÎÊı:	
-* @parm int level ÈÕÖ¾¼¶±ğ(0²»Ğ´ 1ÌáÊ¾ 2¾¯¸æ 3´íÎó 4µ÷ÊÔ)
-* @parm onst char* szLog ÈÕÖ¾ÄÚÈİ
-* ·µ»ØÖµ   ÎŞ 		
+* å‚æ•°:	
+* @parm int level æ—¥å¿—çº§åˆ«(0ä¸å†™ 1æç¤º 2è­¦å‘Š 3é”™è¯¯ 4è°ƒè¯•)
+* @parm onst char* szLog æ—¥å¿—å†…å®¹
+* è¿”å›å€¼   æ—  		
 */
 USBSEALLOG_API  void WriteSealLog(int level, const char* szLog);
 /**
-* º¯Êı:SetLogRoot
-* ¹¦ÄÜ:ÉèÖÃÈÕÖ¾µÄ¸ùÄ¿Â¼
+* å‡½æ•°:SetLogRoot
+* åŠŸèƒ½:è®¾ç½®æ—¥å¿—çš„æ ¹ç›®å½•
 
-* ²ÎÊı
-* @param const char* szLogPath ÈÕÖ¾ÎÄ¼şµÄ¸ùÄ¿Â¼
-* @return ÎŞ
+* å‚æ•°
+* @param const char* szLogPath æ—¥å¿—æ–‡ä»¶çš„æ ¹ç›®å½•
+* @return æ— 
 */
 USBSEALLOG_API  void SetLogRoot(const char* szLogPath);
 /**
-* º¯Êı:SetLogLevel
-* ¹¦ÄÜ:ÉèÖÃÈÕÖ¾¼¶±ğ
+* å‡½æ•°:SetLogLevel
+* åŠŸèƒ½:è®¾ç½®æ—¥å¿—çº§åˆ«
 
-* ²ÎÊı
-* @param int level(0²»Ğ´ 1ÌáÊ¾ 2¾¯¸æ 3´íÎó 4µ÷ÊÔ)
-* @return ÎŞ
+* å‚æ•°
+* @param int level(0ä¸å†™ 1æç¤º 2è­¦å‘Š 3é”™è¯¯ 4è°ƒè¯•)
+* @return æ— 
 */
 USBSEALLOG_API  void SetLogLevel(int level);
 #ifdef __cplusplus

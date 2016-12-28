@@ -1,4 +1,4 @@
-#include <boost/interprocess/ipc/message_queue.hpp>
+ï»¿#include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/exception/all.hpp>
@@ -42,7 +42,7 @@ MC::ConnType Recver::CnnType() const
 bool Recver::Start()
 {
     if (!ParseConfig()) {
-        Log::WriteLog(LL_ERROR, "Recver::Start->½âÎöÅäÖÃÎÄ¼şÊ§°Ü");
+        Log::WriteLog(LL_ERROR, "Recver::Start->è§£æé…ç½®æ–‡ä»¶å¤±è´¥");
         return false;
     }
 
@@ -75,17 +75,17 @@ bool Recver::Start()
                 MC::MQ_MAX_MSG_SIZE);
         } catch (boost::interprocess::interprocess_exception &ex) {
             std::cout << ex.what() << std::endl;
-            Log::WriteLog(LL_ERROR, "Recver::Start->ÏûÏ¢¶ÓÁĞ´´½¨Ê§°Ü: %s", ex.what());
+            Log::WriteLog(LL_ERROR, "Recver::Start->æ¶ˆæ¯é˜Ÿåˆ—åˆ›å»ºå¤±è´¥: %s", ex.what());
             return false;
         }
     } else if (MC::CT_PIPE == cnn_type_) {
         recv_msg_ev_ = CreateEvent(
-            NULL,       // Ä¬ÈÏÊôĞÔ
-            TRUE,       // ÊÖ¹¤reset
-            FALSE,      // ³õÊ¼×´Ì¬ signaled 
-            NULL);      // Î´ÃüÃû
+            NULL,       // é»˜è®¤å±æ€§
+            TRUE,       // æ‰‹å·¥reset
+            FALSE,      // åˆå§‹çŠ¶æ€ signaled 
+            NULL);      // æœªå‘½å
     } else {
-        Log::WriteLog(LL_ERROR, "Recver::Start->Î´ÖªµÄÍ¨ĞÅÁ¬½Ó·½Ê½, %d", cnn_type_);
+        Log::WriteLog(LL_ERROR, "Recver::Start->æœªçŸ¥çš„é€šä¿¡è¿æ¥æ–¹å¼, %d", cnn_type_);
         return false;
     }
 
@@ -125,43 +125,43 @@ void Recver::Stop()
 
 bool Recver::WriteResp(LPPIPEINST pipe_inst_, char* buf)
 {
-    // ¹ÜµÀÁ¬½Ó
+    // ç®¡é“è¿æ¥
     if (cnn_type_ == MC::CT_PIPE) {
         boost::lock_guard<boost::mutex> lk(write_resp_mtx_);
 
         lstrcpyn(pipe_inst_->chReply, TEXT(buf), CMD_BUF_SIZE);
         pipe_inst_->cbToWrite = (lstrlen(pipe_inst_->chReply) + 1) * sizeof(TCHAR);
-        // ½«»Ø¸´Ğ´Èëµ½pipe
+        // å°†å›å¤å†™å…¥åˆ°pipe
         DWORD cbWritten;
         BOOL fWrite = WriteFile(
             pipe_inst_->hPipeInst,
-            pipe_inst_->chReply,    //½«ÏìÓ¦Ğ´Èëpipe
+            pipe_inst_->chReply,    //å°†å“åº”å†™å…¥pipe
             pipe_inst_->cbToWrite,
             &cbWritten,
             NULL);
         return fWrite != 0;
     }
 
-    // ÏûÏ¢¶ÓÁĞÁ¬½Ó
+    // æ¶ˆæ¯é˜Ÿåˆ—è¿æ¥
     try {
         LPTSTR lpvMessage = TEXT(buf);
         send_mq_->send(lpvMessage, (lstrlen(lpvMessage) + 1) * sizeof(TCHAR), 0);
     } catch (boost::interprocess::interprocess_exception &ex) {
-        Log::WriteLog(LL_ERROR, "Recver::WriteResp->ÏûÏ¢¶ÓÁĞ·½Ê½Ğ´»Ø¸´Ê§°Ü, er: %s", ex.what());
+        Log::WriteLog(LL_ERROR, "Recver::WriteResp->æ¶ˆæ¯é˜Ÿåˆ—æ–¹å¼å†™å›å¤å¤±è´¥, er: %s", ex.what());
         return false;
     }
 
     return true;
 }
 
-// ½ÓÊÕÀ´×Ô¿Í»§¶ËÇëÇóµÄÏß³Ì, ·´ĞòÁĞ»¯, ·ÖÅä
+// æ¥æ”¶æ¥è‡ªå®¢æˆ·ç«¯è¯·æ±‚çš„çº¿ç¨‹, ååºåˆ—åŒ–, åˆ†é…
 void Recver::ReceiveFunc()
 {
     const RecvMsg* msg = NULL;
     while (running_) {
-        char cmd;       // ÏûÏ¢Í·
+        char cmd;       // æ¶ˆæ¯å¤´
 
-        if (MC::CT_MQ == cnn_type_) {   // ÏûÏ¢¶ÓÁĞ
+        if (MC::CT_MQ == cnn_type_) {   // æ¶ˆæ¯é˜Ÿåˆ—
             msg = new RecvMsg;
 
             unsigned int priority;
@@ -175,7 +175,7 @@ void Recver::ReceiveFunc()
                 strcpy(const_cast<RecvMsg*>(msg)->msg, buf);
             } catch (boost::interprocess::interprocess_exception &ex) {
                 std::cout << ex.what() << std::endl;
-                Log::WriteLog(LL_ERROR, "Recver::ReceiveFunc->ÏûÏ¢¶ÓÁĞÊÕÏûÏ¢Ê§°Ü, %s", ex.what());
+                Log::WriteLog(LL_ERROR, "Recver::ReceiveFunc->æ¶ˆæ¯é˜Ÿåˆ—æ”¶æ¶ˆæ¯å¤±è´¥, %s", ex.what());
                 continue;
             }
         } else {
@@ -274,7 +274,7 @@ void Recver::ReceiveFunc()
     }
 }
 
-//////////////////////////// »ñÈ¡Ó¡¿ØÒÇ±àºÅ ///////////////////////////////
+//////////////////////////// è·å–å°æ§ä»ªç¼–å· ///////////////////////////////
 
 class QueryMachNT : public MC::NotifyResult {
 public:
@@ -294,7 +294,7 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "QueryMachNT::Notify->ec: " << ec <<
-            ", Ó¡¿ØÒÇ±àºÅ: " << data1.c_str() << std::endl;
+            ", å°æ§ä»ªç¼–å·: " << data1.c_str() << std::endl;
 
         strcpy_s(cmd_->sn_, data1.c_str());
         cmd_->ret_ = ec;
@@ -315,14 +315,14 @@ void Recver::HandleQueryMachine(const RecvMsg* msg)
     QueryMachineCmd* cmd = new (std::nothrow) QueryMachineCmd;
     memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     cmd->Unser();
-    Log::WriteLog(LL_DEBUG, "Recver::HandleQueryMachine->»ñÈ¡Ó¡¿ØÒÇ±àºÅ");
+    Log::WriteLog(LL_DEBUG, "Recver::HandleQueryMachine->è·å–å°æ§ä»ªç¼–å·");
 
-    // »ñÈ¡Ó¡¿ØÒÇ±àºÅ
+    // è·å–å°æ§ä»ªç¼–å·
     MC::NotifyResult* notify = new (std::nothrow) QueryMachNT(msg->pipe_inst, cmd, this);
     MC::BOCApi::GetInst()->QueryMachine(notify);
 }
 
-////////////////////////// ÉèÖÃÓ¡¿Ø»ú±àºÅ ////////////////////////////////////
+////////////////////////// è®¾ç½®å°æ§æœºç¼–å· ////////////////////////////////////
 
 class SetMachNT : public MC::NotifyResult {
 public:
@@ -342,7 +342,7 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "SetMachNT::Notify->ec: " << ec <<
-            ", ´ıÉèÖÃÓ¡¿ØÒÇ±àºÅ: " << data1.c_str() << std::endl;
+            ", å¾…è®¾ç½®å°æ§ä»ªç¼–å·: " << data1.c_str() << std::endl;
 
 /*        strcpy_s(cmd_->sn_, data1.c_str());*/
         cmd_->ret_ = ec;
@@ -363,13 +363,13 @@ void Recver::HandleSetMachine(const RecvMsg* msg)
     SetMachineCmd* cmd = new (std::nothrow) SetMachineCmd;
     memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     cmd->Unser();
-    Log::WriteLog(LL_DEBUG, "Recver::HandleSetMachine->ÉèÖÃÓ¡¿ØÒÇ±àºÅ");
+    Log::WriteLog(LL_DEBUG, "Recver::HandleSetMachine->è®¾ç½®å°æ§ä»ªç¼–å·");
 
     MC::NotifyResult* notify = new (std::nothrow) SetMachNT(msg->pipe_inst, cmd, this);
     MC::BOCApi::GetInst()->SetMachine(cmd->sn_, notify);
 }
 
-/////////////////////////// ³õÊ¼»¯Ó¡¿Ø»ú ////////////////////////////////
+/////////////////////////// åˆå§‹åŒ–å°æ§æœº ////////////////////////////////
 
 class InitMachNT: public MC::NotifyResult {
 public:
@@ -389,7 +389,7 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "InitMachNT::Notify->ec: " << ec << 
-            ", ÈÏÖ¤Âë: " << data1.c_str() << std::endl;
+            ", è®¤è¯ç : " << data1.c_str() << std::endl;
 
         cmd_->ret_ = ec;
         cmd_->Ser();
@@ -409,14 +409,14 @@ void Recver::HandleInitMachine(const RecvMsg* msg)
     InitMachineCmd* init_cmd = new (std::nothrow) InitMachineCmd;
     memcpy(init_cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     init_cmd->Unser();
-    Log::WriteLog(LL_DEBUG, "Recver::HandleInitMachine->³õÊ¼»¯Ó¡¿Ø»ú, key: %s", init_cmd->key_);
+    Log::WriteLog(LL_DEBUG, "Recver::HandleInitMachine->åˆå§‹åŒ–å°æ§æœº, key: %s", init_cmd->key_);
 
-    // ³õÊ¼»¯Ó¡¿Ø»ú
+    // åˆå§‹åŒ–å°æ§æœº
     MC::NotifyResult* notify = new (std::nothrow) InitMachNT(msg->pipe_inst, init_cmd, this);
     MC::BOCApi::GetInst()->InitMachine(init_cmd->key_, notify);
 }
 
-//////////////////////////// °ó¶¨MACµØÖ· ////////////////////////////////
+//////////////////////////// ç»‘å®šMACåœ°å€ ////////////////////////////////
 
 class BindMACNT : public MC::NotifyResult {
 public:
@@ -436,9 +436,9 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "BindMACNT::Notify->ec: " << ec <<
-            ", MACµØÖ·: " << data1.c_str() << std::endl;
+            ", MACåœ°å€: " << data1.c_str() << std::endl;
 
-        //»Ø¸´½á¹û
+        //å›å¤ç»“æœ
         cmd_->ret_ = ec;
         cmd_->Ser();
 
@@ -457,14 +457,14 @@ void Recver::HandleBindMAC(const RecvMsg* msg)
     BindMACCmd* bind_cmd = new (std::nothrow) BindMACCmd;
     memcpy(bind_cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     bind_cmd->Unser();
-    Log::WriteLog(LL_DEBUG, "Recver::HandleBindMAC->°ó¶¨MACµØÖ·, mac: %s", bind_cmd->mac_);
+    Log::WriteLog(LL_DEBUG, "Recver::HandleBindMAC->ç»‘å®šMACåœ°å€, mac: %s", bind_cmd->mac_);
 
-    // °ó¶¨MACµØÖ·
+    // ç»‘å®šMACåœ°å€
     MC::NotifyResult* notify = new (std::nothrow) BindMACNT(msg->pipe_inst, bind_cmd, this);
     MC::BOCApi::GetInst()->BindMAC(bind_cmd->mac_, notify);
 }
 
-//////////////////////// ½â°óMACµØÖ· ////////////////////////////
+//////////////////////// è§£ç»‘MACåœ°å€ ////////////////////////////
 
 class UnbindMACNT : public MC::NotifyResult {
 public:
@@ -484,7 +484,7 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "UnbindMACNT::Notify->ec: " << ec <<
-            ", ½â°óMACµØÖ·: " << data1.c_str() << std::endl;
+            ", è§£ç»‘MACåœ°å€: " << data1.c_str() << std::endl;
 
         cmd_->ret_ = ec;
         cmd_->Ser();
@@ -504,14 +504,14 @@ void Recver::HandleUnbindMAC(const RecvMsg* msg)
     UnbindCmd* unbind_cmd = new (std::nothrow) UnbindCmd;
     memcpy(unbind_cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     unbind_cmd->Unser();
-    printf("Recver::HandleUnbindMAC->½â°óMACµØÖ·, mac: %s\n", unbind_cmd->mac_);
+    printf("Recver::HandleUnbindMAC->è§£ç»‘MACåœ°å€, mac: %s\n", unbind_cmd->mac_);
 
-    // ½â°óMACµØÖ·
+    // è§£ç»‘MACåœ°å€
     MC::NotifyResult* notify = new (std::nothrow) UnbindMACNT(msg->pipe_inst, unbind_cmd, this);
     MC::BOCApi::GetInst()->UnbindMAC(unbind_cmd->mac_, notify);
 }
 
-////////////////////// ×¼±¸ÓÃÓ¡ ///////////////////////////////
+////////////////////// å‡†å¤‡ç”¨å° ///////////////////////////////
 
 class PrepareStampNT : public MC::NotifyResult {
 public:
@@ -531,7 +531,7 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "PrepareStampNT::Notify->ec: " << ec <<
-            ", ÈÎÎñID: " << ctx1.c_str() << std::endl;
+            ", ä»»åŠ¡ID: " << ctx1.c_str() << std::endl;
 
         cmd_->ret_ = ec;
         strcpy_s(cmd_->task_id_, ctx1.c_str());
@@ -552,7 +552,7 @@ void Recver::HandlePrepareStamp(const RecvMsg* msg)
     PrepareStampCmd* prepare_cmd = new (std::nothrow) PrepareStampCmd;
     memcpy(prepare_cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     prepare_cmd->Unser();
-    printf("Recver::HandlePrepareStamp->×¼±¸ÓÃÓ¡, Ó¡ÕÂ¿¨²ÛºÅ: %d, ³¬Ê±Ê±¼ä(Ãë): %d\n", 
+    printf("Recver::HandlePrepareStamp->å‡†å¤‡ç”¨å°, å°ç« å¡æ§½å·: %d, è¶…æ—¶æ—¶é—´(ç§’): %d\n", 
         prepare_cmd->stamper_id_,
         prepare_cmd->timeout_);
 
@@ -560,7 +560,7 @@ void Recver::HandlePrepareStamp(const RecvMsg* msg)
     MC::BOCApi::GetInst()->PrepareStamp(prepare_cmd->stamper_id_, prepare_cmd->timeout_, notify);
 }
 
-///////////////////////////// ²éÑ¯½øÖ½ÃÅ×´Ì¬ ///////////////////////////////////
+///////////////////////////// æŸ¥è¯¢è¿›çº¸é—¨çŠ¶æ€ ///////////////////////////////////
 
 class QueryPaperNT : public MC::NotifyResult {
 public:
@@ -580,7 +580,7 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "QueryPaperNT::Notify->ec: " << ec <<
-            ", ½øÖ½ÃÅ×´Ì¬: " << data1.c_str() << std::endl;
+            ", è¿›çº¸é—¨çŠ¶æ€: " << data1.c_str() << std::endl;
 
         cmd_->ret_ = ec;
         cmd_->status_ = atoi(data1.c_str());
@@ -601,13 +601,13 @@ void Recver::HandleQueryPaper(const RecvMsg* msg)
     ViewPaperCmd* cmd = new (std::nothrow) ViewPaperCmd;
     memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     cmd->Unser();
-    printf("Recver::HandleQueryPaper->²é½øÖ½ÃÅ×´Ì¬\n");
+    printf("Recver::HandleQueryPaper->æŸ¥è¿›çº¸é—¨çŠ¶æ€\n");
 
     MC::NotifyResult* notify = new (std::nothrow) QueryPaperNT(msg->pipe_inst, cmd, this);
     MC::BOCApi::GetInst()->QueryPaperDoor(notify);
 }
 
-/////////////////////////// ÅÄÕÕ ///////////////////////////////////
+/////////////////////////// æ‹ç…§ ///////////////////////////////////
 
 class SnapshotNT : public MC::NotifyResult {
 public:
@@ -627,10 +627,10 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "SnapshotNT::Notify->ec: " << ec <<
-            ", Ô­Ê¼Í¼ÏñÂ·¾¶: " << ctx1.c_str() << 
-            ", ¼ôÇĞºóÍ¼ÏñÂ·¾¶: " << ctx2.c_str() << std::endl;
+            ", åŸå§‹å›¾åƒè·¯å¾„: " << ctx1.c_str() << 
+            ", å‰ªåˆ‡åå›¾åƒè·¯å¾„: " << ctx2.c_str() << std::endl;
 
-        //»Ø¸´½á¹û
+        //å›å¤ç»“æœ
         cmd_->ret_ = ec;
         strcpy_s(cmd_->original_path_, ctx1.c_str());
         strcpy_s(cmd_->cut_path_, ctx2.c_str());
@@ -651,7 +651,7 @@ void Recver::HandleSnapshot(const RecvMsg* msg)
     SnapshotCmd* snap_cmd = new (std::nothrow) SnapshotCmd;
     memcpy(snap_cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     snap_cmd->Unser();
-    printf("Recver::HandleSnapshot->ÅÄÕÕ, Ô­Ê¼Í¼ÏñDPI: %d, ¼ôÇĞºóÍ¼ÏñDPI: %d\n",
+    printf("Recver::HandleSnapshot->æ‹ç…§, åŸå§‹å›¾åƒDPI: %d, å‰ªåˆ‡åå›¾åƒDPI: %d\n",
         snap_cmd->original_dpi_,
         snap_cmd->cut_dpi_);
 
@@ -664,7 +664,7 @@ void Recver::HandleSnapshot(const RecvMsg* msg)
         notify);
 }
 
-//////////////////////// ÕÕÆ¬ºÏ³É ///////////////////////////////////////
+//////////////////////// ç…§ç‰‡åˆæˆ ///////////////////////////////////////
 
 class MergePhotoNT : public MC::NotifyResult {
 public:
@@ -684,7 +684,7 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "MergePhotoNT::Notify->ec: " << ec <<
-            ", ºÏ³ÉºóÍ¼ÏñÂ·¾¶: " << ctx1.c_str() << std::endl;
+            ", åˆæˆåå›¾åƒè·¯å¾„: " << ctx1.c_str() << std::endl;
 
         cmd_->ret_ = ec;
         strcpy_s(cmd_->merged_, ctx1.c_str());
@@ -705,7 +705,7 @@ void Recver::HandleMergePhoto(const RecvMsg* msg)
     SynthesizePhotoCmd* merge_cmd = new (std::nothrow) SynthesizePhotoCmd;
     memcpy(merge_cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     merge_cmd->Unser();
-    printf("Recver::HandleMergePhoto->ºÏ³ÉÕÕÆ¬, Í¼Ïñ1Â·¾¶: %s, Í¼Ïñ2Â·¾¶: %s\n",
+    printf("Recver::HandleMergePhoto->åˆæˆç…§ç‰‡, å›¾åƒ1è·¯å¾„: %s, å›¾åƒ2è·¯å¾„: %s\n",
         merge_cmd->photo1_,
         merge_cmd->photo2_);
 
@@ -713,7 +713,7 @@ void Recver::HandleMergePhoto(const RecvMsg* msg)
     MC::BOCApi::GetInst()->MergePhoto(merge_cmd->photo1_, merge_cmd->photo2_, merge_cmd->merged_, notify);
 }
 
-/////////////////////// °æÃæÑéÖ¤ÂëÊ¶±ğ //////////////////////////////////////
+/////////////////////// ç‰ˆé¢éªŒè¯ç è¯†åˆ« //////////////////////////////////////
 
 class RecognitionNT : public MC::NotifyResult {
 public:
@@ -733,7 +733,7 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "RecognitionNT::Notify->ec: " << ec <<
-            ", Ä£°åID: " << ctx1.c_str() << ", ×·ËİÂë: " << ctx2.c_str() << std::endl;
+            ", æ¨¡æ¿ID: " << ctx1.c_str() << ", è¿½æº¯ç : " << ctx2.c_str() << std::endl;
 
         cmd_->ret_ = ec;
         strcpy_s(cmd_->template_id_, ctx1.c_str());
@@ -755,14 +755,14 @@ void Recver::HandleRecognition(const RecvMsg* msg)
     RecognitionCmd* recog_cmd = new (std::nothrow) RecognitionCmd;
     memcpy(recog_cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     recog_cmd->Unser();
-    printf("Recver::HandleRecognition->´ıÊ¶±ğÍ¼Æ¬Â·¾¶: %s\n",
+    printf("Recver::HandleRecognition->å¾…è¯†åˆ«å›¾ç‰‡è·¯å¾„: %s\n",
         recog_cmd->path_);
 
     MC::NotifyResult* notify = new (std::nothrow) RecognitionNT(msg->pipe_inst, recog_cmd, this);
     MC::BOCApi::GetInst()->RecognizeImage(recog_cmd->path_, notify);
 }
 
-///////////////////////// ÒªËØÊ¶±ğ //////////////////////////////////////
+///////////////////////// è¦ç´ è¯†åˆ« //////////////////////////////////////
 
 class IdentifyElementNT : public MC::NotifyResult {
 public:
@@ -782,7 +782,7 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "IdentifyElementNT::Notify->ec: " << ec <<
-            ", Ê¶±ğÍ¼Æ¬Â·¾¶: " << data1.c_str() << ", Ê¶±ğ½á¹û: " << data2.c_str() << std::endl;
+            ", è¯†åˆ«å›¾ç‰‡è·¯å¾„: " << data1.c_str() << ", è¯†åˆ«ç»“æœ: " << data2.c_str() << std::endl;
 
         cmd_->ret_ = ec;
         strcpy_s(cmd_->content_str_, data2.c_str());
@@ -803,7 +803,7 @@ void Recver::HandleElementIdenti(const RecvMsg* msg)
     IdentifyElementCmd* identi_cmd = new (std::nothrow) IdentifyElementCmd;
     memcpy(identi_cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     identi_cmd->Unser();
-    printf("Recver::HandleElementIdenti->´ıÊ¶±ğÍ¼Æ¬Â·¾¶: %s\n",
+    printf("Recver::HandleElementIdenti->å¾…è¯†åˆ«å›¾ç‰‡è·¯å¾„: %s\n",
         identi_cmd->path_);
 
     MC::NotifyResult* notify = new (std::nothrow) IdentifyElementNT(msg->pipe_inst, identi_cmd, this);
@@ -817,7 +817,7 @@ void Recver::HandleElementIdenti(const RecvMsg* msg)
         notify);
 }
 
-////////////////////////// ÆÕÍ¨ÓÃÓ¡ /////////////////////////////////////
+////////////////////////// æ™®é€šç”¨å° /////////////////////////////////////
 
 class OridinaryStampNT: public MC::NotifyResult {
 public:
@@ -837,7 +837,7 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "OridinaryStampNT::Notify->ec: " << ec <<
-            ", ÈÎÎñºÅ: " << data1.c_str() << std::endl;
+            ", ä»»åŠ¡å·: " << data1.c_str() << std::endl;
 
         cmd_->ret_ = ec;
         cmd_->Ser();
@@ -857,7 +857,7 @@ void Recver::HandleOrdinary(const RecvMsg* msg)
     OridinaryStampCmd* ordi_cmd = new (std::nothrow) OridinaryStampCmd;
     memcpy(ordi_cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     ordi_cmd->Unser();
-    printf("Recver::HandleOrdinary->ÆÕÍ¨ÓÃÓ¡, ÈÎÎñºÅ: %s, Æ¾Ö¤ÀàĞÍ: %s, Ó¡ÕÂ¿¨²ÛºÅ: %d\n",
+    printf("Recver::HandleOrdinary->æ™®é€šç”¨å°, ä»»åŠ¡å·: %s, å‡­è¯ç±»å‹: %s, å°ç« å¡æ§½å·: %d\n",
         ordi_cmd->task_id_,
         ordi_cmd->type_,
         ordi_cmd->stamper_num_);
@@ -867,13 +867,14 @@ void Recver::HandleOrdinary(const RecvMsg* msg)
         ordi_cmd->task_id_,
         ordi_cmd->type_,
         ordi_cmd->stamper_num_,
+        ordi_cmd->ink_,
         ordi_cmd->x_,
         ordi_cmd->y_,
         ordi_cmd->angle_,
         notify);
 }
 
-/////////////////////////// ×Ô¶¯ÓÃÓ¡ ////////////////////////////////////////
+/////////////////////////// è‡ªåŠ¨ç”¨å° ////////////////////////////////////////
 
 class AutoStampNT : public MC::NotifyResult {
 public:
@@ -893,7 +894,7 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "AutoStampNT::Notify->ec: " << ec <<
-            ", ÈÎÎñºÅ: " << data1.c_str() << std::endl;
+            ", ä»»åŠ¡å·: " << data1.c_str() << std::endl;
 
         cmd_->ret_ = ec;
         cmd_->Ser();
@@ -913,7 +914,7 @@ void Recver::HandleAuto(const RecvMsg* msg)
     AutoStampCmd* auto_cmd = new (std::nothrow) AutoStampCmd;
     memcpy(auto_cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     auto_cmd->Unser();
-    printf("Recver::HandleAuto->×Ô¶¯ÓÃÓ¡, ÈÎÎñºÅ: %s, Æ¾Ö¤ÀàĞÍ: %s, Ó¡ÕÂ¿¨²ÛºÅ: %d\n",
+    printf("Recver::HandleAuto->è‡ªåŠ¨ç”¨å°, ä»»åŠ¡å·: %s, å‡­è¯ç±»å‹: %s, å°ç« å¡æ§½å·: %d\n",
         auto_cmd->task_id_,
         auto_cmd->type_,
         auto_cmd->stamper_num_);
@@ -926,7 +927,7 @@ void Recver::HandleAuto(const RecvMsg* msg)
         notify);
 }
 
-///////////////////////// ½áÊøÓÃÓ¡ //////////////////////////////////////
+///////////////////////// ç»“æŸç”¨å° //////////////////////////////////////
 
 class FinishStampNT : public MC::NotifyResult {
 public:
@@ -946,7 +947,7 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "FinishStampNT::Notify->ec: " << ec <<
-            ", ÈÎÎñºÅ: " << data1.c_str() << std::endl;
+            ", ä»»åŠ¡å·: " << data1.c_str() << std::endl;
 
         cmd_->ret_ = ec;
         cmd_->Ser();
@@ -966,13 +967,13 @@ void Recver::HandleFinish(const RecvMsg* msg)
     FinishStampCmd* finish_cmd = new (std::nothrow) FinishStampCmd;
     memcpy(finish_cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     finish_cmd->Unser();
-    printf("Recver::HandleAuto->½áÊøÓÃÓ¡, ÈÎÎñºÅ: %s\n", finish_cmd->task_id_);
+    printf("Recver::HandleAuto->ç»“æŸç”¨å°, ä»»åŠ¡å·: %s\n", finish_cmd->task_id_);
 
     MC::NotifyResult* notify = new (std::nothrow) FinishStampNT(msg->pipe_inst, finish_cmd, this);
     MC::BOCApi::GetInst()->FinishStamp(finish_cmd->task_id_, notify);
 }
 
-////////////////////////// ÊÍ·ÅÓ¡¿Ø»ú /////////////////////////////////////
+////////////////////////// é‡Šæ”¾å°æ§æœº /////////////////////////////////////
 
 class ReleaNT : public MC::NotifyResult {
 public:
@@ -993,7 +994,7 @@ public:
     {
         int err_code = 0;
         std::cout << "ReleaNT::Notify->ec: " << ec <<
-            ", Ó¡¿Ø»ú±àºÅ: " << data1.c_str() << std::endl;
+            ", å°æ§æœºç¼–å·: " << data1.c_str() << std::endl;
 
         cmd_->ret_ = ec;
         cmd_->Ser();
@@ -1013,13 +1014,13 @@ void Recver::HandleReleaseStamper(const RecvMsg* msg)
     ReleaseStamperCmd* release_cmd = new (std::nothrow) ReleaseStamperCmd;
     memcpy(release_cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     release_cmd->Unser();
-    printf("Recver::HandleReleaseStamper->Ó¡¿Ø»ú±àºÅ: %s\n", release_cmd->stamp_id_);
+    printf("Recver::HandleReleaseStamper->å°æ§æœºç¼–å·: %s\n", release_cmd->stamp_id_);
 
     MC::NotifyResult* notify = new (std::nothrow) ReleaNT(msg->pipe_inst, release_cmd, this);
     MC::BOCApi::GetInst()->ReleaseStamp(release_cmd->stamp_id_, notify);
 }
 
-////////////////////////// »ñÈ¡´íÎóĞÅÏ¢ ///////////////////////////////////
+////////////////////////// è·å–é”™è¯¯ä¿¡æ¯ ///////////////////////////////////
 
 class GetErNT : public MC::NotifyResult {
 public:
@@ -1040,9 +1041,9 @@ public:
     {
         int err_code = 0;
         std::cout << "GetErNT::Notify->ec: " << ec <<
-            ", ´íÎóÂë: " << atoi(ctx1.c_str()) << 
-            ", ´íÎóĞÅÏ¢: " << data1.c_str() << 
-            ", ½â¾ö·½°¸: " << data2.c_str() << std::endl;
+            ", é”™è¯¯ç : " << atoi(ctx1.c_str()) << 
+            ", é”™è¯¯ä¿¡æ¯: " << data1.c_str() << 
+            ", è§£å†³æ–¹æ¡ˆ: " << data2.c_str() << std::endl;
 
         cmd_->ret_ = ec;
         strcpy_s(cmd_->err_msg_, data1.c_str());
@@ -1064,13 +1065,13 @@ void Recver::HandleGetError(const RecvMsg* msg)
     GetErrorCmd* err_cmd = new (std::nothrow) GetErrorCmd;
     memcpy(err_cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     err_cmd->Unser();
-    printf("Recver::HandleGetError->´íÎóÂë: %d\n", err_cmd->err_);
+    printf("Recver::HandleGetError->é”™è¯¯ç : %d\n", err_cmd->err_);
 
     MC::NotifyResult* notify = new (std::nothrow) GetErNT(msg->pipe_inst, err_cmd, this);
     MC::BOCApi::GetInst()->GetError(err_cmd->err_, notify);
 }
 
-///////////////////////// Ğ£×¼Ó¡ÕÂ //////////////////////////////////
+///////////////////////// æ ¡å‡†å°ç«  //////////////////////////////////
 
 class CalibrateNT : public MC::NotifyResult {
 public:
@@ -1110,13 +1111,13 @@ void Recver::HandleCalibrate(const RecvMsg* msg)
     CalibrateCmd* cmd = new (std::nothrow) CalibrateCmd;
     memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     cmd->Unser();
-    printf("Recver::HandleCalibrate->Ğ£×¼Ó¡ÕÂ, Ó¡ÕÂºÅ: %d\n", cmd->slot_);
+    printf("Recver::HandleCalibrate->æ ¡å‡†å°ç« , å°ç« å·: %d\n", cmd->slot_);
 
     MC::NotifyResult* notify = new (std::nothrow) CalibrateNT(msg->pipe_inst, cmd, this);
     MC::BOCApi::GetInst()->CalibrateMachine(cmd->slot_, notify);
 }
 
-/////////////////////////// Ó¡ÕÂ×´Ì¬²éÑ¯ //////////////////////////////////
+/////////////////////////// å°ç« çŠ¶æ€æŸ¥è¯¢ //////////////////////////////////
 
 class QueryStampersNT : public MC::NotifyResult {
 public:
@@ -1136,7 +1137,7 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "QueryStampersNT::Notify->ec: " << ec <<
-            ", Ó¡ÕÂ×´Ì¬: " << data1.c_str();
+            ", å°ç« çŠ¶æ€: " << data1.c_str();
 
         cmd_->ret_ = ec;
         if (ec == MC::EC_SUCC) {
@@ -1164,13 +1165,13 @@ void Recver::HandleQueryStampers(const RecvMsg* msg)
     QueryStampersCmd* cmd = new (std::nothrow) QueryStampersCmd;
     memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     cmd->Unser();
-    printf("Recver::HandleQueryStampers->Ó¡ÕÂ×´Ì¬²éÑ¯\n");
+    printf("Recver::HandleQueryStampers->å°ç« çŠ¶æ€æŸ¥è¯¢\n");
 
     MC::NotifyResult* notify = new (std::nothrow) QueryStampersNT(msg->pipe_inst, cmd, this);
     MC::BOCApi::GetInst()->QueryStampers(notify);
 }
 
-/////////////////////////// ²éÑ¯°²È«ÃÅ×´Ì¬/ /////////////////////////////////
+/////////////////////////// æŸ¥è¯¢å®‰å…¨é—¨çŠ¶æ€/ /////////////////////////////////
 
 class QuerySafeNT : public MC::NotifyResult {
 public:
@@ -1191,7 +1192,7 @@ public:
     {
         int err_code = 0;
         std::cout << "QuerySafeNT::Notify->ec: " << ec <<
-            ", °²È«ÃÅ×´Ì¬: " << data1.c_str();
+            ", å®‰å…¨é—¨çŠ¶æ€: " << data1.c_str();
 
         cmd_->ret_ = ec;
         cmd_->status_ = atoi(data1.c_str());
@@ -1212,13 +1213,13 @@ void Recver::HandleQuerySafe(const RecvMsg* msg)
     QuerySafeCmd* cmd = new (std::nothrow) QuerySafeCmd;
     memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     cmd->Unser();
-    printf("Recver::HandleQuerySafe->²éÑ¯°²È«ÃÅ×´Ì¬\n");
+    printf("Recver::HandleQuerySafe->æŸ¥è¯¢å®‰å…¨é—¨çŠ¶æ€\n");
 
     MC::NotifyResult* notify = new (std::nothrow) QuerySafeNT(msg->pipe_inst, cmd, this);
     MC::BOCApi::GetInst()->QuerySafeDoor(notify);
 }
 
-///////////////////////////// ¿ª¹Ø°²È«ÃÅ ////////////////////////////////
+///////////////////////////// å¼€å…³å®‰å…¨é—¨ ////////////////////////////////
 
 class SafeCtlNT : public MC::NotifyResult {
 public:
@@ -1239,7 +1240,7 @@ public:
     {
         int err_code = 0;
         std::cout << "SafeCtlNT::Notify->ec: " << ec <<
-            ", ²Ù×÷: " << data1.c_str();
+            ", æ“ä½œ: " << data1.c_str();
 
         cmd_->ret_ = ec;
         cmd_->ctrl_ = atoi(data1.c_str());
@@ -1261,7 +1262,7 @@ void Recver::HandleSafeControl(const RecvMsg* msg)
     SafeCtrlCmd* cmd = new (std::nothrow) SafeCtrlCmd;
     memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     cmd->Unser();
-    printf("Recver::HandleSafeControl->¿ª¹Ø°²È«ÃÅ, ²Ù×÷: %d, ³¬Ê±Ê±¼ä: %d\n", 
+    printf("Recver::HandleSafeControl->å¼€å…³å®‰å…¨é—¨, æ“ä½œ: %d, è¶…æ—¶æ—¶é—´: %d\n", 
         cmd->ctrl_,
         cmd->timeout_);
 
@@ -1269,7 +1270,7 @@ void Recver::HandleSafeControl(const RecvMsg* msg)
     MC::BOCApi::GetInst()->OperateSafeDoor(cmd->ctrl_, cmd->timeout_, notify);
 }
 
-//////////////////////////// ·äÃùÆ÷¿ØÖÆ /////////////////////////////////
+//////////////////////////// èœ‚é¸£å™¨æ§åˆ¶ /////////////////////////////////
 
 class BeepCtlNT : public MC::NotifyResult {
 public:
@@ -1290,7 +1291,7 @@ public:
     {
         int err_code = 0;
         std::cout << "BeepCtlNT::Notify->ec: " << ec <<
-            ", ²Ù×÷: " << data1.c_str();
+            ", æ“ä½œ: " << data1.c_str();
 
         cmd_->ret_ = ec;
         cmd_->ctrl_ = atoi(data1.c_str());
@@ -1311,13 +1312,13 @@ void Recver::HandleBeepControl(const RecvMsg* msg)
     BeepCtrlCmd* cmd = new (std::nothrow) BeepCtrlCmd;
     memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     cmd->Unser();
-    printf("Recver::HandleBeepControl->·äÃùÆ÷¿ØÖÆ, ²Ù×÷: %d\n", cmd->ctrl_);
+    printf("Recver::HandleBeepControl->èœ‚é¸£å™¨æ§åˆ¶, æ“ä½œ: %d\n", cmd->ctrl_);
 
     MC::NotifyResult* notify = new (std::nothrow) BeepCtlNT(msg->pipe_inst, cmd, this);
     MC::BOCApi::GetInst()->OperateBeep(cmd->ctrl_, notify);
 }
 
-///////////////////////// ¿¨²ÛÊıÁ¿²éÑ¯ ////////////////////////////////////
+///////////////////////// å¡æ§½æ•°é‡æŸ¥è¯¢ ////////////////////////////////////
 
 class QueryStNT : public MC::NotifyResult {
 public:
@@ -1338,7 +1339,7 @@ public:
     {
         int err_code = 0;
         std::cout << "QueryStNT::Notify->ec: " << ec <<
-            ", ¿¨²ÛÊıÁ¿: " << data1.c_str();
+            ", å¡æ§½æ•°é‡: " << data1.c_str();
 
         cmd_->ret_ = ec;
         cmd_->num_ = atoi(data1.c_str());
@@ -1359,13 +1360,13 @@ void Recver::HandleQuerySlot(const RecvMsg* msg)
     QuerySlotCmd* cmd = new (std::nothrow) QuerySlotCmd;
     memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     cmd->Unser();
-    printf("Recver::HandleQuerySlot->¿¨²ÛÊıÁ¿²éÑ¯\n");
+    printf("Recver::HandleQuerySlot->å¡æ§½æ•°é‡æŸ¥è¯¢\n");
 
     MC::NotifyResult* notify = new (std::nothrow) QueryStNT(msg->pipe_inst, cmd, this);
     MC::BOCApi::GetInst()->QuerySlot(notify);
 }
 
-//////////////////////// ±¨¾¯Æ÷¿ØÖÆ ////////////////////////////////
+//////////////////////// æŠ¥è­¦å™¨æ§åˆ¶ ////////////////////////////////
 
 class AlarmCtrlNT : public MC::NotifyResult {
 public:
@@ -1386,8 +1387,8 @@ public:
     {
         int err_code = 0;
         std::cout << "AlarmCtrlNT::Notify->ec: " << ec <<
-            ", ±¨¾¯Æ÷ÀàĞÍ: " << data1.c_str() <<
-            ", ¿ª¹Ø: " << data2.c_str() << std::endl;
+            ", æŠ¥è­¦å™¨ç±»å‹: " << data1.c_str() <<
+            ", å¼€å…³: " << data2.c_str() << std::endl;
 
         cmd_->ret_ = ec;
         cmd_->alarm_ = atoi(data1.c_str());
@@ -1409,13 +1410,13 @@ void Recver::HandleAlarmControl(const RecvMsg* msg)
     AlarmCtrlCmd* cmd = new (std::nothrow) AlarmCtrlCmd;
     memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     cmd->Unser();
-    printf("Recver::HandleAlarmControl->±¨¾¯Æ÷¿ØÖÆ\n");
+    printf("Recver::HandleAlarmControl->æŠ¥è­¦å™¨æ§åˆ¶\n");
 
     MC::NotifyResult* notify = new (std::nothrow) AlarmCtrlNT(msg->pipe_inst, cmd, this);
     MC::BOCApi::GetInst()->OperateAlarm(cmd->alarm_, cmd->ctrl_, notify);
 }
 
-/////////////////////////// ²éÑ¯ÒÑ°ó¶¨MAC //////////////////////////////////
+/////////////////////////// æŸ¥è¯¢å·²ç»‘å®šMAC //////////////////////////////////
 
 class QueryMACNT : public MC::NotifyResult {
 public:
@@ -1459,7 +1460,7 @@ void Recver::HandleQueryMAC(const RecvMsg* msg)
     QueryMACCmd* cmd = new (std::nothrow) QueryMACCmd;
     memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
     cmd->Unser();
-    printf("Recver::HandleQueryMAC->²éÑ¯ÒÑ°ó¶¨MACµØÖ·\n");
+    printf("Recver::HandleQueryMAC->æŸ¥è¯¢å·²ç»‘å®šMACåœ°å€\n");
 
     MC::NotifyResult* notify = new (std::nothrow) QueryMACNT(msg->pipe_inst, cmd, this);
     MC::BOCApi::GetInst()->QueryMAC(notify);

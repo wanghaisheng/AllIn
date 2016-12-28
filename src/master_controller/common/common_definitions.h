@@ -1,4 +1,4 @@
-#ifndef CONTROLLER_COMMON_DEFINITIONS_H_
+﻿#ifndef CONTROLLER_COMMON_DEFINITIONS_H_
 #define CONTROLLER_COMMON_DEFINITIONS_H_
 
 #include <string>
@@ -17,49 +17,50 @@ enum ConnType {
 };
 
 enum ConnStatus {
-    CS_FREE         = 0,    // �ɹ����豸������
-    CS_OPEN_FAIL    = 1,    // ���豸ʧ��
-    CS_CLOSE_SUC    = 2,    // �ɹ��ر��豸
-    CS_CLOSE_FAIL   = 3,    // �ر��豸ʧ��
-    CS_RECON_SUC    = 4,    // �����豸�ɹ�
-    CS_RECON_FAIL   = 5,    // �����豸ʧ��
-    CS_DISCONN_SUC  = 6,    // �豸�Ͽ����رճɹ�
-    CS_RECONN_FAIL  = 7,    // �豸�Ͽ����ر��豸ʧ��
-    CS_STAMPER_DROP = 8,    // ӡ�µ���,�������ģʽ
+    CS_FREE         = 0,    // 成功打开设备并空闲
+    CS_OPEN_FAIL    = 1,    // 打开设备失败
+    CS_CLOSE_SUC    = 2,    // 成功关闭设备
+    CS_CLOSE_FAIL   = 3,    // 关闭设备失败
+    CS_RECON_SUC    = 4,    // 重连设备成功
+    CS_RECON_FAIL   = 5,    // 重连设备失败
+    CS_DISCONN_SUC  = 6,    // 设备断开并关闭成功
+    CS_RECONN_FAIL  = 7,    // 设备断开并关闭设备失败
+    CS_STAMPER_DROP = 8,    // 印章掉落,进入故障模式
 };
 
 static std::string ConnDes[] = 
-{ 
-    "�ɹ����豸������", 
-    "���豸ʧ��",
-    "�ɹ��ر��豸",
-    "�ر��豸ʧ��",
-    "�����豸�ɹ�",
-    "�����豸ʧ��",
-    "�豸�Ͽ����رճɹ�",
-    "�豸�Ͽ����ر��豸ʧ��",
-    "ӡ�µ���,�������ģʽ"
+{
+    "成功打开设备并空闲",
+    "打开设备失败",
+    "成功关闭设备",
+    "关闭设备失败",
+    "重连设备成功",
+    "重连设备失败",
+    "设备断开并关闭成功",
+    "设备断开并关闭设备失败",
+    "印章掉落,进入故障模式"
 };
 
-// ӡ�ػ���PC����״̬����
+// 印控机与PC连接状态描述
 struct DeviceStat {
-    bool        conn_;             //PC��ӡ�ػ��Ƿ�ɹ�����
+    bool        conn_;             //PC与印控机是否成功连接
     ConnStatus  status_;
     std::string cause_;
 };
 
-// ӡ�ػ���״̬����
+// 印控机门状态描述
 struct AllDoorStat {
-    bool top_door_closed_;      // �������Ƿ�ر�
-    bool safe_door_closed_;     // ��е���Ƿ�ر�
-    bool elec_door_closed_;     // �������Ƿ�ر�
-    bool paper_door_closed_;    // ��ֽ���Ƿ�ر�
+    bool top_door_closed_;      // 顶盖门是否关闭
+    bool safe_door_closed_;     // 机械锁是否关闭
+    bool elec_door_closed_;     // 电子锁是否关闭
+    bool paper_door_closed_;    // 进纸门是否关闭
 };
 
-// �����״̬
+// 任务号状态
 enum TaskState {
-    TS_ALIVE,
-    TS_DEAD,
+    TS_ALIVE,   // 生成任务号，未使用
+    TS_USED,    // 任务号被使用
+    TS_DEAD,    // 结束用印, 删除任务号
     TS_NON_EXIST
 };
 

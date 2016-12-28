@@ -21,10 +21,10 @@ bool MC::SvrConfig::Parse()
     try {
         boost::property_tree::ptree pt;
         boost::property_tree::xml_parser::read_xml(xml_path, pt);
-        // ÕÂµ½Î»µÈ´ıÊ±¼ä
+        // ç« åˆ°ä½ç­‰å¾…æ—¶é—´
         wait_time_ = atoi(pt.get<std::string>("con.wait_time").c_str());
 
-        // Ğ£×¼µã
+        // æ ¡å‡†ç‚¹
         std::string pt_str = pt.get<std::string>("con.checkpoint.point0");
         size_t comma_pos = pt_str.find_first_of(",");
         if (comma_pos != std::string::npos) {
@@ -60,14 +60,14 @@ bool MC::SvrConfig::Parse()
             check_pt4_.y = atoi(pt_str.substr(comma_pos + 1, std::string::npos).c_str());
         }
 
-        // Æ¾Ö¤ÉãÏñÍ·Í¼Æ¬¸ñÊ½
+        // å‡­è¯æ‘„åƒå¤´å›¾ç‰‡æ ¼å¼
         img_format_ = atoi(pt.get<std::string>("con.img_format").c_str());
 
-        // Æ¾Ö¤ÉãÏñÍ··Ö±æÂÊ
+        // å‡­è¯æ‘„åƒå¤´åˆ†è¾¨ç‡
         resolution_width_ = atoi(pt.get<std::string>("con.resolution.width").c_str());
         resolution_height_ = atoi(pt.get<std::string>("con.resolution.height").c_str());
 
-        // Æ¾Ö¤ÉãÏñÍ·²¹¹âµÆÁÁ¶È
+        // å‡­è¯æ‘„åƒå¤´è¡¥å…‰ç¯äº®åº¦
         brightness_ = atoi(pt.get<std::string>("con.brightness").c_str());
     } catch (...) {
         boost::exception_ptr e = boost::current_exception();

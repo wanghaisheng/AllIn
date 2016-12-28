@@ -46,105 +46,104 @@ public:
         std::string ori_path, std::string cut_path, int ec) = 0;
 };
 
-// ÕÕÆ¬ºÏ³ÉÍ¨Öª
+// åˆæˆç…§ç‰‡
 class MergePhotoNT {
 public:
     virtual void Notify(std::string p1, std::string p2, std::string merged, int ec) = 0;
 };
 
-// °æÃæÑéÖ¤ÂëÊ¶±ğÍ¨Öª
+// ç‰ˆé¢ã€éªŒè¯ç è¯†åˆ«
 class RecognizeNT {
 public:
     virtual void Notify(std::string path, std::string template_id, std::string trace, int ec) = 0;
 };
 
-// ÒªËØÊ¶±ğÍ¨Öª
+// è¦ç´ è¯†åˆ«
 class IdentifyNT {
 public:
     virtual void Notify(std::string path, int x, int y, int width, int height, int angle,
         std::string result, int ec) = 0;
 };
 
-// ÆÕÍ¨ÓÃÓ¡
+// æ™®é€šç”¨å°
 class OrdinaryStampNT {
 public:
     virtual void Notify(std::string task, std::string voucher_type, int stamp_num, 
         int x, int y, int angle, int ec) = 0;
 };
 
-// ×Ô¶¯ÓÃÓ¡
+// è‡ªåŠ¨ç”¨å°
 class AutoStampNT {
 public:
     virtual void Notify(std::string task, std::string voucher_type, int stamp_num, int ec) = 0;
 };
 
-// ÓÃÓ¡½áÊø
+// ç»“æŸç”¨å°
 class FinishStampNT {
 public:
     virtual void Notify(std::string task, int ec) = 0;
 };
 
-// ÊÍ·ÅÓÃÓ¡»ú
+// é‡Šæ”¾å°æ§æœº
 class ReleaseStampNT {
 public:
     virtual void Notify(std::string machine, int ec) = 0;
 };
 
-// »ñÈ¡´íÎóĞÅÏ¢
+// è·å–é”™è¯¯ä¿¡æ¯
 class GetErrorNT {
 public:
     virtual void Notify(int er_code, std::string err_msg, std::string err_resolver, int ec) = 0;
 };
 
-// Ğ£×¼Ó¡ÕÂ
+// æ ¡å‡†å°ç« 
 class CalibrationNT {
 public:
     virtual void Notify(int slot, int ec) = 0;
 };
 
-// Ó¡ÕÂ×´Ì¬²éÑ¯
+// æŸ¥è¯¢å°ç« ä¿¡æ¯
 class QueryStampersNT {
 public:
     virtual void Notify(int* status, int ec) = 0;
 };
 
-// °²È«ÃÅ×´Ì¬²éÑ¯
+// å®‰å…¨é—¨çŠ¶æ€
 class QuerySafeNT {
 public:
     virtual void Notify(int status, int ec) = 0;
 };
 
-// ¿ª¹Ø°²È«ÃÅ
+// å¼€å…³å®‰å…¨é—¨
 class CtrlSafeNT {
 public:
     virtual void Notify(int ctrl, int ec) = 0;
 };
 
-// ·äÃùÆ÷¿ØÖÆ
+// å¼€å…³èœ‚é¸£å™¨
 class CtrlBeepNT {
 public:
     virtual void Notify(int ctrl, int ec) = 0;
 };
 
-// ¿¨²ÛÊıÁ¿²éÑ¯
 class QuerySlotNT {
 public:
     virtual void Notify(int num, int ec) = 0;
 };
 
-// ±¨¾¯Æ÷¿ØÖÆ
+// å¼€å…³æŠ¥è­¦å™¨
 class CtrlAlarmNT {
 public:
     virtual void Notify(int alarm, int ctrl, int ec) = 0;
 };
 
-// ²éÑ¯MACµØÖ·
+// æŸ¥è¯¢macä¿¡æ¯
 class QueryMACNT {
 public:
     virtual void Notify(std::string mac1, std::string mac2, int ec) = 0;
 };
 
-// ĞÄÌøÍ¨Öª
+// å¿ƒè·³
 class HeartNT {
 public:
     virtual void Notify() {}
@@ -185,8 +184,15 @@ public:
     int AsynIdentifyElement(const std::string& path, int x, int y, int width, int height,
         int angle, IdentifyNT* nt);
 
-    int AsynOrdinaryStamp(const std::string& task, 
-        const std::string& voucher, int num, int x, int y, int angle, OrdinaryStampNT* nt);
+    int AsynOrdinaryStamp(
+        const std::string& task, 
+        const std::string& voucher, 
+        int num, 
+        int ink,
+        int x, 
+        int y, 
+        int angle, 
+        OrdinaryStampNT* nt);
 
     int AsynAutoStamp(const std::string& task,
         const std::string& voucher, int num, AutoStampNT* nt);

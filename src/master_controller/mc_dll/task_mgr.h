@@ -8,19 +8,21 @@
 
 namespace MC {
 
-// ¹ÜÀíÓÃÓ¡ÈÎÎñºÅ
+// ç®¡ç†ç”¨å°ä»»åŠ¡å·
 class TaskMgr {
 
 public:
     static TaskMgr* GetInst();
 
-    // Éú³ÉÎ¨Ò»ÓÃÓ¡ÈÎÎñºÅ
+    // ç”Ÿæˆå”¯ä¸€ç”¨å°ä»»åŠ¡å·
     std::string GeneTask();
    
-    // ²éÑ¯ÓÃÓ¡ÈÎÎñºÅ×´Ì¬
+    // æŸ¥è¯¢ç”¨å°ä»»åŠ¡å·çŠ¶æ€
     enum TaskState QueryTaskState(const std::string& task_id);
 
-    // É¾³ıÓÃÓ¡ÈÎÎñºÅ
+    void MarkUsed(const std::string& task_id);
+
+    // åˆ é™¤ç”¨å°ä»»åŠ¡å·
     bool RemoveTask(const std::string& task_id);
 
 private:

@@ -26,7 +26,7 @@ private:
     static Config* config_inst;
 
 public:
-    MC::ConnType    conn_type_;  // 是否是管道连接通信
+    MC::ConnType    conn_type_;  // 鏄惁鏄閬撹繛鎺ラ�氫俊
 
     std::string     pipe_name_;
     std::string     send_mq_name_;

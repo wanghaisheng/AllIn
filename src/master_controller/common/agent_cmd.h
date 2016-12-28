@@ -1,4 +1,4 @@
-#ifndef AGENT_CMD_H_
+ï»¿#ifndef AGENT_CMD_H_
 #define AGENT_CMD_H_
 
 #include <string>
@@ -20,61 +20,61 @@
 #define MAX_STAMPER_NUM     6
 
 enum CmdType {
-    CT_INIT_MACHINE = 1,    // ³õÊ¼»¯
-    CT_BIND_MAC,            // °ó¶¨MAC
-    CT_UNBIND_MAC,          // ½â°óMAC
-    CT_PREPARE_STAMP,       // ×¼±¸ÓÃÓ¡
-    CT_PAPER_DOOR,          // ²éÑ¯½øÖ½ÃÅ×´Ì¬
-    CT_SNAPSHOT,            // ÅÄÕÕ
-    CT_PHOTO_SYNTHESIS,     // ÕÕÆ¬ºÏ³É
-    CT_RECOGNITION,         // °æÃæÑéÖ¤ÂëÊ¶±ğ
-    CT_ELEMENT_IDENTI,      // ÒªËØÊ¶±ğ
-    CT_ORDINARY_STAMP,      // ÆÕÍ¨ÓÃÓ¡
-    CT_AUTO_STAMP,          // ×Ô¶¯ÓÃÓ¡
-    CT_FINISH_STAMP,        // ½áÊøÓÃÓ¡
-    CT_RELEASE_STAMPER,     // ÊÍ·ÅÓÃÓ¡»ú
-    CT_GET_ERROR,           // »ñÈ¡´íÎóĞÅÏ¢
-    CT_HEART_BEAT,          // ĞÄÌøÃüÁî
-    CT_QUERY_MACHINE,       // »ñÈ¡Ó¡¿Ø»ú±àºÅ
-    CT_SET_MACHINE,         // ÉèÖÃÓ¡¿Ø»ú±àºÅ
-    CT_CALIBRATION,         // Ğ£×¼Ó¡ÕÂ
-    CT_QUERY_STAMPERS,      // Ó¡ÕÂ×´Ì¬²éÑ¯
-    CT_QUERY_SAFE,          // °²È«ÃÅ×´Ì¬²éÑ¯
-    CT_SAFE_CTL,            // ¿ª¹Ø°²È«ÃÅ
-    CT_BEEP_CTL,            // ·äÃùÆ÷¿ØÖÆ
-    CT_QUERY_SLOT,          // ¿¨²ÛÊıÁ¿²éÑ¯
-    CT_ALARM_CTL,           // ±¨¾¯Æ÷¿ØÖÆ
-    CT_QUERY_MAC,           // ²éÑ¯ÒÑ°ó¶¨MACµØÖ·
+    CT_INIT_MACHINE = 1,    // åˆå§‹åŒ–
+    CT_BIND_MAC,            // ç»‘å®šMAC
+    CT_UNBIND_MAC,          // è§£ç»‘MAC
+    CT_PREPARE_STAMP,       // å‡†å¤‡ç”¨å°
+    CT_PAPER_DOOR,          // æŸ¥è¯¢è¿›çº¸é—¨çŠ¶æ€
+    CT_SNAPSHOT,            // æ‹ç…§
+    CT_PHOTO_SYNTHESIS,     // ç…§ç‰‡åˆæˆ
+    CT_RECOGNITION,         // ç‰ˆé¢éªŒè¯ç è¯†åˆ«
+    CT_ELEMENT_IDENTI,      // è¦ç´ è¯†åˆ«
+    CT_ORDINARY_STAMP,      // æ™®é€šç”¨å°
+    CT_AUTO_STAMP,          // è‡ªåŠ¨ç”¨å°
+    CT_FINISH_STAMP,        // ç»“æŸç”¨å°
+    CT_RELEASE_STAMPER,     // é‡Šæ”¾ç”¨å°æœº
+    CT_GET_ERROR,           // è·å–é”™è¯¯ä¿¡æ¯
+    CT_HEART_BEAT,          // å¿ƒè·³å‘½ä»¤
+    CT_QUERY_MACHINE,       // è·å–å°æ§æœºç¼–å·
+    CT_SET_MACHINE,         // è®¾ç½®å°æ§æœºç¼–å·
+    CT_CALIBRATION,         // æ ¡å‡†å°ç« 
+    CT_QUERY_STAMPERS,      // å°ç« çŠ¶æ€æŸ¥è¯¢
+    CT_QUERY_SAFE,          // å®‰å…¨é—¨çŠ¶æ€æŸ¥è¯¢
+    CT_SAFE_CTL,            // å¼€å…³å®‰å…¨é—¨
+    CT_BEEP_CTL,            // èœ‚é¸£å™¨æ§åˆ¶
+    CT_QUERY_SLOT,          // å¡æ§½æ•°é‡æŸ¥è¯¢
+    CT_ALARM_CTL,           // æŠ¥è­¦å™¨æ§åˆ¶
+    CT_QUERY_MAC,           // æŸ¥è¯¢å·²ç»‘å®šMACåœ°å€
 };
 
 static std::string cmd_des[] = 
 {
-    "±£Áô", 
-    "³õÊ¼»¯Ó¡¿Ø»ú", 
-    "°ó¶¨MAC", 
-    "½â°óMAC",
-    "×¼±¸ÓÃÓ¡",
-    "²éÑ¯½øÖ½ÃÅ×´Ì¬",
-    "ÅÄÕÕ",
-    "ÕÕÆ¬ºÏ³É",
-    "°æÃæÑéÖ¤ÂëÊ¶±ğ",
-    "ÒªËØÊ¶±ğ",
-    "ÆÕÍ¨ÓÃÓ¡",
-    "×Ô¶¯ÓÃÓ¡",
-    "½áÊøÓÃÓ¡",
-    "ÊÍ·ÅÓÃÓ¡»ú",
-    "»ñÈ¡´íÎóĞÅÏ¢",
-    "ĞÄÌøÃüÁî",
-    "»ñÈ¡Ó¡¿Ø»ú±àºÅ",
-    "ÉèÖÃÓ¡¿Ø»ú±àºÅ",
-    "Ğ£×¼Ó¡ÕÂ",
-    "Ó¡ÕÂ×´Ì¬²éÑ¯",
-    "°²È«ÃÅ×´Ì¬²éÑ¯",
-    "¿ª¹Ø°²È«ÃÅ",
-    "·äÃùÆ÷¿ØÖÆ",
-    "¿¨²ÛÊıÁ¿²éÑ¯",
-    "±¨¾¯Æ÷¿ØÖÆ",
-    "²éÑ¯ÒÑ°ó¶¨MACµØÖ·"
+    "ä¿ç•™", 
+    "åˆå§‹åŒ–å°æ§æœº", 
+    "ç»‘å®šMAC", 
+    "è§£ç»‘MAC",
+    "å‡†å¤‡ç”¨å°",
+    "æŸ¥è¯¢è¿›çº¸é—¨çŠ¶æ€",
+    "æ‹ç…§",
+    "ç…§ç‰‡åˆæˆ",
+    "ç‰ˆé¢éªŒè¯ç è¯†åˆ«",
+    "è¦ç´ è¯†åˆ«",
+    "æ™®é€šç”¨å°",
+    "è‡ªåŠ¨ç”¨å°",
+    "ç»“æŸç”¨å°",
+    "é‡Šæ”¾ç”¨å°æœº",
+    "è·å–é”™è¯¯ä¿¡æ¯",
+    "å¿ƒè·³å‘½ä»¤",
+    "è·å–å°æ§æœºç¼–å·",
+    "è®¾ç½®å°æ§æœºç¼–å·",
+    "æ ¡å‡†å°ç« ",
+    "å°ç« çŠ¶æ€æŸ¥è¯¢",
+    "å®‰å…¨é—¨çŠ¶æ€æŸ¥è¯¢",
+    "å¼€å…³å®‰å…¨é—¨",
+    "èœ‚é¸£å™¨æ§åˆ¶",
+    "å¡æ§½æ•°é‡æŸ¥è¯¢",
+    "æŠ¥è­¦å™¨æ§åˆ¶",
+    "æŸ¥è¯¢å·²ç»‘å®šMACåœ°å€"
 };
 
 class BaseCmd {
@@ -89,7 +89,7 @@ public:
     virtual void Unser();
 
 public:
-    enum        CmdType ct_;               //ĞÂÔöÊı¾İ³ÉÔ±·ÅÔÚct_ºó, ĞòÁĞ»¯Ê±Ò²×îÏÈĞòÁĞºÅct_
+    enum        CmdType ct_;               //æ–°å¢æ•°æ®æˆå‘˜æ”¾åœ¨ct_å, åºåˆ—åŒ–æ—¶ä¹Ÿæœ€å…ˆåºåˆ—å·ct_
     char        send_time_[SEND_TIME_SIZE];
     XSpace      xs_;
 };
@@ -153,9 +153,9 @@ public:
     virtual void Unser();
 
 public:
-    char            stamper_id_;                //Ó¡ÕÂ¿¨²Û±àºÅ(1-6)
-    int             timeout_;                   //³¬Ê±Ê±¼ä, µ¥Î»: Ãë
-    char            task_id_[TASK_ID_SIZE];     //ÓÃÓ¡ÈÎÎñID
+    char            stamper_id_;                //å°ç« å¡æ§½ç¼–å·(1-6)
+    int             timeout_;                   //è¶…æ—¶æ—¶é—´, å•ä½: ç§’
+    char            task_id_[TASK_ID_SIZE];     //ç”¨å°ä»»åŠ¡ID
     MC::ErrorCode ret_;
 };
 
@@ -169,7 +169,7 @@ public:
     virtual void Unser();
 
 public:
-    int             status_;            //½øÖ½ÃÅ×´Ì¬, 0-¿ª, 1-¹Ø, -1--Î´»ñÈ¡µ½½øÖ½ÃÅ×´Ì¬
+    int             status_;            //è¿›çº¸é—¨çŠ¶æ€, 0-å¼€, 1-å…³, -1--æœªè·å–åˆ°è¿›çº¸é—¨çŠ¶æ€
     MC::ErrorCode   ret_;
 };
 
@@ -183,11 +183,11 @@ public:
     virtual void Unser();
 
 public:
-    int             original_dpi_;              // ÅÄÕÕµÄ·Ö±æÂÊ
+    int             original_dpi_;              // æ‹ç…§çš„åˆ†è¾¨ç‡
     int             cut_dpi_;
 
-    char            original_path_[MAX_PATH];  // ÅÄÕÕÔ­Ê¼Í¼ÏñÂ·¾¶
-    char            cut_path_[MAX_PATH];       // ¼ôÇĞ¾ÀÆ«ºóÍ¼ÏñÂ·¾¶
+    char            original_path_[MAX_PATH];  // æ‹ç…§åŸå§‹å›¾åƒè·¯å¾„
+    char            cut_path_[MAX_PATH];       // å‰ªåˆ‡çº ååå›¾åƒè·¯å¾„
 
     MC::ErrorCode   ret_;
 };
@@ -219,10 +219,10 @@ public:
     virtual void Unser();
 
 public:
-    char            path_[MAX_PATH];       // ´ıÊ¶±ğÍ¼Æ¬Â·¾¶
+    char            path_[MAX_PATH];       // å¾…è¯†åˆ«å›¾ç‰‡è·¯å¾„
 
-    char            template_id_[4];       // Ä£°åID
-    char            trace_num_[20];        // Ê¶±ğ³öµÄÑéÖ¤Âë
+    char            template_id_[4];       // æ¨¡æ¿ID
+    char            trace_num_[20];        // è¯†åˆ«å‡ºçš„éªŒè¯ç 
 
     MC::ErrorCode   ret_;
 };
@@ -237,18 +237,19 @@ public:
     virtual void Unser();
 
 public:
-    char            path_[MAX_PATH];        // Í¼Æ¬Â·¾¶
-    int             x_;                     // Ê¶±ğÇøÓò×ø±êx(ÏñËØ)
-    int             y_;                     // Ê¶±ğÇøÓò×ø±êy(ÏñËØ)
-    int             width_;                 // Ê¶±ğÇøÓò¿í¶È(ÏñËØ)
-    int             height_;                // Ê¶±ğÇøÓò¸ß¶È(ÏñËØ)
-    int             angle_;                 // Ğı×ª½Ç¶È(0, 90, 180, 270)
+    char            path_[MAX_PATH];        // å›¾ç‰‡è·¯å¾„
+    int             x_;                     // è¯†åˆ«åŒºåŸŸåæ ‡x(åƒç´ )
+    int             y_;                     // è¯†åˆ«åŒºåŸŸåæ ‡y(åƒç´ )
+    int             width_;                 // è¯†åˆ«åŒºåŸŸå®½åº¦(åƒç´ )
+    int             height_;                // è¯†åˆ«åŒºåŸŸé«˜åº¦(åƒç´ )
+    int             angle_;                 // æ—‹è½¬è§’åº¦(0, 90, 180, 270)
 
-    char            content_str_[64];       // Ê¶±ğ½á¹û
+    char            content_str_[64];       // è¯†åˆ«ç»“æœ
 
     MC::ErrorCode   ret_;
 };
 
+// æ™®é€šç”¨å°
 class OridinaryStampCmd : public BaseCmd {
 public:
     OridinaryStampCmd() : ret_(MC::EC_SUCC), stamper_num_(-1),
@@ -260,12 +261,13 @@ public:
     virtual void Unser();
 
 public:
-    char            task_id_[TASK_ID_SIZE];    // ÈÎÎñID
-    char            type_[VOUCHER_TYPE_SIZE];  // Æ¾Ö¤ÀàĞÍ
-    int             stamper_num_;               // Ó¡ÕÂ¿¨²ÛºÅ
-    int             x_;                         // Ó¡ÕÂÎ»ÖÃX(ÏñËØ)
-    int             y_;                         // Ó¡ÕÂÎ»ÖÃY(ÏñËØ)
-    int             angle_;                     // ÕÂĞı×ª½Ç¶È(Ë³Ê±Õë: 0, 90, 180, 270)
+    char            task_id_[TASK_ID_SIZE];     // ä»»åŠ¡ID
+    char            type_[VOUCHER_TYPE_SIZE];   // å‡­è¯ç±»å‹
+    int             stamper_num_;               // å°ç« å¡æ§½å·
+    int             ink_;                       // æ˜¯å¦è˜¸å°æ²¹, 0-å¦, 1-æ˜¯
+    int             x_;                         // å°ç« ä½ç½®X(åƒç´ )
+    int             y_;                         // å°ç« ä½ç½®Y(åƒç´ )
+    int             angle_;                     // ç« æ—‹è½¬è§’åº¦(é¡ºæ—¶é’ˆ: 0, 90, 180, 270)
 
     MC::ErrorCode   ret_;
 };
@@ -280,9 +282,9 @@ public:
     virtual void Unser();
 
 public:
-    char            task_id_[TASK_ID_SIZE];    // ÈÎÎñID
-    char            type_[VOUCHER_TYPE_SIZE];  // Æ¾Ö¤ÀàĞÍ
-    int             stamper_num_;              // Ó¡ÕÂ¿¨²ÛºÅ
+    char            task_id_[TASK_ID_SIZE];    // ä»»åŠ¡ID
+    char            type_[VOUCHER_TYPE_SIZE];  // å‡­è¯ç±»å‹
+    int             stamper_num_;              // å°ç« å¡æ§½å·
 
     MC::ErrorCode   ret_;
 };
@@ -297,7 +299,7 @@ public:
     virtual void Unser();
 
 public:
-    char            task_id_[TASK_ID_SIZE];    // ÈÎÎñID
+    char            task_id_[TASK_ID_SIZE];    // ä»»åŠ¡ID
     MC::ErrorCode   ret_;
 };
 
@@ -311,7 +313,7 @@ public:
     virtual void Unser();
 
 public:
-    char            stamp_id_[KEY_SIZE];       // ÓÃÓ¡»úÎ¨Ò»±àºÅ
+    char            stamp_id_[KEY_SIZE];       // ç”¨å°æœºå”¯ä¸€ç¼–å·
     MC::ErrorCode   ret_;
 };
 
@@ -389,7 +391,7 @@ public:
     virtual void Unser();
 
 public:
-    int             slot_;      // Ó¡ÕÂºÅ
+    int             slot_;      // å°ç« å·
     MC::ErrorCode   ret_;
 };
 
@@ -418,7 +420,7 @@ public:
     virtual void Unser();
 
 public:
-    int             status_;      // 0-¹Ø, 1-¿ª
+    int             status_;      // 0-å…³, 1-å¼€
     MC::ErrorCode   ret_;
 };
 
@@ -432,8 +434,8 @@ public:
     virtual void Unser();
 
 public:
-    int             ctrl_;      // 0-¹Ø, 1-¿ª
-    int             timeout_;   // ³¬Ê±Î´¹Ø±ÕÊ±¼ä, µ¥Î»: Ãë
+    int             ctrl_;      // 0-å…³, 1-å¼€
+    int             timeout_;   // è¶…æ—¶æœªå…³é—­æ—¶é—´, å•ä½: ç§’
     MC::ErrorCode   ret_;
 };
 
@@ -447,7 +449,7 @@ public:
     virtual void Unser();
 
 public:
-    int             ctrl_;      // 0-¹Ø, 1-¿ª
+    int             ctrl_;      // 0-å…³, 1-å¼€
     MC::ErrorCode   ret_;
 };
 
@@ -475,8 +477,8 @@ public:
     virtual void Unser();
 
 public:
-    int             alarm_; // ±¨¾¯Æ÷ÀàĞÍ, 0-¿ªÃÅ±¨¾¯, 1-Õñ¶¯±¨¾¯
-    int             ctrl_;  // ¿ØÖÆ¿ª¹Ø, 0-¹Ø, 1-¿ª
+    int             alarm_; // æŠ¥è­¦å™¨ç±»å‹, 0-å¼€é—¨æŠ¥è­¦, 1-æŒ¯åŠ¨æŠ¥è­¦
+    int             ctrl_;  // æ§åˆ¶å¼€å…³, 0-å…³, 1-å¼€
     MC::ErrorCode   ret_;
 };
 

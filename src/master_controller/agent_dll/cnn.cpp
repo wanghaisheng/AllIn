@@ -1,4 +1,4 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include <TlHelp32.h>
 #include <shellapi.h>
 #include <boost/exception/all.hpp>
@@ -16,23 +16,23 @@ bool MC::Cnn::StartPipe(const char* cnn_name)
 
     LPTSTR lpszPipename = TEXT((char*)cnn_name);
     pipe_ = CreateFile(
-        lpszPipename,           // pipe Ãû 
-        GENERIC_READ | GENERIC_WRITE,        // ¿É¶Á¿ÉĞ´
-        0,                      // ²»¹²Ïí
-        NULL,                   // Ä¬ÈÏ°²È«ÊôĞÔ
-        OPEN_EXISTING,          // ÒÑ¾­´æÔÚ(ÓÉ·şÎñ¶Ë´´½¨)
-        FILE_FLAG_OVERLAPPED,   // Ä¬ÈÏÊôĞÔ
+        lpszPipename,           // pipe å 
+        GENERIC_READ | GENERIC_WRITE,        // å¯è¯»å¯å†™
+        0,                      // ä¸å…±äº«
+        NULL,                   // é»˜è®¤å®‰å…¨å±æ€§
+        OPEN_EXISTING,          // å·²ç»å­˜åœ¨(ç”±æœåŠ¡ç«¯åˆ›å»º)
+        FILE_FLAG_OVERLAPPED,   // é»˜è®¤å±æ€§
         NULL);
     if (pipe_ != INVALID_HANDLE_VALUE)
         goto NOR;
 
-    // Èç¹û²»ÊÇ ERROR_PIPE_BUSY ´íÎó, Ö±½ÓÍË³ö  
+    // å¦‚æœä¸æ˜¯ ERROR_PIPE_BUSY é”™è¯¯, ç›´æ¥é€€å‡º  
     if (GetLastError() != ERROR_PIPE_BUSY) {
         printf("1->Could not open pipe, err: %d\n", GetLastError());
         return false;
     }
 
-    // Èç¹ûËùÓĞpipeÊµÀı¶¼´¦ÓÚ·±Ã¦×´Ì¬, µÈ´ı2Ãë
+    // å¦‚æœæ‰€æœ‰pipeå®ä¾‹éƒ½å¤„äºç¹å¿™çŠ¶æ€, ç­‰å¾…2ç§’
     if (!WaitNamedPipe(lpszPipename, PIPE_BUSY_WAIT)) {
         printf("2->Could not open pipe\n");
         return false;
@@ -40,13 +40,13 @@ bool MC::Cnn::StartPipe(const char* cnn_name)
 
     BOOL fSuccess;
     DWORD dwMode;
-    // pipeÒÑ¾­Á¬½Ó, ÉèÖÃÎªÏûÏ¢¶Á×´Ì¬
+    // pipeå·²ç»è¿æ¥, è®¾ç½®ä¸ºæ¶ˆæ¯è¯»çŠ¶æ€
     dwMode = PIPE_READMODE_MESSAGE;
     fSuccess = SetNamedPipeHandleState(
-        pipe_,    // ¾ä±ú
-        &dwMode,  // ĞÂ×´Ì¬
-        NULL,     // ²»ÉèÖÃ×î´ó»º´æ
-        NULL);    // ²»ÉèÖÃ×î³¤Ê±¼ä
+        pipe_,    // å¥æŸ„
+        &dwMode,  // æ–°çŠ¶æ€
+        NULL,     // ä¸è®¾ç½®æœ€å¤§ç¼“å­˜
+        NULL);    // ä¸è®¾ç½®æœ€é•¿æ—¶é—´
     if (!fSuccess) {
         printf("SetNamedPipeHandleState failed, err: %d\n", GetLastError());
         return false;
@@ -78,7 +78,7 @@ bool MC::Cnn::StartMQ(
             boost::interprocess::open_only,
             recv_mq_name.c_str());
     } catch (boost::interprocess::interprocess_exception &ex) {
-        Log::WriteLog(LL_ERROR, "MC::Cnn::StartMQ->´ò¿ªÏûÏ¢¶ÓÁĞ(send: %s, recv: %s)Ê§°Ü, er: %s",
+        Log::WriteLog(LL_ERROR, "MC::Cnn::StartMQ->æ‰“å¼€æ¶ˆæ¯é˜Ÿåˆ—(send: %s, recv: %s)å¤±è´¥, er: %s",
             send_mq_name.c_str(),
             recv_mq_name.c_str(),
             boost::current_exception_diagnostic_information().c_str());
@@ -95,12 +95,12 @@ bool MC::Cnn::Start()
 
     if (!ProcessExisted(MC::SERVER_NAME)) {
         bool ret = StartSvc(MC::SERVER_NAME);
-        Log::WriteLog(LL_DEBUG, "AsynAPISet::Start->Æô¶¯·şÎñ½ø³Ì\"%s\"%s",
+        Log::WriteLog(LL_DEBUG, "AsynAPISet::Start->å¯åŠ¨æœåŠ¡è¿›ç¨‹\"%s\"%s",
             MC::SERVER_NAME.c_str(),
-            ret ? "³É¹¦" : "Ê§°Ü");
+            ret ? "æˆåŠŸ" : "å¤±è´¥");
     }
 
-    Sleep(2000); // ÊÊµ±ÑÓÊ±, ÒÔ±ãÏûÏ¢¶ÓÁĞ×¼±¸ºÃ
+    Sleep(2000); // é€‚å½“å»¶æ—¶, ä»¥ä¾¿æ¶ˆæ¯é˜Ÿåˆ—å‡†å¤‡å¥½
 
     bool ret;
     if (Config::GetInst()->conn_type_ == CT_PIPE)
@@ -109,10 +109,10 @@ bool MC::Cnn::Start()
         ret = StartMQ(Config::GetInst()->send_mq_name_, Config::GetInst()->recv_mq_name_);
 
     running_ = true;
-    // ÊÕÏûÏ¢Ïß³Ì
+    // æ”¶æ¶ˆæ¯çº¿ç¨‹
     recver_thread_ =
         new (std::nothrow) boost::thread(boost::bind(&Cnn::ReceiveFunc, this));
-    // ·¢ÏûÏ¢Ïß³Ì
+    // å‘æ¶ˆæ¯çº¿ç¨‹
     sender_thread_ =
         new (std::nothrow) boost::thread(boost::bind(&Cnn::SendFunc, this));
 
@@ -121,7 +121,7 @@ bool MC::Cnn::Start()
         FALSE,
         TRUE,      // default signaled 
         NULL);
-    // ĞÄÌøÏß³Ì
+    // å¿ƒè·³çº¿ç¨‹
     heart_thread_ =
         new (std::nothrow) boost::thread(boost::bind(&Cnn::HeartBeatingFunc, this));
 
@@ -150,14 +150,14 @@ bool MC::Cnn::PushCmd(BaseCmd* cmd)
 bool MC::Cnn::RecvBuf(TCHAR* buf, int buf_len, DWORD* actual_read)
 {
     bool fSuccess;
-    if (MC::CT_PIPE == Config::GetInst()->conn_type_) {      // ÊÕ¹ÜµÀÏûÏ¢
+    if (MC::CT_PIPE == Config::GetInst()->conn_type_) {      // æ”¶ç®¡é“æ¶ˆæ¯
         fSuccess = ReadFile(
-            pipe_,                          // ¾ä±ú
-            buf,                            // ¶ÁÈ¡ÄÚÈİµÄ»º´æ
-            CMD_BUF_SIZE * sizeof(TCHAR),   // »º´æ´óĞ¡
-            actual_read,                    // Êµ¼Ê¶ÁµÄ×Ö½Ú
-            NULL) == 0? false: true;        // ·Ç overlapped
-    } else {                                                // ÏûÏ¢¶ÓÁĞ
+            pipe_,                          // å¥æŸ„
+            buf,                            // è¯»å–å†…å®¹çš„ç¼“å­˜
+            CMD_BUF_SIZE * sizeof(TCHAR),   // ç¼“å­˜å¤§å°
+            actual_read,                    // å®é™…è¯»çš„å­—èŠ‚
+            NULL) == 0? false: true;        // é overlapped
+    } else {                                                // æ¶ˆæ¯é˜Ÿåˆ—
         unsigned int priority;
         boost::interprocess::message_queue::size_type recvd_size;
         try {
@@ -168,7 +168,7 @@ bool MC::Cnn::RecvBuf(TCHAR* buf, int buf_len, DWORD* actual_read)
             *actual_read = recvd_size;
         } catch (boost::interprocess::interprocess_exception &ex) {
             std::cout << ex.what() << std::endl;
-            Log::WriteLog(LL_ERROR, "AsynAPISet::ReceiverFunc->ÏûÏ¢¶ÓÁĞÒì³£: %s", ex.what());
+            Log::WriteLog(LL_ERROR, "AsynAPISet::ReceiverFunc->æ¶ˆæ¯é˜Ÿåˆ—å¼‚å¸¸: %s", ex.what());
             *actual_read = 0;
             fSuccess = false;
         }
@@ -183,11 +183,11 @@ void MC::Cnn::ReceiveFunc()
     DWORD cbRead;
     while (true) {
         RecvBuf(chBuf, sizeof(chBuf), &cbRead);
-        // ÈçÊµ¼Ê¶Á×Ö½ÚÎª0, ½áÊø±¾´ÎÑ­»·
+        // å¦‚å®é™…è¯»å­—èŠ‚ä¸º0, ç»“æŸæœ¬æ¬¡å¾ªç¯
         if (0 == cbRead)
             continue;
 
-        // ½âÎöÏûÏ¢Í·, ÅĞ¶Ï¾ßÌåÏûÏ¢ÀàĞÍ
+        // è§£ææ¶ˆæ¯å¤´, åˆ¤æ–­å…·ä½“æ¶ˆæ¯ç±»å‹
         char cmd_type;
         memcpy(&cmd_type, chBuf, sizeof(char));
         switch (cmd_type) {
@@ -275,12 +275,12 @@ void MC::Cnn::ReceiveFunc()
     }
 
     Log::WriteLog(LL_DEBUG, "AsynAPISet::ReceiverFunc->thread exited, %s.",
-        running_? "running_Îªtrue": "running_Îªfalse");
+        running_? "running_ä¸ºtrue": "running_ä¸ºfalse");
 }
 
 int MC::Cnn::WritePipe(BaseCmd* cmd)
 {
-    // ¼Ó»¥³âËø, ·ñÔò¶àÏß³ÌĞ´¹ÜµÀ»áÓĞÎÊÌâ.
+    // åŠ äº’æ–¥é”, å¦åˆ™å¤šçº¿ç¨‹å†™ç®¡é“ä¼šæœ‰é—®é¢˜.
     boost::lock_guard<boost::mutex> lk(write_ctx_);
 
     if (!running_) {
@@ -292,12 +292,12 @@ int MC::Cnn::WritePipe(BaseCmd* cmd)
         return MC::EC_INVALID_PARAMETER;
 
     cmd->Ser();
-    // Ğ´Èëpipe
+    // å†™å…¥pipe
     LPTSTR lpvMessage = TEXT(cmd->xs_.GetBuf());
     BOOL fSuccess = WriteFileEx(
         pipe_,
         lpvMessage,
-        (lstrlen(lpvMessage) + 1) * sizeof(TCHAR), // Ğ´ÈëÄÚÈİµÄ³¤¶È
+        (lstrlen(lpvMessage) + 1) * sizeof(TCHAR), // å†™å…¥å†…å®¹çš„é•¿åº¦
         (LPOVERLAPPED)pipe_inst_,
         (LPOVERLAPPED_COMPLETION_ROUTINE)CompletedWriteRoutine);
     if (!fSuccess) {
@@ -311,7 +311,7 @@ int MC::Cnn::WritePipe(BaseCmd* cmd)
 
 int MC::Cnn::WriteMQ(BaseCmd* cmd)
 {
-    // message queue ×ÔÉíÖ§³Ö¶àÏß³Ì, ²»ĞèÒª×Ô¼ºÔÙ¼ÓËø
+    // message queue è‡ªèº«æ”¯æŒå¤šçº¿ç¨‹, ä¸éœ€è¦è‡ªå·±å†åŠ é”
     /*    boost::lock_guard<boost::mutex> lk(write_ctx_);*/
 
     if (!running_)
@@ -329,14 +329,14 @@ int MC::Cnn::WriteMQ(BaseCmd* cmd)
             bool succ = send_mq_->try_send(lpvMessage, msg_size, 0);
             heart_mtx_.unlock();
 
-            // ¹ıÂËĞÄÌøÏûÏ¢
+            // è¿‡æ»¤å¿ƒè·³æ¶ˆæ¯
             if (cmd->ct_ != CT_HEART_BEAT)
-                Log::WriteLog(LL_DEBUG, "AsynAPISet::WriteMQ->Cmd: %s, ÏûÏ¢´óĞ¡: %d, ·¢ËÍ½á¹û: %s",
+                Log::WriteLog(LL_DEBUG, "AsynAPISet::WriteMQ->Cmd: %s, æ¶ˆæ¯å¤§å°: %d, å‘é€ç»“æœ: %s",
                     cmd_des[cmd->ct_].c_str(),
                     msg_size,
-                    succ ? "³É¹¦" : "Ê§°Ü");
+                    succ ? "æˆåŠŸ" : "å¤±è´¥");
         } else {
-            Log::WriteLog(LL_ERROR, "AsynAPISet::WriteMQ->Á¬½ÓÍ¨µÀ¶Ï¿ª");
+            Log::WriteLog(LL_ERROR, "AsynAPISet::WriteMQ->è¿æ¥é€šé“æ–­å¼€");
             return MC::EC_CON_DISCONN;
         }
     } catch (boost::interprocess::interprocess_exception &ex) {
@@ -369,7 +369,7 @@ void MC::Cnn::SendFunc()
     }
 }
 
-// ÊÕµ½·şÎñ½ø³Ì·¢ËÍ»ØµÄĞÄÌøÏìÓ¦
+// æ”¶åˆ°æœåŠ¡è¿›ç¨‹å‘é€å›çš„å¿ƒè·³å“åº”
 void MC::Cnn::HandleHeartBeating(char* chBuf)
 {
     SetEvent(heart_ev_);
@@ -385,19 +385,19 @@ void MC::Cnn::HeartBeatingFunc()
             WriteCnn(&heart_cmd);
         }
             break;
-        case WAIT_TIMEOUT: {    // ³¬Ê±Î´ÊÕµ½ĞÄÌøÏìÓ¦
+        case WAIT_TIMEOUT: {    // è¶…æ—¶æœªæ”¶åˆ°å¿ƒè·³å“åº”
             Log::WriteLog(LL_DEBUG, "AsynAPISet::HeartBeatingFunc->timeout heart beating");
 
             if (ProcessExisted(MC::SERVER_NAME))
                 continue;
 
-            // Æô¶¯·şÎñ
+            // å¯åŠ¨æœåŠ¡
             if (StartSvc(MC::SERVER_NAME)) {
-                Log::WriteLog(LL_DEBUG, "AsynAPISet::HeartBeatingFunc->Æô¶¯%s³É¹¦",
+                Log::WriteLog(LL_DEBUG, "AsynAPISet::HeartBeatingFunc->å¯åŠ¨%sæˆåŠŸ",
                     MC::SERVER_NAME.c_str());
 
                 Sleep(1000);
-                // ·şÎñ½ø³ÌÍ£Ö¹, ĞèÒªÖØĞÂ½¨Á¢¹²ÏíÄÚ´æÍ¨ĞÅÁ¬½Ó, Ëø±£»¤·¢ËÍºÍ½ÓÊÕ¹²ÏíÄÚ´æ¶ÓÁĞ
+                // æœåŠ¡è¿›ç¨‹åœæ­¢, éœ€è¦é‡æ–°å»ºç«‹å…±äº«å†…å­˜é€šä¿¡è¿æ¥, é”ä¿æŠ¤å‘é€å’Œæ¥æ”¶å…±äº«å†…å­˜é˜Ÿåˆ—
                 heart_mtx_.lock();
                 delete recv_mq_;
                 delete send_mq_;
@@ -411,19 +411,19 @@ void MC::Cnn::HeartBeatingFunc()
                         boost::interprocess::open_only,
                         Config::GetInst()->recv_mq_name_.c_str());
                 }  catch (boost::interprocess::interprocess_exception &ex) {
-                    std::cout << "AsynAPISet::HeartBeatingFunc->´ò¿ªÏûÏ¢¶ÓÁĞÊ§°Ü: " 
+                    std::cout << "AsynAPISet::HeartBeatingFunc->æ‰“å¼€æ¶ˆæ¯é˜Ÿåˆ—å¤±è´¥: " 
                         << ex.what() << std::endl;
-                    Log::WriteLog(LL_ERROR, "AsynAPISet::HeartBeatingFunc->´ò¿ªÏûÏ¢¶ÓÁĞÊ§°Ü: %s", 
+                    Log::WriteLog(LL_ERROR, "AsynAPISet::HeartBeatingFunc->æ‰“å¼€æ¶ˆæ¯é˜Ÿåˆ—å¤±è´¥: %s", 
                         ex.what());
                 }
 
                 heart_mtx_.unlock();
 
-                // Æô¶¯³É¹¦ºóĞèÒª·¢ËÍÒ»´ÎĞÄÌø
+                // å¯åŠ¨æˆåŠŸåéœ€è¦å‘é€ä¸€æ¬¡å¿ƒè·³
                 HeartCmd heart_cmd;
                 WriteCnn(&heart_cmd);
             } else {
-                Log::WriteLog(LL_ERROR, "AsynAPISet::HeartBeatingFunc->Æô¶¯%sÊ§°Ü",
+                Log::WriteLog(LL_ERROR, "AsynAPISet::HeartBeatingFunc->å¯åŠ¨%så¤±è´¥",
                     MC::SERVER_NAME.c_str());
             }
         }
@@ -451,7 +451,7 @@ bool MC::Cnn::StartSvc(const std::string& svc)
 
     return false;
 
-    // Æô¶¯Ö¸¶¨·şÎñ
+    // å¯åŠ¨æŒ‡å®šæœåŠ¡
     SC_HANDLE hSC = ::OpenSCManager(
         NULL,
         NULL,
@@ -468,7 +468,7 @@ bool MC::Cnn::StartSvc(const std::string& svc)
         return false;
     }
 
-    // »ñµÃ·şÎñµÄ×´Ì¬  
+    // è·å¾—æœåŠ¡çš„çŠ¶æ€  
     SERVICE_STATUS status;
     if (::QueryServiceStatus(hSvc, &status) == FALSE) {
         ::CloseServiceHandle(hSvc);
@@ -477,7 +477,7 @@ bool MC::Cnn::StartSvc(const std::string& svc)
     }
 
     if (status.dwCurrentState == SERVICE_STOPPED) {
-        // Æô¶¯·şÎñ  
+        // å¯åŠ¨æœåŠ¡  
         if (::StartService(hSvc, NULL, NULL) == FALSE) {
             ::CloseServiceHandle(hSvc);
             ::CloseServiceHandle(hSC);
@@ -490,7 +490,7 @@ bool MC::Cnn::StartSvc(const std::string& svc)
         return true;
     }
     else {
-        Log::WriteLog(LL_DEBUG, "AsynAPISet::StartSvc->µ±Ç°·şÎñ×´Ì¬ÊÇ: %d", status.dwCurrentState);
+        Log::WriteLog(LL_DEBUG, "AsynAPISet::StartSvc->å½“å‰æœåŠ¡çŠ¶æ€æ˜¯: %d", status.dwCurrentState);
         return false;
     }
 }
@@ -529,7 +529,7 @@ VOID WINAPI CompletedWriteRoutine(
     DWORD cbWritten,
     LPOVERLAPPED lpOverLap)
 {
-    Log::WriteLog(LL_DEBUG, "CompletedWriteRoutine->AgentĞ´¹ÜµÀ, Err: %d, Êµ¼ÊĞ´Èë: %d",
+    Log::WriteLog(LL_DEBUG, "CompletedWriteRoutine->Agentå†™ç®¡é“, Err: %d, å®é™…å†™å…¥: %d",
         dwErr,
         cbWritten);
 }

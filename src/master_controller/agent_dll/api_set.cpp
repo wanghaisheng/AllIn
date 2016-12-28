@@ -12,7 +12,7 @@
 #include "cnn.h"
 #include "common_definitions.h"
 
-boost::mutex api_map_mtx;   // È«¾Ö±äÁ¿, »¥³âËø, ±£»¤Í¨Öª¶ÔÏómap
+boost::mutex api_map_mtx;  // å…¨å±€å˜é‡, äº’æ–¥é”, ä¿æŠ¤é€šçŸ¥å¯¹è±¡map
 
 void AsynAPISet::ParseCmd(BaseCmd* cmd, char* chBuf)
 {
@@ -30,7 +30,7 @@ void* AsynAPISet::LookupSendTime(const std::string& send_time)
             ptr = it->second;
             api_maps_.erase(it);
 
-            Log::WriteLog(LL_DEBUG, "AsynAPISet::LookupSendTime->·¢ËÍÊ±¼ä: %s, Í¨Öª¶ÔÏóÖµ: %d",
+            Log::WriteLog(LL_DEBUG, "AsynAPISet::LookupSendTime->å‘é€æ—¶é—´: %s, é€šçŸ¥å¯¹è±¡å€¼: %d",
                 send_time.c_str(),
                 ptr);
             break;
@@ -81,7 +81,7 @@ void AsynAPISet::HandleInitMachine(char* chBuf)
     if (NULL != nt)
         nt->Notify(cmd.key_, cmd.ret_);
     else
-        printf("APISet::HandleInitMachine->Í¨Öª¶ÔÏóÎªNULL.\n");
+        printf("APISet::HandleInitMachine->é€šçŸ¥å¯¹è±¡ä¸ºNULL.\n");
 }
 
 void AsynAPISet::HandleBindMac(char* chBuf)
@@ -116,8 +116,8 @@ void AsynAPISet::HandlePrepareStamp(char* chBuf)
 {
     PrepareStampCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandlePrepareStamp->cmd: %s, ÕÂ²ÛºÅ: %d, "
-        "³¬Ê±Ê±¼ä: %d, ÈÎÎñID: %s, ret: %d",
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandlePrepareStamp->cmd: %s, ç« æ§½å·: %d, "
+        "è¶…æ—¶æ—¶é—´: %d, ä»»åŠ¡ID: %s, ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.stamper_id_,
         cmd.timeout_,
@@ -133,7 +133,7 @@ void AsynAPISet::HandleQueryPaper(char* chBuf)
 {
     ViewPaperCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleQueryPaper->cmd: %s, ½øÖ½ÃÅ×´Ì¬: %d, "
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleQueryPaper->cmd: %s, è¿›çº¸é—¨çŠ¶æ€: %d, "
         "ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.status_,
@@ -148,8 +148,8 @@ void AsynAPISet::HandleSnapshot(char* chBuf)
 {
     SnapshotCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleSnapshot->cmd: %s, Ô­Í¼Â·¾¶: %s, "
-        "ÇÐÍ¼Â·¾¶: %s, ret: %d",
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleSnapshot->cmd: %s, åŽŸå›¾è·¯å¾„: %s, "
+        "åˆ‡å›¾è·¯å¾„: %s, ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.original_path_,
         cmd.cut_path_,
@@ -164,8 +164,8 @@ void AsynAPISet::HandleMergePhoto(char* chBuf)
 {
     SynthesizePhotoCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleMergePhoto->cmd: %s, Í¼1Â·¾¶: %s, "
-        "Í¼2Â·¾¶: %s, ret: %d",
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleMergePhoto->cmd: %s, å›¾1è·¯å¾„: %s, "
+        "å›¾2è·¯å¾„: %s, ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.photo1_,
         cmd.photo2_,
@@ -180,8 +180,8 @@ void AsynAPISet::HandleRecognition(char* chBuf)
 {
     RecognitionCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleRecognition->cmd: %s, Í¼Æ¬Â·¾¶: %s, "
-        "Ä£°åID: %s, ×·ËÝÂë: %s, ret: %d",
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleRecognition->cmd: %s, å›¾ç‰‡è·¯å¾„: %s, "
+        "æ¨¡ç‰ˆID: %s, è¿½æº¯ç : %s, ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.path_,
         cmd.template_id_,
@@ -197,8 +197,8 @@ void AsynAPISet::HandleIdentify(char* chBuf)
 {
     IdentifyElementCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleIdentify->cmd: %s, Í¼Æ¬Â·¾¶: %s, "
-        "Ê¶±ð½á¹û: %s, ret: %d",
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleIdentify->cmd: %s, å›¾ç‰‡è·¯å¾„: %s, "
+        "è¯†åˆ«ç»“æžœ: %s, ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.path_,
         cmd.content_str_,
@@ -214,7 +214,7 @@ void AsynAPISet::HandleOrdinary(char* chBuf)
 {
     OridinaryStampCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleOrdinary->cmd: %s, ÈÎÎñID: %s, "
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleOrdinary->cmd: %s, ä»»åŠ¡ID: %s, "
         "ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.task_id_,
@@ -229,7 +229,7 @@ void AsynAPISet::HandleAuto(char* chBuf)
 {
     AutoStampCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleAuto->cmd: %s, ÈÎÎñID: %s, ÀàÐÍ: %s, "
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleAuto->cmd: %s, ä»»åŠ¡ID: %s, ç±»åž‹: %s, "
         "ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.task_id_,
@@ -245,7 +245,7 @@ void AsynAPISet::HandleFinish(char* chBuf)
 {
     FinishStampCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleFinish->cmd: %s, ÈÎÎñID: %s, "
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleFinish->cmd: %s, ä»»åŠ¡ID: %s, "
         "ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.task_id_,
@@ -260,7 +260,7 @@ void AsynAPISet::HandleRelease(char* chBuf)
 {
     ReleaseStamperCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleRelease->cmd: %s, Ó¡¿Ø»ú±àºÅ: %s, "
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleRelease->cmd: %s, å°æŽ§æœºç¼–å·: %s, "
         "ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.stamp_id_,
@@ -270,15 +270,15 @@ void AsynAPISet::HandleRelease(char* chBuf)
     if (NULL != nt)
         nt->Notify(cmd.stamp_id_, cmd.ret_);
     else
-        Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleRelease->Í¨Öª¶ÔÏóÎªnull");
+        Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleRelease->é€šçŸ¥å¯¹è±¡ä¸ºnull");
 }
 
 void AsynAPISet::HandleGetError(char* chBuf)
 {
     GetErrorCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleGetError->cmd: %s, ´íÎóÂë: %d, "
-        "´íÎóÐÅÏ¢: %s, ½â¾ö·½°¸: %s, ret: %d",
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleGetError->cmd: %s, é”™è¯¯ç : %d, "
+        "é”™è¯¯ä¿¡æ¯: %s, è§£å†³æ–¹æ¡ˆ: %s, ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.err_,
         cmd.err_msg_,
@@ -289,14 +289,14 @@ void AsynAPISet::HandleGetError(char* chBuf)
     if (NULL != nt)
         nt->Notify(cmd.err_, cmd.err_msg_, cmd.err_resolver_, cmd.ret_);
     else
-        Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleGetError->Í¨Öª¶ÔÏóÎªnull");
+        Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleGetError->é€šçŸ¥å¯¹è±¡ä¸ºnull");
 }
 
 void AsynAPISet::HandleCalibrate(char* chBuf)
 {
     CalibrateCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleCalibrate->cmd: %s, ²Ù×÷: %d, "
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleCalibrate->cmd: %s, æ“ä½œ: %d, "
         "ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.slot_,
@@ -311,7 +311,7 @@ void AsynAPISet::HandleQueryStampers(char* chBuf)
 {
     QueryStampersCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleQueryStampers->cmd: %s, ²Ù×÷: %d, "
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleQueryStampers->cmd: %s, æ“ä½œ: %d, "
         "ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.stamper_status_,
@@ -326,7 +326,7 @@ void AsynAPISet::HandleQuerySafe(char* chBuf)
 {
     QuerySafeCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleSafeControl->cmd: %s, °²È«ÃÅ: %d, "
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleSafeControl->cmd: %s, å®‰å…¨é—¨: %d, "
         "ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.status_,
@@ -341,7 +341,7 @@ void AsynAPISet::HandleSafeControl(char* chBuf)
 {
     SafeCtrlCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleSafeControl->cmd: %s, ²Ù×÷: %d, "
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleSafeControl->cmd: %s, æ“ä½œ: %d, "
         "ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.ctrl_,
@@ -356,7 +356,7 @@ void AsynAPISet::HandleBeepControl(char* chBuf)
 {
     BeepCtrlCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleBeepControl->cmd: %s, ²Ù×÷: %d, "
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleBeepControl->cmd: %s, æ“ä½œ: %d, "
         "ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.ctrl_,
@@ -371,7 +371,7 @@ void AsynAPISet::HandleQuerySlot(char* chBuf)
 {
     QuerySlotCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleQuerySlot->cmd: %s, ¿¨²ÛÊý: %d, "
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleQuerySlot->cmd: %s, å¡æ§½æ•°: %d, "
         "ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.num_,
@@ -386,8 +386,8 @@ void AsynAPISet::HandleAlarmControl(char* chBuf)
 {
     AlarmCtrlCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleAlarmControl->cmd: %s, ±¨¾¯Æ÷ÀàÐÍ: %d, "
-        "²Ù×÷: %d, ret: %d",
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleAlarmControl->cmd: %s, æŠ¥è­¦å™¨ç±»åž‹: %d, "
+        "æ“ä½œ: %d, ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.alarm_,
         cmd.ctrl_,
@@ -652,19 +652,27 @@ void AsynAPISet::InsertNotify(const std::string& st, const void* const nt)
 {
     api_map_mtx.lock();
     api_maps_.insert(std::make_pair(st, (void*)nt));
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::InsertNotify->Í¨Öª¶ÔÏóÖµ: %d, ·¢ËÍÊ±¼ä: %s",
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::InsertNotify->é€šçŸ¥å¯¹è±¡å€¼: %d, å‘é€æ—¶é—´: %s",
         nt,
         st.c_str());
     api_map_mtx.unlock();
 }
 
-int AsynAPISet::AsynOrdinaryStamp(const std::string& task,
-    const std::string& voucher, int num, int x, int y, int angle, OrdinaryStampNT* nt)
+int AsynAPISet::AsynOrdinaryStamp(
+    const std::string& task,
+    const std::string& voucher, 
+    int num, 
+    int ink,
+    int x, 
+    int y, 
+    int angle,
+     OrdinaryStampNT* nt)
 {
     OridinaryStampCmd* cmd = new OridinaryStampCmd;
     strcpy_s(cmd->task_id_, task.c_str());
     strcpy_s(cmd->type_, voucher.c_str());
     cmd->stamper_num_ = num;
+    cmd->ink_ = ink;
     cmd->x_ = x;
     cmd->y_ = y;
     cmd->angle_ = angle;

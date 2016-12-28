@@ -4,10 +4,10 @@
 #include <boost/thread/thread.hpp>
 
 enum LogLevel {
-    LL_DEBUG,       //调试
-    LL_MSG,         //消息
-    LL_WARN,        //警告
-    LL_ERROR        //错误
+    LL_DEBUG,       //璋冭瘯
+    LL_MSG,         //娑堟伅
+    LL_WARN,        //璀﹀憡
+    LL_ERROR        //閿欒
 };
 
 class Log {

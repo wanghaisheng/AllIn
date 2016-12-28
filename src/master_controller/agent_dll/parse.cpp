@@ -1,4 +1,4 @@
-#include <string>
+ï»¿#include <string>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/typeof/typeof.hpp>
@@ -19,24 +19,23 @@ bool MC::Config::Parse()
     std::string type = pt.get<std::string>("con.type");
     std::string name = pt.get<std::string>("con.name");
 
-    if (0 == strcmp(type.c_str(), "PIPE")) {        // ¹ÜµÀ
+    if (0 == strcmp(type.c_str(), "PIPE")) {        // ç®¡é“
         conn_type_ = MC::CT_PIPE;
 
         char cnn_name[1024] = { 0 };
         sprintf_s(cnn_name, "\\\\.\\pipe\\%s", name.c_str());
         pipe_name_ = cnn_name;
     }
-    else if (0 == strcmp(type.c_str(), "MQ")) {     // ÏûÏ¢¶ÓÁĞ
+    else if (0 == strcmp(type.c_str(), "MQ")) {     // æ¶ˆæ¯é˜Ÿåˆ—
         conn_type_ = MC::CT_MQ;
 
         send_mq_name_ = name;
         recv_mq_name_ = name + "copy";
     }
-    else {                                          // ²»Ö§³ÖµÄÍ¨ĞÅ·½Ê½, ÍË³ö
-        Log::WriteLog(LL_ERROR, "AsynAPISet::Start->²»Ö§³ÖµÄÍ¨ĞÅ·½Ê½, Ö±½ÓÍË³ö");
+    else {                                          // ä¸æ”¯æŒçš„é€šä¿¡æ–¹å¼, é€€å‡º
+        Log::WriteLog(LL_ERROR, "AsynAPISet::Start->ä¸æ”¯æŒçš„é€šä¿¡æ–¹å¼, ç›´æ¥é€€å‡º");
         return false;
     }
 
     return true;
 }
-

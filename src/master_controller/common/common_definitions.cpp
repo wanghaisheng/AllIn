@@ -1,4 +1,4 @@
-#include <string>
+﻿#include <string>
 #include <windows.h>
 #include "common_definitions.h"
 

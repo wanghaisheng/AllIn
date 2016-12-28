@@ -26,7 +26,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -42,7 +42,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\bin\</OutDir>
+    <OutDir>$(droot)\bin\w32d\</OutDir>
     <IntDir>$(droot)\trash\$(ProjectName)_$(Configuration)\</IntDir>
     <ExtensionsToDeleteOnClean>masterctrl_*.log;$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
     <TargetName>$(ProjectName)d</TargetName>
@@ -64,7 +64,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(droot)\dpd\bin\w32d\;..\bin\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(droot)\dpd\bin\w32d\;$(droot)\bin\w32d\</AdditionalLibraryDirectories>
       <AdditionalDependencies>master_controllerd.lib;ABC.STDZ.Device.STAMP.SealLog.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <UACExecutionLevel>AsInvoker</UACExecutionLevel>
     </Link>

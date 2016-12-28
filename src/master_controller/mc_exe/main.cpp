@@ -26,16 +26,16 @@ VOID SvcReportEvent(LPTSTR);
 int main(int argc, TCHAR *argv[])
 {
     if (1 == argc)
-        printf("²ÎÊı·Ç·¨, ´øÃüÁî²ÎÊı£¨exe or install)Æô¶¯\n");
+        printf("å‚æ•°éæ³•, å¸¦å‘½ä»¤å‚æ•°ï¼ˆexe or install)å¯åŠ¨\n");
 
-    // ¿ØÖÆÌ¨ĞÎÊ½Æô¶¯
+    // æ§åˆ¶å°å½¢å¼å¯åŠ¨
     if (lstrcmpi(argv[1], TEXT("exe")) == 0) {
         StartServer();
         getchar();
         return 0;
     }
 
-    // ·şÎñĞÎÊ½Æô¶¯
+    // æœåŠ¡å½¢å¼å¯åŠ¨
     if (lstrcmpi(argv[1], TEXT("install")) == 0) {
         SvcInstall();
         return 0;
@@ -180,7 +180,7 @@ VOID SvcInit(DWORD dwArgc, LPTSTR *lpszArgv)
     ReportSvcStatus(SERVICE_RUNNING, NO_ERROR, 0);
 
     // TO_DO: Perform work until service stops.
-    StartServer(); //ÄÚ²¿ÊÇÍ¬²½µÈ´ıĞÂµÄÁ¬½Ó, »á×èÈûºóĞø²Ù×÷
+    StartServer(); //å†…éƒ¨æ˜¯åŒæ­¥ç­‰å¾…æ–°çš„è¿æ¥, ä¼šé˜»å¡åç»­æ“ä½œ
 
     while (true) {
         // Check whether to stop the service.

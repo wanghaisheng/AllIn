@@ -6,7 +6,7 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 #include <boost/thread/condition_variable.hpp>
-#include <windows.h>    // ĞèÒª·ÅÔÚÍ·ÎÄ¼şRZCamera.hÇ°Ãæ, ·ñÔò±àÒë²»¹ı
+#include <windows.h>    // éœ€è¦æ”¾åœ¨å¤´æ–‡ä»¶RZCamera.hå‰é¢, å¦åˆ™ç¼–è¯‘ä¸è¿‡
 #include "RZCamera.h"
 #include "log.h"
 #include "parse.h"
@@ -50,10 +50,10 @@ public:
 private:
     Tool() {
         paper_door_ev_ = CreateEvent(
-            NULL,       // Ä¬ÈÏÊôĞÔ
-            TRUE,       // ÊÖ¶¯reset
-            FALSE,      // ³õÊ¼×´Ì¬ non-signaled 
-            NULL);      // Î´ÃüÃû
+            NULL,       // é»˜è®¤å±æ€§
+            TRUE,       // æ‰‹åŠ¨reset
+            FALSE,      // åˆå§‹çŠ¶æ€ non-signaled 
+            NULL);      // æœªå‘½å
     }
 
 private:
@@ -66,7 +66,7 @@ private:
     AllDoorStat doors_stat_;
 
 public:
-    HANDLE      paper_door_ev_;     // ½øÖ½ÃÅ¹Ø±ÕÊÂ¼ş
+    HANDLE      paper_door_ev_;     // è¿›çº¸é—¨å…³é—­äº‹ä»¶
 };
 
 }

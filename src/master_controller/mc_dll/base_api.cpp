@@ -5,12 +5,12 @@
 
 namespace MC {
 
-    // ¸ù¾İÇĞÍ¼ÓÃÓ¡µãÏñËØ×ø±ê»ñÈ¡¸ÇÕÂµã»ùÓÚÇĞÍ¼ÖĞĞÄµãÎ»ÖÃ, ÏñËØ×ø±ê
+    // æ ¹æ®åˆ‡å›¾ç”¨å°ç‚¹åƒç´ åæ ‡è·å–ç›–ç« ç‚¹åŸºäºåˆ‡å›¾ä¸­å¿ƒç‚¹ä½ç½®, åƒç´ åæ ‡
     void CaculatePos(
-        int pCenterX,   // Ô­Í¼¿í/2
-        int pCenterY,   // Ô­Í¼¸ß/2
-        int inX,        // ÇĞÍ¼ÓÃÓ¡µãÏñËØx×ø±ê
-        int inY,        // ÇĞÍ¼ÓÃÓ¡µãÏñËØy×ø±ê
+        int pCenterX,   // åŸå›¾å®½/2
+        int pCenterY,   // åŸå›¾é«˜/2
+        int inX,        // åˆ‡å›¾ç”¨å°ç‚¹åƒç´ xåæ ‡
+        int inY,        // åˆ‡å›¾ç”¨å°ç‚¹åƒç´ yåæ ‡
         int& outX,
         int& outY,
         int& angle)
@@ -47,7 +47,7 @@ namespace MC {
         int &out_y, 
         double &out_angle);
 
-    // ¸ù¾İÇĞÍ¼ÖĞĞÄµã×ø±ê»ñÈ¡Ô­Í¼ÏñËØ×ø±êºÍÓÃÓ¡½Ç¶È
+    // æ ¹æ®åˆ‡å›¾ä¸­å¿ƒç‚¹åæ ‡è·å–åŸå›¾åƒç´ åæ ‡å’Œç”¨å°è§’åº¦
     int STSeachSealPoint(
         const char* in_src_img_name,
         int in_x,
@@ -79,7 +79,7 @@ namespace MC {
         return MC::EC_FAIL;
     }
 
-    // ½«Ô­Í¼ÓÃÓ¡ÏñËØ×ø±ê×ª»»ÎªÉè±¸(Ó¡¿Ø»ú)ÓÃÓ¡×ø±ê(ºÁÃ×)
+    // å°†åŸå›¾ç”¨å°åƒç´ åæ ‡è½¬æ¢ä¸ºè®¾å¤‡(å°æ§æœº)ç”¨å°åæ ‡(æ¯«ç±³)
     Point* GetSealCoord(int nX, int nY)
     {
         typedef float var;
@@ -88,18 +88,18 @@ namespace MC {
         var dminy = 60;         //56//60
         var dmaxx = 270;        //270//270
         var dmaxy = 250;        // 250//239
-        var w = dmaxx - dminx;  //--Ó¡ÕÂĞ£×¼Î»ÖÃ×î´óX-Ó¡ÕÂĞ£×¼Î»ÖÃ×îĞ¡X ÎïÀí=239
-        var h = dmaxy - dminy;  //--Ó¡ÕÂĞ£×¼Î»ÖÃ×î´óY-Ó¡ÕÂĞ£×¼Î»ÖÃ×îĞ¡Y ÎïÀí=182
-        var x0 = nX;            //--Ô­¼ş¸ÇÕÂX×ø±ê
-        var y0 = nY;            //--Ô­¼ş¸ÇÕÂY×ø±ê
+        var w = dmaxx - dminx;  //--å°ç« æ ¡å‡†ä½ç½®æœ€å¤§X-å°ç« æ ¡å‡†ä½ç½®æœ€å°X ç‰©ç†=239
+        var h = dmaxy - dminy;  //--å°ç« æ ¡å‡†ä½ç½®æœ€å¤§Y-å°ç« æ ¡å‡†ä½ç½®æœ€å°Y ç‰©ç†=182
+        var x0 = nX;            //--åŸä»¶ç›–ç« Xåæ ‡
+        var y0 = nY;            //--åŸä»¶ç›–ç« Yåæ ‡
 
-        var x1 = 1914;          //--A4ÏñËØ×îĞ¡X×ø±ê ÏñËØ ÓÒÉÏ½Ç×ø±ê
-        var y1 = 230;           //--A4ÏñËØ×îĞ¡Y×ø±ê ÏñËØ
+        var x1 = 1914;          //--A4åƒç´ æœ€å°Xåæ ‡ åƒç´  å³ä¸Šè§’åæ ‡
+        var y1 = 230;           //--A4åƒç´ æœ€å°Yåæ ‡ åƒç´ 
 
-        var x2 = 208;           //--[===[A4ÏñËØ×î´óX×ø±ê ÏñËØ]===] ×óÏÂ½Ç×ø±ê
-        var y2 = 1442;          //--[===[A4ÏñËØ×î´óY×ø±ê ÏñËØ]===]
+        var x2 = 208;           //--[===[A4åƒç´ æœ€å¤§Xåæ ‡ åƒç´ ]===] å·¦ä¸‹è§’åæ ‡
+        var y2 = 1442;          //--[===[A4åƒç´ æœ€å¤§Yåæ ‡ åƒç´ ]===]
 
-        // ¶ÁÈ¡Ğ£×¼µãÊı¾İ
+        // è¯»å–æ ¡å‡†ç‚¹æ•°æ®
 //         std::vector<struct Point*> VerifyPoists;
 //         unsigned short buffer[10] = { 0 };
 //         int ret = CalibrationPoint(buffer, 10);
@@ -111,12 +111,12 @@ namespace MC {
 //                 VerifyPoists.push_back(pt);
 //             }
 //         } else {
-//             Log::WriteLog(LL_DEBUG, "Î´¶ÁÈ¡µ½Ğ£×¼µãÊı¾İ,Ê¹ÓÃÏµÍ³Ä¬ÈÏÖµ");
+//             Log::WriteLog(LL_DEBUG, "æœªè¯»å–åˆ°æ ¡å‡†ç‚¹æ•°æ®,ä½¿ç”¨ç³»ç»Ÿé»˜è®¤å€¼");
 //         }
 // 
 //         if (VerifyPoists.size() > 4 && VerifyPoists.at(1)->x != 65535 &&
 //             VerifyPoists.at(1)->y != 65535) {
-//             // ×óÉÏ, ÓÒÉÏ(1), ÓÒÏÂ, ×óÏÂ(3), ÖĞ¼ä
+//             // å·¦ä¸Š, å³ä¸Š(1), å³ä¸‹, å·¦ä¸‹(3), ä¸­é—´
 //             x1 = VerifyPoists[1]->x;
 //             y1 = VerifyPoists[1]->y;
 //             x2 = VerifyPoists[3]->x;
@@ -137,7 +137,7 @@ namespace MC {
         x2 = MC::SvrConfig::GetInst()->check_pt3_.x;;
         y2 = MC::SvrConfig::GetInst()->check_pt3_.y;
 
-        // ±ÈÀı¼ÆËã
+        // æ¯”ä¾‹è®¡ç®—
         var dRateX = (double)(fabs(x2 - x1) * 1000) / (double)(fabs(dmaxx - dminx) * 1000); // 7.85
         var dRateY = (double)(fabs(y2 - y1) * 1000) / (double)(fabs(dmaxy - dminy) * 1000); // 7.88
         var devX = (double)(fabs(x1 - nX) * 1000) / (double)(dRateX * 1000) + dminx;
@@ -164,7 +164,7 @@ namespace MC {
         }
 
         if (bFix) {
-            Log::WriteLog(LL_DEBUG, "ĞŞÕıÉè±¸ÓÃÓ¡Î»ÖÃ, Device({2},{3})", nX, nY, x, y);
+            Log::WriteLog(LL_DEBUG, "ä¿®æ­£è®¾å¤‡ç”¨å°ä½ç½®, Device({2},{3})", nX, nY, x, y);
         }
 
         return new Point(x, y);
@@ -198,7 +198,7 @@ namespace MC {
         const char* src_file_name2, 
         const char* dst_file_name);
 
-    // ºÏ²¢Í¼Æ¬
+    // åˆå¹¶å›¾ç‰‡
     int MergeImage(
         const std::string& img1,
         const std::string& img2,

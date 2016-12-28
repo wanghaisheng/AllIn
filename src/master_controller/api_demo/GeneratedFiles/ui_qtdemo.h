@@ -62,7 +62,7 @@ public:
     QPushButton *pb_query_slots_;
     QGroupBox *groupBox_8;
     QLineEdit *le_stamper_idx_;
-    QPushButton *pushButton_19;
+    QPushButton *pb_cali_stamp_;
     QLabel *label;
     QGroupBox *groupBox_22;
     QLabel *label_2;
@@ -322,10 +322,10 @@ public:
         le_stamper_idx_->setObjectName(QStringLiteral("le_stamper_idx_"));
         le_stamper_idx_->setGeometry(QRect(90, 30, 41, 22));
         le_stamper_idx_->setFont(font2);
-        pushButton_19 = new QPushButton(groupBox_8);
-        pushButton_19->setObjectName(QStringLiteral("pushButton_19"));
-        pushButton_19->setGeometry(QRect(70, 60, 81, 28));
-        pushButton_19->setFont(font2);
+        pb_cali_stamp_ = new QPushButton(groupBox_8);
+        pb_cali_stamp_->setObjectName(QStringLiteral("pb_cali_stamp_"));
+        pb_cali_stamp_->setGeometry(QRect(70, 60, 81, 28));
+        pb_cali_stamp_->setFont(font2);
         label = new QLabel(groupBox_8);
         label->setObjectName(QStringLiteral("label"));
         label->setGeometry(QRect(30, 30, 53, 16));
@@ -726,7 +726,7 @@ public:
         QtDemoClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(QtDemoClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1200, 26));
+        menuBar->setGeometry(QRect(0, 0, 1200, 38));
         QtDemoClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(QtDemoClass);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -768,7 +768,7 @@ public:
         groupBox_4->setTitle(QApplication::translate("QtDemoClass", "\345\215\260\347\253\240\347\256\241\347\220\206", 0));
         pb_query_slots_->setText(QApplication::translate("QtDemoClass", "\345\215\241\346\247\275\346\225\260\351\207\217\346\237\245\350\257\242", 0));
         groupBox_8->setTitle(QApplication::translate("QtDemoClass", "\346\240\241\345\207\206\345\215\260\347\253\240", 0));
-        pushButton_19->setText(QApplication::translate("QtDemoClass", "\346\240\241\346\255\243", 0));
+        pb_cali_stamp_->setText(QApplication::translate("QtDemoClass", "\346\240\241\346\255\243", 0));
         label->setText(QApplication::translate("QtDemoClass", "\345\215\241\346\247\275\345\217\267:", 0));
         groupBox_22->setTitle(QApplication::translate("QtDemoClass", "\351\224\231\350\257\257\347\240\201", 0));
         label_2->setText(QApplication::translate("QtDemoClass", "\350\276\223\345\205\245\351\224\231\350\257\257\347\240\201\357\274\232", 0));

@@ -1,4 +1,4 @@
-#ifndef MC_AGENT_CNN_H_
+ï»¿#ifndef MC_AGENT_CNN_H_
 #define MC_AGENT_CNN_H_
 
 #include <windows.h>
@@ -94,7 +94,7 @@ private:
 
     HANDLE                  heart_ev_;
     boost::mutex            heart_mtx_;
-    boost::thread*          heart_thread_;   // ĞÄÌøÏß³Ì, ¼àÌı·şÎñ½ø³Ì"mc_exe"ÊÇ·ñ´æÔÚ
+    boost::thread*          heart_thread_;   // å¿ƒè·³çº¿ç¨‹, ç›‘å¬æœåŠ¡è¿›ç¨‹"mc_exe"æ˜¯å¦å­˜åœ¨
 
     LPPIPEINST                          pipe_inst_;
     HANDLE                              pipe_;
@@ -103,7 +103,7 @@ private:
     boost::interprocess::message_queue* recv_mq_;
 };
 
-// ±éÀúÏµÍ³½ø³ÌÁĞ±í, ²éÕÒÊÇ·ñÓĞÃûÎª@process_nameµÄ½ø³Ì
+// éå†ç³»ç»Ÿè¿›ç¨‹åˆ—è¡¨, æŸ¥æ‰¾æ˜¯å¦æœ‰åä¸º@process_nameçš„è¿›ç¨‹
 bool ProcessExisted(const std::string& process_name);
 
 } // namespace MC

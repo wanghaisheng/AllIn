@@ -4,17 +4,17 @@
 
 AsynAPISet api_agent;
 
-const int WAIT_TIME = 5000; // µÈ´ıÒì²½Í¨Öª»Øµ÷³¬Ê±Ê±¼ä(ºÁÃë)
+const int WAIT_TIME = 5000; // ç­‰å¾…å¼‚æ­¥é€šçŸ¥å›è°ƒè¶…æ—¶æ—¶é—´(æ¯«ç§’)
 
-// Í¬²½½Ó¿Ú, Òì²½¸ÄÍ¬²½½Ó¿Ú, Í¬²½×èÈûµÈÒì²½Í¨Öª
+// åŒæ­¥æ¥å£, å¼‚æ­¥æ”¹åŒæ­¥æ¥å£, åŒæ­¥é˜»å¡ç­‰å¼‚æ­¥é€šçŸ¥
 
-///////////////////////////// »ñÈ¡Ó¡¿Ø»ú±àºÅ ////////////////////////////////
+///////////////////////////// è·å–å°æ§æœºç¼–å· ////////////////////////////////
 
 class QueryMachNT : public QueryMachineNT {
 public:
     virtual void Notify(std::string sn, int ec)
     {
-        Log::WriteLog(LL_DEBUG, "QueryMachNT::Notify->»ñÈ¡Ó¡¿ØÒÇ±àºÅ, ec: %d, sn: %s",
+        Log::WriteLog(LL_DEBUG, "QueryMachNT::Notify->è·å–å°æ§ä»ªç¼–å·, ec: %d, sn: %s",
             ec,
             sn.c_str());
         sn_ = sn;
@@ -42,12 +42,12 @@ int QueryMachine(std::string& sn)
     return ((QueryMachNT*)nt)->er_;
 }
 
-/////////////////////////////// ÉèÖÃÓ¡¿Ø»ú±àºÅ ////////////////////////////////
+/////////////////////////////// è®¾ç½®å°æ§æœºç¼–å· ////////////////////////////////
 
 class SetMachNT : public SetMachineNT {
 public:
     virtual void Notify(std::string sn, int ec) {
-        Log::WriteLog(LL_DEBUG, "SetMachNT::Notify->ÉèÖÃÓ¡¿Ø»ú±àºÅ, ec: %d, sn: %s",
+        Log::WriteLog(LL_DEBUG, "SetMachNT::Notify->è®¾ç½®å°æ§æœºç¼–å·, ec: %d, sn: %s",
             ec,
             sn.c_str());
 
@@ -73,13 +73,13 @@ int SetMachine(const std::string& sn)
     return ((SetMachNT*)nt)->er_;
 }
 
-//////////////////////////// ³õÊ¼»¯Ó¡¿Ø»ú ///////////////////////////////////
+//////////////////////////// åˆå§‹åŒ–å°æ§æœº ///////////////////////////////////
 
 class InitMaNT: public InitMachineNT {
 public:
     virtual void Notify(std::string key, int ec)
     {
-        Log::WriteLog(LL_DEBUG, "InitMaNT::Notify->³õÊ¼»¯Ó¡¿Ø»ú, ec: %d, key: %s", 
+        Log::WriteLog(LL_DEBUG, "InitMaNT::Notify->åˆå§‹åŒ–å°æ§æœº, ec: %d, key: %s", 
             ec, 
             key.c_str());
         er_ = ec;
@@ -104,13 +104,13 @@ int InitMachine(const std::string& key)
     return ((InitMaNT*)nt)->er_;
 }
 
-///////////////////////////////// °ó¶¨MACµØÖ· ///////////////////////////
+///////////////////////////////// ç»‘å®šMACåœ°å€ ///////////////////////////
 
 class BindNT : public BindMACNT {
 public:
     virtual void Notify(std::string mac, int ec)
     {
-        Log::WriteLog(LL_DEBUG, "BindNT::Notify->°ó¶¨MACµØÖ·, ec: %d, mac: %s", 
+        Log::WriteLog(LL_DEBUG, "BindNT::Notify->ç»‘å®šMACåœ°å€, ec: %d, mac: %s", 
             ec, 
             mac.c_str());
         er_ = ec;
@@ -135,13 +135,13 @@ int BindMAC(const std::string& mac)
     return ((BindNT*)nt)->er_;
 }
 
-//////////////////////// ½â°óMACµØÖ· /////////////////////////////////
+//////////////////////// è§£ç»‘MACåœ°å€ /////////////////////////////////
 
 class UnbindNT : public UnbindMACNT {
 public:
     virtual void Notify(std::string mac, int ec)
     {
-        Log::WriteLog(LL_DEBUG, "UnbindNT::Notify->½â°óMACµØÖ·, ec: %d, mac: %s", 
+        Log::WriteLog(LL_DEBUG, "UnbindNT::Notify->è§£ç»‘MACåœ°å€, ec: %d, mac: %s", 
             ec,
             mac.c_str());
         er_ = ec;
@@ -166,14 +166,14 @@ int UnbindMAC(const std::string& mac)
     return ((UnbindNT*)nt)->er_;
 }
 
-///////////////////////// ×¼±¸ÓÃÓ¡ //////////////////////////////
+///////////////////////// å‡†å¤‡ç”¨å° //////////////////////////////
 
 class PrepareNT : public PrepareStampNT {
 public:
     virtual void Notify(int num, int timeout, std::string task_id, int ec)
     {
-        Log::WriteLog(LL_DEBUG, "PrepareNT::Notify->×¼±¸ÓÃÓ¡, ec: %d, ÕÂ¿¨²ÛºÅ: %d, "
-            "³¬Ê±Ê±¼ä: %d, ÈÎÎñID: %s", 
+        Log::WriteLog(LL_DEBUG, "PrepareNT::Notify->å‡†å¤‡ç”¨å°, ec: %d, ç« å¡æ§½å·: %d, "
+            "è¶…æ—¶æ—¶é—´: %d, ä»»åŠ¡ID: %s", 
             ec,
             num,
             timeout,
@@ -204,13 +204,13 @@ int PrepareStamp(char stamp_num, int timeout, std::string& task_id)
     return ((PrepareNT*)nt)->er_;
 }
 
-////////////////////////// ²é½ø½øÖ½ÃÅ×´Ì¬ //////////////////////////////////
+////////////////////////// æŸ¥è¿›è¿›çº¸é—¨çŠ¶æ€ //////////////////////////////////
 
 class PaperNT : public QueryPaperNT {
 public:
     virtual void Notify(int status, int ec)
     {
-        Log::WriteLog(LL_DEBUG, "PaperNT::Notify->²é½øÖ½ÃÅ×´Ì¬, ec: %d, ½øÖ½ÃÅ×´Ì¬: %d",
+        Log::WriteLog(LL_DEBUG, "PaperNT::Notify->æŸ¥è¿›çº¸é—¨çŠ¶æ€, ec: %d, è¿›çº¸é—¨çŠ¶æ€: %d",
             ec,
             status);
 
@@ -239,12 +239,12 @@ int QueryPaper(int& status)
     return ((PaperNT*)nt)->er_;
 }
 
-////////////////////////// ÅÄÕÕ ////////////////////////////////////
+////////////////////////// æ‹ç…§ ////////////////////////////////////
 
 class SnapNT : public SnapshotNT {
 public:
     virtual void Notify(int ori_dpi, int cut_dpi, std::string ori_path, std::string cut_path, int ec) {
-        Log::WriteLog(LL_DEBUG, "SnapNT::Notify->ÅÄÕÕ, ec: %d, ori_dpi: %d, cut_dpi: %d, "
+        Log::WriteLog(LL_DEBUG, "SnapNT::Notify->æ‹ç…§, ec: %d, ori_dpi: %d, cut_dpi: %d, "
             "ori_path: %s, cut_path: %s",
             ec,
             ori_dpi,
@@ -279,13 +279,13 @@ int Snapshot(
     return ((SnapNT*)nt)->er_;
 }
 
-/////////////////////////// ÕÕÆ¬ºÏ³É /////////////////////////////////////
+/////////////////////////// ç…§ç‰‡åˆæˆ /////////////////////////////////////
 
 class MergeNT : public MergePhotoNT {
 public:
     virtual void Notify(std::string p1, std::string p2, std::string merged, int ec) {
-        Log::WriteLog(LL_DEBUG, "MergeNT::Notify->ºÏ³ÉÕÕÆ¬, ec: %d, "
-        "Í¼Æ¬1: %s, Í¼Æ¬2: %s, ºÏ³ÉÍ¼Æ¬: %s",
+        Log::WriteLog(LL_DEBUG, "MergeNT::Notify->åˆæˆç…§ç‰‡, ec: %d, "
+        "å›¾ç‰‡1: %s, å›¾ç‰‡2: %s, åˆæˆå›¾ç‰‡: %s",
             ec,
             p1.c_str(),
             p2.c_str(),
@@ -317,12 +317,12 @@ int MergePhoto(
 }
 
 
-////////////////////////// °æÃæÑéÖ¤ÂëÊ¶±ğ //////////////////////////////////
+////////////////////////// ç‰ˆé¢éªŒè¯ç è¯†åˆ« //////////////////////////////////
 
 class RecogNT : public RecognizeNT {
 public:
     virtual void Notify(std::string path, std::string template_id, std::string trace, int ec) {
-        Log::WriteLog(LL_DEBUG, "RecogNT::Notify->°æÃæÑéÖ¤ÂëÊ¶±ğ, ec: %d, Ä£°åID: %s, ×·ËİÂë: %s",
+        Log::WriteLog(LL_DEBUG, "RecogNT::Notify->ç‰ˆé¢éªŒè¯ç è¯†åˆ«, ec: %d, æ¨¡æ¿ID: %s, è¿½æº¯ç : %s",
             ec,
             template_id.c_str(),
             trace.c_str());
@@ -356,13 +356,13 @@ int RecognizeImage(const std::string& path,
     return ((RecogNT*)nt)->er_;
 }
 
-///////////////////////////// ÒªËØÊ¶±ğ ////////////////////////////////
+///////////////////////////// è¦ç´ è¯†åˆ« ////////////////////////////////
 
 class IdentiNT: public IdentifyNT {
 public:
     virtual void Notify(std::string path, int x, int y, int width, int height, int angle,
         std::string result, int ec) {
-        Log::WriteLog(LL_DEBUG, "IdentiNT::Notify->ÒªËØÊ¶±ğ, ec: %d, Ê¶±ğ½á¹û: %s",
+        Log::WriteLog(LL_DEBUG, "IdentiNT::Notify->è¦ç´ è¯†åˆ«, ec: %d, è¯†åˆ«ç»“æœ: %s",
             ec,
             result.c_str());
 
@@ -398,13 +398,13 @@ int IdentifyElement(
     return ((IdentiNT*)nt)->er_;
 }
 
-///////////////////////////// ÆÕÍ¨ÓÃÓ¡ /////////////////////////////////
+///////////////////////////// æ™®é€šç”¨å° /////////////////////////////////
 
 class OridinaryNT: public OrdinaryStampNT {
 public:
     virtual void Notify(std::string task, std::string voucher_type, int stamp_num,
         int x, int y, int angle, int ec) {
-        Log::WriteLog(LL_DEBUG, "OridinaryNT::Notify->ÆÕÍ¨ÓÃÓ¡, ec: %d, ÈÎÎñID: %s", 
+        Log::WriteLog(LL_DEBUG, "OridinaryNT::Notify->æ™®é€šç”¨å°, ec: %d, ä»»åŠ¡ID: %s", 
             ec,
             task.c_str());
 
@@ -417,11 +417,17 @@ public:
     int er_;
 };
 
-int OrdinaryStamp(const std::string& task,
-    const std::string& voucher, int num, int x, int y, int angle)
+int OrdinaryStamp(
+    const std::string& task,
+    const std::string& voucher, 
+    int num, 
+    int ink,
+    int x, 
+    int y, 
+    int angle)
 {
     OrdinaryStampNT* nt = new OridinaryNT;
-    api_agent.AsynOrdinaryStamp(task, voucher, num, x, y, angle, nt);
+    api_agent.AsynOrdinaryStamp(task, voucher, num, ink, x, y, angle, nt);
 
     boost::mutex mtx;
     boost::mutex::scoped_lock lk(mtx);
@@ -431,12 +437,12 @@ int OrdinaryStamp(const std::string& task,
     return ((OridinaryNT*)nt)->er_;
 }
 
-///////////////////////////// ×Ô¶¯ÓÃÓ¡ ////////////////////////////////////
+///////////////////////////// è‡ªåŠ¨ç”¨å° ////////////////////////////////////
 
 class AutoNT: public AutoStampNT {
 public:
     virtual void Notify(std::string task, std::string voucher_type, int stamp_num, int ec) {
-        Log::WriteLog(LL_DEBUG, "AutoNT::Notify->×Ô¶¯ÓÃÓ¡, ec: %d, ÈÎÎñID: %s", 
+        Log::WriteLog(LL_DEBUG, "AutoNT::Notify->è‡ªåŠ¨ç”¨å°, ec: %d, ä»»åŠ¡ID: %s", 
             ec,
             task.c_str());
 
@@ -463,12 +469,12 @@ int AutoStamp(const std::string& task,
     return ((AutoNT*)nt)->er_;
 }
 
-/////////////////////////// ÓÃÓ¡½áÊø //////////////////////////////////////
+/////////////////////////// ç”¨å°ç»“æŸ //////////////////////////////////////
 
 class FinishNT: public FinishStampNT {
 public:
     virtual void Notify(std::string task, int ec) {
-        Log::WriteLog(LL_DEBUG, "FinishNT::Notify->ÓÃÓ¡½áÊø, ec: %d, ÈÎÎñºÅ: %s",
+        Log::WriteLog(LL_DEBUG, "FinishNT::Notify->ç”¨å°ç»“æŸ, ec: %d, ä»»åŠ¡å·: %s",
             ec, 
             task.c_str());
 
@@ -494,12 +500,12 @@ int FinishStamp(const std::string& task)
     return ((FinishNT*)nt)->er_;
 }
 
-//////////////////////////// ÊÍ·ÅÓ¡¿Ø»ú //////////////////////////////////////
+//////////////////////////// é‡Šæ”¾å°æ§æœº //////////////////////////////////////
 
 class ReleaseNT: public ReleaseStampNT {
 public:
     virtual void Notify(std::string machine, int ec) {
-        Log::WriteLog(LL_DEBUG, "ReleaseNT::Notify->ÊÍ·ÅÓ¡¿Ø»ú, ec: %d, »úÆ÷Î¨Ò»±àºÅ: %s",
+        Log::WriteLog(LL_DEBUG, "ReleaseNT::Notify->é‡Šæ”¾å°æ§æœº, ec: %d, æœºå™¨å”¯ä¸€ç¼–å·: %s",
             ec, 
             machine.c_str());
 
@@ -525,12 +531,12 @@ int ReleaseStamp(const std::string& machine)
     return ((ReleaseNT*)nt)->er_;
 }
 
-///////////////////////////// »ñÈ¡´íÎóĞÅÏ¢ ////////////////////////////////
+///////////////////////////// è·å–é”™è¯¯ä¿¡æ¯ ////////////////////////////////
 
 class GetErrNT: public GetErrorNT {
 public:
     virtual void Notify(int er_code, std::string err_msg, std::string err_resolver, int ec) {
-        Log::WriteLog(LL_DEBUG, "GetErrNT::Notify->»ñÈ¡´íÎóĞÅÏ¢, ´íÎóÂë: %d, ´íÎóĞÅÏ¢: %s, ½â¾ö·½°¸: %s",
+        Log::WriteLog(LL_DEBUG, "GetErrNT::Notify->è·å–é”™è¯¯ä¿¡æ¯, é”™è¯¯ç : %d, é”™è¯¯ä¿¡æ¯: %s, è§£å†³æ–¹æ¡ˆ: %s",
             er_code,
             err_msg.c_str(),
             err_resolver.c_str());
@@ -563,7 +569,7 @@ int GetError(int err_code, std::string& err_msg, std::string& err_resolver)
     return ((GetErrNT*)nt)->er_;
 }
 
-/////////////////////////// Ğ£×¼Ó¡ÕÂ ///////////////////////////////
+/////////////////////////// æ ¡å‡†å°ç«  ///////////////////////////////
 
 class CaliNT: public CalibrationNT {
 public:
@@ -590,7 +596,7 @@ int Calibrate(int slot)
     return ((CaliNT*)nt)->er_;
 }
 
-/////////////////////////// Ó¡ÕÂ×´Ì¬²éÑ¯ ////////////////////////////////////
+/////////////////////////// å°ç« çŠ¶æ€æŸ¥è¯¢ ////////////////////////////////////
 
 class QueryStamNT: public QueryStampersNT {
 public:
@@ -628,7 +634,7 @@ int QueryStampers(int* staus)
     return ((QueryStamNT*)nt)->er_;
 }
 
-/////////////////////////// °²È«ÃÅ×´Ì¬²éÑ¯ ////////////////////////////////////
+/////////////////////////// å®‰å…¨é—¨çŠ¶æ€æŸ¥è¯¢ ////////////////////////////////////
 
 class QuerySafeDoorNT: public QuerySafeNT {
 public:
@@ -658,7 +664,7 @@ int QuerySafe(int& status)
     return ((QuerySafeDoorNT*)nt)->er_;
 }
 
-//////////////////////////// °²È«ÃÅ¿ØÖÆ //////////////////////////////////
+//////////////////////////// å®‰å…¨é—¨æ§åˆ¶ //////////////////////////////////
 
 class CtrLSafeDoorNT: public CtrlSafeNT {
 public:
@@ -685,7 +691,7 @@ int ControlSafe(int ctrl)
     return ((CtrLSafeDoorNT*)nt)->er_;
 }
 
-///////////////////////// ·äÃùÆ÷¿ØÖÆ //////////////////////////////////
+///////////////////////// èœ‚é¸£å™¨æ§åˆ¶ //////////////////////////////////
 
 class BeepCtrlNT: public CtrlBeepNT {
 public:
@@ -712,12 +718,12 @@ int ControlBeep(int ctrl)
     return ((BeepCtrlNT*)nt)->er_;
 }
 
-////////////////////////////// ¿¨²ÛÊıÁ¿²éÑ¯ ////////////////////////////////
+////////////////////////////// å¡æ§½æ•°é‡æŸ¥è¯¢ ////////////////////////////////
 
 class QuerySlNT : public QuerySlotNT {
 public:
     virtual void Notify(int num, int ec) {
-        Log::WriteLog(LL_DEBUG, "QuerySlNT::Notify->¿¨²ÛÊıÁ¿: %d", num);
+        Log::WriteLog(LL_DEBUG, "QuerySlNT::Notify->å¡æ§½æ•°é‡: %d", num);
 
         er_ = ec;
         num_ = num;
@@ -744,12 +750,12 @@ int QuerySlot(int& num)
     return ((QuerySlNT*)nt)->er_;
 }
 
-///////////////////////////////// ±¨¾¯Æ÷¿ª¹Ø ////////////////////////////
+///////////////////////////////// æŠ¥è­¦å™¨å¼€å…³ ////////////////////////////
 
 class AlarmNT : public CtrlAlarmNT {
 public:
     virtual void Notify(int alarm, int ctrl, int ec) {
-        Log::WriteLog(LL_DEBUG, "AlarmNT::Notify->±¨¾¯Æ÷ÀàĞÍ: %d, ¿ª¹Ø: %d", 
+        Log::WriteLog(LL_DEBUG, "AlarmNT::Notify->æŠ¥è­¦å™¨ç±»å‹: %d, å¼€å…³: %d", 
             alarm,
             ctrl);
 
@@ -775,7 +781,7 @@ int ControlAlarm(int alarm, int switches)
     return ((AlarmNT*)nt)->er_;
 }
 
-/////////////////////////////// ²éÑ¯ÒÑ°ó¶¨MACµØÖ· /////////////////////////////
+/////////////////////////////// æŸ¥è¯¢å·²ç»‘å®šMACåœ°å€ /////////////////////////////
 
 class QryMACNT: public QueryMACNT {
 public:

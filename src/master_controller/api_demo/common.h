@@ -1,4 +1,4 @@
-#ifndef QTDEMO_COMMON_H_
+ï»¿#ifndef QTDEMO_COMMON_H_
 #define QTDEMO_COMMON_H_
 
 #include <string>
@@ -14,7 +14,7 @@
 #include <boost/log/sources/record_ostream.hpp>
 #include <QString>
 
-const QString DIALOG_HEADER = QString::fromLocal8Bit("·â±ÕÊ½Ó¡¿Ø»úV2.4-Ö÷¿Ø²âÊÔ³ÌĞò");
+const QString DIALOG_HEADER = QString::fromLocal8Bit("å°é—­å¼å°æ§æœºV2.4-ä¸»æ§æµ‹è¯•ç¨‹åº");
 const std::string kLogger = "QtDemo";
 //#define INFINITE 0xffffffff
 #define STATUS_TEXT 2000
@@ -37,17 +37,17 @@ enum OperationCMD {
 
 static QString cmd_des[MAX_CMD] = 
 {
-    QString::fromLocal8Bit("Éè±¸´ò¿ª³É¹¦"),
-    QString::fromLocal8Bit("Éè±¸ÒÑ´ò¿ª"),
-    QString::fromLocal8Bit("Éè±¸´ò¿ªÊ§°Ü"),
-    QString::fromLocal8Bit("Éè±¸¹Ø±Õ³É¹¦"),
-    QString::fromLocal8Bit("Éè±¸¹Ø±ÕÊ§°Ü"),
-    QString::fromLocal8Bit("¶ÁÈİÁ¿´óĞ¡¼°°æ±¾ºÅÊ§°Ü"),
-    QString::fromLocal8Bit("Éè±¸Î´´ò¿ª"),
-    QString::fromLocal8Bit("Ğ´Êı¾İ³É¹¦"),
-    QString::fromLocal8Bit("Ğ´Êı¾İÊ§°Ü"),
-    QString::fromLocal8Bit("¶ÁÊı¾İ³É¹¦"),
-    QString::fromLocal8Bit("¶ÁÊı¾İÊ§°Ü"),
+    QString::fromLocal8Bit("è®¾å¤‡æ‰“å¼€æˆåŠŸ"),
+    QString::fromLocal8Bit("è®¾å¤‡å·²æ‰“å¼€"),
+    QString::fromLocal8Bit("è®¾å¤‡æ‰“å¼€å¤±è´¥"),
+    QString::fromLocal8Bit("è®¾å¤‡å…³é—­æˆåŠŸ"),
+    QString::fromLocal8Bit("è®¾å¤‡å…³é—­å¤±è´¥"),
+    QString::fromLocal8Bit("è¯»å®¹é‡å¤§å°åŠç‰ˆæœ¬å·å¤±è´¥"),
+    QString::fromLocal8Bit("è®¾å¤‡æœªæ‰“å¼€"),
+    QString::fromLocal8Bit("å†™æ•°æ®æˆåŠŸ"),
+    QString::fromLocal8Bit("å†™æ•°æ®å¤±è´¥"),
+    QString::fromLocal8Bit("è¯»æ•°æ®æˆåŠŸ"),
+    QString::fromLocal8Bit("è¯»æ•°æ®å¤±è´¥"),
 };
 
 #endif //QTDEMO_COMMON_H_

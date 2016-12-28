@@ -136,8 +136,7 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_query_mac_, &QPushButton::clicked, this, &QtDemo::HandleQueryMAC);
    
     connect(ui.pb_query_slots_, &QPushButton::clicked, this, &QtDemo::HandleQuerySlots);
-
-    // to-do , 印章校准
+    connect(ui.pb_cali_stamp_, &QPushButton::clicked, this, &QtDemo::HandleABCCheck);
 
     connect(ui.le_err_code_, SIGNAL(textChanged(const QString &)), this, 
         SLOT(HandleErrCodeChange(const QString &)));
@@ -541,8 +540,18 @@ void QtDemo::HandleQuerySlots()
 void QtDemo::HandleABCCheck()
 {
     std::string str = ui.le_stamper_idx_->text().toStdString();
+    int ret = Calibrate(atoi(str.c_str()));
+    if (0 != ret) {
+        return Info(QString::fromLocal8Bit("校准印章失败"));
+    }
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("校准印章成功"), STATUS_TEXT);
+    return;
+
+    //////////////////////////////////////////////////////////////////////////
+
     unsigned int rfid = 0;
-    int ret = GetStamperID(atoi(str.c_str()) - 1, rfid);
+    ret = GetStamperID(atoi(str.c_str()) - 1, rfid);
     if (STF_SUCCESS != ret)
         return Info(QString::fromLocal8Bit("获取印章ID失败"));
 
@@ -1004,11 +1013,12 @@ void QtDemo::HandleOridinary()
         ui.le_task_id_->text().toStdString(),
         voucher,
         para_.stamp_idx,
+        para_.ink,
         atoi(ui.le_x_in_img_->text().toStdString().c_str()),    // 盖章位置x坐标, 原始图片中的像素
         atoi(ui.le_y_in_img_->text().toStdString().c_str()),    // 盖章位置y坐标, 原始图片中的像素
         0);                                                     // 印章旋转角度, 大于等于0且小于360度
     if (0 != ret)
-        return Info(QString::fromLocal8Bit("普通用印失败"));
+        return Info(QString::fromLocal8Bit("普通用印失败,er: ") + QString::number(ret));
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("普通盖章成功"), STATUS_TEXT);
 }

@@ -36,29 +36,29 @@ int StartServer()
         DWORD dwWait, cbRet;
         BOOL fSuccess, fPendingIO;
 
-        // ÓÃÓÚÁ¬½Ó²Ù×÷µÄÊÂ¼þ¶ÔÏó 
+        // ç”¨äºŽè¿žæŽ¥æ“ä½œçš„äº‹ä»¶å¯¹è±¡ 
         hConnectEvent = CreateEvent(
-            NULL,    // Ä¬ÈÏÊôÐÔ
-            TRUE,    // ÊÖ¹¤reset
-            TRUE,    // ³õÊ¼×´Ì¬ signaled 
-            NULL);   // Î´ÃüÃû
+            NULL,    // é»˜è®¤å±žæ€§
+            TRUE,    // æ‰‹å·¥reset
+            TRUE,    // åˆå§‹çŠ¶æ€ signaled 
+            NULL);   // æœªå‘½å
 
         if (hConnectEvent == NULL)
         {
             printf("CreateEvent failed with %d.\n", GetLastError());
             return 0;
         }
-        // OVERLAPPED ÊÂ¼þ
+        // OVERLAPPED äº‹ä»¶
         oConnect.hEvent = hConnectEvent;
 
-        // ´´½¨Á¬½ÓÊµÀý£¬µÈ´ýÁ¬½Ó
+        // åˆ›å»ºè¿žæŽ¥å®žä¾‹ï¼Œç­‰å¾…è¿žæŽ¥
         fPendingIO = CreateAndConnectInstance(&oConnect);
 
         while (1) {
-            // µÈ´ý¿Í»§¶ËÁ¬½Ó»ò¶ÁÐ´²Ù×÷Íê³É 
+            // ç­‰å¾…å®¢æˆ·ç«¯è¿žæŽ¥æˆ–è¯»å†™æ“ä½œå®Œæˆ 
             dwWait = WaitForSingleObjectEx(
-                hConnectEvent,  // µÈ´ý¿Í»§¶ËÁ¬½ÓµÄÊÂ¼þ 
-                INFINITE,       // ÎÞÏÞµÈ´ý
+                hConnectEvent,  // ç­‰å¾…å®¢æˆ·ç«¯è¿žæŽ¥çš„äº‹ä»¶ 
+                INFINITE,       // æ— é™ç­‰å¾…
                 TRUE);
 
             switch (dwWait)
@@ -66,19 +66,19 @@ int StartServer()
             case 0:
                 // pending
                 if (fPendingIO) {
-                    // »ñÈ¡ Overlapped I/O µÄ½á¹û
+                    // èŽ·å– Overlapped I/O çš„ç»“æžœ
                     fSuccess = GetOverlappedResult(
-                        hPipe,     // pipe ¾ä±ú
-                        &oConnect, // OVERLAPPED ½á¹¹
-                        &cbRet,    // ÒÑ¾­´«ËÍµÄÊý¾ÝÁ¿
-                        FALSE);    // ²»µÈ´ý
+                        hPipe,     // pipe å¥æŸ„
+                        &oConnect, // OVERLAPPED ç»“æž„
+                        &cbRet,    // å·²ç»ä¼ é€çš„æ•°æ®é‡
+                        FALSE);    // ä¸ç­‰å¾…
                     if (!fSuccess) {
                         printf("ConnectNamedPipe (%d)\n", GetLastError());
                         return 0;
                     }
                 }
 
-                // ·ÖÅäÄÚ´æ
+                // åˆ†é…å†…å­˜
                 lpPipeInst = (LPPIPEINST)HeapAlloc(GetProcessHeap(), 0, sizeof(PIPEINST));
                 if (lpPipeInst == NULL) {
                     printf("GlobalAlloc failed (%d)\n", GetLastError());
@@ -86,15 +86,15 @@ int StartServer()
                 }
                 lpPipeInst->hPipeInst = hPipe;
 
-                // ¶ÁºÍÐ´, ×¢ÒâCompletedWriteRoutineºÍCompletedReadRoutineµÄÏà»¥µ÷ÓÃ
+                // è¯»å’Œå†™, æ³¨æ„CompletedWriteRoutineå’ŒCompletedReadRoutineçš„ç›¸äº’è°ƒç”¨
                 lpPipeInst->cbToWrite = 0;
                 CompletedWriteRoutine(0, 0, (LPOVERLAPPED)lpPipeInst);
 
-                // ÔÙ´´½¨Ò»¸öÁ¬½ÓÊµÀý, ÒÔÏìÓ¦ÏÂÒ»¸ö¿Í»§¶ËµÄÁ¬½Ó
+                // å†åˆ›å»ºä¸€ä¸ªè¿žæŽ¥å®žä¾‹, ä»¥å“åº”ä¸‹ä¸€ä¸ªå®¢æˆ·ç«¯çš„è¿žæŽ¥
                 fPendingIO = CreateAndConnectInstance(&oConnect);
                 break;
 
-                // ¶ÁÐ´Íê³É 
+                // è¯»å†™å®Œæˆ 
             case WAIT_IO_COMPLETION:
                 break;
 
@@ -116,22 +116,22 @@ VOID WINAPI CompletedWriteRoutine(
 {
     LPPIPEINST lpPipeInst;
     BOOL fRead = FALSE;
-    // ±£´æoverlapÊµÀý
+    // ä¿å­˜overlapå®žä¾‹
     lpPipeInst = (LPPIPEINST)lpOverLap;
 
-    // Èç¹ûÃ»ÓÐ´íÎó
+    // å¦‚æžœæ²¡æœ‰é”™è¯¯
     if ((dwErr == 0) && (cbWritten == lpPipeInst->cbToWrite)) {
         fRead = ReadFileEx(
             lpPipeInst->hPipeInst,
             lpPipeInst->chRequest,
             CMD_BUF_SIZE * sizeof(TCHAR),
             (LPOVERLAPPED)lpPipeInst,
-            // Ð´¶Á²Ù×÷Íê³Éºó, µ÷ÓÃCompletedReadRoutine
+            // å†™è¯»æ“ä½œå®ŒæˆåŽ, è°ƒç”¨CompletedReadRoutine
             (LPOVERLAPPED_COMPLETION_ROUTINE)CompletedReadRoutine);
     }
 
     if (!fRead) {
-        // ³ö´í, ¶Ï¿ªÁ¬½Ó
+        // å‡ºé”™, æ–­å¼€è¿žæŽ¥
         printf("ReadFileEx fails (%ld)\n", GetLastError());
         DisconnectAndClose(lpPipeInst);
     }
@@ -139,10 +139,10 @@ VOID WINAPI CompletedWriteRoutine(
 
 /* ************************************
 * CompletedReadRoutine
-*     ¶ÁÈ¡pipe²Ù×÷µÄÍê³Éº¯Êý
-*    ½Ó¿Ú²Î¼ûFileIOCompletionRoutine»Øµ÷º¯Êý¶¨Òå
+*     è¯»å–pipeæ“ä½œçš„å®Œæˆå‡½æ•°
+*    æŽ¥å£å‚è§FileIOCompletionRoutineå›žè°ƒå‡½æ•°å®šä¹‰
 *
-*    µ±¶Á²Ù×÷Íê³ÉÊ±±»µ÷ÓÃ£¬Ð´Èë»Ø¸´
+*    å½“è¯»æ“ä½œå®Œæˆæ—¶è¢«è°ƒç”¨ï¼Œå†™å…¥å›žå¤
 **************************************/
 VOID WINAPI CompletedReadRoutine(
     DWORD dwErr,
@@ -152,56 +152,56 @@ VOID WINAPI CompletedReadRoutine(
     LPPIPEINST lpPipeInst;
     BOOL fWrite = FALSE;
 
-    // ±£´æoverlapÊµÀý
+    // ä¿å­˜overlapå®žä¾‹
     lpPipeInst = (LPPIPEINST)lpOverLap;
 
-    // Èç¹ûÃ»ÓÐ´íÎó
+    // å¦‚æžœæ²¡æœ‰é”™è¯¯
     if ((dwErr == 0) && (cbBytesRead != 0))
     {
-        // ¸ù¾Ý¿Í»§¶ËµÄÇëÇó£¬Éú³É»Ø¸´
+        // æ ¹æ®å®¢æˆ·ç«¯çš„è¯·æ±‚ï¼Œç”Ÿæˆå›žå¤
         GetAnswerToRequest(lpPipeInst);
 
 //         DWORD avail = 0;
 //         PeekNamedPipe(lpPipeInst->hPipeInst);
-        // ½«»Ø¸´Ð´Èëµ½pipe
+        // å°†å›žå¤å†™å…¥åˆ°pipe
         fWrite = WriteFileEx(
             lpPipeInst->hPipeInst,
-            lpPipeInst->chReply,    //½«ÏìÓ¦Ð´Èëpipe
+            lpPipeInst->chReply,    //å°†å“åº”å†™å…¥pipe
             lpPipeInst->cbToWrite,
             (LPOVERLAPPED)lpPipeInst,
-            // Ð´ÈëÍê³Éºó£¬µ÷ÓÃCompletedWriteRoutine
+            // å†™å…¥å®ŒæˆåŽï¼Œè°ƒç”¨CompletedWriteRoutine
             (LPOVERLAPPED_COMPLETION_ROUTINE)CompletedWriteRoutine);
     }
 
     if (!fWrite)
-        // ³ö´í£¬¶Ï¿ªÁ¬½Ó
+        // å‡ºé”™ï¼Œæ–­å¼€è¿žæŽ¥
         DisconnectAndClose(lpPipeInst);
 }
 
 /* ************************************
 * VOID DisconnectAndClose(LPPIPEINST lpPipeInst)
-* ¹¦ÄÜ    ¶Ï¿ªÒ»¸öÁ¬½ÓµÄÊµÀý
-* ²ÎÊý    lpPipeInst£¬¶Ï¿ª²¢¹Ø±ÕµÄÊµÀý¾ä±ú
+* åŠŸèƒ½    æ–­å¼€ä¸€ä¸ªè¿žæŽ¥çš„å®žä¾‹
+* å‚æ•°    lpPipeInstï¼Œæ–­å¼€å¹¶å…³é—­çš„å®žä¾‹å¥æŸ„
 **************************************/
 VOID DisconnectAndClose(LPPIPEINST lpPipeInst)
 {
-    // ¹Ø±ÕÁ¬½ÓÊµÀý
+    // å…³é—­è¿žæŽ¥å®žä¾‹
     if (!DisconnectNamedPipe(lpPipeInst->hPipeInst))
     {
         printf("DisconnectNamedPipe failed with %d.\n", GetLastError());
     }
-    // ¹Ø±Õ pipe ÊµÀýµÄ¾ä±ú 
+    // å…³é—­ pipe å®žä¾‹çš„å¥æŸ„ 
     CloseHandle(lpPipeInst->hPipeInst);
-    // ÊÍ·Å
+    // é‡Šæ”¾
     if (lpPipeInst != NULL)
         HeapFree(GetProcessHeap(), 0, lpPipeInst);
 }
 
 /* ************************************
 * BOOL CreateAndConnectInstance(LPOVERLAPPED lpoOverlap)
-* ¹¦ÄÜ    ½¨Á¢Á¬½ÓÊµÀý
-* ²ÎÊý    lpoOverlap£¬ÓÃÓÚoverlapped IOµÄ½á¹¹
-* ·µ»ØÖµ    ÊÇ·ñ³É¹¦
+* åŠŸèƒ½    å»ºç«‹è¿žæŽ¥å®žä¾‹
+* å‚æ•°    lpoOverlapï¼Œç”¨äºŽoverlapped IOçš„ç»“æž„
+* è¿”å›žå€¼    æ˜¯å¦æˆåŠŸ
 **************************************/
 BOOL CreateAndConnectInstance(LPOVERLAPPED lpoOverlap)
 {
@@ -228,20 +228,20 @@ BOOL CreateAndConnectInstance(LPOVERLAPPED lpoOverlap)
     char cnn_name[1024] = { 0 };
     sprintf_s(cnn_name, "\\\\.\\pipe\\%s", name.c_str());
     LPTSTR lpszPipename = TEXT(cnn_name);
-    // ´´½¨named pipe     
+    // åˆ›å»ºnamed pipe     
     hPipe = CreateNamedPipe(
-        lpszPipename,             // pipeÃû 
-        PIPE_ACCESS_DUPLEX |      // ¿É¶Á¿ÉÐ´
-        FILE_FLAG_OVERLAPPED,     // overlapped Ä£Ê½
-        // pipeÄ£Ê½
-        PIPE_TYPE_BYTE |       // ÏûÏ¢ÀàÐÍpipe
-        PIPE_READMODE_BYTE |   // ÏûÏ¢¶ÁÄ£Ê½
-        PIPE_WAIT,                // ×èÈûÄ£Ê½
-        PIPE_UNLIMITED_INSTANCES, // ÎÞÏÞÖÆÊµÀý
-        PIPE_MAX_BUF * sizeof(TCHAR),  // Êä³ö»º´æ´óÐ¡
-        PIPE_MAX_BUF * sizeof(TCHAR),  // ÊäÈë»º´æ´óÐ¡
-        PIPE_TIMEOUT,             // ¿Í»§¶Ë³¬Ê±
-        NULL);                    // Ä¬ÈÏ°²È«ÊôÐÔ
+        lpszPipename,             // pipeå 
+        PIPE_ACCESS_DUPLEX |      // å¯è¯»å¯å†™
+        FILE_FLAG_OVERLAPPED,     // overlapped æ¨¡å¼
+        // pipeæ¨¡å¼
+        PIPE_TYPE_BYTE |       // æ¶ˆæ¯ç±»åž‹pipe
+        PIPE_READMODE_BYTE |   // æ¶ˆæ¯è¯»æ¨¡å¼
+        PIPE_WAIT,                // é˜»å¡žæ¨¡å¼
+        PIPE_UNLIMITED_INSTANCES, // æ— é™åˆ¶å®žä¾‹
+        PIPE_MAX_BUF * sizeof(TCHAR),  // è¾“å‡ºç¼“å­˜å¤§å°
+        PIPE_MAX_BUF * sizeof(TCHAR),  // è¾“å…¥ç¼“å­˜å¤§å°
+        PIPE_TIMEOUT,             // å®¢æˆ·ç«¯è¶…æ—¶
+        NULL);                    // é»˜è®¤å®‰å…¨å±žæ€§
     if (hPipe == INVALID_HANDLE_VALUE) {
         printf("CreateNamedPipe failed with %d.\n", GetLastError());
         return 0;
@@ -251,36 +251,36 @@ BOOL CreateAndConnectInstance(LPOVERLAPPED lpoOverlap)
         (int)hPipe,
         GetLastError());
 
-    // Á¬½Óµ½ÐÂµÄ¿Í»§¶Ë
+    // è¿žæŽ¥åˆ°æ–°çš„å®¢æˆ·ç«¯
     return ConnectToNewClient(hPipe, lpoOverlap);
 }
 
 /* ************************************
 * BOOL ConnectToNewClient(HANDLE hPipe, LPOVERLAPPED lpo)
-* ¹¦ÄÜ    ½¨Á¢Á¬½ÓÊµÀý
-* ²ÎÊý    lpoOverlap£¬ÓÃÓÚoverlapped IOµÄ½á¹¹
-* ·µ»ØÖµ    ÊÇ·ñ³É¹¦
+* åŠŸèƒ½    å»ºç«‹è¿žæŽ¥å®žä¾‹
+* å‚æ•°    lpoOverlapï¼Œç”¨äºŽoverlapped IOçš„ç»“æž„
+* è¿”å›žå€¼    æ˜¯å¦æˆåŠŸ
 **************************************/
 BOOL ConnectToNewClient(HANDLE hPipe, LPOVERLAPPED lpo)
 {
     BOOL fConnected, fPendingIO = FALSE;
 
-    // ¿ªÊ¼Ò»¸ö overlapped Á¬½Ó, ÓÉÓÚlpo·Ç¿Õ, µ÷ÓÃºó»áÁ¢¼´·µ»Ø;
-    // ´ËÊ±, Èç¹ÜµÀÉÐÎ´Á¬½Ó, ¿Í»§Í¬¹ÜµÀÁ¬½ÓÊ±¾Í»á´¥·¢lpOverlapped½á¹¹ÖÐµÄÊÂ¼þ¶ÔÏó.
-    // Ëæºó, ¿ÉÓÃÒ»¸öµÈ´ýº¯ÊýÀ´¼àÊÓÁ¬½Ó.
+    // å¼€å§‹ä¸€ä¸ª overlapped è¿žæŽ¥, ç”±äºŽlpoéžç©º, è°ƒç”¨åŽä¼šç«‹å³è¿”å›ž;
+    // æ­¤æ—¶, å¦‚ç®¡é“å°šæœªè¿žæŽ¥, å®¢æˆ·åŒç®¡é“è¿žæŽ¥æ—¶å°±ä¼šè§¦å‘lpOverlappedç»“æž„ä¸­çš„äº‹ä»¶å¯¹è±¡.
+    // éšåŽ, å¯ç”¨ä¸€ä¸ªç­‰å¾…å‡½æ•°æ¥ç›‘è§†è¿žæŽ¥.
     fConnected = ConnectNamedPipe(hPipe, lpo);
     if (fConnected) {
         printf("ConnectNamedPipe failed with %d.\n", GetLastError());
         return 0;
     }
 
-    printf("³É¹¦½ÓÊÜ¿Í»§¶ËÁ¬½Ó, err:%d\n", GetLastError());
+    printf("æˆåŠŸæŽ¥å—å®¢æˆ·ç«¯è¿žæŽ¥, err:%d\n", GetLastError());
     switch (GetLastError()) {
-        // overlappedÁ¬½Ó½øÐÐÖÐ.
+        // overlappedè¿žæŽ¥è¿›è¡Œä¸­.
     case ERROR_IO_PENDING:
         fPendingIO = TRUE;
         break;
-        // ÒÑ¾­Á¬½Ó£¬Òò´ËEventÎ´ÖÃÎ» 
+        // å·²ç»è¿žæŽ¥ï¼Œå› æ­¤Eventæœªç½®ä½ 
     case ERROR_PIPE_CONNECTED:
         if (SetEvent(lpo->hEvent))
             break;
@@ -295,7 +295,7 @@ BOOL ConnectToNewClient(HANDLE hPipe, LPOVERLAPPED lpo)
     return fPendingIO;
 }
 
-// TODO¸ù¾Ý¿Í»§¶ËµÄÇëÇó£¬¸ø³öÏìÓ¦
+// TODOæ ¹æ®å®¢æˆ·ç«¯çš„è¯·æ±‚ï¼Œç»™å‡ºå“åº”
 VOID GetAnswerToRequest(LPPIPEINST pipe)
 {
 /*    _tprintf(TEXT("[%d] %s\n"), pipe->hPipeInst, pipe->chRequest);*/

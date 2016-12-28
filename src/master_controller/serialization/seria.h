@@ -1,4 +1,4 @@
-#ifndef SERAILIZATION_H_
+ï»¿#ifndef SERAILIZATION_H_
 #define SERAILIZATION_H_
 
 #include <iostream>
@@ -17,7 +17,7 @@ public:
 
     XSpace(void* buf, int len);
 
-    // ÖØÔØ<<ÔËËã·û, ĞòÁĞ»¯
+    // é‡è½½<<è¿ç®—ç¬¦, åºåˆ—åŒ–
     template <typename T>
     friend XSpace& operator<<(XSpace& xs, const T& t)
     {
@@ -31,10 +31,10 @@ public:
 
     void Trim();
 
-    // ÔÚ·´ĞòÁĞ»¯Ç°µ÷ÓÃ
+    // åœ¨ååºåˆ—åŒ–å‰è°ƒç”¨
     void Untrim();
 
-    // ÖØÔØ>>ÔËËã·û, ·´ĞòÁĞ»¯
+    // é‡è½½>>è¿ç®—ç¬¦, ååºåˆ—åŒ–
     template <typename T>
     friend XSpace& operator>>(XSpace& xs, T& t)
     {

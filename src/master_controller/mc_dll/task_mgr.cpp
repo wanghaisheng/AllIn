@@ -20,7 +20,8 @@ std::string MC::TaskMgr::GeneTask()
 {
     boost::lock_guard<boost::mutex> lk(task_mtx_);
     std::string task_id = GenerateGUID();
-    task_map_.insert(std::make_pair(task_id, MC::TS_ALIVE));
+//    task_map_.insert(std::make_pair(task_id, MC::TS_ALIVE));
+    task_map_.insert(std::pair(task_id, MC::TS_ALIVE));
     return task_id;
 }
 
@@ -34,6 +35,17 @@ enum MC::TaskState MC::TaskMgr::QueryTaskState(const std::string& task_id)
     }
 
     return MC::TS_NON_EXIST;
+}
+
+void MC::TaskMgr::MarkUsed(const std::string& task_id)
+{
+    boost::lock_guard<boost::mutex> lk(task_mtx_);
+    std::map<std::string, MC::TaskState>::iterator it = task_map_.begin();
+    for (; it != task_map_.end(); ++it) {
+        if (task_id == it->first) {
+            it->second = MC::TS_USED;
+        }
+    }
 }
 
 bool MC::TaskMgr::RemoveTask(const std::string& task_id)

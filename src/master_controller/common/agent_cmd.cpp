@@ -1,4 +1,4 @@
-#include "agent_cmd.h"
+﻿#include "agent_cmd.h"
 
 void BaseCmd::Ser()
 {
@@ -131,14 +131,14 @@ void IdentifyElementCmd::Unser()
 void OridinaryStampCmd::Ser()
 {
     BaseCmd::Ser();
-    xs_ << task_id_ << type_ << stamper_num_ << x_ << y_ << angle_ << ret_;
+    xs_ << task_id_ << type_ << stamper_num_ << ink_ << x_ << y_ << angle_ << ret_;
     xs_.Trim();
 }
 
 void OridinaryStampCmd::Unser()
 {
     BaseCmd::Unser();
-    xs_ >> task_id_ >> type_ >> stamper_num_ >> x_ >> y_ >> angle_ >> ret_;
+    xs_ >> task_id_ >> type_ >> stamper_num_ >> ink_ >> x_ >> y_ >> angle_ >> ret_;
 }
 
 void AutoStampCmd::Ser()

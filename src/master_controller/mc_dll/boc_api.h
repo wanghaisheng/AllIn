@@ -1,4 +1,4 @@
-#ifndef CONTROLLER_BOC_API_H_
+ï»¿#ifndef CONTROLLER_BOC_API_H_
 #define CONTROLLER_BOC_API_H_
 
 #include <string>
@@ -12,11 +12,11 @@
 
 namespace MC {
 
-// Í³Ò»Òì²½Í¨Öª¶ÔÏó
+// ç»Ÿä¸€å¼‚æ­¥é€šçŸ¥å¯¹è±¡
 class MASTERCTRL_API NotifyResult {
 public:
     virtual void Notify(
-        ErrorCode ec,               // ¾ßÌå´¦Àí½á¹û
+        ErrorCode ec,               // å…·ä½“å¤„ç†ç»“æœ
         std::string data1 = "",
         std::string data2 = "",
         std::string ctx1 = "",
@@ -25,12 +25,12 @@ public:
     virtual ~NotifyResult() {}
 };
 
-// ÖĞĞĞAPI
+// ä¸­è¡ŒAPI
 class MASTERCTRL_API BOCApi: public BaseAPI {
 public:
     static BOCApi* GetInst() {
         if (NULL == inst_) {
-            inst_ = new (std::nothrow) MC::BOCApi("ÖĞĞĞ");
+            inst_ = new (std::nothrow) MC::BOCApi("ä¸­è¡Œ");
         }
 
         return inst_;
@@ -58,7 +58,7 @@ private:
         int               angle;
         ret = IdentifyImage(
             "K:\\pj\\src\\master_controller\\bin\\cut.jpg",
-            "»ª¶«ÈıÊ¡Ò»ÊĞ",
+            "åä¸œä¸‰çœä¸€å¸‚",
             out_model_type,
             voucher_no,
             trace_no,
@@ -68,38 +68,38 @@ private:
     }
 
 private:
-    static MC::BOCApi* inst_;  // µ¥Àı
+    static MC::BOCApi* inst_;  // å•ä¾‹
 
 public:
-    // »ñÈ¡ÓÃÓ¡»ú±àºÅ
+    // è·å–ç”¨å°æœºç¼–å·
     void QueryMachine(NotifyResult* notify);
 
-    // ÉèÖÃÓ¡¿Ø»ú±àºÅ
+    // è®¾ç½®å°æ§æœºç¼–å·
     void SetMachine(const std::string& sn, NotifyResult* notify);
 
-    // ³õÊ¼»¯ÓÃÓ¡»ú
-    // key   --- ÓÃÓ¡»úÈÏÖ¤Âë
+    // åˆå§‹åŒ–ç”¨å°æœº
+    // key   --- ç”¨å°æœºè®¤è¯ç 
     void InitMachine(std::string key, NotifyResult* notify);
 
-    // °ó¶¨MACµØÖ·
-    // mac   --- ´ı°ó¶¨MACµØÖ·
+    // ç»‘å®šMACåœ°å€
+    // mac   --- å¾…ç»‘å®šMACåœ°å€
     void BindMAC(std::string mac, NotifyResult* notify);
 
-    // ½â°óMACµØÖ·
-    // mac   --- ´ı½â°óMACµØÖ·, ¸ÃMACµØÖ·Ó¦ÔÚÒÑ°ó¶¨MACµØÖ·ÁĞ±íÖĞ
+    // è§£ç»‘MACåœ°å€
+    // mac   --- å¾…è§£ç»‘MACåœ°å€, è¯¥MACåœ°å€åº”åœ¨å·²ç»‘å®šMACåœ°å€åˆ—è¡¨ä¸­
     void UnbindMAC(std::string mac, NotifyResult* notify);
 
-    // ×¼±¸ÓÃÓ¡
-    // stamp_num    --- Ó¡ÕÂºÅ(1-6)
-    // timeout      --- ½øÖ½ÃÅ³¬Ê±Î´¹Ø±Õ(Ãë)
+    // å‡†å¤‡ç”¨å°
+    // stamp_num    --- å°ç« å·(1-6)
+    // timeout      --- è¿›çº¸é—¨è¶…æ—¶æœªå…³é—­(ç§’)
     void PrepareStamp(int stamp_num, int timeout, NotifyResult* notify);
 
-    // ²éÑ¯½øÖ½ÃÅ×´Ì¬
+    // æŸ¥è¯¢è¿›çº¸é—¨çŠ¶æ€
     void QueryPaperDoor(NotifyResult* notify);
 
-    // ÅÄÕÕ
-    // ori_dpi      --- Ô­Ê¼Í¼ÏñDPI
-    // cut_dpi      --- ¼ôÇĞºóÍ¼ÏñDPI
+    // æ‹ç…§
+    // ori_dpi      --- åŸå§‹å›¾åƒDPI
+    // cut_dpi      --- å‰ªåˆ‡åå›¾åƒDPI
     void Snapshot(
         int ori_dpi, 
         int cut_dpi, 
@@ -107,19 +107,19 @@ public:
         const std::string& cut_path,
         NotifyResult* notify);
 
-    // ºÏ³ÉÕÕÆ¬
+    // åˆæˆç…§ç‰‡
     void MergePhoto(
         const std::string& photo1, 
         const std::string& photo2,
         const std::string& merged,
         NotifyResult* notify);
 
-    // °æÃæ¡¢ÑéÖ¤ÂëÊ¶±ğ
+    // ç‰ˆé¢ã€éªŒè¯ç è¯†åˆ«
     void RecognizeImage(
         const std::string& img,
         NotifyResult* notify);
 
-    // ÒªËØÊ¶±ğ
+    // è¦ç´ è¯†åˆ«
     void IdentifyElement(
         const std::string& path,
         int x,
@@ -129,67 +129,68 @@ public:
         int angle_,
         NotifyResult* notify);
 
-    // ÆÕÍ¨ÓÃÓ¡
+    // æ™®é€šç”¨å°
     void OrdinaryStamp(
         const std::string& task,
         const std::string& voucher, 
         int num, 
+        int ink,
         int x, 
         int y, 
         int angle, 
         NotifyResult* notify);
 
-    // ×Ô¶¯ÓÃÓ¡
+    // è‡ªåŠ¨ç”¨å°
     void AutoStamp(
         const std::string& task,
         const std::string& voucher, 
         int num, 
         NotifyResult* notify);
 
-    // ½áÊøÓÃÓ¡
+    // ç»“æŸç”¨å°
     void FinishStamp(
         const std::string& task, 
         NotifyResult* notify);
 
-    // ÊÍ·ÅÓ¡¿Ø»ú
-    // ½âËøÓ¡¿ØÒÇ, ¿ÉÒÔÔÚÈÎÒâÊ±¿Ìµ÷ÓÃ
+    // é‡Šæ”¾å°æ§æœº
+    // è§£é”å°æ§ä»ª, å¯ä»¥åœ¨ä»»æ„æ—¶åˆ»è°ƒç”¨
     void ReleaseStamp(
         const std::string& machine, 
         NotifyResult* notify);
 
-    // »ñÈ¡´íÎóĞÅÏ¢
+    // è·å–é”™è¯¯ä¿¡æ¯
     void GetError(
         int err_code, 
         NotifyResult* notify);
 
-    // Ğ£×¼Ó¡ÕÂ
-    // num      --- Ó¡ÕÂ¿¨²ÛºÅ, ´Ó1¿ªÊ¼
+    // æ ¡å‡†å°ç« 
+    // num      --- å°ç« å¡æ§½å·, ä»1å¼€å§‹
     void CalibrateMachine(
         int num, 
         NotifyResult* notify);
 
-    // Ó¡ÕÂ×´Ì¬²éÑ¯
+    // å°ç« çŠ¶æ€æŸ¥è¯¢
     void QueryStampers(NotifyResult* notify);
 
-    // °²È«ÃÅ×´Ì¬²éÑ¯
+    // å®‰å…¨é—¨çŠ¶æ€æŸ¥è¯¢
     void QuerySafeDoor(NotifyResult* notify);
 
-    // ¿ª¹Ø°²È«ÃÅ(µç×ÓËø)
-    // operation        --- 0--¹Ø, 1--¿ª
-    // timeout          --- ³¬Ê±ÈÔÎ´¹Ø±Õ°²È«ÃÅ, ĞèÃù·äÃùÆ÷, µ¥Î»:Ãë
+    // å¼€å…³å®‰å…¨é—¨(ç”µå­é”)
+    // operation        --- 0--å…³, 1--å¼€
+    // timeout          --- è¶…æ—¶ä»æœªå…³é—­å®‰å…¨é—¨, éœ€é¸£èœ‚é¸£å™¨, å•ä½:ç§’
     void OperateSafeDoor(int operation, int timeout, NotifyResult* notify);
 
-    // ¿ª¹Ø·äÃùÆ÷
-    // operation        --- 0--¹Ø, 1--¿ª
+    // å¼€å…³èœ‚é¸£å™¨
+    // operation        --- 0--å…³, 1--å¼€
     void OperateBeep(int operation, NotifyResult* notify);
 
-    // ¿¨²ÛÊıÁ¿²éÑ¯
+    // å¡æ§½æ•°é‡æŸ¥è¯¢
     void QuerySlot(NotifyResult* notify);
 
-    // ±¨¾¯Æ÷²Ù×÷
+    // æŠ¥è­¦å™¨æ“ä½œ
     void OperateAlarm(int alarm, int ctrl, NotifyResult* notify);
 
-    // ²éÑ¯ÒÑ°ó¶¨MACµØÖ·
+    // æŸ¥è¯¢å·²ç»‘å®šMACåœ°å€
     void QueryMAC(NotifyResult* notify);
 
 private:

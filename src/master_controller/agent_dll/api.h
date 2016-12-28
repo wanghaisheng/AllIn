@@ -18,95 +18,95 @@
 extern "C"{
 #endif
 
-// »ñÈ¡Ó¡¿ØÒÇ±àºÅ
+// è·å–å°æ§ä»ªç¼–å·
 MASTERCTRL_AGENT_API int QueryMachine(
     std::string& sn);
 
-// ÉèÖÃÓ¡¿Ø»ú±àºÅ
+// è®¾ç½®å°æ§æœºç¼–å·
 MASTERCTRL_AGENT_API int SetMachine(
     const std::string& sn);
 
-// ³õÊ¼»¯Ó¡¿Ø»ú
+// åˆå§‹åŒ–å°æ§æœº
 MASTERCTRL_AGENT_API int InitMachine(
     const std::string& key);
 
-// ²éÑ¯MACµØÖ·
+// æŸ¥è¯¢MACåœ°å€
 MASTERCTRL_AGENT_API int QueryMAC(
     std::string& mac1, 
     std::string& mac2);
 
-// ¹¦ÄÜ:     °ó¶¨MACµØÖ·
+// åŠŸèƒ½:     ç»‘å®šMACåœ°å€
 //
-// ÊäÈë²ÎÊı:
-//		const std::string & mac     --- ´ı°ó¶¨MACµØÖ·
+// è¾“å…¥å‚æ•°:
+//		const std::string & mac     --- å¾…ç»‘å®šMACåœ°å€
 //
-// Êä³ö²ÎÊı:
+// è¾“å‡ºå‚æ•°:
 //		
-// ·µ»ØÖµ:
+// è¿”å›å€¼:
 MASTERCTRL_AGENT_API int BindMAC(
     const std::string& mac);
 
-// ¹¦ÄÜ:     ½â°óMACµØÖ·
+// åŠŸèƒ½:     è§£ç»‘MACåœ°å€
 //
-// ÊäÈë²ÎÊı:
-//		const std::string & mac     --- ´ı½â°óMACµØÖ·
+// è¾“å…¥å‚æ•°:
+//		const std::string & mac     --- å¾…è§£ç»‘MACåœ°å€
 //
-// Êä³ö²ÎÊı:
+// è¾“å‡ºå‚æ•°:
 //		
-// ·µ»ØÖµ:
+// è¿”å›å€¼:
 MASTERCTRL_AGENT_API int UnbindMAC(
     const std::string& mac);
 
-// ¹¦ÄÜ:     ×¼±¸ÓÃÓ¡
+// åŠŸèƒ½:     å‡†å¤‡ç”¨å°
 //
-// ÊäÈë²ÎÊı:
-//		char stamp_num          --- ÕÂ²ÛºÅ, ´Ó1¿ªÊ¼
-//		int timeout             --- ½øÖ½ÃÅ³¬Ê±Î´¹Ø±ÕÊ±¼ä, µ¥Î»Ãë
+// è¾“å…¥å‚æ•°:
+//		char stamp_num          --- ç« æ§½å·, ä»1å¼€å§‹
+//		int timeout             --- è¿›çº¸é—¨è¶…æ—¶æœªå…³é—­æ—¶é—´, å•ä½ç§’
 //
-// Êä³ö²ÎÊı:
-//		std::string & task_id   --- ÈÎÎñºÅ, ½öÄÜÊ¹ÓÃÒ»´Î
+// è¾“å‡ºå‚æ•°:
+//		std::string & task_id   --- ä»»åŠ¡å·, ä»…èƒ½ä½¿ç”¨ä¸€æ¬¡
 //
-// ·µ»ØÖµ:
+// è¿”å›å€¼:
 MASTERCTRL_AGENT_API int PrepareStamp(
     char            stamp_num, 
     int             timeout, 
     std::string&    task_id);
 
-// ¹¦ÄÜ:     ²éÑ¯½øÖ½ÃÅ×´Ì¬
+// åŠŸèƒ½:     æŸ¥è¯¢è¿›çº¸é—¨çŠ¶æ€
 //
-// ÊäÈë²ÎÊı:
+// è¾“å…¥å‚æ•°:
 //
-// Êä³ö²ÎÊı:
-//		int & status        --- 0-¹Ø, 1-¿ª
+// è¾“å‡ºå‚æ•°:
+//		int & status        --- 0-å…³, 1-å¼€
 //
-// ·µ»ØÖµ:
+// è¿”å›å€¼:
 MASTERCTRL_AGENT_API int QueryPaper(
     int& status);
 
-// ÅÄÕÕ
+// æ‹ç…§
 MASTERCTRL_AGENT_API int Snapshot(
     int                 ori_dpi, 
     int                 cut_dpi, 
     const std::string&  ori_path, 
     const std::string&  cut_path);
 
-// ºÏ³ÉÕÕÆ¬
+// åˆæˆç…§ç‰‡
 MASTERCTRL_AGENT_API int MergePhoto(
     const std::string& p1, 
     const std::string& p2,
     const std::string& merged);
 
-// °æÃæ¡¢ÑéÖ¤ÂëÊ¶±ğ
-// path         --- ÇĞÍ¼Â·¾¶
-// template_id  --- Ä£°åID
-// trace_num    --- ×·ËİÂë
+// ç‰ˆé¢ã€éªŒè¯ç è¯†åˆ«
+// path         --- åˆ‡å›¾è·¯å¾„
+// template_id  --- æ¨¡æ¿ID
+// trace_num    --- è¿½æº¯ç 
 MASTERCTRL_AGENT_API int RecognizeImage(
     const std::string&  path, 
     std::string&        template_id, 
     std::string&        trace_num);
 
-// ÒªËØÊ¶±ğ
-// path         --- ÇĞÍ¼Â·¾¶
+// è¦ç´ è¯†åˆ«
+// path         --- åˆ‡å›¾è·¯å¾„
 MASTERCTRL_AGENT_API int IdentifyElement(
     const           std::string& path, 
     int             x, 
@@ -116,70 +116,71 @@ MASTERCTRL_AGENT_API int IdentifyElement(
     int             angle, 
     std::string&    result);
 
-// ÆÕÍ¨ÓÃÓ¡
+// æ™®é€šç”¨å°
 MASTERCTRL_AGENT_API int OrdinaryStamp(
     const std::string&  task,
     const std::string&  voucher,
     int                 num, 
-    int                 x,          // ¸ÇÕÂÎ»ÖÃx×ø±ê, Ô­Ê¼Í¼Æ¬ÖĞµÄÏñËØ
-    int                 y,          // ¸ÇÕÂÎ»ÖÃy×ø±ê, Ô­Ê¼Í¼Æ¬ÖĞµÄÏñËØ
-    int                 angle);     // Ó¡ÕÂĞı×ª½Ç¶È, ´óÓÚµÈÓÚ0ÇÒĞ¡ÓÚ360¶È
+    int                 ink,
+    int                 x,          // ç›–ç« ä½ç½®xåæ ‡, åŸå§‹å›¾ç‰‡ä¸­çš„åƒç´ 
+    int                 y,          // ç›–ç« ä½ç½®yåæ ‡, åŸå§‹å›¾ç‰‡ä¸­çš„åƒç´ 
+    int                 angle);     // å°ç« æ—‹è½¬è§’åº¦, å¤§äºç­‰äº0ä¸”å°äº360åº¦
 
-// ×Ô¶¯ÓÃÓ¡
+// è‡ªåŠ¨ç”¨å°
 MASTERCTRL_AGENT_API int AutoStamp(
     const std::string&  task,
     const std::string&  voucher, 
     int                 num);
 
-// ½áÊøÓÃÓ¡
+// ç»“æŸç”¨å°
 MASTERCTRL_AGENT_API int FinishStamp(
     const std::string& task);
 
-// ÊÍ·ÅÓ¡¿Ø»ú
+// é‡Šæ”¾å°æ§æœº
 MASTERCTRL_AGENT_API int ReleaseStamp(
     const std::string& machine);
 
-// Ó¡ÕÂĞ£×¼
-// slot     --- ¿¨²ÛºÅ, ´Ó1¿ªÊ¼
+// å°ç« æ ¡å‡†
+// slot     --- å¡æ§½å·, ä»1å¼€å§‹
 MASTERCTRL_AGENT_API int Calibrate(
     int slot);
 
-// ²éÑ¯Ó¡ÕÂ×´Ì¬
-// status   --- 0-ÎŞÕÂ, 1-ÓĞÕÂ, Èç"001101"
+// æŸ¥è¯¢å°ç« çŠ¶æ€
+// status   --- 0-æ— ç« , 1-æœ‰ç« , å¦‚"001101"
 MASTERCTRL_AGENT_API int QueryStampers(
     int* status);
 
-// °²È«ÃÅ×´Ì¬
-// status   --- 0-¹Ø,1-¿ª
+// å®‰å…¨é—¨çŠ¶æ€
+// status   --- 0-å…³,1-å¼€
 MASTERCTRL_AGENT_API int QuerySafe(
     int& status);
 
-// ¿ª¹Ø°²È«ÃÅ
-// ctrl     --- 0 - ¹Ø, 1 - ¿ª
+// å¼€å…³å®‰å…¨é—¨
+// ctrl     --- 0 - å…³, 1 - å¼€
 MASTERCTRL_AGENT_API int ControlSafe(
     int ctrl);
 
-// ·äÃùÆ÷¿ª¹Ø
-// ctrl     --- 0 - ¹Ø, 1 - ¿ª
+// èœ‚é¸£å™¨å¼€å…³
+// ctrl     --- 0 - å…³, 1 - å¼€
 MASTERCTRL_AGENT_API int ControlBeep(
     int ctrl);
 
-// ±¨¾¯Æ÷¿ª¹Ø
-//alarm     --- 0(¿ªÃÅ±¨¾¯Æ÷)
-//              1(Õñ¶¯±¨¾¯Æ÷)
-//switches  --- ±¨¾¯Æ÷¿ª¹Ø
-//              1(¿ªÆô);
-//              0(¹Ø±Õ)
+// æŠ¥è­¦å™¨å¼€å…³
+//alarm     --- 0(å¼€é—¨æŠ¥è­¦å™¨)
+//              1(æŒ¯åŠ¨æŠ¥è­¦å™¨)
+//switches  --- æŠ¥è­¦å™¨å¼€å…³
+//              1(å¼€å¯);
+//              0(å…³é—­)
 MASTERCTRL_AGENT_API int ControlAlarm(
     int alarm, 
     int switches);
 
-// ¿¨²ÛÊıÁ¿²éÑ¯
-// num      --- Êµ¼ÊÓ¡ÕÂÊı
+// å¡æ§½æ•°é‡æŸ¥è¯¢
+// num      --- å®é™…å°ç« æ•°
 MASTERCTRL_AGENT_API int QuerySlot(
     int& num);
 
-// »ñÈ¡ÏêÏ¸´íÎóĞÅÏ¢
+// è·å–è¯¦ç»†é”™è¯¯ä¿¡æ¯
 MASTERCTRL_AGENT_API int GetError(
     int             err_code,
     std::string&    err_msg,
