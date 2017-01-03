@@ -20,8 +20,7 @@ std::string MC::TaskMgr::GeneTask()
 {
     boost::lock_guard<boost::mutex> lk(task_mtx_);
     std::string task_id = GenerateGUID();
-//    task_map_.insert(std::make_pair(task_id, MC::TS_ALIVE));
-    task_map_.insert(std::pair(task_id, MC::TS_ALIVE));
+    task_map_.insert(std::make_pair(task_id, MC::TS_ALIVE));
     return task_id;
 }
 

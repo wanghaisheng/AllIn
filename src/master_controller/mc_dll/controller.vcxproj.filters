@@ -57,6 +57,9 @@
     <ClInclude Include="parse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="img_pro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -86,10 +89,10 @@
     <ClCompile Include="task_mgr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="base_api.cpp">
+    <ClCompile Include="parse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="parse.cpp">
+    <ClCompile Include="img_pro.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

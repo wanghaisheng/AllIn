@@ -4,8 +4,8 @@
 #include <vector>
 #include "event_cpu.h"
 #include "tool.h"
-#include "boc_api.h"
 #include "task_mgr.h"
+#include "boc_api.h"
 
 MC::BOCApi* MC::BOCApi::inst_ = NULL;
 
@@ -622,7 +622,7 @@ public:
         }
 
         // 纠偏去黑边
-        ret = MC::CutImage(ori_, cut_);
+        ret = MC::ImgPro::GetInst()->CutImage(ori_, cut_);
         if (0 != ret) {
             Log::WriteLog(LL_ERROR, "SnapshotEv::SpecificExecute->纠偏去黑边失败, er: %d", ret);
             ec = MC::EC_PROCESS_IMG_FAIL;
@@ -700,7 +700,7 @@ public:
             goto NT;
 
         // 中行-照片合成
-        int ret = MC::MergeImage(
+        int ret = MC::ImgPro::GetInst()->MergeImage(
             photo1_,
             photo2_,
             merged_);
@@ -770,7 +770,7 @@ public:
 
         // 中行-版面验证码识别
         // 模板类型、角度、用印点识别
-        int ret = MC::GetModelTypeAnglePoint(img_, model_type, angle, x, y);
+        int ret = MC::ImgPro::GetInst()->GetModelTypeAnglePoint(img_, model_type, angle, x, y);
         if (0 != ret) {
             Log::WriteLog(LL_ERROR, "MC::RecognitionEv::SpecificExecute->模版类型角度识别失败, er: %d",
                           ret);
@@ -779,7 +779,7 @@ public:
         }
 
         int out_angle = 0;
-        ret = MC::IdentifyImage(
+        ret = MC::ImgPro::GetInst()->IdentifyImage(
             img_,
             model_type,
             out_model_type,
@@ -859,7 +859,7 @@ public:
             goto NT;
 
         // 中行-要素识别
-        int ret = MC::IdentifyArea(path_, x_, y_, width_, height_, angle_, result);
+        int ret = MC::ImgPro::GetInst()->IdentifyArea(path_, x_, y_, width_, height_, angle_, result);
         if (0 != ret) {
             ec = MC::EC_ELEMENT_FAIL;
             goto NT;
@@ -940,7 +940,7 @@ public:
         MC::TaskState ts = MC::TaskMgr::GetInst()->QueryTaskState(task_);
         if (ts ==  MC::TS_ALIVE) {
             // 将原图用印坐标(像素)转换为设备用印坐标(毫米)
-            MC::Point* ptSeal = MC::GetSealCoord(x_, y_);
+            MC::Point* ptSeal = MC::ImgPro::GetInst()->GetSealCoord(x_, y_);
             unsigned int rfid;
             int ret = GetStamperID(num_ - 1, rfid);
             if (0 != ret) {

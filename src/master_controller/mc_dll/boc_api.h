@@ -6,6 +6,7 @@
 #include <boost/timer.hpp>
 #include <boost/asio.hpp>
 #include "common_definitions.h"
+#include "img_pro.h"
 #include "base_api.h"
 
 #pragma warning(disable:4251)
@@ -41,8 +42,8 @@ private:
         int out_x;
         int out_y;
         double out_angle;
-        int ret = STSeachSealPoint(
-            "K:\\pj\\src\\master_controller\\bin\\ori.jpg",
+        int ret = MC::ImgPro::GetInst()->STSeachSealPoint(
+            "C:\\pj\\bin\\w32d\\ori.jpg",
             100,
             100,
             0,
@@ -56,8 +57,8 @@ private:
         int               x;
         int               y;
         int               angle;
-        ret = IdentifyImage(
-            "K:\\pj\\src\\master_controller\\bin\\cut.jpg",
+        ret = MC::ImgPro::GetInst()->IdentifyImage(
+            "C:\\pj\\bin\\w32d\\cut.jpg",
             "华东三省一市",
             out_model_type,
             voucher_no,

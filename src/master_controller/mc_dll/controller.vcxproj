@@ -101,6 +101,7 @@
     <ClInclude Include="boc_api.h" />
     <ClInclude Include="event_cpu.h" />
     <ClInclude Include="ImgProcAndReco.h" />
+    <ClInclude Include="img_pro.h" />
     <ClInclude Include="parse.h" />
     <ClInclude Include="RZCamera.h" />
     <ClInclude Include="stdafx.h" />
@@ -116,11 +117,11 @@
     <ClCompile Include="..\common\log.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="base_api.cpp" />
     <ClCompile Include="base_event.cpp" />
     <ClCompile Include="boc_api.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="event_cpu.cpp" />
+    <ClCompile Include="img_pro.cpp" />
     <ClCompile Include="parse.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
