@@ -148,8 +148,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\common\common_definitions.cpp" />
-    <ClCompile Include="custom_label.cpp" />
-    <ClCompile Include="GeneratedFiles\Debug\moc_custom_label.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_notify_thread.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -223,10 +221,6 @@
   <ItemGroup>
     <ClInclude Include="common.h" />
     <ClInclude Include="parse.h" />
-    <CustomBuild Include="custom_label.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-    </CustomBuild>
     <ClInclude Include="GeneratedFiles\ui_qtdemo.h" />
     <ClInclude Include="message.h" />
     <CustomBuild Include="notify_thread.h">

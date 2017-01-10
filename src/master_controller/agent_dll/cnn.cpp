@@ -149,7 +149,7 @@ bool MC::Cnn::PushCmd(BaseCmd* cmd)
 
 bool MC::Cnn::RecvBuf(TCHAR* buf, int buf_len, DWORD* actual_read)
 {
-    bool fSuccess;
+    bool fSuccess = true;
     if (MC::CT_PIPE == Config::GetInst()->conn_type_) {      // 收管道消息
         fSuccess = ReadFile(
             pipe_,                          // 句柄
@@ -161,9 +161,9 @@ bool MC::Cnn::RecvBuf(TCHAR* buf, int buf_len, DWORD* actual_read)
         unsigned int priority;
         boost::interprocess::message_queue::size_type recvd_size;
         try {
-            heart_mtx_.lock();
-            fSuccess = recv_mq_->try_receive(buf, buf_len, recvd_size, priority);
-            heart_mtx_.unlock();
+            //heart_mtx_.lock();
+            /*fSuccess = */recv_mq_->receive(buf, buf_len, recvd_size, priority);
+            //heart_mtx_.unlock();
 
             *actual_read = recvd_size;
         } catch (boost::interprocess::interprocess_exception &ex) {
@@ -331,12 +331,12 @@ int MC::Cnn::WriteMQ(BaseCmd* cmd)
 
             // 过滤心跳消息
             if (cmd->ct_ != CT_HEART_BEAT)
-                Log::WriteLog(LL_DEBUG, "AsynAPISet::WriteMQ->Cmd: %s, 消息大小: %d, 发送结果: %s",
+                Log::WriteLog(LL_DEBUG, "Cnn::WriteMQ->Cmd: %s, 消息大小: %d, 发送结果: %s",
                     cmd_des[cmd->ct_].c_str(),
                     msg_size,
                     succ ? "成功" : "失败");
         } else {
-            Log::WriteLog(LL_ERROR, "AsynAPISet::WriteMQ->连接通道断开");
+            Log::WriteLog(LL_ERROR, "Cnn::WriteMQ->连接通道断开");
             return MC::EC_CON_DISCONN;
         }
     } catch (boost::interprocess::interprocess_exception &ex) {
@@ -386,7 +386,7 @@ void MC::Cnn::HeartBeatingFunc()
         }
             break;
         case WAIT_TIMEOUT: {    // 超时未收到心跳响应
-            Log::WriteLog(LL_DEBUG, "AsynAPISet::HeartBeatingFunc->timeout heart beating");
+            Log::WriteLog(LL_DEBUG, "AsynAPISet::HeartBeatingFunc->timeout");
 
             if (ProcessExisted(MC::SERVER_NAME))
                 continue;
@@ -433,7 +433,6 @@ void MC::Cnn::HeartBeatingFunc()
         }
     }
 }
-
 
 bool MC::Cnn::StartSvc(const std::string& svc)
 {

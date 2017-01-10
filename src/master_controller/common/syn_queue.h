@@ -2,33 +2,46 @@
 #define CONTROLLER_SYN_QUEUE_H_
 
 #include <list>
+#include <windows.h>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
 #include <boost/thread/condition_variable.hpp>
 
 namespace MC { // MC for Master Controller
 
-//åŒæ­¥çº¿ç¨‹å®‰å…¨é˜Ÿåˆ—
+//Í¬²½Ïß³Ì°²È«¶ÓÁĞ
 template <typename T>
 class SynQueue {
 
 public:
+    SynQueue() : vista_better_(false) {
+// #if (!vista_better_)
+// #define _XP
+// #endif
+    }
+
     ~SynQueue() {
         queue_list_.clear();
     }
 
-    // é˜»å¡ç­‰å¾…æœ‰æ•°æ®è¯»å‡º.
-    // è¿”å›å€¼:
-    //      0 --- æœ‰æ•°æ®
-    //      1 --- æ— æ•°æ®
-    //      -1 --- è¶…æ—¶
+    // ×èÈûµÈ´ıÓĞÊı¾İ¶Á³ö.
+    // ·µ»ØÖµ:
+    //      0 --- ÓĞÊı¾İ
+    //      1 --- ÎŞÊı¾İ
+    //      -1 --- ³¬Ê±
     int WaitForRead(unsigned long milliseconds) {
         boost::unique_lock<boost::mutex> lk(mutex_);
-        if (!queue_list_.empty())
-            return 0;
+//         if (!queue_list_.empty())
+//             return 0;
 
-        if (boost::cv_status::timeout == cv_.wait_for(lk, boost::chrono::milliseconds(milliseconds)))
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(cv_, milliseconds))
             return -1;
+#else
+        if (boost::cv_status::timeout == 
+            cv_.wait_for(lk, boost::chrono::milliseconds(milliseconds)))
+            return -1;
+#endif
 
         if (queue_list_.empty())
             return 1;
@@ -39,7 +52,11 @@ public:
     bool Push(const T& val) {
         boost::lock_guard<boost::mutex> lk(mutex_);
         queue_list_.push_back(val);
+#ifdef _XP
+        SetEvent(cv_);
+#else
         cv_.notify_all();
+#endif
         return true;
     }
 
@@ -61,7 +78,14 @@ public:
 private:
     std::list<T> queue_list_;
     boost::mutex mutex_;
+
+    bool vista_better_;
+
+#ifdef _XP
+    HANDLE cv_;
+#else
     boost::condition_variable cv_;
+#endif
 };
 
 } //namespace MC

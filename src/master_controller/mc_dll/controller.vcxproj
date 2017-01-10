@@ -64,7 +64,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(droot)\dpd\bin\w32d\;$(droot)\bin\w32d\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ABC.STDZ.Device.STAMP.USBF60APID.lib;ABC.STDZ.Device.STAMP.SealLog.lib;ABC.STDZ.Device.STAMP.RZCamera.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ABC.STDZ.Device.STAMP.USBF60APID.lib;ABC.STDZ.Device.STAMP.SealLog.lib;ABC.STDZ.Device.STAMP.RZCamera.lib;ImageProcess.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <UACExecutionLevel>AsInvoker</UACExecutionLevel>
       <UACUIAccess>false</UACUIAccess>
     </Link>
@@ -101,6 +101,7 @@
     <ClInclude Include="boc_api.h" />
     <ClInclude Include="event_cpu.h" />
     <ClInclude Include="ImgProcAndReco.h" />
+    <ClInclude Include="ImgReco.h" />
     <ClInclude Include="img_pro.h" />
     <ClInclude Include="parse.h" />
     <ClInclude Include="RZCamera.h" />

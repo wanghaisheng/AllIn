@@ -411,6 +411,19 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
+        // check top-door
+        char doors[4] = { 0 };
+        int ret = FGetDoorsPresent(doors, sizeof(doors));
+        if (0 != ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        if (doors[3] == 1) {
+            ec = MC::EC_TOP_DOOR_OPEN;
+            goto NT;
+        }
+
         // 印控仪处于锁定状态下不能准备用印, 需要先解锁印控仪
         if (IsLocked()) {
             ec = MC::EC_MACHINE_LOCKED;
@@ -424,7 +437,7 @@ public:
         }
 
         // 设置推纸门开启后超时提示时间, 默认30秒
-        int ret = SetPaperDoor(timeout_);
+        ret = SetPaperDoor(timeout_);
         if (-1 == ret) {
             ec = MC::EC_DRIVER_FAIL;
             goto NT;
@@ -1300,6 +1313,8 @@ public:
         unsigned int rfid = 0;
         int ret = GetStamperID(num_ - 1, rfid);
         if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::CaliStamperEv::SpecificExecute->获取%d号章的RFID失败",
+                num_);
             ec = MC::EC_DRIVER_FAIL;
             goto NT;
         }

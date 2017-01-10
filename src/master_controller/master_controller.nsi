@@ -18,7 +18,7 @@ InstallDir $PROGRAMFILES\master_controller
 InstallDirRegKey HKLM "Software\NSIS_master_controller" "Install_Dir"
 
 ; Request application privileges for Windows Vista
-RequestExecutionLevel admin
+; RequestExecutionLevel admin
 
 ;--------------------------------
 
@@ -77,14 +77,18 @@ Section "Uninstall"
   DeleteRegKey HKLM SOFTWARE\NSIS_master_controller
 
   ; Remove files and uninstaller
-  Delete $INSTDIR\uninstall.exe
-  Delete /r $INSTDIR\*
+  Delete $INSTDIR\uninstall.exe  
+  Delete $INSTDIR\*
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\master_controller\*.*"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\master_controller"
+  RMDir /r "$INSTDIR\imageformats"
+  RMDir /r "$INSTDIR\Log"
+  RMDir /r "$INSTDIR\Model_Image"
   RMDir "$INSTDIR"
+  
 
 SectionEnd

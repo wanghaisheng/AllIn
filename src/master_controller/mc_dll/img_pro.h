@@ -8,13 +8,13 @@
 #include <string>
 #include "parse.h"
 
+enum FontLib {
+    image = 0,
+    eng = 1
+};
+
 namespace MC {
     class ImgPro {
-
-        enum FontLib {
-            image = 0,
-            eng = 1
-        };
 
         // function pointer
         typedef DWORD (*my_SearchImgStampPointEx)(
@@ -165,7 +165,7 @@ namespace MC {
                     recog_model_ptr_(NULL), model_code_ptr_(NULL), recog_area_ptr_(NULL) {
             std::string path;
             GetMoudulePath(path);
-            path = path.append("ABC.STDZ.Device.STAMP.ImgPro.dll");
+            path = path.append("ImageProcess.dll");
             dllinst_ = LoadLibrary(path.c_str());
             if (dllinst_ != NULL) {
                 // dynamically loads dll, gets entry point address

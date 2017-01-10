@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "log.h"
 #include "img_pro.h"
+#include "ImgProcAndReco.h"
 
 MC::ImgPro* MC::ImgPro::g_inst_ = NULL;
 
@@ -216,19 +217,42 @@ namespace MC {
             int&                x,
             int&                y,
             int&                angle) {
-        if (model_code_ptr_ != NULL) {
-            return model_code_ptr_(
-                    cut_img.c_str(),
-                    (char*)model_type.c_str(),
-                    (char*)out_model_type.c_str(),
-                    (char*)voucher_no.c_str(),
-                    (char*)trace_no.c_str(),
-                    x,
-                    y,
-                    angle);
-        }
+//         if (model_code_ptr_ != NULL) {
+//             return model_code_ptr_(
+//                     cut_img.c_str(),
+//                     (char*)model_type.c_str(),
+//                     (char*)out_model_type.c_str(),
+//                     (char*)voucher_no.c_str(),
+//                     (char*)trace_no.c_str(),
+//                     x,
+//                     y,
+//                     angle);
+//         }
+// 
+//         return MC::EC_FAIL;
 
-        return MC::EC_FAIL;
+        char out_mo_type[256] = { 0 };
+        char out_Vocher_Number[256] = { 0 };
+        char out_trace_code[256] = { 0 };
+        return RecoModelTypeAndCodeAndAngleAndPointByImg(
+            cut_img.c_str(), 
+            (char*)model_type.c_str(),
+            out_mo_type,
+            out_Vocher_Number, 
+            out_trace_code, 
+            x, 
+            y, 
+            angle);
+
+        return RecoModelTypeAndCodeAndAngleAndPointByImg(
+            cut_img.c_str(),
+            (char*)model_type.c_str(),
+            (char*)out_model_type.c_str(),
+            (char*)voucher_no.c_str(),
+            (char*)trace_no.c_str(),
+            x,
+            y,
+            angle);
     }
 
     int ImgPro::IdentifyArea(

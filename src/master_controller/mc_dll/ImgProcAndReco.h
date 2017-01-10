@@ -33,6 +33,7 @@ MYLIBDLL DWORD  GetABCSealCheckStampPoint(const char* in_cut_img_name,int idx,in
 MYLIBDLL DWORD  GetABCSealCheckStampPointEx(const char* in_cut_img_name,int *x,int *y,int *outangle);
 MYLIBDLL DWORD	CutImgEdge(const char* in_src_img_name,char *out_dest_img_name);
 MYLIBDLL DWORD	CutImgEdgeEx(const char* in_src_img_name,char *out_dest_img_name);
+MYLIBDLL DWORD	GetCutImgExSize(const char* in_src_img_name,int &width,int &height,double &outangle);
 MYLIBDLL DWORD	AdjustImgByRotate(const char* in_src_img_name,char *out_dest_img_name);
 MYLIBDLL DWORD	CutImgByRectArea(const char* in_src_img_name,int x,int y,int width,int height,char *out_dest_img_name);
 MYLIBDLL DWORD	GetLastCutImgAngle(double &out_angle);
@@ -42,8 +43,11 @@ MYLIBDLL DWORD  GetModelThresholdByImgModel(const char *in_model_type,double &ou
 MYLIBDLL DWORD  GetModelVocherNumberAreaByImgModel(const char *in_model_type,int &left,int &top,int &right,int &bottom);
 MYLIBDLL DWORD  SearchImgStampPoint(const char* in_src_img_name,int in_x,int in_y,double in_angle,
 	int &out_x,int &out_y,int &out_angle);
+MYLIBDLL DWORD  SearchImgStampPointForPSBC(const char* in_src_img_name,int in_x,int in_y,double in_angle,
+	int &out_x,int &out_y,int &out_angle);
 MYLIBDLL DWORD   SearchImgStampPointEx(const char* in_src_img_name,int in_x,int in_y,double in_angle,
 	int &out_x,int &out_y,double &out_angle);
+MYLIBDLL DWORD   ConvertMM2Dpi(int mm,int dpi,int &outpix);
 MYLIBDLL DWORD	RecoImgRectArea(const char* in_dest_img_name,int left,int top,int right,int bottom,double threshold,char *ocrresult,FontLib lib= image);
 MYLIBDLL DWORD	RecoImg(const char* in_dest_img_name,char *ocrresult,FontLib lib= image);
 MYLIBDLL DWORD  ImgConvert(const char* in_src_img_name,const char* out_dest_img_name);
@@ -54,6 +58,7 @@ MYLIBDLL DWORD ResetImgSize(const char* src_file_name,int width,int height);
 MYLIBDLL DWORD RotateImg(const char* src_file_name,double in_angle,const char* out_dest_img_name);
 MYLIBDLL DWORD Merge2Imgs(const char* src_file_name1,const char* src_file_name2,const char* dst_file_name);
 MYLIBDLL DWORD CalcImgRate(const char* src_file_name,int dpi,double &rate_x,double &rate_y);
+MYLIBDLL DWORD Find2Circles(const char* src_file_name,char* outbuf);
 //******************************C#*************************
 MYLIBDLL int CS_RecoModelTypeByImg(const char* in_src_img_name,char *out_model_type);
 MYLIBDLL int CS_RecoModelTypeAndAngleByImg(const char* in_src_img_name,char *out_model_type,char *outangle);
@@ -66,9 +71,13 @@ MYLIBDLL int CS_RecoModelTypeAndCodeAndAngleAndPointByImg(const char* in_cut_img
 	char* out_Vocher_Number,char* out_trace_code,char* x,char* y,char* outangle );
 MYLIBDLL int CS_GetABCSealCheckStampPoint(const char* in_cut_img_name,char* idx,char* x,char* y,char* outangle);
 MYLIBDLL int CS_GetABCSealCheckStampPointEx(const char* in_cut_img_name,char* outbuf);
+MYLIBDLL int CS_SearchImgStampPointForPSBC(const char* in_src_img_name,char* in_x,char* in_y,char* in_angle,
+	char* out_x,char* out_y,char* out_angle);
+MYLIBDLL int CS_ConvertMM2Dpi(char* mm,char* dpi,char* outpix);
 MYLIBDLL int CS_GetModelThresholdByImgModel(const char *in_model_type,char* outshreshold);
 MYLIBDLL int CS_CutImgEdge(const char* in_src_img_name,char *out_dest_img_name);
 MYLIBDLL int CS_CutImgEdgeEx(const char* in_src_img_name,char *out_dest_img_name);
+MYLIBDLL int CS_GetCutImgExSize(const char* in_src_img_name,char* ch_width,char* ch_height,char* ch_outangle);
 MYLIBDLL int CS_AdjustImgByRotate(const char* in_src_img_name,char *out_dest_img_name);
 MYLIBDLL int CS_CutImgByRectArea(const char* in_src_img_name,char* x,char* y,char* width,char* height,char *out_dest_img_name);
 MYLIBDLL int CS_GetLastCutImgAngle(char *out_angle);
@@ -90,3 +99,4 @@ MYLIBDLL int CS_RotateImg(const char* src_file_name,char *in_angle,const char* o
 MYLIBDLL int CS_Merge2Imgs(const char* src_file_name1,const char* src_file_name2,const char* dst_file_name);
 MYLIBDLL int CS_IsExistsPaper(const char* src_file_name);
 MYLIBDLL int CS_CalcImgRate(const char* src_file_name,char* dpi,char* rate_x,char* rate_y);
+MYLIBDLL int CS_Find2Circles(const char* src_file_name,char* outbuf);

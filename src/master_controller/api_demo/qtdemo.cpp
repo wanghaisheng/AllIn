@@ -83,12 +83,12 @@ void QtDemo::HandleConnect(const char* path, unsigned int msg)
 {
     switch (msg) {
     case 0:
-        setWindowTitle("设备断开");
+        Info("设备断开");
         break;//设备断开连接，处理在回调函数
     case 1:
     {//设备连接	
         //更新界面
-        setWindowTitle("设备打开成功");
+        Info("设备打开成功");
     }
     break;
     default:
@@ -269,18 +269,18 @@ bool QtDemo::Init()
     consoleSink->set_formatter(logFmt);
 
     /* fs sink */
-    std::string prefix;
-    std::string log_file = "封闭式印控机V2.4_%Y-%m-%d_%H-%M-%S.%N.log";
-    bool err = base::FSUtility::GetMoudulePath(prefix);
-    auto fsSink = boost::log::add_file_log(
-        boost::log::keywords::file_name = err? prefix + log_file: log_file,
-        boost::log::keywords::rotation_size = 10 * 1024 * 1024,
-        boost::log::keywords::min_free_space = 30 * 1024 * 1024,
-        boost::log::keywords::open_mode = std::ios_base::app);
-    fsSink->set_formatter(logFmt);
-    fsSink->locked_backend()->auto_flush(true);
+//     std::string prefix;
+//     std::string log_file = "封闭式印控机V2.4_%Y-%m-%d_%H-%M-%S.%N.log";
+//     bool err = base::FSUtility::GetMoudulePath(prefix);
+//     auto fsSink = boost::log::add_file_log(
+//         boost::log::keywords::file_name = err? prefix + log_file: log_file,
+//         boost::log::keywords::rotation_size = 10 * 1024 * 1024,
+//         boost::log::keywords::min_free_space = 30 * 1024 * 1024,
+//         boost::log::keywords::open_mode = std::ios_base::app);
+//     fsSink->set_formatter(logFmt);
+//     fsSink->locked_backend()->auto_flush(true);
 
-    StartTimer(1000);
+/*    StartTimer(1000);*/
 
     InitDevControl(); //需要手动调用一次
     return true;
@@ -288,9 +288,6 @@ bool QtDemo::Init()
 
 QtDemo::~QtDemo()
 {
-    char cmd[256] = { 0 };
-    sprintf_s(cmd, "taskkill /f /in %s", "mc_exed.exe");
-    system(cmd);
 }
 
 /////////////////////////// 设备控制 ////////////////////////////////
@@ -542,7 +539,7 @@ void QtDemo::HandleABCCheck()
     std::string str = ui.le_stamper_idx_->text().toStdString();
     int ret = Calibrate(atoi(str.c_str()));
     if (0 != ret) {
-        return Info(QString::fromLocal8Bit("校准印章失败"));
+        return Info(QString::fromLocal8Bit("校准印章失败, er: ") + QString::number(ret));
     }
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("校准印章成功"), STATUS_TEXT);
@@ -780,6 +777,7 @@ void QtDemo::HandleCheckStamp()
         return;
     }
 
+    FOpenDev(NULL);
     unsigned int rfid;
     int ret = GetStamperID(para_.stamp_idx - 1, rfid);
 
@@ -971,6 +969,7 @@ void QtDemo::HandleStampReadStampers()
     if (!IsOpened())
         return;
 
+    FOpenDev(NULL);
     QRadioButton* btns[] =
     {
         ui.radio_stamper1_,

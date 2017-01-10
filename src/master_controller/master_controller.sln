@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mc_exe", "mc_exe\test_mc.vcxproj", "{94B236A6-DD31-420C-A1A1-960E56ADDBE0}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -13,11 +13,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "master_controller", "mc_dll\controller.vcxproj", "{C76E2513-23B0-449D-B2C6-DAD53574D771}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "serialization", "serialization\serialization.vcxproj", "{D96872C2-E024-4BD9-BC71-6EE5ADD2ABC1}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "agent_exe", "agent_exe\named_pipe_client.vcxproj", "{ECEC0486-79B1-4026-B13D-C7C480D8A454}"
-	ProjectSection(ProjectDependencies) = postProject
-		{42C17E54-4295-488D-B0E6-26A5E9E8F9D6} = {42C17E54-4295-488D-B0E6-26A5E9E8F9D6}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "USBControlF60", "..\USBControlF60_2.4\USBControlF60\USBControlF60.vcxproj", "{E40DA04C-02A8-4286-A140-34736ED9ED30}"
 EndProject
@@ -58,12 +53,6 @@ Global
 		{D96872C2-E024-4BD9-BC71-6EE5ADD2ABC1}.Release|Win32.ActiveCfg = Release|Win32
 		{D96872C2-E024-4BD9-BC71-6EE5ADD2ABC1}.Release|Win32.Build.0 = Release|Win32
 		{D96872C2-E024-4BD9-BC71-6EE5ADD2ABC1}.Release|x64.ActiveCfg = Release|Win32
-		{ECEC0486-79B1-4026-B13D-C7C480D8A454}.Debug|Win32.ActiveCfg = Debug|Win32
-		{ECEC0486-79B1-4026-B13D-C7C480D8A454}.Debug|Win32.Build.0 = Debug|Win32
-		{ECEC0486-79B1-4026-B13D-C7C480D8A454}.Debug|x64.ActiveCfg = Debug|Win32
-		{ECEC0486-79B1-4026-B13D-C7C480D8A454}.Release|Win32.ActiveCfg = Release|Win32
-		{ECEC0486-79B1-4026-B13D-C7C480D8A454}.Release|Win32.Build.0 = Release|Win32
-		{ECEC0486-79B1-4026-B13D-C7C480D8A454}.Release|x64.ActiveCfg = Release|Win32
 		{E40DA04C-02A8-4286-A140-34736ED9ED30}.Debug|Win32.ActiveCfg = Debug|Win32
 		{E40DA04C-02A8-4286-A140-34736ED9ED30}.Debug|Win32.Build.0 = Debug|Win32
 		{E40DA04C-02A8-4286-A140-34736ED9ED30}.Debug|x64.ActiveCfg = Debug|Win32
