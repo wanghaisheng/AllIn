@@ -5,7 +5,6 @@
 #include <windows.h>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
-#include <boost/thread/condition_variable.hpp>
 #include <windows.h>    // 需要放在头文件RZCamera.h前面, 否则编译不过
 #include "RZCamera.h"
 #include "log.h"

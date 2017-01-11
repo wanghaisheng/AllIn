@@ -53,7 +53,8 @@ private:
         pipe_inst_(NULL),
         send_mq_(NULL),
         recv_mq_(NULL), 
-        pipe_(NULL) {
+        pipe_(NULL),
+        server_dead_(false) {
 
     }
 
@@ -92,6 +93,7 @@ private:
 
     boost::mutex            write_ctx_;;
 
+    bool                    server_dead_;
     HANDLE                  heart_ev_;
     boost::mutex            heart_mtx_;
     boost::thread*          heart_thread_;   // 心跳线程, 监听服务进程"mc_exe"是否存在

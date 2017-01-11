@@ -3,7 +3,17 @@
 #include <boost/uuid/uuid_generators.hpp> // generators
 #include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
 #include <boost/lexical_cast.hpp>
+
+typedef int DWORD;
+enum FontLib {
+    image = 0,
+    eng = 1
+};
+
+#include "../mc_dll/ImgProcAndReco.h"
 #include "seria.h"
+
+#pragma comment(lib, "ImageProcess.lib")
 
 enum CmdType {
     CT_INIT_MACHINE = 1,    //≥ı ºªØ
@@ -13,6 +23,25 @@ enum CmdType {
 
 void main()
 {
+    std::string cut_img = "C:\\pj\\bin\\w32d\\cut.img";
+    std::string model_type = "123";
+    char out_mo_type[256] = { 0 };
+    char out_Vocher_Number[256] = { 0 };
+    char out_trace_code[256] = { 0 };
+    int x = 0;
+    int y = 0;
+    int angle = 0;
+    int result = RecoModelTypeAndCodeAndAngleAndPointByImg(
+        cut_img.c_str(),
+        (char*)model_type.c_str(),
+        out_mo_type,
+        out_Vocher_Number,
+        out_trace_code,
+        x,
+        y,
+        angle);    printf("result: %d\n", result);
+
+
     char str1[] = { 2, 3, 125, 126, 127};
     char str2[] = {'2', '3'};
     std::cout << str1 << ", " << strlen(str1) << std::endl; 

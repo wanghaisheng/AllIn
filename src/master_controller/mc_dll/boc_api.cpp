@@ -51,7 +51,7 @@ private:
 
 void MC::BOCApi::QueryMachine(MC::NotifyResult* notify)
 {
-    BaseEvent* ev = new (std::nothrow) QueryMachEv("获取用印机编号" + des_, notify);
+    BaseEvent* ev = new (std::nothrow) QueryMachEv("获取用印机编号", notify);
     if (NULL == ev)
         return notify->Notify(MC::EC_ALLOCATE_FAILURE);
 
@@ -98,7 +98,7 @@ private:
 
 void MC::BOCApi::SetMachine(const std::string& sn, NotifyResult* notify)
 {
-    BaseEvent* ev = new (std::nothrow) SetMachEv("设置印控机编号" + des_, sn, notify);
+    BaseEvent* ev = new (std::nothrow) SetMachEv("设置印控机编号", sn, notify);
     if (NULL == ev)
         return notify->Notify(MC::EC_ALLOCATE_FAILURE);
 
@@ -201,7 +201,7 @@ private:
 
 void MC::BOCApi::InitMachine(std::string key, NotifyResult* notify)
 {
-    BaseEvent* ev = new (std::nothrow) InitMachEv("初始化印控机" + des_, key, notify);
+    BaseEvent* ev = new (std::nothrow) InitMachEv("初始化印控机", key, notify);
     if (NULL == ev)
         return notify->Notify(MC::EC_ALLOCATE_FAILURE, key);
 
@@ -291,7 +291,7 @@ private:
 
 void MC::BOCApi::BindMAC(std::string mac, NotifyResult* notify)
 {
-    BaseEvent* ev = new (std::nothrow) BindMACEv("用印机绑定MAC地址" + des_, mac, notify);
+    BaseEvent* ev = new (std::nothrow) BindMACEv("用印机绑定MAC地址", mac, notify);
     if (NULL == ev)
         return notify->Notify(MC::EC_ALLOCATE_FAILURE, mac);
 
@@ -377,7 +377,7 @@ private:
 
 void MC::BOCApi::UnbindMAC(std::string mac, NotifyResult* notify)
 {
-    BaseEvent* ev = new (std::nothrow) UnbindMACEv("用印机解绑MAC地址" + des_, mac, notify);
+    BaseEvent* ev = new (std::nothrow) UnbindMACEv("用印机解绑MAC地址", mac, notify);
     if (NULL == ev)
         return notify->Notify(MC::EC_ALLOCATE_FAILURE, mac);
 
@@ -538,7 +538,7 @@ void PrepareStampEv::ThreadFunc()
 
 void MC::BOCApi::PrepareStamp(int stamp_num, int timeout, NotifyResult* notify)
 {
-    BaseEvent* ev = new (std::nothrow) PrepareStampEv("准备用印" + des_, stamp_num, timeout, notify);
+    BaseEvent* ev = new (std::nothrow) PrepareStampEv("准备用印", stamp_num, timeout, notify);
     if (NULL == ev)
         return notify->Notify(MC::EC_ALLOCATE_FAILURE);
 
@@ -589,7 +589,7 @@ private:
 void MC::BOCApi::QueryPaperDoor(MC::NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) QueryPaperEv(
-        "查询进纸门" + des_,
+        "查询进纸门",
         notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);
@@ -676,7 +676,7 @@ void MC::BOCApi::Snapshot(
     NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) SnapshotEv(
-        "拍照" + des_, 
+        "拍照", 
         original_dpi, 
         cut_dpi, 
         ori_path,
@@ -750,7 +750,7 @@ void MC::BOCApi::MergePhoto(
     const std::string& merged,
     NotifyResult* notify)
 {
-    BaseEvent* ev = new (std::nothrow) MergePhotoEv("照片合成" + des_, photo1, photo2, merged, notify);
+    BaseEvent* ev = new (std::nothrow) MergePhotoEv("照片合成", photo1, photo2, merged, notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);
 
@@ -833,7 +833,7 @@ private:
 
 void MC::BOCApi::RecognizeImage(const std::string& img, NotifyResult* notify)
 {
-    BaseEvent* ev = new (std::nothrow) RecognitionEv("版面验证码识别" + des_, img, notify);
+    BaseEvent* ev = new (std::nothrow) RecognitionEv("版面验证码识别", img, notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);
 
@@ -912,7 +912,7 @@ void MC::BOCApi::IdentifyElement(
     NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) IdentifyEleEv(
-        "要素识别" + des_, 
+        "要素识别", 
         path, 
         x,
         y,
@@ -1028,7 +1028,7 @@ void MC::BOCApi::OrdinaryStamp(
     NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) OridinaryEv(
-        "普通用印" + des_,
+        "普通用印",
         task,
         voucher,
         num, 
@@ -1096,7 +1096,7 @@ void MC::BOCApi::AutoStamp(const std::string& task,
     const std::string& voucher, int num, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) AutoEv(
-        "自动用印" + des_,
+        "自动用印",
         task,
         voucher,
         num,
@@ -1175,7 +1175,7 @@ private:
 void MC::BOCApi::FinishStamp(const std::string& task, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) FinishEv(
-        "用印结束" + des_,
+        "用印结束",
         task,
         notify);
     if (NULL == ev)
@@ -1230,7 +1230,7 @@ private:
 void MC::BOCApi::ReleaseStamp(const std::string& machine, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) ReleaseEv(
-        "释放印控机" + des_,
+        "释放印控机",
         machine,
         notify);
     if (NULL == ev)
@@ -1286,7 +1286,7 @@ private:
 void MC::BOCApi::GetError(int err_code, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) GetErrEv(
-        "获取错误信息" + des_,
+        "获取错误信息",
         err_code,
         notify);
     if (NULL == ev)
@@ -1343,7 +1343,7 @@ private:
 void MC::BOCApi::CalibrateMachine(int num, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) CaliStamperEv(
-        "校准印章" + des_,
+        "校准印章",
         num,
         notify);
     if (NULL == ev)
@@ -1400,7 +1400,7 @@ private:
 void MC::BOCApi::QueryStampers(NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) QueryStampersEv(
-        "印章状态查询" + des_,
+        "印章状态查询",
         notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);
@@ -1450,7 +1450,7 @@ private:
 void MC::BOCApi::QuerySafeDoor(NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) QuerySafeEv(
-        "安全门状态查询" + des_,
+        "安全门状态查询",
         notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);
@@ -1565,7 +1565,7 @@ private:
 void MC::BOCApi::OperateSafeDoor(int operation, int timeout, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) OperateSafeEv(
-        "开关安全门" + des_,
+        "开关安全门",
         operation,
         timeout,
         notify);
@@ -1619,7 +1619,7 @@ private:
 void MC::BOCApi::OperateBeep(int operation, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) OperateBeepEv(
-        "开关安全门" + des_,
+        "蜂鸣器开关",
         operation,
         notify);
     if (NULL == ev)
@@ -1671,7 +1671,7 @@ private:
 void MC::BOCApi::QuerySlot(NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) QuerySlotEv(
-        "卡槽数量查询" + des_,
+        "卡槽数量查询",
         notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);
@@ -1733,7 +1733,7 @@ private:
 void MC::BOCApi::OperateAlarm(int alarm, int ctrl, MC::NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) AlarmCtrlEv(
-        "报警器控制" + des_,
+        "报警器控制",
         alarm,
         ctrl,
         notify);
@@ -1786,7 +1786,7 @@ private:
 void MC::BOCApi::QueryMAC(NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) QueryMACEv(
-        "查询已绑定MAC地址" + des_,
+        "查询已绑定MAC地址",
         notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);

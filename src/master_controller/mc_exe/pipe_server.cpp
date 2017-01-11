@@ -25,7 +25,7 @@ HANDLE hPipe;
 int StartServer()
 {
     if (!g_recver.Start()) {
-        Log::WriteLog(LL_ERROR, "StartPipe->fails to start recver");
+        Log::WriteLog(LL_ERROR, "StartServer->fails to start recver.");
         return -1;
     }
 

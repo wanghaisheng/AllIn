@@ -54,19 +54,14 @@ namespace MC {
             int &out_y,
             double &out_angle)
     {
-
-        if (search_img_ptr_ != NULL) {
-            return search_img_ptr_(
-                    in_src_img_name,
-                    in_x,
-                    in_y,
-                    in_angle,
-                    out_x,
-                    out_y,
-                    out_angle);
-        }
-
-        return MC::EC_FAIL;
+        return SearchImgStampPointEx(
+                in_src_img_name,
+                in_x,
+                in_y,
+                in_angle,
+                out_x,
+                out_y,
+                out_angle);
     }
 
     // 将原图用印像素坐标转换为设备(印控机)用印坐标(毫米)
@@ -164,13 +159,9 @@ namespace MC {
             const std::string&  ori,
             std::string&        cut)
     {
-        if (cut_img_ptr_ != NULL) {
-            return cut_img_ptr_(
-                    ori.c_str(),
-                    (char*)cut.c_str());
-        }
-
-        return MC::EC_FAIL;
+        return CutImgEdge(
+                ori.c_str(),
+                (char*)cut.c_str());
     }
 
     // 合并图片
@@ -179,14 +170,10 @@ namespace MC {
             const std::string& img2,
             const std::string& merged)
     {
-        if (merge_ptr_ != NULL) {
-            return merge_ptr_(
-                    img1.c_str(),
-                    img2.c_str(),
-                    merged.c_str());
-        }
-
-        return MC::EC_FAIL;
+        return Merge2Imgs(
+                img1.c_str(),
+                img2.c_str(),
+                merged.c_str());
     }
 
     int ImgPro::GetModelTypeAnglePoint(
@@ -196,16 +183,12 @@ namespace MC {
             int&                x,
             int&                y)
     {
-        if (recog_model_ptr_ != NULL) {
-            return recog_model_ptr_(
-                    img_path.c_str(),
-                    (char*)model_type.c_str(),
-                    outangle,
-                    x,
-                    y);
-        }
-
-        return MC::EC_FAIL;
+        return RecoModelTypeAndAngleAndModelPointByImg(
+                img_path.c_str(),
+                (char*)model_type.c_str(),
+                outangle,
+                x,
+                y);
     }
 
     int ImgPro::IdentifyImage(
@@ -217,33 +200,6 @@ namespace MC {
             int&                x,
             int&                y,
             int&                angle) {
-//         if (model_code_ptr_ != NULL) {
-//             return model_code_ptr_(
-//                     cut_img.c_str(),
-//                     (char*)model_type.c_str(),
-//                     (char*)out_model_type.c_str(),
-//                     (char*)voucher_no.c_str(),
-//                     (char*)trace_no.c_str(),
-//                     x,
-//                     y,
-//                     angle);
-//         }
-// 
-//         return MC::EC_FAIL;
-
-        char out_mo_type[256] = { 0 };
-        char out_Vocher_Number[256] = { 0 };
-        char out_trace_code[256] = { 0 };
-        return RecoModelTypeAndCodeAndAngleAndPointByImg(
-            cut_img.c_str(), 
-            (char*)model_type.c_str(),
-            out_mo_type,
-            out_Vocher_Number, 
-            out_trace_code, 
-            x, 
-            y, 
-            angle);
-
         return RecoModelTypeAndCodeAndAngleAndPointByImg(
             cut_img.c_str(),
             (char*)model_type.c_str(),
@@ -263,19 +219,15 @@ namespace MC {
             int height,
             int angle,
             std::string& result) {
-        if (recog_area_ptr_ != NULL) {
-            return recog_area_ptr_(
-                    img.c_str(),
-                    x,
-                    y,
-                    x + width,
-                    y + height,
-                    0.f,
-                    (char*)result.c_str(),
-                    image);
-        }
-
-        return MC::EC_FAIL;
+        return RecoImgRectArea(
+            img.c_str(),
+            x,
+            y,
+            x + width,
+            y + height,
+            0.f,
+            (char*)result.c_str(),
+            image);
     }
 
 } // namespace MC

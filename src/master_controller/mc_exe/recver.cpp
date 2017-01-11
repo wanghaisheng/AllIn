@@ -42,6 +42,7 @@ MC::ConnType Recver::CnnType() const
 bool Recver::Start()
 {
     if (!ParseConfig()) {
+        printf("Recver::Start->解析配置文件失败\n");
         Log::WriteLog(LL_ERROR, "Recver::Start->解析配置文件失败");
         return false;
     }
@@ -93,6 +94,7 @@ bool Recver::Start()
     recver_thread_ =
         new (std::nothrow) boost::thread(boost::bind(&Recver::ReceiveFunc, this));
 
+    printf("Recver::Start->start succ\n");
     return true;
 }
 

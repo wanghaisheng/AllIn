@@ -70,7 +70,7 @@ namespace MC {
         }
 
         ~ImgPro() {
-            FreeLibrary(dllinst_);
+/*            FreeLibrary(dllinst_);*/
         }
 
         // 根据切图用印点像素坐标获取盖章点基于切图中心点位置, 像素坐标
@@ -163,39 +163,39 @@ namespace MC {
     private:
         ImgPro(): search_img_ptr_(NULL), cut_img_ptr_(NULL), merge_ptr_(NULL),
                     recog_model_ptr_(NULL), model_code_ptr_(NULL), recog_area_ptr_(NULL) {
-            std::string path;
-            GetMoudulePath(path);
-            path = path.append("ImageProcess.dll");
-            dllinst_ = LoadLibrary(path.c_str());
-            if (dllinst_ != NULL) {
-                // dynamically loads dll, gets entry point address
-                search_img_ptr_ = (my_SearchImgStampPointEx) GetProcAddress(
-                        dllinst_,
-                        "SearchImgStampPointEx");
-
-                cut_img_ptr_ = (my_CutImgEdge) GetProcAddress(
-                        dllinst_,
-                        "CutImgEdge");
-
-                merge_ptr_ = (my_Merge2Imgs) GetProcAddress(
-                        dllinst_,
-                        "Merge2Imgs");
-
-                recog_model_ptr_ =
-                        (my_RecoModelTypeAndAngleAndModelPointByImg) GetProcAddress(
-                                dllinst_,
-                                "RecoModelTypeAndAngleAndModelPointByImg");
-
-                model_code_ptr_ =
-                        (my_RecoModelTypeAndCodeAndAngleAndPointByImg) GetProcAddress(
-                                dllinst_,
-                                "RecoModelTypeAndCodeAndAngleAndPointByImg");
-
-                recog_area_ptr_ =
-                        (my_RecoImgRectArea) GetProcAddress(
-                                dllinst_,
-                                "RecoImgRectArea");
-            }
+//             std::string path;
+//             GetMoudulePath(path);
+//             path = path.append("ImageProcess.dll");
+//             dllinst_ = LoadLibrary(path.c_str());
+//             if (dllinst_ != NULL) {
+//                 // dynamically loads dll, gets entry point address
+//                 search_img_ptr_ = (my_SearchImgStampPointEx) GetProcAddress(
+//                         dllinst_,
+//                         "SearchImgStampPointEx");
+// 
+//                 cut_img_ptr_ = (my_CutImgEdge) GetProcAddress(
+//                         dllinst_,
+//                         "CutImgEdge");
+// 
+//                 merge_ptr_ = (my_Merge2Imgs) GetProcAddress(
+//                         dllinst_,
+//                         "Merge2Imgs");
+// 
+//                 recog_model_ptr_ =
+//                         (my_RecoModelTypeAndAngleAndModelPointByImg) GetProcAddress(
+//                                 dllinst_,
+//                                 "RecoModelTypeAndAngleAndModelPointByImg");
+// 
+//                 model_code_ptr_ =
+//                         (my_RecoModelTypeAndCodeAndAngleAndPointByImg) GetProcAddress(
+//                                 dllinst_,
+//                                 "RecoModelTypeAndCodeAndAngleAndPointByImg");
+// 
+//                 recog_area_ptr_ =
+//                         (my_RecoImgRectArea) GetProcAddress(
+//                                 dllinst_,
+//                                 "RecoImgRectArea");
+//             }
         }
 
     private:

@@ -4,6 +4,7 @@
 #include <winbase.h>
 #include "parse.h"
 #include "cnn.h"
+#include "common_definitions.h"
 #include "api_set.h"
 
 extern AsynAPISet api_agent;
@@ -38,7 +39,7 @@ void Start()
 void Stop()
 {
     MC::Cnn::GetInst()->Stop();
-    KillProcessByName("mc_exed.exe");
+    KillProcessByName(MC::SERVER_NAME.c_str());
 }
 
 BOOL APIENTRY DllMain(

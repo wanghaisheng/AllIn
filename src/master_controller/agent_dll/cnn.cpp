@@ -161,11 +161,13 @@ bool MC::Cnn::RecvBuf(TCHAR* buf, int buf_len, DWORD* actual_read)
         unsigned int priority;
         boost::interprocess::message_queue::size_type recvd_size;
         try {
-            //heart_mtx_.lock();
-            /*fSuccess = */recv_mq_->receive(buf, buf_len, recvd_size, priority);
-            //heart_mtx_.unlock();
-
-            *actual_read = recvd_size;
+            heart_mtx_.lock();
+            bool server_dead = server_dead_;
+            heart_mtx_.unlock();
+            if (!server_dead) {
+                recv_mq_->receive(buf, buf_len, recvd_size, priority);
+                *actual_read = recvd_size;
+            }
         } catch (boost::interprocess::interprocess_exception &ex) {
             std::cout << ex.what() << std::endl;
             Log::WriteLog(LL_ERROR, "AsynAPISet::ReceiverFunc->消息队列异常: %s", ex.what());
@@ -391,14 +393,15 @@ void MC::Cnn::HeartBeatingFunc()
             if (ProcessExisted(MC::SERVER_NAME))
                 continue;
 
+            // 服务进程停止, 需要重新建立共享内存通信连接, 锁保护发送和接收共享内存队列
+            heart_mtx_.lock();
+            server_dead_ = true;
             // 启动服务
             if (StartSvc(MC::SERVER_NAME)) {
                 Log::WriteLog(LL_DEBUG, "AsynAPISet::HeartBeatingFunc->启动%s成功",
                     MC::SERVER_NAME.c_str());
 
                 Sleep(1000);
-                // 服务进程停止, 需要重新建立共享内存通信连接, 锁保护发送和接收共享内存队列
-                heart_mtx_.lock();
                 delete recv_mq_;
                 delete send_mq_;
 
@@ -416,7 +419,6 @@ void MC::Cnn::HeartBeatingFunc()
                     Log::WriteLog(LL_ERROR, "AsynAPISet::HeartBeatingFunc->打开消息队列失败: %s", 
                         ex.what());
                 }
-
                 heart_mtx_.unlock();
 
                 // 启动成功后需要发送一次心跳
