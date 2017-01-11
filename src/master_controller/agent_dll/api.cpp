@@ -1,14 +1,14 @@
 ﻿#include <windows.h>
+#define _XP
+
+#ifndef _XP
 #include <boost/thread/condition_variable.hpp>
+#endif
+
 #include "api_set.h"
 #include "log.h"
 #include "api.h"
 
-bool vista_better = false;
-
-// #if (!vista_better)
-// #define _XP
-// #endif
 
 AsynAPISet api_agent;
 
@@ -43,6 +43,7 @@ public:
         er_ = ec;
 #ifdef _XP
         SetEvent(cv_);
+        Log::WriteLog(LL_MSG, "QueryMachNT::Notify->event signaled");
 #else
         cv_.notify_one();
 #endif
@@ -63,8 +64,6 @@ int QueryMachine(std::string& sn)
     QueryMachineNT* nt = new (std::nothrow) QueryMachNT;
     api_agent.AsynQueryMachine(nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((QueryMachNT*)nt)->cv_, WAIT_TIME))
 #else
@@ -123,8 +122,6 @@ int SetMachine(const std::string& sn)
     SetMachineNT* nt = new (std::nothrow) SetMachNT;
     api_agent.AsynSetMachine(sn, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((SetMachNT*)nt)->cv_, WAIT_TIME))
 #else
@@ -182,8 +179,6 @@ int InitMachine(const std::string& key)
     InitMachineNT* nt = new (std::nothrow) InitMaNT;
     api_agent.AsynInitMachine(key, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((InitMaNT*)nt)->cv_, WAIT_TIME))
         ((InitMaNT*)nt)->er_ = MC::EC_TIMEOUT;
@@ -242,15 +237,12 @@ int BindMAC(const std::string& mac)
     BindMACNT* nt = new BindNT;
     api_agent.AsynBindMAC(mac, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((BindNT*)nt)->cv_, WAIT_TIME))
-        ((BindNT*)nt)->er_ = MC::EC_TIMEOUT;
 #else
     if (!((BindNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
-        ((BindNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
+        ((BindNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((BindNT*)nt)->er_;
     //delete nt;
@@ -302,15 +294,12 @@ int UnbindMAC(const std::string& mac)
     UnbindMACNT* nt = new UnbindNT;
     api_agent.AsynUnbindMAC(mac, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((UnbindNT*)nt)->cv_, WAIT_TIME))
-        ((UnbindNT*)nt)->er_ = MC::EC_TIMEOUT;
 #else
     if (!((UnbindNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
-        ((UnbindNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
+        ((UnbindNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((UnbindNT*)nt)->er_;
     //delete nt;
@@ -368,15 +357,12 @@ int PrepareStamp(char stamp_num, int timeout, std::string& task_id)
     PrepareStampNT* nt = new PrepareNT;
     api_agent.AsynPrepareStamp(stamp_num, timeout, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((PrepareNT*)nt)->cv_, WAIT_TIME))
-        ((PrepareNT*)nt)->er_ = MC::EC_TIMEOUT;
+    if (WAIT_TIMEOUT == WaitForSingleObject(((PrepareNT*)nt)->cv_, timeout * 1000))
 #else
     if (!((PrepareNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(timeout * 1000)))
-        ((PrepareNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
+        ((PrepareNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     task_id = ((PrepareNT*)nt)->task_id_;
     int ret = ((PrepareNT*)nt)->er_;
@@ -432,15 +418,12 @@ int QueryPaper(int& status)
     QueryPaperNT* nt = new PaperNT;
     api_agent.AsynQueryPaper(nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((PaperNT*)nt)->cv_, WAIT_TIME))
-        ((PaperNT*)nt)->er_ = MC::EC_TIMEOUT;
 #else
     if (!((PaperNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
-        ((PaperNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
+        ((PaperNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     status = ((PaperNT*)nt)->status_;
     int ret = ((PaperNT*)nt)->er_;
@@ -502,8 +485,6 @@ int Snapshot(
     SnapshotNT* nt = new SnapNT;
     api_agent.AsynSnapshot(ori_dpi, cut_dpi, ori_path, cut_path, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((SnapNT*)nt)->cv_, WAIT_TIME))
         ((SnapNT*)nt)->er_ = MC::EC_TIMEOUT;
@@ -568,15 +549,12 @@ int MergePhoto(
     MergePhotoNT* nt = new MergeNT;
     api_agent.AsynMergePhoto(p1, p2, merged, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((MergeNT*)nt)->cv_, WAIT_TIME))
-        ((MergeNT*)nt)->er_ = MC::EC_TIMEOUT;
 #else
     if (!((MergeNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
-        ((MergeNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
+        ((MergeNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((MergeNT*)nt)->er_;
     //delete nt;
@@ -635,15 +613,12 @@ int RecognizeImage(const std::string& path,
     RecognizeNT* nt = new RecogNT;
     api_agent.AsynRecognizeImage(path, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((RecogNT*)nt)->cv_, WAIT_TIME))
-        ((RecogNT*)nt)->er_ = MC::EC_TIMEOUT;
 #else
     if (!((RecogNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
-        ((RecogNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
+        ((RecogNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     template_id = ((RecogNT*)nt)->template_id_;
     trace_num = ((RecogNT*)nt)->trace_num_;
@@ -707,15 +682,12 @@ int IdentifyElement(
     IdentifyNT* nt = new IdentiNT;
     api_agent.AsynIdentifyElement(path, x, y, width, height, angle, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((IdentiNT*)nt)->cv_, WAIT_TIME))
-        ((IdentiNT*)nt)->er_ = MC::EC_TIMEOUT;
 #else
     if (!((IdentiNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
-        ((IdentiNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
+        ((IdentiNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     result = ((IdentiNT*)nt)->re_;
     int ret = ((IdentiNT*)nt)->er_;
@@ -776,15 +748,12 @@ int OrdinaryStamp(
     OrdinaryStampNT* nt = new OridinaryNT;
     api_agent.AsynOrdinaryStamp(task, voucher, num, ink, x, y, angle, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((OridinaryNT*)nt)->cv_, WAIT_TIME))
-        ((OridinaryNT*)nt)->er_ = MC::EC_TIMEOUT;
 #else
     if (!((OridinaryNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
-        ((OridinaryNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
+        ((OridinaryNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((OridinaryNT*)nt)->er_;
     //delete nt;
@@ -837,15 +806,12 @@ int AutoStamp(const std::string& task,
     AutoStampNT* nt = new AutoNT;
     api_agent.AsynAutoStamp(task, voucher, num, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((AutoNT*)nt)->cv_, WAIT_TIME))
-        ((AutoNT*)nt)->er_ = MC::EC_TIMEOUT;
 #else
     if (!((AutoNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
-        ((AutoNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
+        ((AutoNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((AutoNT*)nt)->er_;
     //delete nt;
@@ -897,15 +863,12 @@ int FinishStamp(const std::string& task)
     FinishStampNT* nt = new FinishNT;
     api_agent.AsynFinishStamp(task, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((FinishNT*)nt)->cv_, WAIT_TIME))
-        ((FinishNT*)nt)->er_ = MC::EC_TIMEOUT;
 #else
     if (!((FinishNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
-        ((FinishNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
+        ((FinishNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((FinishNT*)nt)->er_;
     //delete nt;
@@ -957,15 +920,12 @@ int ReleaseStamp(const std::string& machine)
     ReleaseStampNT* nt = new ReleaseNT;
     api_agent.AsynReleaseStamp(machine, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((ReleaseNT*)nt)->cv_, WAIT_TIME))
-        ((ReleaseNT*)nt)->er_ = MC::EC_TIMEOUT;
 #else
     if (!((ReleaseNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
-        ((ReleaseNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
+        ((ReleaseNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((ReleaseNT*)nt)->er_;
     //delete nt;
@@ -1022,15 +982,12 @@ int GetError(int err_code, std::string& err_msg, std::string& err_resolver)
     GetErrorNT* nt = new GetErrNT;
     api_agent.AsynGetError(err_code, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((GetErrNT*)nt)->cv_, WAIT_TIME))
-        ((GetErrNT*)nt)->er_ = MC::EC_TIMEOUT;
 #else
     if (!((GetErrNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
-        ((GetErrNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
+        ((GetErrNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     err_msg = ((GetErrNT*)nt)->msg_;
     err_resolver = ((GetErrNT*)nt)->resolver_;
@@ -1080,15 +1037,12 @@ int Calibrate(int slot)
     CalibrationNT* nt = new CaliNT;
     api_agent.AsynCalibrate(slot, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((CaliNT*)nt)->cv_, WAIT_TIME))
-        ((CaliNT*)nt)->er_ = MC::EC_TIMEOUT;
 #else
     if (!((CaliNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
-        ((CaliNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
+        ((CaliNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((CaliNT*)nt)->er_;
     //delete nt;
@@ -1146,15 +1100,12 @@ int QueryStampers(int* staus)
     QueryStampersNT* nt = new QueryStamNT(staus);
     api_agent.AsynQueryStampers(nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((QueryStamNT*)nt)->cv_, WAIT_TIME))
-        ((QueryStamNT*)nt)->er_ = MC::EC_TIMEOUT;
 #else
     if (!((QueryStamNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
-        ((QueryStamNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
+        ((QueryStamNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((QueryStamNT*)nt)->er_;
     //delete nt;
@@ -1204,8 +1155,6 @@ int QuerySafe(int& status)
     QuerySafeNT* nt = new QuerySafeDoorNT;
     api_agent.AsynQuerySafe(nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((QuerySafeDoorNT*)nt)->cv_, WAIT_TIME))
 #else
@@ -1260,8 +1209,6 @@ int ControlSafe(int ctrl)
     CtrlSafeNT* nt = new CtrLSafeDoorNT;
     api_agent.AsynSafeControl(ctrl, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((CtrLSafeDoorNT*)nt)->cv_, WAIT_TIME))
 #else
@@ -1315,8 +1262,6 @@ int ControlBeep(int ctrl)
     CtrlBeepNT* nt = new BeepCtrlNT;
     api_agent.AsynBeepControl(ctrl, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((BeepCtrlNT*)nt)->cv_, WAIT_TIME))
 #else
@@ -1374,8 +1319,6 @@ int QuerySlot(int& num)
     QuerySlotNT* nt = new QuerySlNT;
     api_agent.AsynQuerySlot(nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((QuerySlNT*)nt)->cv_, WAIT_TIME))
 #else
@@ -1434,8 +1377,6 @@ int ControlAlarm(int alarm, int switches)
     CtrlAlarmNT* nt = new AlarmNT;
     api_agent.AsynAlarmControl(alarm, switches, nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((AlarmNT*)nt)->cv_, WAIT_TIME))
 #else
@@ -1493,8 +1434,6 @@ int QueryMAC(std::string& mac1, std::string& mac2)
     QueryMACNT* nt = new QryMACNT;
     api_agent.AsynQueryMAC(nt);
 
-    boost::mutex mtx;
-    boost::mutex::scoped_lock lk(mtx);
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((QryMACNT*)nt)->cv_, WAIT_TIME))
 #else

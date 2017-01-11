@@ -57,15 +57,15 @@ private:
         int               x;
         int               y;
         int               angle;
-        ret = MC::ImgPro::GetInst()->IdentifyImage(
-            "C:\\pj\\bin\\w32d\\cut.jpg",
-            "12",
-            out_model_type,
-            voucher_no,
-            trace_no,
-            x,
-            y,
-            angle);
+//         ret = MC::ImgPro::GetInst()->IdentifyImage(
+//             "C:\\pj\\bin\\w32d\\cut.jpg",
+//             "12",
+//             out_model_type,
+//             voucher_no,
+//             trace_no,
+//             x,
+//             y,
+//             angle);
     }
 
 private:
