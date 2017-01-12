@@ -8,8 +8,8 @@
 #include "agent_cmd.h"
 #include "syn_queue.h"
 
-#define SEND_QUEUE_WAIT 5000
-#define HEART_BEATING_WAIT 5000
+#define SEND_QUEUE_WAIT     5000
+#define HEART_BEATING_WAIT  3000
 
 typedef struct {
     OVERLAPPED oOverlap;
@@ -70,6 +70,8 @@ private:
     bool RecvBuf(TCHAR* buf, int buf_len, DWORD* actual_read);
 
     void ReceiveFunc();
+
+    void HandleServerDeath();
 
     void HeartBeatingFunc();
    

@@ -1,33 +1,10 @@
 #include <windows.h>
-#include <process.h>
-#include <Tlhelp32.h>
-#include <winbase.h>
 #include "parse.h"
 #include "cnn.h"
 #include "common_definitions.h"
 #include "api_set.h"
 
 extern AsynAPISet api_agent;
-
-void KillProcessByName(const char *filename)
-{
-    HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPALL, NULL);
-    PROCESSENTRY32 pEntry;
-    pEntry.dwSize = sizeof (pEntry);
-    BOOL hRes = Process32First(hSnapShot, &pEntry);
-    while (hRes) {
-        if (strcmp(pEntry.szExeFile, filename) == 0) {
-            HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, 0,
-                (DWORD)pEntry.th32ProcessID);
-            if (hProcess != NULL && pEntry.th32ProcessID != GetCurrentProcessId()) {
-                TerminateProcess(hProcess, 9);
-                CloseHandle(hProcess);
-            }
-        }
-        hRes = Process32Next(hSnapShot, &pEntry);
-    }
-    CloseHandle(hSnapShot);
-}
 
 void Start()
 {
@@ -39,7 +16,7 @@ void Start()
 void Stop()
 {
     MC::Cnn::GetInst()->Stop();
-    KillProcessByName(MC::SERVER_NAME.c_str());
+    MC::KillProcessByName(MC::SERVER_NAME.c_str());
 }
 
 BOOL APIENTRY DllMain(

@@ -164,7 +164,7 @@ bool MC::Cnn::RecvBuf(TCHAR* buf, int buf_len, DWORD* actual_read)
             heart_mtx_.lock();
             bool server_dead = server_dead_;
             heart_mtx_.unlock();
-            if (!server_dead) {
+            if (!server_dead && NULL != recv_mq_) {
                 recv_mq_->receive(buf, buf_len, recvd_size, priority);
                 *actual_read = recvd_size;
             }
@@ -377,9 +377,60 @@ void MC::Cnn::HandleHeartBeating(char* chBuf)
     SetEvent(heart_ev_);
 }
 
+void MC::Cnn::HandleServerDeath()
+{
+    // 服务进程停止, 需要重新建立共享内存通信连接, 锁保护发送和接收共享内存队列
+    heart_mtx_.lock();
+    server_dead_ = true;
+    // 启动服务
+    if (StartSvc(MC::SERVER_NAME)) {
+        Log::WriteLog(LL_DEBUG, "MC::Cnn::HandleServerDeath->启动%s成功",
+            MC::SERVER_NAME.c_str());
+
+        Sleep(1000);
+        delete recv_mq_;
+        delete send_mq_;
+        recv_mq_ = NULL;
+        send_mq_ = NULL;
+
+        try {
+            send_mq_ = new (std::nothrow) boost::interprocess::message_queue(
+                boost::interprocess::open_only,
+                Config::GetInst()->send_mq_name_.c_str());
+
+            recv_mq_ = new (std::nothrow) boost::interprocess::message_queue(
+                boost::interprocess::open_only,
+                Config::GetInst()->recv_mq_name_.c_str());
+        }  catch (boost::interprocess::interprocess_exception &ex) {
+            std::cout << "MC::Cnn::HandleServerDeath->打开消息队列失败: " 
+                << ex.what() << std::endl;
+            Log::WriteLog(LL_ERROR, "MC::Cnn::HandleServerDeath->打开消息队列失败: %s", 
+                ex.what());
+        }
+        heart_mtx_.unlock();
+
+        // 启动成功后需要发送一次心跳
+        HeartCmd heart_cmd;
+        WriteCnn(&heart_cmd);
+    } else {
+        Log::WriteLog(LL_ERROR, "MC::Cnn::HandleServerDeath->启动%s失败",
+            MC::SERVER_NAME.c_str());
+        heart_mtx_.unlock();
+    }
+}
+
 void MC::Cnn::HeartBeatingFunc()
 {
     while (running_) {
+        // if (ProcessExisted(MC::SERVER_NAME)) {
+        //     Sleep(HEART_BEATING_WAIT);
+        // } else {
+        //     HandleServerDeath();
+        // }
+        // continue;
+
+        //////////////////////
+        
         DWORD ret = WaitForSingleObject(heart_ev_, HEART_BEATING_WAIT);
         switch (ret) {
         case WAIT_OBJECT_0: {
@@ -389,45 +440,8 @@ void MC::Cnn::HeartBeatingFunc()
             break;
         case WAIT_TIMEOUT: {    // 超时未收到心跳响应
             Log::WriteLog(LL_DEBUG, "AsynAPISet::HeartBeatingFunc->timeout");
-
-            if (ProcessExisted(MC::SERVER_NAME))
-                continue;
-
-            // 服务进程停止, 需要重新建立共享内存通信连接, 锁保护发送和接收共享内存队列
-            heart_mtx_.lock();
-            server_dead_ = true;
-            // 启动服务
-            if (StartSvc(MC::SERVER_NAME)) {
-                Log::WriteLog(LL_DEBUG, "AsynAPISet::HeartBeatingFunc->启动%s成功",
-                    MC::SERVER_NAME.c_str());
-
-                Sleep(1000);
-                delete recv_mq_;
-                delete send_mq_;
-
-                try {
-                    send_mq_ = new (std::nothrow) boost::interprocess::message_queue(
-                        boost::interprocess::open_only,
-                        Config::GetInst()->send_mq_name_.c_str());
-
-                    recv_mq_ = new (std::nothrow) boost::interprocess::message_queue(
-                        boost::interprocess::open_only,
-                        Config::GetInst()->recv_mq_name_.c_str());
-                }  catch (boost::interprocess::interprocess_exception &ex) {
-                    std::cout << "AsynAPISet::HeartBeatingFunc->打开消息队列失败: " 
-                        << ex.what() << std::endl;
-                    Log::WriteLog(LL_ERROR, "AsynAPISet::HeartBeatingFunc->打开消息队列失败: %s", 
-                        ex.what());
-                }
-                heart_mtx_.unlock();
-
-                // 启动成功后需要发送一次心跳
-                HeartCmd heart_cmd;
-                WriteCnn(&heart_cmd);
-            } else {
-                Log::WriteLog(LL_ERROR, "AsynAPISet::HeartBeatingFunc->启动%s失败",
-                    MC::SERVER_NAME.c_str());
-            }
+            MC::KillProcessByName(MC::SERVER_NAME.c_str());
+            HandleServerDeath();
         }
             break;
         default:

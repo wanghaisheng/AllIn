@@ -116,6 +116,7 @@ int PrepareCamera()
 void DisableCamera()
 {
     CloseCamera(PAPERCAMERA);
+    FLightCtrl(2, 0);
 }
 
 int _stdcall ConnectCallBack(const char* dev_path, unsigned int msg)

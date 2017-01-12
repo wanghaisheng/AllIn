@@ -70,6 +70,8 @@ enum TaskState {
 
 bool GetMoudulePath(std::string& path);
 
+void KillProcessByName(const char *filename);
+
 #ifdef _DEBUG
 static const std::string SERVER_NAME = "mc_exed.exe";
 #else
