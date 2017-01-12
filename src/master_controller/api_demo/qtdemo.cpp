@@ -2,7 +2,6 @@
 #include <QtWidgets/QMessageBox>
 #include <QFileDialog>
 #include <QTextCodec>
-#include <QDebug>
 #include <windows.h>
 #include <fstream>
 #include "RZCamera.h"
@@ -25,7 +24,6 @@ int QtDemo::ConnectCallBack(const char* path, unsigned int msg)
         ::FCloseDev();
         char buf[1024] = { 0 };
         sprintf(buf, "QtDemo::DevConnCallBack->断开, 关闭设备");
-        BOOST_LOG_TRIVIAL(debug) << buf;
     }
         break;//设备断开连接，处理在回调函数
     case 1:
@@ -33,7 +31,6 @@ int QtDemo::ConnectCallBack(const char* path, unsigned int msg)
         ::FOpenDev(path);
         char buf[1024] = { 0 };
         sprintf(buf, "QtDemo::DevConnCallBack->连接, 打开设备");
-        BOOST_LOG_TRIVIAL(debug) << buf;
     }
     break;
     default:
@@ -50,30 +47,17 @@ int QtDemo::DevMsgCallBack(unsigned int uMsg, unsigned int wParam, long lParam,
                             unsigned char* data, unsigned char len)
 {
     if (STAMPER_COMPLETE == uMsg) {
-        BOOST_LOG_FUNC();
-        BOOST_LOG_TRIVIAL(debug) << uMsg << "," << wParam;
     }
 
     if (STAMPER_PAPERDOORCLOSE == uMsg) {
         std::string str = wParam == 0 ? "关闭" : "打开";
-        BOOST_LOG_TRIVIAL(debug) << "进纸门" << str << " at: " << GetTickCount();
     }
 
     if (STAMPER_ELEC_LOCK == uMsg) {
-        //QString msg = "电子锁" + QString::fromLocal8Bit("关闭");
-        BOOST_LOG_TRIVIAL(debug) << "电子锁关闭";
-// 
-//         QMessageBox::information(
-//             NULL,
-//             DIALOG_HEADER,
-//             msg,
-//             QMessageBox::Yes,
-//             QMessageBox::NoButton);
     }
 
     if (STAMPER_SIDEDOOR_CLOSE == uMsg) {
         std::string str = wParam == 0 ? "关闭" : "打开";
-        BOOST_LOG_TRIVIAL(debug) << "安全门" << str;
     }
 
     return 0;
@@ -235,53 +219,6 @@ bool QtDemo::Init()
     if (!Config::GetInst()->Parse())
         return false;
 
-    /* init boost log
-    * 1. Add common attributes
-    * 2. set log filter to trace
-    */
-    boost::log::add_common_attributes();
-    boost::log::core::get()->add_global_attribute(
-        "Scope",
-        boost::log::attributes::named_scope());
-    boost::log::core::get()->set_filter(
-        boost::log::trivial::severity >= boost::log::trivial::trace);
-
-    /* log formatter:
-    * [TimeStamp] [ThreadId] [Severity Level] [Scope] Log message
-    */
-    auto fmtTimeStamp = boost::log::expressions::
-        format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S.%f");
-    auto fmtThreadId = boost::log::expressions::
-        attr<boost::log::attributes::current_thread_id::value_type>("ThreadID");
-    auto fmtSeverity = boost::log::expressions::
-        attr<boost::log::trivial::severity_level>("Severity");
-    auto fmtScope = boost::log::expressions::format_named_scope("Scope",
-        boost::log::keywords::format = "%n(%f:%l)",
-        boost::log::keywords::iteration = boost::log::expressions::reverse,
-        boost::log::keywords::depth = 2);
-    boost::log::formatter logFmt =
-        boost::log::expressions::format("[%1%] (%2%) [%3%] [%4%] %5%")
-        % fmtTimeStamp % fmtThreadId % fmtSeverity % fmtScope
-        % boost::log::expressions::smessage;
-
-    /* console sink */
-    auto consoleSink = boost::log::add_console_log(std::clog);
-    consoleSink->set_formatter(logFmt);
-
-    /* fs sink */
-//     std::string prefix;
-//     std::string log_file = "封闭式印控机V2.4_%Y-%m-%d_%H-%M-%S.%N.log";
-//     bool err = base::FSUtility::GetMoudulePath(prefix);
-//     auto fsSink = boost::log::add_file_log(
-//         boost::log::keywords::file_name = err? prefix + log_file: log_file,
-//         boost::log::keywords::rotation_size = 10 * 1024 * 1024,
-//         boost::log::keywords::min_free_space = 30 * 1024 * 1024,
-//         boost::log::keywords::open_mode = std::ios_base::app);
-//     fsSink->set_formatter(logFmt);
-//     fsSink->locked_backend()->auto_flush(true);
-
-/*    StartTimer(1000);*/
-
     InitDevControl(); //需要手动调用一次
     return true;
 }
@@ -294,12 +231,7 @@ QtDemo::~QtDemo()
 
 void QtDemo::InitDevControl()
 {
-    if (register_conn_cb_ != 0)
-        BOOST_LOG_TRIVIAL(error) << "注册设备回掉函数失败";
-    if (register_msg_cb_ != 0)
-        BOOST_LOG_TRIVIAL(error) << "注册回掉函数(盖章结果)失败";
-
-    ui.le_stamper_idx_->setText(QString::number(1)); //从1开始
+    ui.le_stamper_idx_->setText(QString::number(1)); //从1c
 }
 
 std::string QtDemo::GetLocalMAC()
@@ -564,7 +496,6 @@ void QtDemo::HandleABCCheck()
     };
 
     ret = CalibrationEx(stamper_id, (char*)pts, 10);
-    BOOST_LOG_TRIVIAL(info) << ret;
     if (STF_SUCCESS != ret)
         return Info(QString::fromLocal8Bit("农行校准失败"));
 
@@ -1200,7 +1131,6 @@ void QtDemo::ShowTimeElapsed(unsigned long begin)
 {
     unsigned long end = GetTickCount();
     unsigned long interval = end - begin;
-    BOOST_LOG_TRIVIAL(info) << "(begin, end) = (" << begin << ", " << end << ")";
     Info(QString::fromLocal8Bit("耗时(毫秒): ") + QString::number(interval));
 }
 
@@ -1370,9 +1300,7 @@ void QtDemo::TimerDone()
 
 void QtDemo::StartTimer(uint16_t milliseconds)
 {
-    timer_ = new QTimer(this);
-    connect(timer_, SIGNAL(timeout()), this, SLOT(TimerDone()));
-    timer_->start(milliseconds); // 1秒单触发定时器
+
 }
 
 void QtDemo::PushMessage(Message* msg)

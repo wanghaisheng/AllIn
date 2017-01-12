@@ -5,7 +5,6 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMessageBox>
 #include <QPainter>
-#include <QTimer>
 #include <QThread>
 #include <boost/thread/thread.hpp>
 #include <boost/signals2/signal.hpp>
