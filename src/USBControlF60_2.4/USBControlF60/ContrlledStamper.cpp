@@ -1534,7 +1534,7 @@ int CContrlledStamper::CalibrationEx(char * pStampid, char* points, int len)
         }
         if (iCount == 0)
         {
-            FStartStamper(GetTickCount(), (char*)szStampID, 1, vecStampPoints.at(0)._x, vecStampPoints.at(0)._y, 0, 15);
+            FStartStamper(GetTickCount(), (char*)szStampID, 1, vecStampPoints.at(0)._x, vecStampPoints.at(0)._y, 0, 2);
             iCount++;
         }
 
@@ -1542,7 +1542,7 @@ int CContrlledStamper::CalibrationEx(char * pStampid, char* points, int len)
         {
             m_USB->SetStamperStauts(0);
             dStartTime = GetTickCount();
-            FStartStamper(GetTickCount(), (char*)szStampID, 1, vecStampPoints.at(iCount)._x, vecStampPoints.at(iCount)._y, 0, 15);
+            FStartStamper(GetTickCount(), (char*)szStampID, 1, vecStampPoints.at(iCount)._x, vecStampPoints.at(iCount)._y, 0, 2);
             iCount++;
         }
         DWORD	dEndTime = GetTickCount();
