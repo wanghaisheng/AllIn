@@ -1499,6 +1499,14 @@ public:
                 goto NT;
             }
 
+            // 更新章映射
+            ret = SetStampMap();
+            if (0 != ret) {
+                ec = MC::EC_UPDATE_STAMP_FAIL;
+                Log::WriteLog(LL_ERROR, "MC::OperateSafeEv::SpecificExecute->更新章映射失败");
+                goto NT;
+            }
+
             // 先关电子锁
             ret = FCloseDoorSafe();
             if (0 != ret) {
