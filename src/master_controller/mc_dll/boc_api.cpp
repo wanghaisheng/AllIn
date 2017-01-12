@@ -1319,6 +1319,15 @@ public:
             goto NT;
         }
 
+        if (0 == rfid) {
+            Log::WriteLog(LL_ERROR, "MC::CaliStamperEv::SpecificExecute->%d号章槽无章", num_);
+            ec = MC::EC_STAMP_NOT_EXIST;
+            goto NT;
+        }
+
+        Log::WriteLog(LL_DEBUG, "MC::CaliStamperEv::SpecificExecute->%d号章对应rfid: %d",
+            num_,
+            rfid);
         ret = CalibrationEx((char*)&rfid, NULL, 0);
         if (0 != ret) {
             ec = MC::EC_DRIVER_FAIL;

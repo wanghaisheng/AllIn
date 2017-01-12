@@ -41,6 +41,7 @@ enum ErrorCode {
     EC_LOCK_FAILURE,            // 解锁印控仪失败, 重试
     EC_TOP_DOOR_OPEN,           // 顶盖门打开
     EC_UPDATE_STAMP_FAIL,       // 更新章映射失败
+    EC_STAMP_NOT_EXIST,         // 章槽无章
     EC_MAX
 };
 
@@ -79,7 +80,8 @@ static std::string ErrorMsg[] = {
     "印控仪处于锁定状态",
     "解锁印控仪失败, 重试",
     "顶盖门打开",
-    "更新章映射失败"
+    "更新章映射失败",
+    "章槽无章"
 };
 
 static std::string GetErrMsg(enum ErrorCode err)
@@ -120,6 +122,7 @@ static std::string ErrorResolver[] = {
     "解锁印控仪失败, 重试",
     "先关闭顶盖门",
     "更新章映射失败"
+    "章槽无章"
 };
 
 static std::string GetErrResolver(enum ErrorCode err)
