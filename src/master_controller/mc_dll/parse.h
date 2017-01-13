@@ -1,7 +1,7 @@
 #ifndef MASTER_CONTROLLER_PARSE_H_
 #define MASTER_CONTROLLER_PARSE_H_
 
-#include <windows.h>
+#include <string>
 
 namespace MC {
 
@@ -40,6 +40,9 @@ private:
     static SvrConfig* config_inst;
 
 public:
+    std::string type_;
+    std::string name_;
+
     int wait_time_;         // 章到位等待时间
 
     MC::Point check_pt0_;   // 校准点

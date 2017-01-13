@@ -82,7 +82,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\;$(droot)\dpd\inc\;..\common\;..\mc_dll\;..\serialization\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;$(droot)\dpd\inc\;..\common\;..\mc_dll\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -94,18 +94,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\common\agent_cmd.cpp" />
-    <ClCompile Include="..\common\common_definitions.cpp" />
-    <ClCompile Include="..\common\log.cpp" />
-    <ClCompile Include="..\serialization\seria.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="pipe_server.cpp" />
-    <ClCompile Include="recver.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\common\log.h" />
-    <ClInclude Include="pipe_server.h" />
-    <ClInclude Include="recver.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

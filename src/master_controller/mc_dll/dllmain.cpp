@@ -3,6 +3,7 @@
 #include "tool.h"
 #include "event_cpu.h"
 #include "parse.h"
+#include "recver.h"
 #include "USBControlF60.h"
 
 BOOL APIENTRY DllMain(

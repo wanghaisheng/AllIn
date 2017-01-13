@@ -5,9 +5,9 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/typeof/typeof.hpp>
 #include <boost/exception/all.hpp>
+#include "common_definitions.h"
 #include "parse.h"
 #include "log.h"
-#include "common_definitions.h"
 
 MC::SvrConfig* MC::SvrConfig::config_inst = NULL;
 
@@ -21,6 +21,10 @@ bool MC::SvrConfig::Parse()
     try {
         boost::property_tree::ptree pt;
         boost::property_tree::xml_parser::read_xml(xml_path, pt);
+        // supported conn type, name
+        type_ = pt.get<std::string>("con.type");
+        name_ = pt.get<std::string>("con.name");
+
         // 章到位等待时间
         wait_time_ = atoi(pt.get<std::string>("con.wait_time").c_str());
 

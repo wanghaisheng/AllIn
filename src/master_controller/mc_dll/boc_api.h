@@ -14,7 +14,7 @@
 namespace MC {
 
 // 统一异步通知对象
-class MASTERCTRL_API NotifyResult {
+class NotifyResult {
 public:
     virtual void Notify(
         ErrorCode ec,               // 具体处理结果
@@ -27,7 +27,7 @@ public:
 };
 
 // 中行API
-class MASTERCTRL_API BOCApi: public BaseAPI {
+class BOCApi: public BaseAPI {
 public:
     static BOCApi* GetInst() {
         if (NULL == inst_) {
@@ -39,33 +39,6 @@ public:
 
 private:
     BOCApi(std::string des) : BaseAPI(des) {
-        int out_x;
-        int out_y;
-        double out_angle;
-        int ret = MC::ImgPro::GetInst()->STSeachSealPoint(
-            "C:\\pj\\bin\\w32d\\ori.jpg",
-            100,
-            100,
-            0,
-            out_x,
-            out_y,
-            out_angle);
-
-        std::string        out_model_type;
-        std::string        voucher_no;
-        std::string       trace_no;
-        int               x;
-        int               y;
-        int               angle;
-        ret = MC::ImgPro::GetInst()->IdentifyImage(
-             "C:\\pj\\bin\\w32d\\cut.jpg",
-             "12",
-             out_model_type,
-             voucher_no,
-             trace_no,
-             x,
-             y,
-             angle);
     }
 
 private:

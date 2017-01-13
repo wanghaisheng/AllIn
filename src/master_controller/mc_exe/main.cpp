@@ -2,10 +2,12 @@
 #include <tchar.h>
 #include <strsafe.h>
 #include <iostream>
-#include "pipe_server.h"
+#include "recver.h"
 #include "log.h"
 
 #pragma comment(lib, "advapi32.lib")
+
+Recver g_recver;
 
 #define SVCNAME TEXT("MasterControllerService")
 
@@ -30,8 +32,10 @@ int main(int argc, TCHAR *argv[])
 
     // 控制台形式启动
     if (lstrcmpi(argv[1], TEXT("exe")) == 0) {
-        StartServer();
+        g_recver.Start();
+
         getchar();
+        g_recver.Stop();
         return 0;
     }
 
@@ -180,11 +184,12 @@ VOID SvcInit(DWORD dwArgc, LPTSTR *lpszArgv)
     ReportSvcStatus(SERVICE_RUNNING, NO_ERROR, 0);
 
     // TO_DO: Perform work until service stops.
-    StartServer(); //内部是同步等待新的连接, 会阻塞后续操作
+    g_recver.Start(); //内部是同步等待新的连接, 会阻塞后续操作
 
     while (true) {
         // Check whether to stop the service.
         WaitForSingleObject(ghSvcStopEvent, INFINITE);
+        g_recver.Stop();
         ReportSvcStatus(SERVICE_STOPPED, NO_ERROR, 0);
         return;
     }

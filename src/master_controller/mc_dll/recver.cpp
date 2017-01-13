@@ -1,42 +1,145 @@
-﻿#include <boost/interprocess/ipc/message_queue.hpp>
+﻿#include <windows.h>
+#include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/exception/all.hpp>
+#include "pipe_server.h"
 #include "common_definitions.h"
-#include "recver.h"
 #include "agent_cmd.h"
 #include "boc_api.h"
+#include "seria.h"
+#include "recver.h"
 
 #pragma warning(disable:4995)
 #pragma warning(disable:4996)
 
-Recver::~Recver()
-{
-    Stop();
-}
+MC::SynQueue<const RecvMsg*> Recver::recver_queue_;
+HANDLE                       Recver::recv_msg_ev_;
+
+HANDLE hPipe;
 
 bool Recver::ParseConfig()
 {
-    std::string path;
-    if (!MC::GetMoudulePath(path))
-        return false;
+    std::string type = MC::SvrConfig::GetInst()->type_;
+    if (type == "PIPE")
+        cnn_type_ = MC::CT_PIPE;
+    else if (type == "MQ")
+        cnn_type_ = MC::CT_MQ;
+    else
+        cnn_type_ = MC::CT_MAX;
 
-    std::string xml_path = path + "mc.xml";
+    if (MC::CT_MQ == cnn_type_) {
+        recv_mq_name_ = MC::SvrConfig::GetInst()->name_;
+        send_mq_name_ = recv_mq_name_ + "copy";
+    }
+
+    return true;
+}
+
+bool Recver::StartMQ()
+{
     try {
-        boost::property_tree::xml_parser::read_xml(xml_path, svr_config_pt_);
-    } catch (...) {
-        boost::exception_ptr e = boost::current_exception();
-        Log::WriteLog(LL_ERROR, "Recver::ParseConfig->%s",
-            boost::current_exception_diagnostic_information());
+        boost::interprocess::message_queue::remove(recv_mq_name_.c_str());
+        boost::interprocess::message_queue::remove(send_mq_name_.c_str());
+
+        recv_mq_ = new (std::nothrow) boost::interprocess::message_queue(
+            boost::interprocess::create_only,
+            recv_mq_name_.c_str(),
+            MC::MQ_MAX_MSG_NUM,
+            MC::MQ_MAX_MSG_SIZE);
+
+        send_mq_ = new boost::interprocess::message_queue(
+            boost::interprocess::create_only,
+            send_mq_name_.c_str(),
+            MC::MQ_MAX_MSG_NUM,
+            MC::MQ_MAX_MSG_SIZE);
+    } catch (boost::interprocess::interprocess_exception &ex) {
+        std::cout << ex.what() << std::endl;
+        Log::WriteLog(LL_ERROR, "Recver::Start->消息队列创建失败: %s", ex.what());
         return false;
     }
 
     return true;
 }
 
-MC::ConnType Recver::CnnType() const
+bool Recver::StartPipe()
 {
-    return cnn_type_;
+    recv_msg_ev_ = CreateEvent(
+        NULL,       // 默认属性
+        TRUE,       // 手工reset
+        FALSE,      // 初始状态 signaled 
+        NULL);      // 未命名
+
+    HANDLE hConnectEvent;
+    OVERLAPPED oConnect;
+    LPPIPEINST lpPipeInst;
+    DWORD dwWait, cbRet;
+    BOOL fSuccess, fPendingIO;
+
+    // 用于连接操作的事件对象 
+    hConnectEvent = CreateEvent(
+        NULL,    // 默认属性
+        TRUE,    // 手工reset
+        TRUE,    // 初始状态 signaled 
+        NULL);   // 未命名
+
+    if (hConnectEvent == NULL) {
+        printf("CreateEvent failed with %d.\n", GetLastError());
+        return 0;
+    }
+    // OVERLAPPED 事件
+    oConnect.hEvent = hConnectEvent;
+
+    // 创建连接实例，等待连接
+    fPendingIO = CreateAndConnectInstance(&oConnect);
+
+    while (1) {
+        // 等待客户端连接或读写操作完成 
+        dwWait = WaitForSingleObjectEx(
+            hConnectEvent,  // 等待客户端连接的事件 
+            INFINITE,       // 无限等待
+            TRUE);
+
+        switch (dwWait) {
+        case 0:
+            // pending
+            if (fPendingIO) {
+                // 获取 Overlapped I/O 的结果
+                fSuccess = GetOverlappedResult(
+                    hPipe,     // pipe 句柄
+                    &oConnect, // OVERLAPPED 结构
+                    &cbRet,    // 已经传送的数据量
+                    FALSE);    // 不等待
+                if (!fSuccess) {
+                    printf("ConnectNamedPipe (%d)\n", GetLastError());
+                    return 0;
+                }
+            }
+
+            // 分配内存
+            lpPipeInst = (LPPIPEINST)HeapAlloc(GetProcessHeap(), 0, sizeof(PIPEINST));
+            if (lpPipeInst == NULL) {
+                printf("GlobalAlloc failed (%d)\n", GetLastError());
+                return 0;
+            }
+            lpPipeInst->hPipeInst = hPipe;
+
+            // 读和写, 注意CompletedWriteRoutine和CompletedReadRoutine的相互调用
+            lpPipeInst->cbToWrite = 0;
+            CompletedWriteRoutine(0, 0, (LPOVERLAPPED)lpPipeInst);
+
+            // 再创建一个连接实例, 以响应下一个客户端的连接
+            fPendingIO = CreateAndConnectInstance(&oConnect);
+            break;
+            // 读写完成 
+        case WAIT_IO_COMPLETION:
+            break;
+        default: {
+            printf("WaitForSingleObjectEx (%d)\n", GetLastError());
+            return 0;
+            }
+        }
+    }
 }
 
 bool Recver::Start()
@@ -47,46 +150,19 @@ bool Recver::Start()
         return false;
     }
 
-    std::string type = svr_config_pt_.get<std::string>("con.type");
-    if (type == "PIPE")
-        cnn_type_ = MC::CT_PIPE;
-    else if (type == "MQ")
-        cnn_type_ = MC::CT_MQ;
-    else
-        cnn_type_ = MC::CT_MAX;
-
+    bool conn;
     if (MC::CT_MQ == cnn_type_) {
-        recv_mq_name_ = svr_config_pt_.get<std::string>("con.name");
-        send_mq_name_ = svr_config_pt_.get<std::string>("con.name") + "copy";
-
-        try {
-            boost::interprocess::message_queue::remove(recv_mq_name_.c_str());
-            boost::interprocess::message_queue::remove(send_mq_name_.c_str());
-
-            recv_mq_ = new (std::nothrow) boost::interprocess::message_queue(
-                boost::interprocess::create_only,
-                recv_mq_name_.c_str(),
-                MC::MQ_MAX_MSG_NUM,
-                MC::MQ_MAX_MSG_SIZE);
-
-            send_mq_ = new boost::interprocess::message_queue(
-                boost::interprocess::create_only,
-                send_mq_name_.c_str(),
-                MC::MQ_MAX_MSG_NUM,
-                MC::MQ_MAX_MSG_SIZE);
-        } catch (boost::interprocess::interprocess_exception &ex) {
-            std::cout << ex.what() << std::endl;
-            Log::WriteLog(LL_ERROR, "Recver::Start->消息队列创建失败: %s", ex.what());
-            return false;
-        }
+        conn = StartMQ();
     } else if (MC::CT_PIPE == cnn_type_) {
-        recv_msg_ev_ = CreateEvent(
-            NULL,       // 默认属性
-            TRUE,       // 手工reset
-            FALSE,      // 初始状态 signaled 
-            NULL);      // 未命名
+        conn = StartPipe();
     } else {
         Log::WriteLog(LL_ERROR, "Recver::Start->未知的通信连接方式, %d", cnn_type_);
+        conn = false;
+    }
+
+    if (!conn) {
+        Log::WriteLog(LL_ERROR, "Recver::Start->fails to start conn channel, type: %d", 
+            cnn_type_);
         return false;
     }
 
@@ -94,7 +170,7 @@ bool Recver::Start()
     recver_thread_ =
         new (std::nothrow) boost::thread(boost::bind(&Recver::ReceiveFunc, this));
 
-    printf("Recver::Start->start succ\n");
+    printf("Recver::Start->start succ.\n");
     return true;
 }
 
@@ -149,7 +225,8 @@ bool Recver::WriteResp(LPPIPEINST pipe_inst_, char* buf)
         LPTSTR lpvMessage = TEXT(buf);
         send_mq_->send(lpvMessage, (lstrlen(lpvMessage) + 1) * sizeof(TCHAR), 0);
     } catch (boost::interprocess::interprocess_exception &ex) {
-        Log::WriteLog(LL_ERROR, "Recver::WriteResp->消息队列方式写回复失败, er: %s", ex.what());
+        Log::WriteLog(LL_ERROR, "Recver::WriteResp->消息队列方式写回复失败, er: %s", 
+            ex.what());
         return false;
     }
 
@@ -159,34 +236,38 @@ bool Recver::WriteResp(LPPIPEINST pipe_inst_, char* buf)
 // 接收来自客户端请求的线程, 反序列化, 分配
 void Recver::ReceiveFunc()
 {
-    const RecvMsg* msg = NULL;
+    RecvMsg* msg = NULL;
     while (running_) {
         char cmd;       // 消息头
 
         if (MC::CT_MQ == cnn_type_) {   // 消息队列
-            msg = new RecvMsg;
+            msg = new (std::nothrow) RecvMsg;
+            msg->pipe_inst = NULL;
 
             unsigned int priority;
             boost::interprocess::message_queue::size_type recvd_size;
-            char buf[CMD_BUF_SIZE] = { 0 };
             try {
-                recv_mq_->receive(buf, sizeof(buf), recvd_size, priority);  // blocked if empty
-                memcpy(&cmd, buf, sizeof(char));
-
-                const_cast<RecvMsg*>(msg)->pipe_inst = NULL;
-                strcpy(const_cast<RecvMsg*>(msg)->msg, buf);
+                // receiver is blocked if message queue is empty.
+                recv_mq_->receive(msg->msg, sizeof(msg->msg), recvd_size, priority);
+                memcpy(&cmd, msg->msg, sizeof(char));
             } catch (boost::interprocess::interprocess_exception &ex) {
-                std::cout << ex.what() << std::endl;
-                Log::WriteLog(LL_ERROR, "Recver::ReceiveFunc->消息队列收消息失败, %s", ex.what());
+                std::cout << "Recver::ReceiveFunc->消息队列收消息失败, er: "
+                    << ex.what() << std::endl;
+                Log::WriteLog(LL_ERROR, "Recver::ReceiveFunc->消息队列收消息失败, %s", 
+                    ex.what());
                 continue;
             }
         } else {
             DWORD wait_result = WaitForSingleObject(recv_msg_ev_, INFINITE);
-            if (0 != wait_result)
+            if (WAIT_OBJECT_0 != wait_result)
                 continue;
 
             ResetEvent(recv_msg_ev_);
-            recver_queue_.Pop(msg);
+            const RecvMsg* tmp_msg;
+            if (!recver_queue_.Pop(tmp_msg))
+                continue;
+
+            msg = const_cast<RecvMsg*>(tmp_msg);
             memcpy(&cmd, msg->msg, sizeof(char));
         }
 

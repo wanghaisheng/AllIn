@@ -6,6 +6,7 @@
 #define MC_DLL_IMG_PRO_H
 
 #include <string>
+#include <windows.h>
 #include "parse.h"
 
 enum FontLib {

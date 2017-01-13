@@ -82,7 +82,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;MASTERCTRL_EXPORTS;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(droot)\dpd\inc\;..\common\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(droot)\dpd\inc\;..\common\;..\serialization\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -94,8 +94,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\agent_cmd.h" />
     <ClInclude Include="..\common\common_definitions.h" />
     <ClInclude Include="..\common\log.h" />
+    <ClInclude Include="..\serialization\seria.h" />
     <ClInclude Include="base_api.h" />
     <ClInclude Include="base_event.h" />
     <ClInclude Include="boc_api.h" />
@@ -104,6 +106,8 @@
     <ClInclude Include="ImgReco.h" />
     <ClInclude Include="img_pro.h" />
     <ClInclude Include="parse.h" />
+    <ClInclude Include="pipe_server.h" />
+    <ClInclude Include="recver.h" />
     <ClInclude Include="RZCamera.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="syn_queue.h" />
@@ -112,18 +116,22 @@
     <ClInclude Include="USBControlF60.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\agent_cmd.cpp" />
     <ClCompile Include="..\common\common_definitions.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\common\log.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\serialization\seria.cpp" />
     <ClCompile Include="base_event.cpp" />
     <ClCompile Include="boc_api.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="event_cpu.cpp" />
     <ClCompile Include="img_pro.cpp" />
     <ClCompile Include="parse.cpp" />
+    <ClCompile Include="pipe_server.cpp" />
+    <ClCompile Include="recver.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>

@@ -1,113 +1,12 @@
 ﻿#include <windows.h> 
 #include <stdio.h>
 #include <tchar.h>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/interprocess/ipc/message_queue.hpp>
-#include <boost/typeof/typeof.hpp>
-#include <boost/exception/all.hpp>
-#include "recver.h"
 #include "log.h"
+#include "parse.h"
+#include "recver.h"
 #include "pipe_server.h"
-#include "common_definitions.h"
 
-Recver g_recver;
-
-VOID DisconnectAndClose(LPPIPEINST);
-BOOL CreateAndConnectInstance(LPOVERLAPPED);
-BOOL ConnectToNewClient(HANDLE, LPOVERLAPPED);
-VOID GetAnswerToRequest(LPPIPEINST);
-VOID WINAPI CompletedWriteRoutine(DWORD, DWORD, LPOVERLAPPED);
-VOID WINAPI CompletedReadRoutine(DWORD, DWORD, LPOVERLAPPED);
-
-HANDLE hPipe;
-
-int StartServer()
-{
-    if (!g_recver.Start()) {
-        Log::WriteLog(LL_ERROR, "StartServer->fails to start recver.");
-        return -1;
-    }
-
-    if (MC::CT_PIPE == g_recver.CnnType()) {
-        HANDLE hConnectEvent;
-        OVERLAPPED oConnect;
-        LPPIPEINST lpPipeInst;
-        DWORD dwWait, cbRet;
-        BOOL fSuccess, fPendingIO;
-
-        // 用于连接操作的事件对象 
-        hConnectEvent = CreateEvent(
-            NULL,    // 默认属性
-            TRUE,    // 手工reset
-            TRUE,    // 初始状态 signaled 
-            NULL);   // 未命名
-
-        if (hConnectEvent == NULL)
-        {
-            printf("CreateEvent failed with %d.\n", GetLastError());
-            return 0;
-        }
-        // OVERLAPPED 事件
-        oConnect.hEvent = hConnectEvent;
-
-        // 创建连接实例，等待连接
-        fPendingIO = CreateAndConnectInstance(&oConnect);
-
-        while (1) {
-            // 等待客户端连接或读写操作完成 
-            dwWait = WaitForSingleObjectEx(
-                hConnectEvent,  // 等待客户端连接的事件 
-                INFINITE,       // 无限等待
-                TRUE);
-
-            switch (dwWait)
-            {
-            case 0:
-                // pending
-                if (fPendingIO) {
-                    // 获取 Overlapped I/O 的结果
-                    fSuccess = GetOverlappedResult(
-                        hPipe,     // pipe 句柄
-                        &oConnect, // OVERLAPPED 结构
-                        &cbRet,    // 已经传送的数据量
-                        FALSE);    // 不等待
-                    if (!fSuccess) {
-                        printf("ConnectNamedPipe (%d)\n", GetLastError());
-                        return 0;
-                    }
-                }
-
-                // 分配内存
-                lpPipeInst = (LPPIPEINST)HeapAlloc(GetProcessHeap(), 0, sizeof(PIPEINST));
-                if (lpPipeInst == NULL) {
-                    printf("GlobalAlloc failed (%d)\n", GetLastError());
-                    return 0;
-                }
-                lpPipeInst->hPipeInst = hPipe;
-
-                // 读和写, 注意CompletedWriteRoutine和CompletedReadRoutine的相互调用
-                lpPipeInst->cbToWrite = 0;
-                CompletedWriteRoutine(0, 0, (LPOVERLAPPED)lpPipeInst);
-
-                // 再创建一个连接实例, 以响应下一个客户端的连接
-                fPendingIO = CreateAndConnectInstance(&oConnect);
-                break;
-
-                // 读写完成 
-            case WAIT_IO_COMPLETION:
-                break;
-
-            default: {
-                printf("WaitForSingleObjectEx (%d)\n", GetLastError());
-                return 0;
-            }
-            }
-        }
-    }
-
-    return 0;
-}
+extern HANDLE hPipe;
 
 VOID WINAPI CompletedWriteRoutine(
     DWORD dwErr,
@@ -205,26 +104,7 @@ VOID DisconnectAndClose(LPPIPEINST lpPipeInst)
 **************************************/
 BOOL CreateAndConnectInstance(LPOVERLAPPED lpoOverlap)
 {
-    std::string path;
-    if (!MC::GetMoudulePath(path))
-        return FALSE;
-
-    std::string xml_path = path + "server.xml";
-    std::string type;
-    std::string name;
-    try {
-        boost::property_tree::ptree pt;
-        boost::property_tree::xml_parser::read_xml(xml_path, pt);
-        type = pt.get<std::string>("con.type");
-        name = pt.get<std::string>("con.name");
-    } catch (...) {
-        boost::exception_ptr e = boost::current_exception();
-        std::cout << boost::current_exception_diagnostic_information();
-        //printf("read_xml fails\n");
-        system("pause");
-        return FALSE;
-    }
-
+    std::string name = MC::SvrConfig::GetInst()->name_;
     char cnn_name[1024] = { 0 };
     sprintf_s(cnn_name, "\\\\.\\pipe\\%s", name.c_str());
     LPTSTR lpszPipename = TEXT(cnn_name);
@@ -305,6 +185,6 @@ VOID GetAnswerToRequest(LPPIPEINST pipe)
 
     msg->pipe_inst = pipe;
     memcpy(msg->msg, pipe->chRequest, sizeof(msg->msg));
-    g_recver.Insert(msg);
-    g_recver.Signal();
+    Recver::Insert(msg);
+    Recver::Signal();
 }

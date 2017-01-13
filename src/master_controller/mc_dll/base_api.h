@@ -7,19 +7,9 @@
 #include "parse.h"
 #include "USBControlF60.h"
 
-#ifdef _WIN32
-#ifdef MASTERCTRL_EXPORTS
-#define MASTERCTRL_API _declspec(dllexport)
-#else
-#define MASTERCTRL_API _declspec(dllimport)
-#endif
-#else
-#define MASTERCTRL_API
-#endif
-
 namespace MC {
 
-class MASTERCTRL_API BaseAPI {
+class BaseAPI {
 public:
     BaseAPI(std::string des) : des_(des) {
         int ret = FOpenDev(NULL);

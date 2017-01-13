@@ -1,31 +1,31 @@
 #ifndef CONTROLLER_RECVER_H_
 #define CONTROLLER_RECVER_H_
 
-#define WIN32_LEAN_AND_MEAN
+//#define WIN32_LEAN_AND_MEAN
 
+#include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/thread/thread.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include <windows.h>
 #include "syn_queue.h"
 #include "pipe_server.h"
-#include "seria.h"
 
-struct RecvMsg {
-    LPPIPEINST  pipe_inst;
-    char        msg[CMD_BUF_SIZE];
-};
+#ifdef _WIN32
+#ifdef MASTERCTRL_EXPORTS
+#define MASTERCTRL_API _declspec(dllexport)
+#else
+#define MASTERCTRL_API _declspec(dllimport)
+#endif
+#else
+#define MASTERCTRL_API
+#endif
 
-class Recver {
+class MASTERCTRL_API Recver {
 public:
-    ~Recver();
-
     bool Start();
 
-    MC::ConnType CnnType() const;
+    static void Insert(const RecvMsg* msg);
 
-    void Insert(const RecvMsg* msg);
-
-    void Signal();
+    static void Signal();
 
     void Stop();
 
@@ -35,6 +35,10 @@ private:
     bool ParseConfig();
 
     void ReceiveFunc();
+
+    bool StartMQ();
+
+    bool StartPipe();
 
 private:
     void HandleQueryMachine(const RecvMsg* msg);
@@ -88,10 +92,10 @@ private:
     void HandleHeart(const RecvMsg* msg);
 
 private:
-    boost::property_tree::ptree         svr_config_pt_;
+    // relating pipe conn
+    static MC::SynQueue<const RecvMsg*> recver_queue_;
+    static HANDLE                       recv_msg_ev_;
 
-    MC::SynQueue<const RecvMsg* >       recver_queue_;
-    HANDLE                              recv_msg_ev_;
     volatile bool                       running_;
     boost::thread*                      recver_thread_;
 
