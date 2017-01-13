@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<con>
-	<!--type: 通信方式, PIPE, MQ -->
-	<type>MQ</type>
-	<name>samplenamedpipe</name>
-</con>

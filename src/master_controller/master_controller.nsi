@@ -27,9 +27,9 @@ InstallDirRegKey HKLM "Software\NSIS_master_controller" "Install_Dir"
 Page components
 Page directory
 Page instfiles
-
+  
 UninstPage uninstConfirm
-UninstPage instfiles
+UninstPage instfiles 
 
 ;--------------------------------
 
@@ -43,7 +43,7 @@ Section "master_controller (required)"
   
   ; Put files there
   ; File "master_controller.nsi"
-  File /r "C:\\pj\\bin\\w32d\\*"
+  File /r "C:\\pj\\bin\\w32r\\*"
   
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\NSIS_master_controller "Install_Dir" "$INSTDIR"
@@ -87,6 +87,8 @@ Section "Uninstall"
   RMDir "$SMPROGRAMS\master_controller"
   RMDir /r "$INSTDIR\imageformats"
   RMDir /r "$INSTDIR\Log"
+  RMDir /r "$INSTDIR\pic"
+  RMDir /r "$INSTDIR\platforms"
   RMDir /r "$INSTDIR\Model_Image"
   RMDir "$INSTDIR"
   

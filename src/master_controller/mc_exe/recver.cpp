@@ -21,7 +21,7 @@ bool Recver::ParseConfig()
     if (!MC::GetMoudulePath(path))
         return false;
 
-    std::string xml_path = path + "server.xml";
+    std::string xml_path = path + "mc.xml";
     try {
         boost::property_tree::xml_parser::read_xml(xml_path, svr_config_pt_);
     } catch (...) {
