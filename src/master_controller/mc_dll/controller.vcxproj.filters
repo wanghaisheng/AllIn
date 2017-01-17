@@ -39,9 +39,6 @@
     <ClInclude Include="..\common\common_definitions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="boc_api.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RZCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -75,6 +72,9 @@
     <ClInclude Include="..\serialization\seria.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="seal_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -90,9 +90,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="boc_api.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\common\log.cpp">
@@ -120,6 +117,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\serialization\seria.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="seal_api.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

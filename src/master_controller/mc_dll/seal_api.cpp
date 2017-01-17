@@ -5,9 +5,9 @@
 #include "event_cpu.h"
 #include "tool.h"
 #include "task_mgr.h"
-#include "boc_api.h"
+#include "seal_api.h"
 
-MC::BOCApi* MC::BOCApi::inst_ = NULL;
+MC::STSealAPI* MC::STSealAPI::inst_ = NULL;
 
 //////////////////////////// 获取用印机编号 ///////////////////////////////
 
@@ -49,7 +49,7 @@ private:
     MC::NotifyResult*   notify_;
 };
 
-void MC::BOCApi::QueryMachine(MC::NotifyResult* notify)
+void MC::STSealAPI::QueryMachine(MC::NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) QueryMachEv("获取用印机编号", notify);
     if (NULL == ev)
@@ -96,7 +96,7 @@ private:
     MC::NotifyResult*   notify_;
 };
 
-void MC::BOCApi::SetMachine(const std::string& sn, NotifyResult* notify)
+void MC::STSealAPI::SetMachine(const std::string& sn, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) SetMachEv("设置印控机编号", sn, notify);
     if (NULL == ev)
@@ -199,7 +199,7 @@ private:
     MC::NotifyResult*   notify_;
 };
 
-void MC::BOCApi::InitMachine(std::string key, NotifyResult* notify)
+void MC::STSealAPI::InitMachine(std::string key, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) InitMachEv("初始化印控机", key, notify);
     if (NULL == ev)
@@ -289,7 +289,7 @@ private:
     MC::NotifyResult*   notify_;
 };
 
-void MC::BOCApi::BindMAC(std::string mac, NotifyResult* notify)
+void MC::STSealAPI::BindMAC(std::string mac, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) BindMACEv("用印机绑定MAC地址", mac, notify);
     if (NULL == ev)
@@ -375,7 +375,7 @@ private:
     MC::NotifyResult*   notify_;
 };
 
-void MC::BOCApi::UnbindMAC(std::string mac, NotifyResult* notify)
+void MC::STSealAPI::UnbindMAC(std::string mac, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) UnbindMACEv("用印机解绑MAC地址", mac, notify);
     if (NULL == ev)
@@ -536,7 +536,7 @@ void PrepareStampEv::ThreadFunc()
     }
 }
 
-void MC::BOCApi::PrepareStamp(int stamp_num, int timeout, NotifyResult* notify)
+void MC::STSealAPI::PrepareStamp(int stamp_num, int timeout, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) PrepareStampEv("准备用印", stamp_num, timeout, notify);
     if (NULL == ev)
@@ -586,7 +586,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::QueryPaperDoor(MC::NotifyResult* notify)
+void MC::STSealAPI::QueryPaperDoor(MC::NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) QueryPaperEv(
         "查询进纸门",
@@ -668,7 +668,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::Snapshot(
+void MC::STSealAPI::Snapshot(
     int original_dpi, 
     int cut_dpi, 
     const std::string& ori_path,
@@ -744,7 +744,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::MergePhoto(
+void MC::STSealAPI::MergePhoto(
     const std::string& photo1, 
     const std::string& photo2, 
     const std::string& merged,
@@ -831,7 +831,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::RecognizeImage(const std::string& img, NotifyResult* notify)
+void MC::STSealAPI::RecognizeImage(const std::string& img, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) RecognitionEv("版面验证码识别", img, notify);
     if (NULL == ev)
@@ -902,7 +902,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::IdentifyElement(
+void MC::STSealAPI::IdentifyElement(
     const std::string& path,
     int x,
     int y,
@@ -1017,7 +1017,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::OrdinaryStamp(
+void MC::STSealAPI::OrdinaryStamp(
     const std::string& task,
     const std::string& voucher,
     int num, 
@@ -1092,7 +1092,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::AutoStamp(const std::string& task,
+void MC::STSealAPI::AutoStamp(const std::string& task,
     const std::string& voucher, int num, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) AutoEv(
@@ -1172,7 +1172,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::FinishStamp(const std::string& task, NotifyResult* notify)
+void MC::STSealAPI::FinishStamp(const std::string& task, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) FinishEv(
         "用印结束",
@@ -1227,7 +1227,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::ReleaseStamp(const std::string& machine, NotifyResult* notify)
+void MC::STSealAPI::ReleaseStamp(const std::string& machine, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) ReleaseEv(
         "释放印控机",
@@ -1283,7 +1283,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::GetError(int err_code, NotifyResult* notify)
+void MC::STSealAPI::GetError(int err_code, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) GetErrEv(
         "获取错误信息",
@@ -1349,7 +1349,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::CalibrateMachine(int num, NotifyResult* notify)
+void MC::STSealAPI::CalibrateMachine(int num, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) CaliStamperEv(
         "校准印章",
@@ -1406,7 +1406,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::QueryStampers(NotifyResult* notify)
+void MC::STSealAPI::QueryStampers(NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) QueryStampersEv(
         "印章状态查询",
@@ -1456,7 +1456,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::QuerySafeDoor(NotifyResult* notify)
+void MC::STSealAPI::QuerySafeDoor(NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) QuerySafeEv(
         "安全门状态查询",
@@ -1579,7 +1579,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::OperateSafeDoor(int operation, int timeout, NotifyResult* notify)
+void MC::STSealAPI::OperateSafeDoor(int operation, int timeout, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) OperateSafeEv(
         "开关安全门",
@@ -1633,7 +1633,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::OperateBeep(int operation, NotifyResult* notify)
+void MC::STSealAPI::OperateBeep(int operation, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) OperateBeepEv(
         "蜂鸣器开关",
@@ -1685,7 +1685,7 @@ private:
     MC::NotifyResult* notify_;
 };
 
-void MC::BOCApi::QuerySlot(NotifyResult* notify)
+void MC::STSealAPI::QuerySlot(NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) QuerySlotEv(
         "卡槽数量查询",
@@ -1747,7 +1747,7 @@ private:
     MC::NotifyResult*   notify_;
 };
 
-void MC::BOCApi::OperateAlarm(int alarm, int ctrl, MC::NotifyResult* notify)
+void MC::STSealAPI::OperateAlarm(int alarm, int ctrl, MC::NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) AlarmCtrlEv(
         "报警器控制",
@@ -1800,7 +1800,7 @@ private:
     MC::NotifyResult*   notify_;
 };
 
-void MC::BOCApi::QueryMAC(NotifyResult* notify)
+void MC::STSealAPI::QueryMAC(NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) QueryMACEv(
         "查询已绑定MAC地址",

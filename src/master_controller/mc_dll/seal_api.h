@@ -26,23 +26,23 @@ public:
     virtual ~NotifyResult() {}
 };
 
-// 中行API
-class BOCApi: public BaseAPI {
+// supported api by master controller now.
+class STSealAPI: public BaseAPI {
 public:
-    static BOCApi* GetInst() {
+    static STSealAPI* GetInst() {
         if (NULL == inst_) {
-            inst_ = new (std::nothrow) MC::BOCApi("中行");
+            inst_ = new (std::nothrow) MC::STSealAPI("三泰");
         }
 
         return inst_;
     }
 
 private:
-    BOCApi(std::string des) : BaseAPI(des) {
+    STSealAPI(std::string des) : BaseAPI(des) {
     }
 
 private:
-    static MC::BOCApi* inst_;  // 单例
+    static MC::STSealAPI* inst_;  // 单例
 
 public:
     // 获取用印机编号
@@ -166,9 +166,6 @@ public:
 
     // 查询已绑定MAC地址
     void QueryMAC(NotifyResult* notify);
-
-private:
-    std::string des_;
 };
 
 }

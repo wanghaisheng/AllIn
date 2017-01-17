@@ -66,8 +66,8 @@ private:
 
 public:
     HANDLE      paper_door_ev_;     // 进纸门关闭事件
-};
+}; // namespace Tool
 
-}
+} // namespace MC
 
 #endif // CONTROLLER_TOOL_H_

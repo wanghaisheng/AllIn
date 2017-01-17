@@ -6,7 +6,7 @@
 #include "pipe_server.h"
 #include "common_definitions.h"
 #include "agent_cmd.h"
-#include "boc_api.h"
+#include "seal_api.h"
 #include "seria.h"
 #include "recver.h"
 
@@ -402,7 +402,7 @@ void Recver::HandleQueryMachine(const RecvMsg* msg)
 
     // 获取印控仪编号
     MC::NotifyResult* notify = new (std::nothrow) QueryMachNT(msg->pipe_inst, cmd, this);
-    MC::BOCApi::GetInst()->QueryMachine(notify);
+    MC::STSealAPI::GetInst()->QueryMachine(notify);
 }
 
 ////////////////////////// 设置印控机编号 ////////////////////////////////////
@@ -449,7 +449,7 @@ void Recver::HandleSetMachine(const RecvMsg* msg)
     Log::WriteLog(LL_DEBUG, "Recver::HandleSetMachine->设置印控仪编号");
 
     MC::NotifyResult* notify = new (std::nothrow) SetMachNT(msg->pipe_inst, cmd, this);
-    MC::BOCApi::GetInst()->SetMachine(cmd->sn_, notify);
+    MC::STSealAPI::GetInst()->SetMachine(cmd->sn_, notify);
 }
 
 /////////////////////////// 初始化印控机 ////////////////////////////////
@@ -496,7 +496,7 @@ void Recver::HandleInitMachine(const RecvMsg* msg)
 
     // 初始化印控机
     MC::NotifyResult* notify = new (std::nothrow) InitMachNT(msg->pipe_inst, init_cmd, this);
-    MC::BOCApi::GetInst()->InitMachine(init_cmd->key_, notify);
+    MC::STSealAPI::GetInst()->InitMachine(init_cmd->key_, notify);
 }
 
 //////////////////////////// 绑定MAC地址 ////////////////////////////////
@@ -544,7 +544,7 @@ void Recver::HandleBindMAC(const RecvMsg* msg)
 
     // 绑定MAC地址
     MC::NotifyResult* notify = new (std::nothrow) BindMACNT(msg->pipe_inst, bind_cmd, this);
-    MC::BOCApi::GetInst()->BindMAC(bind_cmd->mac_, notify);
+    MC::STSealAPI::GetInst()->BindMAC(bind_cmd->mac_, notify);
 }
 
 //////////////////////// 解绑MAC地址 ////////////////////////////
@@ -591,7 +591,7 @@ void Recver::HandleUnbindMAC(const RecvMsg* msg)
 
     // 解绑MAC地址
     MC::NotifyResult* notify = new (std::nothrow) UnbindMACNT(msg->pipe_inst, unbind_cmd, this);
-    MC::BOCApi::GetInst()->UnbindMAC(unbind_cmd->mac_, notify);
+    MC::STSealAPI::GetInst()->UnbindMAC(unbind_cmd->mac_, notify);
 }
 
 ////////////////////// 准备用印 ///////////////////////////////
@@ -640,7 +640,7 @@ void Recver::HandlePrepareStamp(const RecvMsg* msg)
         prepare_cmd->timeout_);
 
     MC::NotifyResult* notify = new (std::nothrow) PrepareStampNT(msg->pipe_inst, prepare_cmd, this);
-    MC::BOCApi::GetInst()->PrepareStamp(prepare_cmd->stamper_id_, prepare_cmd->timeout_, notify);
+    MC::STSealAPI::GetInst()->PrepareStamp(prepare_cmd->stamper_id_, prepare_cmd->timeout_, notify);
 }
 
 ///////////////////////////// 查询进纸门状态 ///////////////////////////////////
@@ -687,7 +687,7 @@ void Recver::HandleQueryPaper(const RecvMsg* msg)
     printf("Recver::HandleQueryPaper->查进纸门状态\n");
 
     MC::NotifyResult* notify = new (std::nothrow) QueryPaperNT(msg->pipe_inst, cmd, this);
-    MC::BOCApi::GetInst()->QueryPaperDoor(notify);
+    MC::STSealAPI::GetInst()->QueryPaperDoor(notify);
 }
 
 /////////////////////////// 拍照 ///////////////////////////////////
@@ -739,7 +739,7 @@ void Recver::HandleSnapshot(const RecvMsg* msg)
         snap_cmd->cut_dpi_);
 
     MC::NotifyResult* notify = new (std::nothrow) SnapshotNT(msg->pipe_inst, snap_cmd, this);
-    MC::BOCApi::GetInst()->Snapshot(
+    MC::STSealAPI::GetInst()->Snapshot(
         snap_cmd->original_dpi_,
         snap_cmd->cut_dpi_, 
         snap_cmd->original_path_,
@@ -793,7 +793,7 @@ void Recver::HandleMergePhoto(const RecvMsg* msg)
         merge_cmd->photo2_);
 
     MC::NotifyResult* notify = new (std::nothrow) MergePhotoNT(msg->pipe_inst, merge_cmd, this);
-    MC::BOCApi::GetInst()->MergePhoto(merge_cmd->photo1_, merge_cmd->photo2_, merge_cmd->merged_, notify);
+    MC::STSealAPI::GetInst()->MergePhoto(merge_cmd->photo1_, merge_cmd->photo2_, merge_cmd->merged_, notify);
 }
 
 /////////////////////// 版面验证码识别 //////////////////////////////////////
@@ -842,7 +842,7 @@ void Recver::HandleRecognition(const RecvMsg* msg)
         recog_cmd->path_);
 
     MC::NotifyResult* notify = new (std::nothrow) RecognitionNT(msg->pipe_inst, recog_cmd, this);
-    MC::BOCApi::GetInst()->RecognizeImage(recog_cmd->path_, notify);
+    MC::STSealAPI::GetInst()->RecognizeImage(recog_cmd->path_, notify);
 }
 
 ///////////////////////// 要素识别 //////////////////////////////////////
@@ -890,7 +890,7 @@ void Recver::HandleElementIdenti(const RecvMsg* msg)
         identi_cmd->path_);
 
     MC::NotifyResult* notify = new (std::nothrow) IdentifyElementNT(msg->pipe_inst, identi_cmd, this);
-    MC::BOCApi::GetInst()->IdentifyElement(
+    MC::STSealAPI::GetInst()->IdentifyElement(
         identi_cmd->path_,
         identi_cmd->x_,
         identi_cmd->y_,
@@ -946,7 +946,7 @@ void Recver::HandleOrdinary(const RecvMsg* msg)
         ordi_cmd->stamper_num_);
 
     MC::NotifyResult* notify = new (std::nothrow) OridinaryStampNT(msg->pipe_inst, ordi_cmd, this);
-    MC::BOCApi::GetInst()->OrdinaryStamp(
+    MC::STSealAPI::GetInst()->OrdinaryStamp(
         ordi_cmd->task_id_,
         ordi_cmd->type_,
         ordi_cmd->stamper_num_,
@@ -1003,7 +1003,7 @@ void Recver::HandleAuto(const RecvMsg* msg)
         auto_cmd->stamper_num_);
 
     MC::NotifyResult* notify = new (std::nothrow) AutoStampNT(msg->pipe_inst, auto_cmd, this);
-    MC::BOCApi::GetInst()->AutoStamp(
+    MC::STSealAPI::GetInst()->AutoStamp(
         auto_cmd->task_id_,
         auto_cmd->type_,
         auto_cmd->stamper_num_,
@@ -1053,7 +1053,7 @@ void Recver::HandleFinish(const RecvMsg* msg)
     printf("Recver::HandleAuto->结束用印, 任务号: %s\n", finish_cmd->task_id_);
 
     MC::NotifyResult* notify = new (std::nothrow) FinishStampNT(msg->pipe_inst, finish_cmd, this);
-    MC::BOCApi::GetInst()->FinishStamp(finish_cmd->task_id_, notify);
+    MC::STSealAPI::GetInst()->FinishStamp(finish_cmd->task_id_, notify);
 }
 
 ////////////////////////// 释放印控机 /////////////////////////////////////
@@ -1100,7 +1100,7 @@ void Recver::HandleReleaseStamper(const RecvMsg* msg)
     printf("Recver::HandleReleaseStamper->印控机编号: %s\n", release_cmd->stamp_id_);
 
     MC::NotifyResult* notify = new (std::nothrow) ReleaNT(msg->pipe_inst, release_cmd, this);
-    MC::BOCApi::GetInst()->ReleaseStamp(release_cmd->stamp_id_, notify);
+    MC::STSealAPI::GetInst()->ReleaseStamp(release_cmd->stamp_id_, notify);
 }
 
 ////////////////////////// 获取错误信息 ///////////////////////////////////
@@ -1151,7 +1151,7 @@ void Recver::HandleGetError(const RecvMsg* msg)
     printf("Recver::HandleGetError->错误码: %d\n", err_cmd->err_);
 
     MC::NotifyResult* notify = new (std::nothrow) GetErNT(msg->pipe_inst, err_cmd, this);
-    MC::BOCApi::GetInst()->GetError(err_cmd->err_, notify);
+    MC::STSealAPI::GetInst()->GetError(err_cmd->err_, notify);
 }
 
 ///////////////////////// 校准印章 //////////////////////////////////
@@ -1197,7 +1197,7 @@ void Recver::HandleCalibrate(const RecvMsg* msg)
     printf("Recver::HandleCalibrate->校准印章, 印章号: %d\n", cmd->slot_);
 
     MC::NotifyResult* notify = new (std::nothrow) CalibrateNT(msg->pipe_inst, cmd, this);
-    MC::BOCApi::GetInst()->CalibrateMachine(cmd->slot_, notify);
+    MC::STSealAPI::GetInst()->CalibrateMachine(cmd->slot_, notify);
 }
 
 /////////////////////////// 印章状态查询 //////////////////////////////////
@@ -1251,7 +1251,7 @@ void Recver::HandleQueryStampers(const RecvMsg* msg)
     printf("Recver::HandleQueryStampers->印章状态查询\n");
 
     MC::NotifyResult* notify = new (std::nothrow) QueryStampersNT(msg->pipe_inst, cmd, this);
-    MC::BOCApi::GetInst()->QueryStampers(notify);
+    MC::STSealAPI::GetInst()->QueryStampers(notify);
 }
 
 /////////////////////////// 查询安全门状态/ /////////////////////////////////
@@ -1299,7 +1299,7 @@ void Recver::HandleQuerySafe(const RecvMsg* msg)
     printf("Recver::HandleQuerySafe->查询安全门状态\n");
 
     MC::NotifyResult* notify = new (std::nothrow) QuerySafeNT(msg->pipe_inst, cmd, this);
-    MC::BOCApi::GetInst()->QuerySafeDoor(notify);
+    MC::STSealAPI::GetInst()->QuerySafeDoor(notify);
 }
 
 ///////////////////////////// 开关安全门 ////////////////////////////////
@@ -1350,7 +1350,7 @@ void Recver::HandleSafeControl(const RecvMsg* msg)
         cmd->timeout_);
 
     MC::NotifyResult* notify = new (std::nothrow) SafeCtlNT(msg->pipe_inst, cmd, this);
-    MC::BOCApi::GetInst()->OperateSafeDoor(cmd->ctrl_, cmd->timeout_, notify);
+    MC::STSealAPI::GetInst()->OperateSafeDoor(cmd->ctrl_, cmd->timeout_, notify);
 }
 
 //////////////////////////// 蜂鸣器控制 /////////////////////////////////
@@ -1398,7 +1398,7 @@ void Recver::HandleBeepControl(const RecvMsg* msg)
     printf("Recver::HandleBeepControl->蜂鸣器控制, 操作: %d\n", cmd->ctrl_);
 
     MC::NotifyResult* notify = new (std::nothrow) BeepCtlNT(msg->pipe_inst, cmd, this);
-    MC::BOCApi::GetInst()->OperateBeep(cmd->ctrl_, notify);
+    MC::STSealAPI::GetInst()->OperateBeep(cmd->ctrl_, notify);
 }
 
 ///////////////////////// 卡槽数量查询 ////////////////////////////////////
@@ -1446,7 +1446,7 @@ void Recver::HandleQuerySlot(const RecvMsg* msg)
     printf("Recver::HandleQuerySlot->卡槽数量查询\n");
 
     MC::NotifyResult* notify = new (std::nothrow) QueryStNT(msg->pipe_inst, cmd, this);
-    MC::BOCApi::GetInst()->QuerySlot(notify);
+    MC::STSealAPI::GetInst()->QuerySlot(notify);
 }
 
 //////////////////////// 报警器控制 ////////////////////////////////
@@ -1496,7 +1496,7 @@ void Recver::HandleAlarmControl(const RecvMsg* msg)
     printf("Recver::HandleAlarmControl->报警器控制\n");
 
     MC::NotifyResult* notify = new (std::nothrow) AlarmCtrlNT(msg->pipe_inst, cmd, this);
-    MC::BOCApi::GetInst()->OperateAlarm(cmd->alarm_, cmd->ctrl_, notify);
+    MC::STSealAPI::GetInst()->OperateAlarm(cmd->alarm_, cmd->ctrl_, notify);
 }
 
 /////////////////////////// 查询已绑定MAC //////////////////////////////////
@@ -1546,7 +1546,7 @@ void Recver::HandleQueryMAC(const RecvMsg* msg)
     printf("Recver::HandleQueryMAC->查询已绑定MAC地址\n");
 
     MC::NotifyResult* notify = new (std::nothrow) QueryMACNT(msg->pipe_inst, cmd, this);
-    MC::BOCApi::GetInst()->QueryMAC(notify);
+    MC::STSealAPI::GetInst()->QueryMAC(notify);
 }
 
 //////////////////////////////////////////////////////////////////////////
