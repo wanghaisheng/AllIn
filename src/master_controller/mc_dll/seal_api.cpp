@@ -932,7 +932,7 @@ class OridinaryEv : public MC::BaseEvent {
 
 public:
     OridinaryEv(std::string des, std::string t, std::string v, int num, int ink,
-        int x, int y, int angle, MC::NotifyResult* notify): BaseEvent(des), 
+        int x, int y, int angle, int type, MC::NotifyResult* notify): BaseEvent(des), 
         task_(t), 
         voucher_(v), 
         num_(num),
@@ -940,6 +940,7 @@ public:
         x_(x),
         y_(y),
         angle_(angle),
+        type_(type),
         notify_(notify) {
 
     }
@@ -949,18 +950,18 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        // 中行-普通用印
+        // 普通用印
         MC::TaskState ts = MC::TaskMgr::GetInst()->QueryTaskState(task_);
+        // check task_id state
         if (ts ==  MC::TS_ALIVE) {
-            // 将原图用印坐标(像素)转换为设备用印坐标(毫米)
-            MC::Point* ptSeal = MC::ImgPro::GetInst()->GetSealCoord(x_, y_);
+            // 将原图用印坐标(像素)转换为设备用印坐标(毫米), do-do 坐标转换由接口使用者调用
+            // MC::Point* ptSeal = MC::ImgPro::GetInst()->GetSealCoord(x_, y_);
             unsigned int rfid;
             int ret = GetStamperID(num_ - 1, rfid);
             if (0 != ret) {
                 ec = MC::EC_DRIVER_FAIL;
                 Log::WriteLog(LL_ERROR, "MC::OridinaryEv::SpecificExecute->获取章槽号%d的RFID失败, er: %d",
-                              num_,
-                              ret);
+                    num_, ret);
                 goto NT;
             }
 
@@ -968,15 +969,15 @@ public:
             memcpy(&pa.seal, &rfid, sizeof(rfid));
             pa.serial_number = atoi(task_.c_str());
             pa.isPadInk = ink_;
-            pa.x_point = ptSeal->x;
-            pa.y_point = ptSeal->y;
+            pa.x_point = x_;
+            pa.y_point = y_;
             pa.w_time = MC::SvrConfig::GetInst()->wait_time_;
-            pa.angle = 270;
-            pa.type = 0;
+            pa.angle = angle_;
+            pa.type = type_;
 
             Log::WriteLog(LL_DEBUG, "MC::OridinaryEv::SpecificExecute->普通用印, 物理用印点(%d, %d)",
-                ptSeal->x,
-                ptSeal->y);
+                x_,
+                y_);
             ret = FStartStamperstrc(&pa);
             if (0 != ret) {
                 ec = MC::EC_DRIVER_FAIL;
@@ -1010,9 +1011,10 @@ private:
     std::string voucher_;
     int         num_;
     int         ink_;
-    int         x_;         // 盖章位置x坐标, 原始图片中的像素
+    int         x_;         // 盖章位置物理x坐标
     int         y_;
     int         angle_;
+    int         type_;
 
     MC::NotifyResult* notify_;
 };
@@ -1025,6 +1027,7 @@ void MC::STSealAPI::OrdinaryStamp(
     int x, 
     int y, 
     int angle,
+    int type,
     NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) OridinaryEv(
@@ -1036,6 +1039,7 @@ void MC::STSealAPI::OrdinaryStamp(
         x,
         y,
         angle,
+        type,
         notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);
@@ -1811,4 +1815,900 @@ void MC::STSealAPI::QueryMAC(NotifyResult* notify)
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
 
-//////////////////////////////////////////////////////////////////////////
+///////////////////////////// 锁定印控仪 ///////////////////////////////////
+
+class LockMachineEv : public MC::BaseEvent {
+public:
+    LockMachineEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        // 判断当前状态
+        
+        // lock machine
+        int ret = Lock();
+        if (0 != ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::LockMachineEv::SpecificExecute->锁定印控仪, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::Lock(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) LockMachineEv(
+        "锁定印控仪",
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 解锁印控仪 //////////////////////////////////
+
+class UnlockMachineEv : public MC::BaseEvent {
+public:
+    UnlockMachineEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        // unlock machine
+        int ret = Unlock();
+        if (0 != ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::UnlockMachineEv::SpecificExecute->解锁印控仪, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::Unlock(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) UnlockMachineEv(
+        "解锁印控仪",
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 印控仪锁定状态 //////////////////////////////////
+
+class QueryLockEv : public MC::BaseEvent {
+public:
+    QueryLockEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        bool ret = IsLocked();
+        if (!ret) {
+            ec = MC::EC_MACHINE_UNLOCKED;
+            goto NT;
+        }
+
+        ec = MC::EC_MACHINE_LOCKED;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::QueryLockEv::SpecificExecute->印控仪锁定状态, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::QueryLock(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) QueryLockEv(
+        "印控仪锁定状态",
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 打开设备连接 //////////////////////////////////
+
+class CnnEv: public MC::BaseEvent {
+public:
+    CnnEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = FOpenDev(NULL);
+        if (0 != ret) {
+            ec = MC::EC_OPEN_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::CnnEv::SpecificExecute->打开设备失败, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::Connect(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) CnnEv("打开设备", notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 关闭设备连接 //////////////////////////////////
+
+class CloseCnnEv: public MC::BaseEvent {
+public:
+    CloseCnnEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = FCloseDev();
+        if (!ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::CloseCnnEv::SpecificExecute->关闭设备连接, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::Disconnect(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) CloseCnnEv("关闭设备连接", notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 连接状态查询 //////////////////////////////////
+
+class QueryCnnEv: public MC::BaseEvent {
+public:
+    QueryCnnEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        if (!MC::Tool::GetInst()->Connected()) {
+            ec = MC::EC_DEV_DISCONN;
+            goto NT;
+        }
+
+        ec = MC::EC_CONNECTED;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::QueryCnnEv::SpecificExecute->连接状态, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::QueryCnn(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) QueryCnnEv("设备连接状态", notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 安全门报警器设置 //////////////////////////////////
+
+class SetSideDoorEv: public MC::BaseEvent {
+public:
+    SetSideDoorEv(std::string des, int keep, int timeout, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        keep_(keep),
+        timeout_(timeout),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = SetSideDoor(keep_, timeout_);
+        if (!ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::SetSideDoorEv::SpecificExecute->侧门报警器设置, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    int keep_;
+    int timeout_;
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::SetSideDoor(int keep_open, int timeout, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) SetSideDoorEv(
+        "安全门报警器设置", 
+        keep_open,
+        timeout,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 获取设备型号 //////////////////////////////////
+
+class GetDevModelEv: public MC::BaseEvent {
+public:
+    GetDevModelEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        // to-do
+        int ret = FOpenDev(NULL);
+        if (!ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::GetDevModelEv::SpecificExecute->获取设备型号, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::QueryDevModel(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) GetDevModelEv("获取设备型号", notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 打开进纸门 //////////////////////////////////
+
+class OpenPaperEv: public MC::BaseEvent {
+public:
+    OpenPaperEv(std::string des, int timeout, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        timeout_(timeout),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = SetPaperDoor(timeout_);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::OpenPaperEv::SpecificExecute->设置纸门超时"
+                "时间(%d)失败", timeout_);
+        }
+
+        ret = FOpenDoorPaper();
+        if (0 != ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::OpenPaperEv::SpecificExecute->打开进纸门, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    int timeout_;
+    MC::NotifyResult*   notify_;
+};
+
+
+void MC::STSealAPI::OpenPaper(int timeout, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) OpenPaperEv(
+        "打开进纸门", 
+        timeout,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 补光灯控制 //////////////////////////////////
+
+class CtrlLEDEv: public MC::BaseEvent {
+public:
+    CtrlLEDEv(std::string des, int which, int swi, int val, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        which_(which),
+        switch_(swi),
+        value_(val),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+//0x0F, 补光灯控制
+//light     --- 补光灯类型
+//              1 -- 安全门旁边的补光灯; 
+//              2 -- 凭证摄像头旁边的补光灯
+//op        --- 操作(0 -- 关; 1 -- 开)
+//USBCONTROLF60_API   int FLightCtrl(char light, int op);
+
+//0x17, 补光灯亮度调节
+//light         --- 补光灯类型
+//                  1 安全门旁边的补光灯
+//                  2 凭证摄像头旁边的补光灯
+//brightness    --- 亮度值(建议范围 1-100, 1为最弱, 100为最亮)
+//USBCONTROLF60_API   int FLightBrightness(char light, char brightness);
+
+        int ret = FLightCtrl(which_, switch_);
+        if (0 != ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        // 开补光灯需要同时设置亮度
+        if (1 == switch_) {
+            ret = FLightBrightness(which_, value_);
+            if (0 != ret) {
+                ec = MC::EC_DRIVER_FAIL;
+                goto NT;
+            }
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::CtrlLEDEv::SpecificExecute->补光灯控制, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    int which_;
+    int switch_;
+    int value_;
+
+    MC::NotifyResult*   notify_;
+};
+
+// 补光灯控制
+void MC::STSealAPI::CtrlLed(int which, int switchs, int value, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) CtrlLEDEv(
+        "补光灯控制", 
+        which,
+        switchs,
+        value,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 用印参数检查 //////////////////////////////////
+
+class CheckParaEv: public MC::BaseEvent {
+public:
+    CheckParaEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = FOpenDev(NULL);
+        if (!ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::CheckParaEv::SpecificExecute->用印参数检查, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+// 用印参数合法性检查
+void MC::STSealAPI::CheckParams(int x, int y, int angle, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) CheckParaEv("用印参数检查", notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 打开摄像头 //////////////////////////////////
+
+class OpenCameraEv: public MC::BaseEvent {
+public:
+    OpenCameraEv(std::string des, int which, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        which_(which),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = OpenCamera((CAMERAINDEX)which_);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::OpenCameraEv->打开摄像头失败, er: %d", ret);
+            ec = MC::EC_OPEN_CAM_FAIL;
+            goto NT;
+        }
+
+        MC::Tool::GetInst()->UpdateCams(which_, true);
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::OpenCameraEv::SpecificExecute->打开摄像头, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    int which_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::OpenCamera(int which, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) OpenCameraEv(
+        "打开摄像头", 
+        which,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 关闭摄像头 //////////////////////////////////
+
+class CloseCameraEv: public MC::BaseEvent {
+public:
+    CloseCameraEv(std::string des, int which, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        which_(which),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = CloseCamera((CAMERAINDEX)which_);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::CloseCameraEv->关闭摄像头失败，er: %d", ret);
+            ec = MC::EC_CLOSE_CAM_FAIL;
+            goto NT;
+        }
+
+        MC::Tool::GetInst()->UpdateCams(which_, false);
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::CloseCameraEv::SpecificExecute->关闭摄像头, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    int which_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::CloseCamera(int which, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) CloseCameraEv(
+        "关闭摄像头", 
+        which,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 摄像头状态 //////////////////////////////////
+
+class QueryCameraEv: public MC::BaseEvent {
+public:
+    QueryCameraEv(std::string des, int which, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        which_(which),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        char buffer[4] = {0};
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        bool status = MC::Tool::GetInst()->QueryCam(which_);
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec, status? _itoa(1, buffer, 10) : _itoa(0, buffer, 10));
+        Log::WriteLog(LL_DEBUG, "MC::QueryCameraEv::SpecificExecute->摄像头状态, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    int which_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::QueryCameraStatus(int which, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) QueryCameraEv(
+        "摄像头状态", 
+        which,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 设置分辨率 //////////////////////////////////
+
+class SetResolutionEv: public MC::BaseEvent {
+public:
+    SetResolutionEv(
+        std::string des, 
+        int which,
+        int x,
+        int y,
+        MC::NotifyResult* notify) :
+        BaseEvent(des),
+        which_(which),
+        x_(x),
+        y_(y),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = SetResolution((CAMERAINDEX)which_, x_, y_);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::SetResolutionEv->设置分辨率失败, er: %d", ret);
+            ec = MC::EC_SET_RESO_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::SetResolutionEv::SpecificExecute->设置分辨率, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    int which_;
+    int x_;
+    int y_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::SetResolution(int which, int x, int y, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) SetResolutionEv(
+        "设置分辨率",
+        which,
+        x,
+        y,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 设置属性 //////////////////////////////////
+
+class SetPropertyEv: public MC::BaseEvent {
+public:
+    SetPropertyEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = FOpenDev(NULL);
+        if (!ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::SetPropertyEv::SpecificExecute->打开设备失败, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::SetProperty(int which, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) SetPropertyEv("设置摄像头属性", notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 录像 //////////////////////////////////
+
+class RecordVideoEv: public MC::BaseEvent {
+public:
+    RecordVideoEv(std::string des, int which, std::string path, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        which_(which),
+        path_(path),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = StartCaptureVideo((CAMERAINDEX)which_, (char*)path_.c_str());
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::RecordVideoEv->开启录像失败, er: %d", ret);
+            ec = MC::EC_START_RECORD_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::RecordVideoEv::SpecificExecute->开启录像, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    int which_;
+    std::string path_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::RecordVideo(int which, const std::string& path, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) RecordVideoEv(
+        "录像",
+        which,
+        path,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 停止录像 //////////////////////////////////
+
+class StopRecordVideoEv: public MC::BaseEvent {
+public:
+    StopRecordVideoEv(std::string des, int which, std::string path, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        which_(which),
+        path_(path),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = StopCaptureVideo((CAMERAINDEX)which_, (char*)path_.c_str());
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::StopRecordVideoEv->停止录像失败, er: %d", ret);
+            ec = MC::EC_STOP_RECORD_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::StopRecordVideoEv::SpecificExecute->停止录像, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    int which_;
+    std::string path_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::StopRecordVideo(int which, const std::string& path, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) StopRecordVideoEv(
+        "停止录像",
+        which,
+        path,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+

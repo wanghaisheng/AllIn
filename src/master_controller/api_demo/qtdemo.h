@@ -94,6 +94,22 @@ private:
     void HandleQuerySN();           // 获取设备编号
     void HandleSetSN();             // 设置设备编号
 
+    void HandleCnnStatus();
+    void HandleOpenCnn();
+    void HandleCloseCnn();
+
+    void HandleOpenPaper();
+
+    void HandleOpenPaperLED();
+    void HandleClosePaperLED();
+    void HandleOpenSafeLED();
+    void HandleCloseSafeLED();
+
+    void HandleSetResolution();
+
+    void HandleStartRecord();
+    void HandleStopRecord();
+
 private slots:
     void HandleErrCodeChange(const QString &);
 
@@ -129,6 +145,7 @@ protected:
 
 private slots:
     void HandleSelectImg(int index);    // 选择图片(原图或切图)
+    void HandleCamListChange(int index);
 
 private:
     void HandleOriImgClick();   // 点按原图
@@ -142,6 +159,11 @@ private:
 
     void HandleRecogCode();     // 版面、验证码识别
     void HandleRecogEle();      // 要素识别
+
+    int which_cam_;
+    void HandleOpenCam();
+    void HandleCloseCam();
+    void HandleQueryCam();
 
 private:
     void InitSnapshot();

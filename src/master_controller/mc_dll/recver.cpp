@@ -348,6 +348,60 @@ void Recver::ReceiveFunc()
         case CT_QUERY_MAC:
             HandleQueryMAC(msg);
             break;
+        case CT_LOCK:
+            HandleLock(msg);
+            break;
+        case CT_UNLOCK:
+            HandleUnlock(msg);
+            break;
+        case CT_LOCK_STATUS:
+            HandleQueryLock(msg);
+            break;
+        case CT_OPEN_CON:
+            HandleOpenCnn(msg);
+            break;
+        case CT_CLOSE_CON:
+            HandleCloseCnn(msg);
+            break;
+        case CT_QUERY_CON:
+            HandleQueryCnn(msg);
+            break;
+        case CT_SIDE_DOOR_ALARM:
+            HandleSetSideDoor(msg);
+            break;
+        case CT_QUERY_DEV_MODEL:
+            HandleGetDevModel(msg);
+            break;
+        case CT_OPEN_PAPER:
+            HandleOpenPaper(msg);
+            break;
+        case CT_LED_CTL:
+            HandleCtrlLED(msg);
+            break;
+        case CT_CHECK_PARAM:
+            HandleCheckParam(msg);
+            break;
+        case CT_OPEN_CAMERA:
+            HandleOpenCamera(msg);
+            break;
+        case CT_CLOSE_CAMERA:
+            HandleCloseCamera(msg);
+            break;
+        case CT_CAMERA_STATUS:
+            HandleGetCameraStatus(msg);
+            break;
+        case CT_SET_RESOLUTION:
+            HandleSetResolution(msg);
+            break;
+        case CT_SET_PROPERTY:
+            HandleSetProperty(msg);
+            break;
+        case CT_RECORD:
+            HandleRecordVideo(msg);
+            break;
+        case CT_STOP_RECORD:
+            HandleStopRecordVideo(msg);
+            break;
         default:
             printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
             break;
@@ -954,6 +1008,7 @@ void Recver::HandleOrdinary(const RecvMsg* msg)
         ordi_cmd->x_,
         ordi_cmd->y_,
         ordi_cmd->angle_,
+        ordi_cmd->seal_type_,
         notify);
 }
 
@@ -1547,6 +1602,863 @@ void Recver::HandleQueryMAC(const RecvMsg* msg)
 
     MC::NotifyResult* notify = new (std::nothrow) QueryMACNT(msg->pipe_inst, cmd, this);
     MC::STSealAPI::GetInst()->QueryMAC(notify);
+}
+
+////////////////////////////////////
+
+class LockNT: public MC::NotifyResult {
+public:
+    LockNT(LPPIPEINST inst, LockCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "LockNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    LockCmd*            cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleLock(const RecvMsg* msg)
+{
+    LockCmd* cmd = new (std::nothrow) LockCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleLock->锁定印控仪\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) LockNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->Lock(notify);
+}
+
+////////////////////////////
+
+class UnlockNT: public MC::NotifyResult {
+public:
+    UnlockNT(LPPIPEINST inst, UnlockCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        int err_code = 0;
+        std::cout << "UnlockNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    UnlockCmd*          cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleUnlock(const RecvMsg* msg)
+{
+    UnlockCmd* cmd = new (std::nothrow) UnlockCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleUnlock->解锁印控仪\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) UnlockNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->Unlock(notify);
+}
+
+////////////////////////////
+
+class QueryLockNT: public MC::NotifyResult {
+public:
+    QueryLockNT(LPPIPEINST inst, QueryLockCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        int err_code = 0;
+        std::cout << "QueryLockNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    QueryLockCmd*       cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleQueryLock(const RecvMsg* msg)
+{
+    QueryLockCmd* cmd = new (std::nothrow) QueryLockCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleQueryLock->印控仪锁定状态\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) QueryLockNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->QueryLock(notify);
+}
+
+////////////////////////////
+
+class OpenCnnNT: public MC::NotifyResult {
+public:
+    OpenCnnNT(LPPIPEINST inst, OpenCnnCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        int err_code = 0;
+        std::cout << "QueryLockNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    OpenCnnCmd*         cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleOpenCnn(const RecvMsg* msg)
+{
+    OpenCnnCmd* cmd = new (std::nothrow) OpenCnnCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleOpenCnn->打开设备连接\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) OpenCnnNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->Connect(notify);
+}
+
+////////////////////////////
+
+class CloseCnnNT: public MC::NotifyResult {
+public:
+    CloseCnnNT(LPPIPEINST inst, CloseCnnCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        int err_code = 0;
+        std::cout << "QueryLockNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    CloseCnnCmd*        cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleCloseCnn(const RecvMsg* msg)
+{
+    CloseCnnCmd* cmd = new (std::nothrow) CloseCnnCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleCloseCnn->关闭设备连接\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) CloseCnnNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->Disconnect(notify);
+}
+
+////////////////////////////
+
+class QueryCnnNT: public MC::NotifyResult {
+public:
+    QueryCnnNT(LPPIPEINST inst, QueryCnnCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "QueryCnnNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->status_ = ec == MC::EC_CONNECTED? 1: 0;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    QueryCnnCmd*        cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleQueryCnn(const RecvMsg* msg)
+{
+    QueryCnnCmd* cmd = new (std::nothrow) QueryCnnCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleQueryCnn->连接状态查询\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) QueryCnnNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->QueryCnn(notify);
+}
+
+////////////////////////////
+
+class SetSideDoorNT: public MC::NotifyResult {
+public:
+    SetSideDoorNT(LPPIPEINST inst, SideDoorAlarmCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        int err_code = 0;
+        std::cout << "SetSideDoorNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    SideDoorAlarmCmd*   cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleSetSideDoor(const RecvMsg* msg)
+{
+    SideDoorAlarmCmd* cmd = new (std::nothrow) SideDoorAlarmCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleSetSideDoor->设置安全门报警器\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) SetSideDoorNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->SetSideDoor(cmd->keep_open_,
+                                        cmd->timeout_,
+                                        notify);
+}
+
+////////////////////////////
+
+class GetModelNT: public MC::NotifyResult {
+public:
+    GetModelNT(LPPIPEINST inst, GetDevModelCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        int err_code = 0;
+        std::cout << "GetModelNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    GetDevModelCmd*     cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleGetDevModel(const RecvMsg* msg)
+{
+    GetDevModelCmd* cmd = new (std::nothrow) GetDevModelCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleGetDevModel->获取设备型号\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) GetModelNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->QueryDevModel(notify);
+}
+
+////////////////////////////
+
+class OpenPaperNT: public MC::NotifyResult {
+public:
+    OpenPaperNT(LPPIPEINST inst, OpenPaperCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        int err_code = 0;
+        std::cout << "OpenPaperNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    OpenPaperCmd*       cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleOpenPaper(const RecvMsg* msg)
+{
+    OpenPaperCmd* cmd = new (std::nothrow) OpenPaperCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleOpenPaper->打开进纸门\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) OpenPaperNT(
+        msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->OpenPaper(cmd->timeout_, notify);
+}
+
+////////////////////////////
+
+class CtrlLedNT: public MC::NotifyResult {
+public:
+    CtrlLedNT(LPPIPEINST inst, CtrlLEDCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        int err_code = 0;
+        std::cout << "CtrlLedNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    CtrlLEDCmd*         cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleCtrlLED(const RecvMsg* msg)
+{
+    CtrlLEDCmd* cmd = new (std::nothrow) CtrlLEDCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleCtrlLED->控制补光灯\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) CtrlLedNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->CtrlLed(
+        cmd->which_,
+        cmd->switch_,
+        cmd->value_,
+        notify);
+}
+
+////////////////////////////
+
+class CheckParaNT: public MC::NotifyResult {
+public:
+    CheckParaNT(LPPIPEINST inst, CheckParamCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        int err_code = 0;
+        std::cout << "CheckParaNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    CheckParamCmd*      cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleCheckParam(const RecvMsg* msg)
+{
+    CheckParamCmd* cmd = new (std::nothrow) CheckParamCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleCheckParam->用印参数检查\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) CheckParaNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->CheckParams(
+        cmd->x_,
+        cmd->y_,
+        cmd->angle_,
+        notify);
+}
+
+////////////////////////////
+
+class OpenCameraNT: public MC::NotifyResult {
+public:
+    OpenCameraNT(LPPIPEINST inst, OpenCameraCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        int err_code = 0;
+        std::cout << "OpenCameraNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    OpenCameraCmd*      cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleOpenCamera(const RecvMsg* msg)
+{
+    OpenCameraCmd* cmd = new (std::nothrow) OpenCameraCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleOpenCamera->打开摄像头\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) OpenCameraNT(
+        msg->pipe_inst, 
+        cmd,
+        this);
+    MC::STSealAPI::GetInst()->OpenCamera(
+        cmd->which_,
+        notify);
+}
+
+////////////////////////////
+
+class CloseCameraNT: public MC::NotifyResult {
+public:
+    CloseCameraNT(LPPIPEINST inst, CloseCameraCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        int err_code = 0;
+        std::cout << "CloseCameraNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    CloseCameraCmd*     cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleCloseCamera(const RecvMsg* msg)
+{
+    CloseCameraCmd* cmd = new (std::nothrow) CloseCameraCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleCloseCamera->关闭摄像头\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) CloseCameraNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->CloseCamera(
+        cmd->which_,
+        notify);
+}
+
+////////////////////////////
+
+class QueryCameraNT: public MC::NotifyResult {
+public:
+    QueryCameraNT(LPPIPEINST inst, QueryCameraStatusCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "QueryCameraNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->status_ = atoi(data1.c_str());
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    QueryCameraStatusCmd*   cmd_;
+    LPPIPEINST              pipe_inst_;
+    Recver*                 recver_;
+};
+
+void Recver::HandleGetCameraStatus(const RecvMsg* msg)
+{
+    QueryCameraStatusCmd* cmd = new (std::nothrow) QueryCameraStatusCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleGetCameraStatus->摄像头状态\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) QueryCameraNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->QueryCameraStatus(
+        cmd->which_,
+        notify);
+}
+
+////////////////////////////
+
+class SetResolutionNT: public MC::NotifyResult {
+public:
+    SetResolutionNT(LPPIPEINST inst, SetResolutionCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        int err_code = 0;
+        std::cout << "SetResolutionNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    SetResolutionCmd*   cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleSetResolution(const RecvMsg* msg)
+{
+    SetResolutionCmd* cmd = new (std::nothrow) SetResolutionCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleSetResolution->设置分辨率\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) SetResolutionNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->SetResolution(
+        cmd->which_,
+        cmd->x_,
+        cmd->y_,
+        notify);
+}
+
+////////////////////////////
+
+class SetPropertyNT: public MC::NotifyResult {
+public:
+    SetPropertyNT(LPPIPEINST inst, SetPropertyCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        int err_code = 0;
+        std::cout << "SetPropertyNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    SetPropertyCmd*     cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleSetProperty(const RecvMsg* msg)
+{
+    SetPropertyCmd* cmd = new (std::nothrow) SetPropertyCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleSetProperty->设置摄像头属性\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) SetPropertyNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->SetProperty(
+        cmd->which_,
+        notify);
+}
+
+////////////////////////////
+
+class RecordVideoNT: public MC::NotifyResult {
+public:
+    RecordVideoNT(LPPIPEINST inst, RecordVideoCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "RecordVideoNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    RecordVideoCmd*     cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleRecordVideo(const RecvMsg* msg)
+{
+    RecordVideoCmd* cmd = new (std::nothrow) RecordVideoCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleRecordVideo->录像\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) RecordVideoNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->RecordVideo(
+        cmd->which_,
+        cmd->path_,
+        notify);
+}
+
+////////////////////////////
+
+class StopRecordVideoNT: public MC::NotifyResult {
+public:
+    StopRecordVideoNT(LPPIPEINST inst, StopRecordVideoCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "StopRecordVideoNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    StopRecordVideoCmd* cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleStopRecordVideo(const RecvMsg* msg)
+{
+    StopRecordVideoCmd* cmd = new (std::nothrow) StopRecordVideoCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleStopRecordVideo->停止录像\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) StopRecordVideoNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->StopRecordVideo(
+        cmd->which_,
+        cmd->path_,
+        notify);
 }
 
 //////////////////////////////////////////////////////////////////////////

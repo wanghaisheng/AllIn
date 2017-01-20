@@ -11,6 +11,7 @@ enum ErrorCode {
     EC_TIMEOUT,                 // 超时
     EC_PAPER_TIMEOUT,           // 进纸门超时未关闭
     EC_DRIVER_FAIL,             // 调用驱动接口失败
+    EC_CONNECTED,               // 设备已连接
     EC_CON_DISCONN,             // 通信连接断开
     EC_DEV_DISCONN,             // 设备已断开
     EC_CONN_OPEN_FAIL,          // 成功连接, 打开设备失败
@@ -42,6 +43,12 @@ enum ErrorCode {
     EC_TOP_DOOR_OPEN,           // 顶盖门打开
     EC_UPDATE_STAMP_FAIL,       // 更新章映射失败
     EC_STAMP_NOT_EXIST,         // 章槽无章
+    EC_SET_RESO_FAIL,           // 设置分辨率失败
+    EC_OPEN_CAM_FAIL,           // 打开摄像头失败
+    EC_CLOSE_CAM_FAIL,          // 关闭摄像头失败
+    EC_OPEN_FAIL,               // 打开设备失败
+    EC_START_RECORD_FAIL,       // 开启录像失败
+    EC_STOP_RECORD_FAIL,        // 停止录像失败
     EC_MAX
 };
 
@@ -51,6 +58,7 @@ static std::string ErrorMsg[] = {
     "超时错误",
     "进纸门超时未关闭",
     "调用驱动接口失败",
+    "设备已连接",
     "通信连接断开",
     "设备已断开",
     "成功连接, 打开设备失败",
@@ -81,7 +89,13 @@ static std::string ErrorMsg[] = {
     "解锁印控仪失败, 重试",
     "顶盖门打开",
     "更新章映射失败",
-    "章槽无章"
+    "章槽无章",
+    "设置分辨率失败",
+    "打开摄像头失败",
+    "关闭摄像头失败",
+    "打开设备失败",
+    "开启录像失败",
+    "停止录像失败"
 };
 
 static std::string GetErrMsg(enum ErrorCode err)

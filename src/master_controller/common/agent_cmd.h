@@ -25,7 +25,6 @@ enum CmdType {
     CT_UNBIND_MAC,          // 解绑MAC
     CT_PREPARE_STAMP,       // 准备用印
     CT_PAPER_DOOR,          // 查询进纸门状态
-    CT_SNAPSHOT,            // 拍照
     CT_PHOTO_SYNTHESIS,     // 照片合成
     CT_RECOGNITION,         // 版面验证码识别
     CT_ELEMENT_IDENTI,      // 要素识别
@@ -43,8 +42,29 @@ enum CmdType {
     CT_SAFE_CTL,            // 开关安全门
     CT_BEEP_CTL,            // 蜂鸣器控制
     CT_QUERY_SLOT,          // 卡槽数量查询
-    CT_ALARM_CTL,           // 报警器控制
+    CT_ALARM_CTL,           // 开关报警器(门报警、振动报警)
     CT_QUERY_MAC,           // 查询已绑定MAC地址
+    CT_LOCK,                // 锁定印控仪
+    CT_UNLOCK,              // 解锁印控仪
+    CT_LOCK_STATUS,         // 锁定状态
+    CT_OPEN_CON,            // 打开连接
+    CT_CLOSE_CON,           // 关闭连接
+    CT_QUERY_CON,           // 连接状态
+    CT_SIDE_DOOR_ALARM,     // 安全门报警器设置
+    CT_QUERY_DEV_MODEL,     // 获取设备型号
+    CT_OPEN_PAPER,          // 开进纸门
+    CT_LED_CTL,             // 补光灯控制
+    CT_CHECK_PARAM,         // 用印参数合法性检查
+
+    // 摄像头接口
+    CT_OPEN_CAMERA,         // 打开摄像头
+    CT_CLOSE_CAMERA,        // 关闭摄像头
+    CT_CAMERA_STATUS,       // 摄像头状态
+    CT_SET_RESOLUTION,      // 设置分辨率
+    CT_SET_PROPERTY,        // 设置属性
+    CT_SNAPSHOT,            // 拍照
+    CT_RECORD,              // 录像
+    CT_STOP_RECORD,         // 停止录像
 };
 
 static std::string cmd_des[] = 
@@ -55,7 +75,6 @@ static std::string cmd_des[] =
     "解绑MAC",
     "准备用印",
     "查询进纸门状态",
-    "拍照",
     "照片合成",
     "版面验证码识别",
     "要素识别",
@@ -74,7 +93,26 @@ static std::string cmd_des[] =
     "蜂鸣器控制",
     "卡槽数量查询",
     "报警器控制",
-    "查询已绑定MAC地址"
+    "查询已绑定MAC地址",
+    "锁定印控仪",
+    "解锁印控仪",
+    "锁定状态",
+    "打开连接",
+    "关闭连接",
+    "连接状态",
+    "安全门报警器设置",
+    "获取设备型号",
+    "开进纸门",
+    "补光灯控制",
+    "用印参数合法性检查",
+    "打开摄像头",
+    "关闭摄像头",
+    "摄像头状态",
+    "设置分辨率",
+    "设置属性",
+    "拍照",
+    "开始录像",
+    "停止录像"
 };
 
 class BaseCmd {
@@ -253,7 +291,7 @@ public:
 class OridinaryStampCmd : public BaseCmd {
 public:
     OridinaryStampCmd() : ret_(MC::EC_SUCC), stamper_num_(-1),
-        x_(-1), y_(-1), angle_(0) {
+        x_(-1), y_(-1), angle_(0), seal_type_(0) {
         ct_ = CT_ORDINARY_STAMP;
     }
 
@@ -265,9 +303,10 @@ public:
     char            type_[VOUCHER_TYPE_SIZE];   // 凭证类型
     int             stamper_num_;               // 印章卡槽号
     int             ink_;                       // 是否蘸印油, 0-否, 1-是
-    int             x_;                         // 印章位置X(像素)
-    int             y_;                         // 印章位置Y(像素)
+    int             x_;                         // 印章位置X(物理坐标)
+    int             y_;                         // 印章位置Y(物理坐标)
     int             angle_;                     // 章旋转角度(顺时针: 0, 90, 180, 270)
+    int             seal_type_;                 // 0 - 普通用印, 1 - 骑缝章
 
     MC::ErrorCode   ret_;
 };
@@ -496,6 +535,283 @@ public:
 public:
     char mac1_[MAC_SIZE];
     char mac2_[MAC_SIZE];
+
+    MC::ErrorCode ret_;
+};
+
+// lock machine
+class LockCmd: public BaseCmd {
+public:
+    LockCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_LOCK;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    MC::ErrorCode ret_;
+};
+
+// unlock machine
+class UnlockCmd: public BaseCmd {
+public:
+    UnlockCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_UNLOCK;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    MC::ErrorCode ret_;
+};
+
+// query lock status
+class QueryLockCmd: public BaseCmd {
+public:
+    QueryLockCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_LOCK_STATUS;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int status_;            // 0 -- unlocking, 1 -- locking
+
+    MC::ErrorCode ret_;
+};
+
+class OpenCnnCmd: public BaseCmd {
+public:
+    OpenCnnCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_OPEN_CON;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    MC::ErrorCode ret_;
+};
+
+class CloseCnnCmd: public BaseCmd {
+public:
+    CloseCnnCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_CLOSE_CON;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    MC::ErrorCode ret_;
+};
+
+class QueryCnnCmd: public BaseCmd {
+public:
+    QueryCnnCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_QUERY_CON;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int status_;            // 0-disconnected, 1-connected
+
+    MC::ErrorCode ret_;
+};
+
+class SideDoorAlarmCmd: public BaseCmd {
+public:
+    SideDoorAlarmCmd(): ret_(MC::EC_SUCC), keep_open_(0), timeout_(0) {
+        ct_ = CT_SIDE_DOOR_ALARM;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int keep_open_;
+    int timeout_;
+
+    MC::ErrorCode ret_;
+};
+
+class GetDevModelCmd: public BaseCmd {
+public:
+    GetDevModelCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_QUERY_DEV_MODEL;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    std::string model_;
+
+    MC::ErrorCode ret_;
+};
+
+class OpenPaperCmd: public BaseCmd {
+public:
+    OpenPaperCmd(): ret_(MC::EC_SUCC), timeout_(0) {
+        ct_ = CT_OPEN_PAPER;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int timeout_;
+    MC::ErrorCode ret_;
+};
+
+class CtrlLEDCmd: public BaseCmd {
+public:
+    CtrlLEDCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_LED_CTL;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int which_;     // control which led
+    int switch_;    // operation code, 0--close, 1--open
+    int value_;     // only when operation code is '1', this value is valid
+
+    MC::ErrorCode ret_;
+};
+
+class CheckParamCmd: public BaseCmd {
+public:
+    CheckParamCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_CHECK_PARAM;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int x_;
+    int y_;
+    int angle_;
+
+    MC::ErrorCode ret_;
+};
+
+class OpenCameraCmd: public BaseCmd {
+public:
+    OpenCameraCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_OPEN_CAMERA;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int which_;
+
+    MC::ErrorCode ret_;
+};
+
+class CloseCameraCmd: public BaseCmd {
+public:
+    CloseCameraCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_CLOSE_CAMERA;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int which_;
+
+    MC::ErrorCode ret_;
+};
+
+class QueryCameraStatusCmd: public BaseCmd {
+public:
+    QueryCameraStatusCmd() : ret_(MC::EC_SUCC), which_(-1), status_(-1) {
+        ct_ = CT_CAMERA_STATUS;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int which_;
+    int status_;
+
+    MC::ErrorCode ret_;
+};
+
+class SetResolutionCmd: public BaseCmd {
+public:
+    SetResolutionCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_SET_RESOLUTION;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int which_;
+    int x_;
+    int y_;
+
+    MC::ErrorCode ret_;
+};
+
+class SetPropertyCmd: public BaseCmd {
+public:
+    SetPropertyCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_SET_PROPERTY;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int which_;
+    int hue_;
+    int saturation_;
+    int value_;
+
+    MC::ErrorCode ret_;
+};
+
+class RecordVideoCmd: public BaseCmd {
+public:
+    RecordVideoCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_RECORD;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int which_;
+    char path_[MAX_PATH];
+
+    MC::ErrorCode ret_;
+};
+
+class StopRecordVideoCmd: public BaseCmd {
+public:
+    StopRecordVideoCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_STOP_RECORD;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int which_;
+    char path_[MAX_PATH];
 
     MC::ErrorCode ret_;
 };

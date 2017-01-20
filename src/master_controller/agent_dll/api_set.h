@@ -143,6 +143,97 @@ public:
     virtual void Notify(std::string mac1, std::string mac2, int ec) = 0;
 };
 
+// 锁定
+class LockNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class UnlockNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class QueryLockNT {
+public:
+    virtual void Notify(int lock, int ec) = 0;
+};
+
+class OpenCnnNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class CloseCnnNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class QueryCnnNT {
+public:
+    virtual void Notify(int cnn, int ec)  = 0;
+};
+
+class SideDoorAlarmNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class DevModelNT {
+public:
+    virtual void Notify(std::string model, int ec) = 0;
+};
+
+class OpenPaperNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class CtrlLedNT {
+public:
+    virtual void Notify(int ec)  = 0;
+};
+
+class CheckParamNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class OpenCameraNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class CloseCameraNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class QueryCameraNT {
+public:
+    virtual void Notify(int which, int status, int ec) = 0;
+};
+
+class SetResolutionNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class SetPropertyNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class RecordVideoNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class StopRecordVideoNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
 // 心跳
 class HeartNT {
 public:
@@ -192,6 +283,7 @@ public:
         int x, 
         int y, 
         int angle, 
+        int type,
         OrdinaryStampNT* nt);
 
     int AsynAutoStamp(const std::string& task,
@@ -218,6 +310,42 @@ public:
     int AsynAlarmControl(int alarm, int ctrl, CtrlAlarmNT* nt);
 
     int AsynQueryMAC(QueryMACNT* nt);
+
+    int AsynLock(LockNT* nt);
+
+    int AsynUnlock(UnlockNT* nt);
+
+    int AsynQueryLock(QueryLockNT* nt);
+
+    int AsynOpen(OpenCnnNT* nt);
+
+    int AsynClose(CloseCnnNT* nt);
+
+    int AsynQueryCnn(QueryCnnNT* nt);
+
+    int AsynSetSideAlarm(int keep, int timeout, SideDoorAlarmNT* nt);
+
+    int AsynQueryModel(DevModelNT* nt);
+
+    int AsynOpenPaper(int timeout, OpenPaperNT* nt);
+
+    int AsynCtrlLed(int which, int ctrl, int value, CtrlLedNT* nt);
+
+    int AsynCheckParam(int x, int y, int angle, CheckParamNT* nt);
+
+    int AsynOpenCamera(int which, OpenCameraNT* nt);
+
+    int AsynCloseCamera(int which, CloseCameraNT* nt);
+
+    int AsynQueryCamera(int which, QueryCameraNT* nt);
+
+    int AsynSetResolution(int which, int x, int y, SetResolutionNT* nt);
+
+    int AsynSetProperty(int which, SetPropertyNT* nt);
+
+    int AsynStartRecordVideo(int which, const std::string& path, RecordVideoNT* nt);
+
+    int AsynStopRecordVideo(int which, const std::string& path, StopRecordVideoNT* nt);
 
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);
@@ -276,6 +404,42 @@ public:
     void HandleAlarmControl(char* chBuf);
 
     void HandleQueryMAC(char* chBuf);
+
+    void HandleLock(char* chBuf);
+
+    void HandleUnlock(char* chBuf);
+
+    void HandleQueryLock(char* chBuf);
+
+    void HandleOpenCnn(char* chBuf);
+
+    void HandleCloseCnn(char* chBuf);
+
+    void HandleQueryCnn(char* chBuf);
+
+    void HandleSetSideAlarm(char* chBuf);
+
+    void HandleGetModel(char* chBuf);
+
+    void HandleOpenPaper(char* chBuf);
+
+    void HandleCtrlLed(char* chBuf);
+
+    void HandleCheckParam(char* chBuf);
+
+    void HandleOpenCamera(char* chBuf);
+
+    void HandleCloseCamera(char* chBuf);
+
+    void HandleQueryCamera(char* chBuf);
+
+    void HandleSetResolution(char* chBuf);
+
+    void HandleSetProperty(char* chBuf);
+
+    void HandleRecordVideo(char* chBuf);
+
+    void HandleStopRecordVideo(char* chBuf);
 
 private:
     std::map<std::string, void*> api_maps_;

@@ -112,6 +112,7 @@ public:
         int x, 
         int y, 
         int angle, 
+        int type,
         NotifyResult* notify);
 
     // 自动用印
@@ -166,8 +167,51 @@ public:
 
     // 查询已绑定MAC地址
     void QueryMAC(NotifyResult* notify);
-};
 
-}
+    // lock machine
+    void Lock(NotifyResult* notify);
+
+    // unlock machine
+    void Unlock(NotifyResult* notify);
+
+    // query lock status
+    void QueryLock(NotifyResult* notify);
+
+    // open connection
+    void Connect(NotifyResult* notify);
+
+    void Disconnect(NotifyResult* notify);
+
+    void QueryCnn(NotifyResult* notify);
+
+    void SetSideDoor(int keep_open, int timeout, NotifyResult* notify);
+
+    void QueryDevModel(NotifyResult* notify);
+
+    void OpenPaper(int timeout, NotifyResult* notify);
+
+    // 补光灯控制
+    void CtrlLed(int which, int switchs, int value, NotifyResult* notify);
+
+    // 用印参数合法性检查
+    void CheckParams(int x, int y, int angle, NotifyResult* notify);
+
+    void OpenCamera(int which, NotifyResult* notify);
+
+    void CloseCamera(int which, NotifyResult* notify);
+
+    void QueryCameraStatus(int which, NotifyResult* notify);
+
+    void SetResolution(int which, int x, int y, NotifyResult* notify);
+
+    void SetProperty(int which, NotifyResult* notify);
+
+    void RecordVideo(int which, const std::string& path, NotifyResult* notify);
+
+    void StopRecordVideo(int which, const std::string& path, NotifyResult* notify);
+
+}; // end class STSealAPI
+
+} // end namespace MC
 
 #endif // CONTROLLER_STAMPER_API_H_

@@ -729,6 +729,264 @@
        </property>
       </widget>
      </widget>
+     <widget class="QPushButton" name="pb_cnn_status_">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>410</y>
+        <width>91</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>连接状态</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_open_">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>410</y>
+        <width>101</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>打开设备</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_close_">
+      <property name="geometry">
+       <rect>
+        <x>520</x>
+        <y>410</y>
+        <width>111</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>关闭设备</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="le_paper_timeout_">
+      <property name="geometry">
+       <rect>
+        <x>670</x>
+        <y>420</y>
+        <width>113</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_open_paper_">
+      <property name="geometry">
+       <rect>
+        <x>790</x>
+        <y>400</y>
+        <width>101</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开纸门</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>670</x>
+        <y>380</y>
+        <width>121</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>超时（秒）</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_8">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>510</y>
+        <width>86</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>亮度值：</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="le_led_val_">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>510</y>
+        <width>113</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_open_paper_led_">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>550</y>
+        <width>131</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开凭证LED</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_close_paper_led_">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>550</y>
+        <width>151</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>关凭证LED</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_open_safe_led_">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>600</y>
+        <width>131</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开安全门LED</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_close_safe_led_">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>600</y>
+        <width>150</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>关安全门LED</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_set_resolution_">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>580</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>设置分辨率</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="le_cam_width_">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>550</y>
+        <width>113</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>520</y>
+        <width>86</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>宽度：</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>590</y>
+        <width>86</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>高度：</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="le_cam_height_">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>620</y>
+        <width>113</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_14">
+      <property name="geometry">
+       <rect>
+        <x>650</x>
+        <y>530</y>
+        <width>121</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>视频全路径：</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="le_video_path_">
+      <property name="geometry">
+       <rect>
+        <x>650</x>
+        <y>560</y>
+        <width>411</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_start_record_">
+      <property name="geometry">
+       <rect>
+        <x>650</x>
+        <y>610</y>
+        <width>91</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开始录像</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_stop_record_">
+      <property name="geometry">
+       <rect>
+        <x>770</x>
+        <y>610</y>
+        <width>91</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>停止录像</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_stamper">
      <attribute name="title">
@@ -737,10 +995,10 @@
      <widget class="QPushButton" name="pb_capture_">
       <property name="geometry">
        <rect>
-        <x>110</x>
+        <x>380</x>
         <y>30</y>
         <width>93</width>
-        <height>28</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
@@ -750,7 +1008,7 @@
      <widget class="QPushButton" name="pb_select_picture_">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>270</x>
         <y>30</y>
         <width>93</width>
         <height>28</height>
@@ -843,7 +1101,7 @@
      <widget class="QGroupBox" name="groupBox">
       <property name="geometry">
        <rect>
-        <x>240</x>
+        <x>480</x>
         <y>0</y>
         <width>351</width>
         <height>80</height>
@@ -1068,7 +1326,7 @@
      <widget class="QGroupBox" name="groupBox_23">
       <property name="geometry">
        <rect>
-        <x>630</x>
+        <x>840</x>
         <y>0</y>
         <width>331</width>
         <height>80</height>
@@ -1195,6 +1453,68 @@
         </rect>
        </property>
       </widget>
+     </widget>
+     <widget class="QComboBox" name="cb_cam_list_">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>10</y>
+        <width>131</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_open_cam_">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>10</y>
+        <width>61</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>打开</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_close_cam_">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>60</y>
+        <width>61</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>关闭</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_3">
+      <property name="geometry">
+       <rect>
+        <x>650</x>
+        <y>700</y>
+        <width>61</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>打开</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_status_cam_">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>60</y>
+        <width>61</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>状态</string>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="tab">

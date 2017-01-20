@@ -89,6 +89,42 @@ private:
 
     void HandleQueryMAC(const RecvMsg* msg);
 
+    void HandleLock(const RecvMsg* msg);
+    
+    void HandleUnlock(const RecvMsg* msg);
+
+    void HandleQueryLock(const RecvMsg* msg);
+
+    void HandleOpenCnn(const RecvMsg* msg);
+
+    void HandleCloseCnn(const RecvMsg* msg);
+
+    void HandleQueryCnn(const RecvMsg* msg);
+
+    void HandleSetSideDoor(const RecvMsg* msg);
+
+    void HandleGetDevModel(const RecvMsg* msg);
+
+    void HandleOpenPaper(const RecvMsg* msg);
+
+    void HandleCtrlLED(const RecvMsg* msg);
+
+    void HandleCheckParam(const RecvMsg* msg);
+
+    void HandleOpenCamera(const RecvMsg* msg);
+
+    void HandleCloseCamera(const RecvMsg* msg);
+
+    void HandleGetCameraStatus(const RecvMsg* msg);
+
+    void HandleSetResolution(const RecvMsg* msg);
+
+    void HandleSetProperty(const RecvMsg* msg);
+
+    void HandleRecordVideo(const RecvMsg* msg);
+
+    void HandleStopRecordVideo(const RecvMsg* msg);
+
     void HandleHeart(const RecvMsg* msg);
 
 private:

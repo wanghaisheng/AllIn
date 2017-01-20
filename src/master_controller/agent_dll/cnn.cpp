@@ -268,6 +268,60 @@ void MC::Cnn::ReceiveFunc()
         case CT_HEART_BEAT:
             HandleHeartBeating(chBuf);
             break;
+        case CT_LOCK:
+            asyn_api_->HandleLock(chBuf);
+            break;
+        case CT_UNLOCK:
+            asyn_api_->HandleUnlock(chBuf);
+            break;
+        case CT_LOCK_STATUS:
+            asyn_api_->HandleQueryLock(chBuf);
+            break;
+        case CT_OPEN_CON:
+            asyn_api_->HandleOpenCnn(chBuf);
+            break;
+        case CT_CLOSE_CON:
+            asyn_api_->HandleCloseCnn(chBuf);
+            break;
+        case CT_QUERY_CON:
+            asyn_api_->HandleQueryCnn(chBuf);
+            break;
+        case CT_SIDE_DOOR_ALARM:
+            asyn_api_->HandleSetSideAlarm(chBuf);
+            break;
+        case CT_QUERY_DEV_MODEL:
+            asyn_api_->HandleGetModel(chBuf);
+            break;
+        case CT_OPEN_PAPER:
+            asyn_api_->HandleOpenPaper(chBuf);
+            break;
+        case CT_LED_CTL:
+            asyn_api_->HandleCtrlLed(chBuf);
+            break;
+        case CT_CHECK_PARAM:
+            asyn_api_->HandleCheckParam(chBuf);
+            break;
+        case CT_OPEN_CAMERA:
+            asyn_api_->HandleOpenCamera(chBuf);
+            break;
+        case CT_CLOSE_CAMERA:
+            asyn_api_->HandleCloseCamera(chBuf);
+            break;
+        case CT_CAMERA_STATUS:
+            asyn_api_->HandleQueryCamera(chBuf);
+            break;
+        case CT_SET_RESOLUTION:
+            asyn_api_->HandleSetResolution(chBuf);
+            break;
+        case CT_SET_PROPERTY:
+            asyn_api_->HandleSetProperty(chBuf);
+            break;
+        case CT_RECORD:
+            asyn_api_->HandleRecordVideo(chBuf);
+            break;
+        case CT_STOP_RECORD:
+            asyn_api_->HandleStopRecordVideo(chBuf);
+            break;
         default:
             printf("AsynAPISet::ReceiverFunc->Unknown cmd: %d", cmd_type);
             break;

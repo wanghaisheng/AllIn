@@ -82,7 +82,7 @@ void QtDemo::HandleConnect(const char* path, unsigned int msg)
 
 QtDemo::QtDemo(QWidget *parent)
     : QMainWindow(parent), echo_thread_(NULL), open_called(true), test_mode_(false),
-    img_(NULL), serial_(0), capture_suc(false)
+    img_(NULL), serial_(0), capture_suc(false), which_cam_(0)
 {
     ui.setupUi(this);
     setWindowTitle(DIALOG_HEADER);
@@ -125,6 +125,19 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.le_err_code_, SIGNAL(textChanged(const QString &)), this, 
         SLOT(HandleErrCodeChange(const QString &)));
 
+    connect(ui.pb_cnn_status_, &QPushButton::clicked, this, &QtDemo::HandleCnnStatus);
+    connect(ui.pb_open_, &QPushButton::clicked, this, &QtDemo::HandleOpenCnn);
+    connect(ui.pb_close_, &QPushButton::clicked, this, &QtDemo::HandleCloseCnn);
+    connect(ui.pb_open_paper_, &QPushButton::clicked, this, &QtDemo::HandleOpenPaper);
+
+    connect(ui.pb_open_paper_led_, &QPushButton::clicked, this, &QtDemo::HandleOpenPaperLED);
+    connect(ui.pb_close_paper_led_, &QPushButton::clicked, this, &QtDemo::HandleClosePaperLED);
+    connect(ui.pb_open_safe_led_, &QPushButton::clicked, this, &QtDemo::HandleOpenSafeLED);
+    connect(ui.pb_close_safe_led_, &QPushButton::clicked, this, &QtDemo::HandleCloseSafeLED);
+
+    connect(ui.pb_set_resolution_, &QPushButton::clicked, this, &QtDemo::HandleSetResolution);
+    connect(ui.pb_start_record_, &QPushButton::clicked, this, &QtDemo::HandleStartRecord);
+    connect(ui.pb_stop_record_, &QPushButton::clicked, this, &QtDemo::HandleStopRecord);
 
     //拍照/识别
     ui.pb_ori_img_->setStyleSheet("background-color: transparent;");
@@ -141,6 +154,11 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.combo_img_sel_, SIGNAL(activated(int)), this, SLOT(HandleSelectImg(int)));
     connect(ui.pb_recog_code_, &QPushButton::clicked, this, &QtDemo::HandleRecogCode);
     connect(ui.pb_recog_ele_, &QPushButton::clicked, this, &QtDemo::HandleRecogEle);
+
+    connect(ui.cb_cam_list_, SIGNAL(activated(int)), this, SLOT(HandleCamListChange(int)));
+    connect(ui.pb_open_cam_, &QPushButton::clicked, this, &QtDemo::HandleOpenCam);
+    connect(ui.pb_close_cam_, &QPushButton::clicked, this, &QtDemo::HandleCloseCam);
+    connect(ui.pb_status_cam_, &QPushButton::clicked, this, &QtDemo::HandleQueryCam);
 
     //盖章
     connect(ui.radio_stamper1_, SIGNAL(pressed()), this, SLOT(Stamper1()));
@@ -164,6 +182,7 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_lock_, &QPushButton::clicked, this, &QtDemo::HandleLock);
     connect(ui.pb_unlock_, &QPushButton::clicked, this, &QtDemo::HandleUnlock);
     connect(ui.pb_stamper_lock_, &QPushButton::clicked, this, &QtDemo::HandleIsLock);
+
     connect(ui.pb_write_id_, &QPushButton::clicked, this, &QtDemo::HandleWriteID);
     connect(ui.pb_read_id_, &QPushButton::clicked, this, &QtDemo::HandleReadID);
     connect(ui.pb_write_backup_sn_, &QPushButton::clicked, this, &QtDemo::HandleWriteBackupSN);
@@ -184,9 +203,12 @@ QtDemo::QtDemo(QWidget *parent)
 
     connect(ui.pb_hardware_ver_, &QPushButton::clicked, this, &QtDemo::HandleHardwareVer);
     
+    ui.cb_cam_list_->addItem(QString::fromLocal8Bit("凭证摄像头"));
+    ui.cb_cam_list_->addItem(QString::fromLocal8Bit("环境摄像头"));
+    ui.cb_cam_list_->addItem(QString::fromLocal8Bit("侧门摄像头"));
+
     // 默认显示第一个tab
     ui.tabWidget->setCurrentIndex(0);
-    ui.tabWidget->removeTab(3);
     this->setMouseTracking(true);
 
     status_label_ = new QLabel(this);
@@ -299,7 +321,7 @@ void QtDemo::HandleBinding()
     if (mac.empty())
         return Info(QString::fromLocal8Bit("待绑定MAC地址为空"));
 
-    int ret = BindMAC(mac);
+    int ret = ST_BindMAC(mac);
     return Info(QString::fromLocal8Bit("绑定MAC地址, er: ") + QString::number(ret));
 }
 
@@ -309,7 +331,7 @@ void QtDemo::HandleUnbinding()
     if (mac.empty())
         return Info(QString::fromLocal8Bit("待解绑MAC地址为空"));
 
-    int ret = UnbindMAC(mac);
+    int ret = ST_UnbindMAC(mac);
     return Info(QString::fromLocal8Bit("解绑MAC地址, er: ") + QString::number(ret));
 }
 
@@ -317,7 +339,7 @@ void QtDemo::HandleQueryMAC()
 {
     std::string mac1;
     std::string mac2;
-    int ret = QueryMAC(mac1, mac2);
+    int ret = ST_QueryMAC(mac1, mac2);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("查询MAC地址失败, er: ") + QString::number(ret));
 
@@ -330,7 +352,7 @@ void QtDemo::HandleQueryMAC()
 
 void QtDemo::HandleOpenSafeDoorAlarm()
 {
-    int ret = ControlAlarm(0, 1);
+    int ret = ST_ControlAlarm(0, 1);
     if (STF_SUCCESS != ret)
         return Info(QString::fromLocal8Bit("打开安全门报警失败, er: ") + QString::number(ret));
 
@@ -339,7 +361,7 @@ void QtDemo::HandleOpenSafeDoorAlarm()
 
 void QtDemo::HandleCloseSafeDoorAlarm()
 {
-    int ret = ControlAlarm(0, 0);
+    int ret = ST_ControlAlarm(0, 0);
     if (STF_SUCCESS != ret)
         return Info(QString::fromLocal8Bit("关闭安全门报警失败, er: ") + QString::number(ret));
 
@@ -348,7 +370,7 @@ void QtDemo::HandleCloseSafeDoorAlarm()
 
 void QtDemo::HandleOpenVibrationAlarm()
 {
-    int ret = ControlAlarm(1, 1);
+    int ret = ST_ControlAlarm(1, 1);
     if (STF_SUCCESS != ret)
         return Info(QString::fromLocal8Bit("打开振动报警失败, er: ") + QString::number(ret));
 
@@ -357,7 +379,7 @@ void QtDemo::HandleOpenVibrationAlarm()
 
 void QtDemo::HandleCloseVibrationAlarm()
 {
-    int ret = ControlAlarm(1, 0);
+    int ret = ST_ControlAlarm(1, 0);
     if (STF_SUCCESS != ret)
         return Info(QString::fromLocal8Bit("关闭振动报警失败, er: ") + QString::number(ret));
 
@@ -367,7 +389,7 @@ void QtDemo::HandleCloseVibrationAlarm()
 void QtDemo::HandleQuerySN()
 {
     std::string sn;
-    int ret = QueryMachine(sn);
+    int ret = ST_QueryMachine(sn);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("获取设备编号失败, er: ") + QString::number(ret));
 
@@ -381,19 +403,143 @@ void QtDemo::HandleSetSN()
     if (sn.empty())
         return Info(QString::fromLocal8Bit("设备编号为空"));
 
-    int ret = SetMachine(sn);
+    int ret = ST_SetMachine(sn);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("设置设备编号失败, er: ") + QString::number(ret));
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("设置设备编号成功"), STATUS_TEXT);
 }
 
+void QtDemo::HandleCnnStatus()
+{
+    int cnn;
+    int ret = ST_QueryCnn(cnn);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("获取连接状态失败, er: ") + 
+            QString::number(ret));
+
+    if (0 == cnn)
+        ui.statusBar->showMessage(QString::fromLocal8Bit("设备断开"), STATUS_TEXT);
+    else if (1 == cnn)
+        ui.statusBar->showMessage(QString::fromLocal8Bit("设备连接"), STATUS_TEXT);
+    else
+        ui.statusBar->showMessage(QString::fromLocal8Bit("状态错误"), STATUS_TEXT);
+}
+
+void QtDemo::HandleOpenCnn()
+{
+    int ret = ST_Open();
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("打开设备失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("打开设备成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleCloseCnn()
+{
+    int ret = ST_Close();
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("关闭设备失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("关闭设备成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleOpenPaper()
+{
+    int timeout = atoi(ui.le_paper_timeout_->text().toStdString().c_str());
+    int ret = ST_OpenPaper(timeout);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("开进纸门失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("打开纸门成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleOpenPaperLED()
+{
+    int value = atoi(ui.le_led_val_->text().toStdString().c_str());
+    int ret = ST_CtlrLed(2, 1, value);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("开纸门补光灯失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("开纸门补光灯成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleClosePaperLED()
+{
+    int ret = ST_CtlrLed(2, 0, 0);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("关纸门补光灯失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("关纸门补光灯成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleOpenSafeLED()
+{
+    int value = atoi(ui.le_led_val_->text().toStdString().c_str());
+    int ret = ST_CtlrLed(1, 1, value);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("开安全门补光灯失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("开安全门补光灯成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleCloseSafeLED()
+{
+    int ret = ST_CtlrLed(1, 0, 0);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("关安全门补光灯失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("关安全门补光灯成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleSetResolution()
+{
+    int width = atoi(ui.le_cam_width_->text().toStdString().c_str());
+    int height = atoi(ui.le_cam_height_->text().toStdString().c_str());
+    int ret = ST_SetResolution2(which_cam_, width, height);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("设置摄像头分辨率失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("设置摄像头分辨率成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleStartRecord()
+{
+    std::string path = ui.le_video_path_->text().toStdString();
+    int ret = ST_StartRecordVideo(which_cam_, path);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("开始录制视频失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("开始录制视频成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleStopRecord()
+{
+    std::string path = ui.le_video_path_->text().toStdString();
+    int ret = ST_StopRecordVideo(which_cam_, path);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("停止录制视频失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("停止录制视频成功"), STATUS_TEXT);
+}
+
 void QtDemo::HandleOpenSafeDoor()
 {
     int ctrl = 1;
-    int ret = ControlSafe(ctrl);
+    int ret = ST_ControlSafe(ctrl);
     if (0 != ret)
-        return Info(QString::fromLocal8Bit("打开安全门失败"));
+        return Info(QString::fromLocal8Bit("打开安全门失败") + 
+            QString::number(ret));
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("打开安全门成功"), STATUS_TEXT);
 }
@@ -401,9 +547,10 @@ void QtDemo::HandleOpenSafeDoor()
 void QtDemo::HandleCloseSafeDoor()
 {
     int ctrl = 0;
-    int ret = ControlSafe(ctrl);
+    int ret = ST_ControlSafe(ctrl);
     if (0 != ret)
-        return Info(QString::fromLocal8Bit("关闭安全门失败"));
+        return Info(QString::fromLocal8Bit("关闭安全门失败") +
+            QString::number(ret));
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("关闭安全门成功"), STATUS_TEXT);
 }
@@ -411,7 +558,7 @@ void QtDemo::HandleCloseSafeDoor()
 void QtDemo::HandleReadSafe()
 {
     int safe_status;
-    int ret2 = QuerySafe(safe_status);
+    int ret2 = ST_QuerySafe(safe_status);
     if (ret2 != 0)
         return Info(QString::fromLocal8Bit("获取安全门状态失败, er: ") + QString::number(ret2));
 
@@ -426,7 +573,7 @@ void QtDemo::HandleReadSafe()
 void QtDemo::HandleReadPaper()
 {
     int paper_status;
-    int ret1 = QueryPaper(paper_status);
+    int ret1 = ST_QueryPaper(paper_status);
     if (ret1 != 0)
         return Info(QString::fromLocal8Bit("获取进纸门状态失败, er: ") + QString::number(ret1));
 
@@ -440,7 +587,7 @@ void QtDemo::HandleReadPaper()
 
 void QtDemo::HandleBeepOn()
 {
-    int ret = ControlBeep(1);
+    int ret = ST_ControlBeep(1);
     if (STF_SUCCESS != ret)
         return Info(QString::fromLocal8Bit("打开蜂鸣器失败, er: ") + QString::number(ret));
 
@@ -449,7 +596,7 @@ void QtDemo::HandleBeepOn()
 
 void QtDemo::HandleBeepOff()
 {
-    int ret = ControlBeep(0);
+    int ret = ST_ControlBeep(0);
     if (STF_SUCCESS != ret)
         return Info(QString::fromLocal8Bit("关闭蜂鸣器失败, er: ") + QString::number(ret));
 
@@ -459,7 +606,7 @@ void QtDemo::HandleBeepOff()
 void QtDemo::HandleQuerySlots()
 {
     int num;
-    int ret = QuerySlot(num);
+    int ret = ST_QuerySlot(num);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("查询卡槽数量失败, err: ") + QString::number(num));
 
@@ -469,7 +616,7 @@ void QtDemo::HandleQuerySlots()
 void QtDemo::HandleABCCheck()
 {
     std::string str = ui.le_stamper_idx_->text().toStdString();
-    int ret = Calibrate(atoi(str.c_str()));
+    int ret = ST_Calibrate(atoi(str.c_str()));
     if (0 != ret) {
         return Info(QString::fromLocal8Bit("校准印章失败, er: ") + QString::number(ret));
     }
@@ -512,7 +659,7 @@ void QtDemo::HandleErrCodeChange(const QString & txt)
 
     int err = atoi(err_str.c_str());
     std::string msg, resolver;
-    int ret = GetError(err, msg, resolver);
+    int ret = ST_GetError(err, msg, resolver);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("查询错误码失败"));
 
@@ -609,7 +756,7 @@ void QtDemo::HandleCapture()
 {
     const std::string ori_path = Config::GetInst()->ori_path_;
     const std::string cut_path = Config::GetInst()->cut_path_;
-    int ret = Snapshot(
+    int ret = ST_Snapshot(
         200,
         200,
         ori_path,
@@ -742,6 +889,11 @@ void QtDemo::HandleSelectImg(int index)
     img_type_ = index;
 }
 
+void QtDemo::HandleCamListChange(int index)
+{
+    which_cam_ = index;
+}
+
 void QtDemo::HandleRecogCode()
 {
     // 清空之前结果
@@ -751,10 +903,10 @@ void QtDemo::HandleRecogCode()
     std::string trace_num;
     int ret;
     if (0 == img_type_) {
-        ret = RecognizeImage(Config::GetInst()->ori_path_, template_id, trace_num);
+        ret = ST_RecognizeImage(Config::GetInst()->ori_path_, template_id, trace_num);
     }
     else if (1 == img_type_) {
-        ret = RecognizeImage(Config::GetInst()->cut_path_, template_id, trace_num);
+        ret = ST_RecognizeImage(Config::GetInst()->cut_path_, template_id, trace_num);
     }
 
     if (0 != ret)
@@ -776,7 +928,7 @@ void QtDemo::HandleRecogEle()
         img_path = Config::GetInst()->cut_path_;
 
     std::string result;
-    int ret = IdentifyElement(
+    int ret = ST_IdentifyElement(
         img_path,
         atoi(ui.le_x_in_img_->text().toStdString().c_str()),
         atoi(ui.le_y_in_img_->text().toStdString().c_str()),
@@ -790,6 +942,48 @@ void QtDemo::HandleRecogEle()
     ui.le_ele_result_->setText(QString::fromStdString(result));
     ui.le_ele_result_->adjustSize();
     ui.statusBar->showMessage(QString::fromLocal8Bit("要素识别成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleOpenCam()
+{
+    int ret = ST_OpenCamera2(which_cam_);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("打开摄像头-") + 
+            QString::number(which_cam_) +
+            ui.cb_cam_list_->currentText() +
+            QString::fromLocal8Bit("-失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("打开摄像头成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleCloseCam()
+{
+    int ret = ST_CloseCamera2(which_cam_);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("关闭摄像头-") +
+            QString::number(which_cam_) +
+            ui.cb_cam_list_->currentText() +
+            QString::fromLocal8Bit("-失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("关闭摄像头成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleQueryCam()
+{
+    int status;
+    int ret = ST_QueryCamera(which_cam_, status);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("摄像头状态-") +
+            QString::number(which_cam_) +
+            ui.cb_cam_list_->currentText() +
+            QString::fromLocal8Bit("-失败, er: ") +
+            QString::number(ret));
+
+    std::string status_text = status == 0 ? "关闭" : "打开";
+    Info(ui.cb_cam_list_->currentText() + QString::fromLocal8Bit(": ") +
+        QString::fromStdString(status_text));
 }
 
 void QtDemo::HandlePreStamp()
@@ -939,7 +1133,7 @@ void QtDemo::HandleCheckStampInk(int checked)
 void QtDemo::HandleOridinary()
 {
     std::string voucher;
-    int ret = OrdinaryStamp(
+    int ret = ST_OrdinaryStamp(
         ui.le_task_id_->text().toStdString(),
         voucher,
         para_.stamp_idx,
@@ -969,7 +1163,7 @@ void QtDemo::HandlePrepare()
     std::string task_id;
     int time = atoi(ui.le_paper_door_timeout_->text().toStdString().c_str());
     char stamp_num = 1;
-    int ret = PrepareStamp(
+    int ret = ST_PrepareStamp(
         stamp_num,
         time,
         task_id);
@@ -993,7 +1187,7 @@ void QtDemo::HandleFinishStamp()
         return Info(QString::fromLocal8Bit("任务号为空, 请先准备用印获取任务号"));
     }
 
-    int ret = FinishStamp(task_id);
+    int ret = ST_FinishStamp(task_id);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("结束用印失败, er: ") + QString::number(ret));
 
@@ -1006,7 +1200,7 @@ void QtDemo::HandleReleaseMachine()
     if (machine.empty())
         return Info(QString::fromLocal8Bit("请先通过\"设备控制\"页获取设备编号"));
 
-    int ret = ReleaseStamp(machine);
+    int ret = ST_ReleaseStamp(machine);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("释放印控机失败, er: ") + QString::number(ret));
 
@@ -1023,29 +1217,33 @@ void QtDemo::InitOther()
 
 void QtDemo::HandleLock()
 {
-    int ret = ::Lock();
-    if (STF_SUCCESS != ret)
-        return Info(QString::fromLocal8Bit("锁定印控仪失败"));
+    int ret = ST_Lock();
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("锁定印控仪失败, er: ") + 
+            QString::number(ret));
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("成功锁定印控仪"), STATUS_TEXT);
 }
 
 void QtDemo::HandleUnlock()
 {
-    int ret = ::Unlock();
-    if (STF_SUCCESS != ret)
-        return Info(QString::fromLocal8Bit("解锁印控仪失败"));
+    int ret = ST_Unlock();
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("解锁印控仪失败, er: ") + 
+            QString::number(ret));
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("成功解锁印控仪"), STATUS_TEXT);
 }
 
 void QtDemo::HandleIsLock()
 {
-    bool ret = IsLocked();
-    if (!ret)
-        return Info(QString::fromLocal8Bit("未锁定状态"));
+    int lock;
+    int ret = ST_QueryLock(lock);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("获取锁定状态失败, er: ") + 
+            QString::number(ret));
 
-    Info(QString::fromLocal8Bit("锁定状态"));
+    Info(QString::fromLocal8Bit("锁定状态: ") + QString::number(lock));
 }
 
 void QtDemo::HandleWriteID()
@@ -1064,7 +1262,7 @@ void QtDemo::HandleWriteID()
 void QtDemo::HandleReadID()
 {
     std::string sn;
-    int ret = QueryMachine(sn);
+    int ret = ST_QueryMachine(sn);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("读编号失败"));
 

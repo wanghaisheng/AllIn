@@ -25,6 +25,7 @@ void MC::Tool::SetStat(const DeviceStat& stat)
         device_stat_.cause_.c_str());
 }
 
+// 印控机与PC是否线连接，true --- 表示连接
 bool MC::Tool::Connected()
 {
     boost::lock_guard<boost::mutex> lk(mutex_);
@@ -86,7 +87,36 @@ const MC::AllDoorStat& MC::Tool::GetDoors()
     return doors_stat_;
 }
 
-/////////////////////////////// 来自印控机的异步回调 /////////////////////////////////
+void MC::Tool::UpdateCams(int which, bool status)
+{
+    switch (which) {
+        case 0:
+            paper_cam_ = status;
+            break;
+        case 1:
+            env_cam_ = status;
+            break;
+        case 2:
+            side_cam_ = status;
+            break;
+        default:
+            break;
+    }
+}
+
+bool MC::Tool::QueryCam(int which)
+{
+    switch (which) {
+        case 0:
+            return paper_cam_;
+        case 1:
+            return env_cam_;
+        case 2:
+            return side_cam_;
+        default:
+            return false;
+    }
+}
 
 int PrepareCamera() 
 {
@@ -119,29 +149,32 @@ void DisableCamera()
     FLightCtrl(2, 0);
 }
 
+/////////////////////////////// 来自印控机的异步回调 /////////////////////////////////
+
+// 连接、断开回调
+// 印控机与PC连接成功后，需要打开设备才能进行通信，
+// 连接与打开设备是两个不同的动作。
 int _stdcall ConnectCallBack(const char* dev_path, unsigned int msg)
 {
     switch (msg) {
-    case 0: {
-        int ret = ::FCloseDev();
+    case 0: { // 断开
         MC::DeviceStat stat;
-        stat.conn_ = !(0 == ret);
-        stat.status_ = 0 == ret ? MC::CS_DISCONN_SUC : MC::CS_RECONN_FAIL;
+        stat.conn_ = false;
+        stat.status_ = 0 == ::FCloseDev() ? MC::CS_DISCONN_SUC : MC::CS_RECONN_FAIL;
         stat.cause_ = "断开设备";
         MC::Tool::GetInst()->SetStat(stat);
 
-        DisableCamera();
+        // DisableCamera();
     }
         break;
-    case 1: {
-        int ret = ::FOpenDev(NULL);
+    case 1: { // 重连
         MC::DeviceStat stat;
-        stat.conn_ = 0 == ret;
-        stat.status_ = 0 == ret ? MC::CS_RECON_SUC : MC::CS_RECON_FAIL;
+        stat.conn_ = true;
+        stat.status_ = 0 == ::FOpenDev(NULL) ? MC::CS_RECON_SUC : MC::CS_RECON_FAIL;
         stat.cause_ = "重连设备";
         MC::Tool::GetInst()->SetStat(stat);
 
-        PrepareCamera();
+        // PrepareCamera();
     }
         break;
     default:
@@ -151,6 +184,7 @@ int _stdcall ConnectCallBack(const char* dev_path, unsigned int msg)
     return 0;
 }
 
+// 状态回调
 int _stdcall DevMsgCallBack(
     unsigned int uMsg,
     unsigned int wParam,

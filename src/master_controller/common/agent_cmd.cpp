@@ -1,4 +1,4 @@
-﻿#include "agent_cmd.h"
+#include "agent_cmd.h"
 
 void BaseCmd::Ser()
 {
@@ -131,14 +131,14 @@ void IdentifyElementCmd::Unser()
 void OridinaryStampCmd::Ser()
 {
     BaseCmd::Ser();
-    xs_ << task_id_ << type_ << stamper_num_ << ink_ << x_ << y_ << angle_ << ret_;
+    xs_ << task_id_ << type_ << stamper_num_ << ink_ << x_ << y_ << angle_ << seal_type_ << ret_;
     xs_.Trim();
 }
 
 void OridinaryStampCmd::Unser()
 {
     BaseCmd::Unser();
-    xs_ >> task_id_ >> type_ >> stamper_num_ >> ink_ >> x_ >> y_ >> angle_ >> ret_;
+    xs_ >> task_id_ >> type_ >> stamper_num_ >> ink_ >> x_ >> y_ >> angle_ >> seal_type_ << ret_;
 }
 
 void AutoStampCmd::Ser()
@@ -338,4 +338,238 @@ void QueryMACCmd::Unser()
 {
     BaseCmd::Unser();
     xs_ >> mac1_ >> mac2_ >> ret_;
+}
+
+void LockCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << ret_;
+    xs_.Trim();
+}
+
+void LockCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> ret_;
+}
+
+void UnlockCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << ret_;
+    xs_.Trim();
+}
+
+void UnlockCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> ret_;
+}
+
+void QueryLockCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << status_ << ret_;
+    xs_.Trim();
+}
+
+void QueryLockCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> status_ >> ret_;
+}
+
+void OpenCnnCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << ret_;
+    xs_.Trim();
+}
+
+void OpenCnnCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> ret_;
+}
+
+void CloseCnnCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << ret_;
+    xs_.Trim();
+}
+
+void CloseCnnCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> ret_;
+}
+
+void QueryCnnCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << status_ << ret_;
+    xs_.Trim();
+}
+
+void QueryCnnCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> status_ >> ret_;
+}
+
+void SideDoorAlarmCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << keep_open_ << timeout_ << ret_;
+    xs_.Trim();
+}
+
+void SideDoorAlarmCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> keep_open_ >> timeout_ >> ret_;
+}
+
+void GetDevModelCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << model_ << ret_;
+    xs_.Trim();
+}
+
+void GetDevModelCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> model_ >> ret_;
+}
+
+void OpenPaperCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << timeout_ << ret_;
+    xs_.Trim();
+}
+
+void OpenPaperCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> timeout_ >> ret_;
+}
+
+void CtrlLEDCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << which_ << switch_ << value_ << ret_;
+    xs_.Trim();
+}
+
+void CtrlLEDCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> which_ >> switch_ >> value_ >> ret_;
+}
+
+void CheckParamCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << x_ << y_ << angle_ << ret_;
+    xs_.Trim();
+}
+
+void CheckParamCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> x_ >> y_ >> angle_ >> ret_;
+}
+
+void OpenCameraCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << which_ << ret_;
+    xs_.Trim();
+}
+
+void OpenCameraCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> which_ >> ret_;
+}
+
+void CloseCameraCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << which_ << ret_;
+    xs_.Trim();
+}
+
+void CloseCameraCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> which_ >> ret_;
+}
+
+void QueryCameraStatusCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << which_ << status_ << ret_;
+    xs_.Trim();
+}
+
+void QueryCameraStatusCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> which_ >> status_ >> ret_;
+}
+
+void SetResolutionCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << which_ << x_ << y_ << ret_;
+    xs_.Trim();
+}
+
+void SetResolutionCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> which_ >> x_ >> y_ >> ret_;
+}
+
+void SetPropertyCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << which_ << hue_ << saturation_ << value_ << ret_;
+    xs_.Trim();
+}
+
+void SetPropertyCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> which_ >> hue_ >> saturation_ >> value_ >> ret_;
+}
+
+void RecordVideoCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << which_ << path_ << ret_;
+    xs_.Trim();
+}
+
+void RecordVideoCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> which_ >> path_ >> ret_;
+}
+
+void StopRecordVideoCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << which_ << path_ << ret_;
+    xs_.Trim();
+}
+
+void StopRecordVideoCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> which_ >> path_ >> ret_;
 }

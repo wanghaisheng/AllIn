@@ -414,6 +414,249 @@ void AsynAPISet::HandleQueryMAC(char* chBuf)
         nt->Notify(cmd.mac1_, cmd.mac2_, cmd.ret_);
 }
 
+void AsynAPISet::HandleLock(char* chBuf)
+{
+    LockCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleLock->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    LockNT* nt = (LockNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+void AsynAPISet::HandleUnlock(char* chBuf)
+{
+    UnlockCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleUnlock->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    UnlockNT* nt = (UnlockNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+void AsynAPISet::HandleQueryLock(char* chBuf)
+{
+    QueryLockCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleQueryLock->cmd: %s, whether_lock: %d, "
+        "ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.status_,
+        cmd.ret_);
+
+    QueryLockNT* nt = (QueryLockNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.status_, cmd.ret_);
+}
+
+void AsynAPISet::HandleOpenCnn(char* chBuf)
+{
+    OpenCnnCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleOpenCnn->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    OpenCnnNT* nt = (OpenCnnNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+void AsynAPISet::HandleCloseCnn(char* chBuf)
+{
+    CloseCnnCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleCloseCnn->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    CloseCnnNT* nt = (CloseCnnNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+void AsynAPISet::HandleQueryCnn(char* chBuf)
+{
+    QueryCnnCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleQueryCnn->cmd: %s, "
+        "status: cmd.status_, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.status_,
+        cmd.ret_);
+
+    QueryCnnNT* nt = (QueryCnnNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.status_, cmd.ret_);
+}
+
+void AsynAPISet::HandleSetSideAlarm(char* chBuf)
+{
+    SideDoorAlarmCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleSetSideAlarm->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    SideDoorAlarmNT* nt = (SideDoorAlarmNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+void AsynAPISet::HandleGetModel(char* chBuf)
+{
+    GetDevModelCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleGetModel->cmd: %s, model: %s, "
+        "ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.model_,
+        cmd.ret_);
+
+    DevModelNT* nt = (DevModelNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.model_, cmd.ret_);
+}
+
+void AsynAPISet::HandleOpenPaper(char* chBuf)
+{
+    OpenPaperCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleOpenPaper->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    OpenPaperNT* nt = (OpenPaperNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+void AsynAPISet::HandleCtrlLed(char* chBuf)
+{
+    CtrlLEDCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleCtrlLed->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    CtrlLedNT* nt = (CtrlLedNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+void AsynAPISet::HandleCheckParam(char* chBuf)
+{
+    CheckParamCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleCheckParam->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    CheckParamNT* nt = (CheckParamNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+void AsynAPISet::HandleOpenCamera(char* chBuf)
+{
+    OpenCameraCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleOpenCamera->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    OpenCameraNT* nt = (OpenCameraNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+void AsynAPISet::HandleCloseCamera(char* chBuf)
+{
+    CloseCameraCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleCloseCamera->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    CloseCameraNT* nt = (CloseCameraNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+void AsynAPISet::HandleQueryCamera(char* chBuf)
+{
+    QueryCameraStatusCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleQueryCamera->cmd: %s, which: %d, "
+        "status: %d, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.which_,
+        cmd.status_,
+        cmd.ret_);
+
+    QueryCameraNT* nt = (QueryCameraNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.which_, cmd.status_, cmd.ret_);
+}
+
+void AsynAPISet::HandleSetResolution(char* chBuf)
+{
+    SetResolutionCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleSetResolution->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    SetResolutionNT* nt = (SetResolutionNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+void AsynAPISet::HandleSetProperty(char* chBuf)
+{
+    SetPropertyCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleSetProperty->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    SetPropertyNT* nt = (SetPropertyNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+void AsynAPISet::HandleRecordVideo(char* chBuf)
+{
+    RecordVideoCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleRecordVideo->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    RecordVideoNT* nt = (RecordVideoNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+void AsynAPISet::HandleStopRecordVideo(char* chBuf)
+{
+    StopRecordVideoCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleStopRecordVideo->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    StopRecordVideoNT* nt = (StopRecordVideoNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
 void AsynAPISet::AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec)
 {
     switch (cmd->ct_) {
@@ -666,7 +909,8 @@ int AsynAPISet::AsynOrdinaryStamp(
     int x, 
     int y, 
     int angle,
-     OrdinaryStampNT* nt)
+    int type,
+    OrdinaryStampNT* nt)
 {
     OridinaryStampCmd* cmd = new OridinaryStampCmd;
     strcpy_s(cmd->task_id_, task.c_str());
@@ -676,6 +920,7 @@ int AsynAPISet::AsynOrdinaryStamp(
     cmd->x_ = x;
     cmd->y_ = y;
     cmd->angle_ = angle;
+    cmd->seal_type_ = type;
     InsertNotify(cmd->send_time_, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
@@ -785,6 +1030,170 @@ int AsynAPISet::AsynAlarmControl(int alarm, int ctrl, CtrlAlarmNT* nt)
 int AsynAPISet::AsynQueryMAC(QueryMACNT* nt)
 {
     QueryMACCmd* cmd = new QueryMACCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynLock(LockNT* nt)
+{
+    LockCmd* cmd = new LockCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynUnlock(UnlockNT* nt)
+{
+    UnlockCmd* cmd = new UnlockCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynQueryLock(QueryLockNT* nt)
+{
+    QueryLockCmd* cmd = new QueryLockCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynOpen(OpenCnnNT* nt)
+{
+    OpenCnnCmd* cmd = new OpenCnnCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynClose(CloseCnnNT* nt)
+{
+    CloseCnnCmd* cmd = new CloseCnnCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynQueryCnn(QueryCnnNT* nt)
+{
+    QueryCnnCmd* cmd = new QueryCnnCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynSetSideAlarm(int keep, int timeout, SideDoorAlarmNT* nt)
+{
+    SideDoorAlarmCmd* cmd = new SideDoorAlarmCmd;
+    cmd->keep_open_ = keep;
+    cmd->timeout_ = timeout;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynQueryModel(DevModelNT* nt)
+{
+    GetDevModelCmd* cmd = new GetDevModelCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynOpenPaper(int timeout, OpenPaperNT* nt)
+{
+    OpenPaperCmd* cmd = new OpenPaperCmd;
+    cmd->timeout_ = timeout;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynCtrlLed(int which, int ctrl, int value, CtrlLedNT* nt)
+{
+    CtrlLEDCmd* cmd = new CtrlLEDCmd;
+    cmd->which_ = which;
+    cmd->switch_ = ctrl;
+    cmd->value_ = value;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynCheckParam(int x, int y, int angle, CheckParamNT* nt)
+{
+    CheckParamCmd* cmd = new CheckParamCmd;
+    cmd->x_ = x;
+    cmd->y_ = y;
+    cmd->angle_ = angle;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynOpenCamera(int which, OpenCameraNT* nt)
+{
+    OpenCameraCmd* cmd = new OpenCameraCmd;
+    cmd->which_ = which;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynCloseCamera(int which, CloseCameraNT* nt)
+{
+    CloseCameraCmd* cmd = new CloseCameraCmd;
+    cmd->which_ = which;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynQueryCamera(int which, QueryCameraNT* nt)
+{
+    QueryCameraStatusCmd* cmd = new QueryCameraStatusCmd;
+    cmd->which_ = which;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynSetResolution(int which, int x, int y, SetResolutionNT* nt)
+{
+    SetResolutionCmd* cmd = new SetResolutionCmd;
+    cmd->which_ = which;
+    cmd->x_ = x;
+    cmd->y_ = y;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynSetProperty(int which, SetPropertyNT* nt)
+{
+    SetPropertyCmd* cmd = new SetPropertyCmd;
+    cmd->which_ = which;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynStartRecordVideo(int which, const std::string& path, RecordVideoNT* nt)
+{
+    RecordVideoCmd* cmd = new RecordVideoCmd;
+    cmd->which_ = which;
+    strcpy(cmd->path_, path.c_str());
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynStopRecordVideo(int which, const std::string& path, StopRecordVideoNT* nt)
+{
+    StopRecordVideoCmd* cmd = new StopRecordVideoCmd;
+    cmd->which_ = which;
+    strcpy(cmd->path_, path.c_str());
     InsertNotify(cmd->send_time_, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);

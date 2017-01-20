@@ -59,7 +59,7 @@ public:
     int er_;
 };
 
-int QueryMachine(std::string& sn)
+int ST_QueryMachine(std::string& sn)
 {
     QueryMachineNT* nt = new (std::nothrow) QueryMachNT;
     api_agent.AsynQueryMachine(nt);
@@ -117,7 +117,7 @@ public:
     int er_;
 };
 
-int SetMachine(const std::string& sn)
+int ST_SetMachine(const std::string& sn)
 {
     SetMachineNT* nt = new (std::nothrow) SetMachNT;
     api_agent.AsynSetMachine(sn, nt);
@@ -174,7 +174,7 @@ public:
     int er_;
 };
 
-int InitMachine(const std::string& key)
+int ST_InitMachine(const std::string& key)
 {
     InitMachineNT* nt = new (std::nothrow) InitMaNT;
     api_agent.AsynInitMachine(key, nt);
@@ -232,7 +232,7 @@ public:
     int er_;
 };
 
-int BindMAC(const std::string& mac)
+int ST_BindMAC(const std::string& mac)
 {
     BindMACNT* nt = new BindNT;
     api_agent.AsynBindMAC(mac, nt);
@@ -289,7 +289,7 @@ public:
     int er_;
 };
 
-int UnbindMAC(const std::string& mac)
+int ST_UnbindMAC(const std::string& mac)
 {
     UnbindMACNT* nt = new UnbindNT;
     api_agent.AsynUnbindMAC(mac, nt);
@@ -352,7 +352,7 @@ public:
     int er_;
 };
 
-int PrepareStamp(char stamp_num, int timeout, std::string& task_id)
+int ST_PrepareStamp(char stamp_num, int timeout, std::string& task_id)
 {
     PrepareStampNT* nt = new PrepareNT;
     api_agent.AsynPrepareStamp(stamp_num, timeout, nt);
@@ -413,7 +413,7 @@ public:
     int er_;
 };
 
-int QueryPaper(int& status)
+int ST_QueryPaper(int& status)
 {
     QueryPaperNT* nt = new PaperNT;
     api_agent.AsynQueryPaper(nt);
@@ -476,7 +476,7 @@ public:
     int er_;
 };
 
-int Snapshot(
+int ST_Snapshot(
     int ori_dpi, 
     int cut_dpi,
     const std::string& ori_path, 
@@ -541,7 +541,7 @@ public:
     int er_;
 };
 
-int MergePhoto(
+int ST_MergePhoto(
     const std::string& p1, 
     const std::string& p2, 
     const std::string& merged)
@@ -607,7 +607,7 @@ public:
     int er_;
 };
 
-int RecognizeImage(const std::string& path,
+int ST_RecognizeImage(const std::string& path,
     std::string& template_id, std::string& trace_num)
 {
     RecognizeNT* nt = new RecogNT;
@@ -670,7 +670,7 @@ public:
     int er_;
 };
 
-int IdentifyElement(
+int ST_IdentifyElement(
     const std::string& path,
     int x,
     int y,
@@ -736,17 +736,18 @@ public:
     int er_;
 };
 
-int OrdinaryStamp(
+int ST_OrdinaryStamp(
     const std::string& task,
     const std::string& voucher, 
     int num, 
     int ink,
     int x, 
     int y, 
-    int angle)
+    int angle,
+    int type)
 {
     OrdinaryStampNT* nt = new OridinaryNT;
-    api_agent.AsynOrdinaryStamp(task, voucher, num, ink, x, y, angle, nt);
+    api_agent.AsynOrdinaryStamp(task, voucher, num, ink, x, y, angle, type, nt);
 
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((OridinaryNT*)nt)->cv_, WAIT_TIME))
@@ -800,7 +801,7 @@ public:
     int er_;
 };
 
-int AutoStamp(const std::string& task,
+int ST_AutoStamp(const std::string& task,
     const std::string& voucher, int num)
 {
     AutoStampNT* nt = new AutoNT;
@@ -858,7 +859,7 @@ public:
     int er_;
 };
 
-int FinishStamp(const std::string& task)
+int ST_FinishStamp(const std::string& task)
 {
     FinishStampNT* nt = new FinishNT;
     api_agent.AsynFinishStamp(task, nt);
@@ -915,7 +916,7 @@ public:
     int er_;
 };
 
-int ReleaseStamp(const std::string& machine)
+int ST_ReleaseStamp(const std::string& machine)
 {
     ReleaseStampNT* nt = new ReleaseNT;
     api_agent.AsynReleaseStamp(machine, nt);
@@ -977,7 +978,7 @@ public:
     int er_;
 };
 
-int GetError(int err_code, std::string& err_msg, std::string& err_resolver)
+int ST_GetError(int err_code, std::string& err_msg, std::string& err_resolver)
 {
     GetErrorNT* nt = new GetErrNT;
     api_agent.AsynGetError(err_code, nt);
@@ -1032,7 +1033,7 @@ public:
     int er_;
 };
 
-int Calibrate(int slot)
+int ST_Calibrate(int slot)
 {
     CalibrationNT* nt = new CaliNT;
     api_agent.AsynCalibrate(slot, nt);
@@ -1095,7 +1096,7 @@ public:
     int er_;
 };
 
-int QueryStampers(int* staus)
+int ST_QueryStampers(int* staus)
 {
     QueryStampersNT* nt = new QueryStamNT(staus);
     api_agent.AsynQueryStampers(nt);
@@ -1150,7 +1151,7 @@ public:
     int er_;
 };
 
-int QuerySafe(int& status)
+int ST_QuerySafe(int& status)
 {
     QuerySafeNT* nt = new QuerySafeDoorNT;
     api_agent.AsynQuerySafe(nt);
@@ -1204,7 +1205,7 @@ public:
     int er_;
 };
 
-int ControlSafe(int ctrl)
+int ST_ControlSafe(int ctrl)
 {
     CtrlSafeNT* nt = new CtrLSafeDoorNT;
     api_agent.AsynSafeControl(ctrl, nt);
@@ -1257,7 +1258,7 @@ public:
     int er_;
 };
 
-int ControlBeep(int ctrl)
+int ST_ControlBeep(int ctrl)
 {
     CtrlBeepNT* nt = new BeepCtrlNT;
     api_agent.AsynBeepControl(ctrl, nt);
@@ -1314,7 +1315,7 @@ public:
     int er_;
 };
 
-int QuerySlot(int& num)
+int ST_QuerySlot(int& num)
 {
     QuerySlotNT* nt = new QuerySlNT;
     api_agent.AsynQuerySlot(nt);
@@ -1372,7 +1373,7 @@ public:
     int er_;
 };
 
-int ControlAlarm(int alarm, int switches)
+int ST_ControlAlarm(int alarm, int switches)
 {
     CtrlAlarmNT* nt = new AlarmNT;
     api_agent.AsynAlarmControl(alarm, switches, nt);
@@ -1429,7 +1430,7 @@ public:
     int er_;
 };
 
-int QueryMAC(std::string& mac1, std::string& mac2)
+int ST_QueryMAC(std::string& mac1, std::string& mac2)
 {
     QueryMACNT* nt = new QryMACNT;
     api_agent.AsynQueryMAC(nt);
@@ -1444,6 +1445,993 @@ int QueryMAC(std::string& mac1, std::string& mac2)
     mac1 = ((QryMACNT*)nt)->mac1_;
     mac2 = ((QryMACNT*)nt)->mac2_;
     int ret = ((QryMACNT*)nt)->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 锁定印控仪 /////////////////////////////
+
+class LockMachineNT: public LockNT {
+public:
+#ifdef _XP
+    LockMachineNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~LockMachineNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+
+    int er_;
+};
+
+int ST_Lock()
+{
+    LockNT* nt = new LockMachineNT;
+    api_agent.AsynLock(nt);
+
+    LockMachineNT* derive_nt = (LockMachineNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 解锁印控仪 /////////////////////////////
+
+class UnlockMachineNT: public UnlockNT {
+public:
+#ifdef _XP
+    UnlockMachineNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~UnlockMachineNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_Unlock()
+{
+    UnlockNT* nt = new UnlockMachineNT;
+    api_agent.AsynUnlock(nt);
+
+    UnlockMachineNT* derive_nt = (UnlockMachineNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 印控仪锁定状态查询 /////////////////////////////
+
+class QryLockNT: public QueryLockNT {
+public:
+#ifdef _XP
+    QryLockNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~QryLockNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int lk, int ec) {
+        er_ = ec;
+        lock_ = lk;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int lock_;
+    int er_;
+};
+
+int ST_QueryLock(int& lock)
+{
+    QueryLockNT* nt = new QryLockNT;
+    api_agent.AsynQueryLock(nt);
+
+    QryLockNT* derive_nt = (QryLockNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 打开设备连接 /////////////////////////////
+
+class OpenNT: public OpenCnnNT {
+public:
+#ifdef _XP
+    OpenNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~OpenNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_Open()
+{
+    OpenCnnNT* nt = new OpenNT;
+    api_agent.AsynOpen(nt);
+
+    OpenNT* derive_nt = (OpenNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 关闭设备连接 /////////////////////////////
+
+class CloseNT: public CloseCnnNT {
+public:
+#ifdef _XP
+    CloseNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~CloseNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_Close()
+{
+    CloseCnnNT* nt = new CloseNT;
+    api_agent.AsynClose(nt);
+
+    CloseNT* derive_nt = (CloseNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 设备连接状态查询 /////////////////////////////
+
+class QryCnnNT: public QueryCnnNT {
+public:
+#ifdef _XP
+    QryCnnNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~QryCnnNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int cnn, int ec) {
+        er_ = ec;
+        cnn_ = cnn;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int cnn_;
+    int er_;
+};
+
+int ST_QueryCnn(int& cnn)
+{
+    QueryCnnNT* nt = new QryCnnNT;
+    api_agent.AsynQueryCnn(nt);
+
+    QryCnnNT* derive_nt = (QryCnnNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    cnn = derive_nt->cnn_;
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 安全门报警器设置 /////////////////////////////
+
+class SetSideAlarmNT: public SideDoorAlarmNT {
+public:
+#ifdef _XP
+    SetSideAlarmNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~SetSideAlarmNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_SetSideAlarm(int keep, int timeout)
+{
+    SideDoorAlarmNT* nt = new SetSideAlarmNT;
+    api_agent.AsynSetSideAlarm(keep, timeout, nt);
+
+    SetSideAlarmNT* derive_nt = (SetSideAlarmNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 获取设备型号 /////////////////////////////
+
+class GetModelNT: public DevModelNT {
+public:
+#ifdef _XP
+    GetModelNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~GetModelNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(std::string model, int ec) {
+        er_ = ec;
+        model_ = model;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    std::string model_;
+    int er_;
+};
+
+int ST_GetDevModel(std::string& model)
+{
+    DevModelNT* nt = new GetModelNT;
+    api_agent.AsynQueryModel(nt);
+
+    GetModelNT* derive_nt = (GetModelNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    model = derive_nt->model_;
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 打开进纸门 /////////////////////////////
+
+class OpenPaperDoorNT: public OpenPaperNT {
+public:
+#ifdef _XP
+    OpenPaperDoorNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~OpenPaperDoorNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_OpenPaper(int timeout)
+{
+    OpenPaperNT* nt = new OpenPaperDoorNT;
+    api_agent.AsynOpenPaper(timeout, nt);
+
+    OpenPaperDoorNT* derive_nt = (OpenPaperDoorNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// LED补光灯控制 /////////////////////////////
+
+class ControlLEDNT: public CtrlLedNT {
+public:
+#ifdef _XP
+    ControlLEDNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~ControlLEDNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_CtlrLed(int which, int ctrl, int value)
+{
+    CtrlLedNT* nt = new ControlLEDNT;
+    api_agent.AsynCtrlLed(which, ctrl, value, nt);
+
+    ControlLEDNT* derive_nt = (ControlLEDNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 用印坐标参数检查 /////////////////////////////
+
+class ChkParaNT: public CheckParamNT {
+public:
+#ifdef _XP
+    ChkParaNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~ChkParaNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_CheckParam(int x, int y, int angle)
+{
+    CheckParamNT* nt = new ChkParaNT;
+    api_agent.AsynCheckParam(x, y, angle, nt);
+
+    ChkParaNT* derive_nt = (ChkParaNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 打开摄像头 /////////////////////////////
+
+class OpenCaNT: public OpenCameraNT {
+public:
+#ifdef _XP
+    OpenCaNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~OpenCaNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_OpenCamera2(int which)
+{
+    OpenCameraNT* nt = new OpenCaNT;
+    api_agent.AsynOpenCamera(which, nt);
+
+    OpenCaNT* derive_nt = (OpenCaNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 关闭摄像头 /////////////////////////////
+
+class CloseCaNT: public CloseCameraNT {
+public:
+#ifdef _XP
+    CloseCaNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~CloseCaNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_CloseCamera2(int which)
+{
+    CloseCameraNT* nt = new CloseCaNT;
+    api_agent.AsynCloseCamera(which, nt);
+
+    CloseCaNT* derive_nt = (CloseCaNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 摄像头状态查询 /////////////////////////////
+
+class QryCameraNT: public QueryCameraNT {
+public:
+#ifdef _XP
+    QryCameraNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~QryCameraNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int which, int status, int ec) {
+        er_ = ec;
+        which_ = which;
+        status_ = status;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int which_;
+    int status_;
+    int er_;
+};
+
+int ST_QueryCamera(int which, int& status)
+{
+    QueryCameraNT* nt = new QryCameraNT;
+    api_agent.AsynQueryCamera(which, nt);
+
+    QryCameraNT* derive_nt = (QryCameraNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    status = derive_nt->status_;
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 设置分辨率 /////////////////////////////
+
+class SetResoNT: public SetResolutionNT {
+public:
+#ifdef _XP
+    SetResoNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~SetResoNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_SetResolution2(int which, int x, int y)
+{
+    SetResolutionNT* nt = new SetResoNT;
+    api_agent.AsynSetResolution(which, x, y, nt);
+
+    SetResoNT* derive_nt = (SetResoNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 设置摄像头属性 /////////////////////////////
+
+class SetProNT: public SetPropertyNT {
+public:
+#ifdef _XP
+    SetProNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~SetProNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_SetProperty(int which)
+{
+    SetPropertyNT* nt = new SetProNT;
+    api_agent.AsynSetProperty(which, nt);
+
+    SetProNT* derive_nt = (SetProNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 录像 /////////////////////////////
+
+class RecordNT: public RecordVideoNT {
+public:
+#ifdef _XP
+    RecordNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~RecordNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_StartRecordVideo(int which, const std::string& path)
+{
+    RecordVideoNT* nt = new RecordNT;
+    api_agent.AsynStartRecordVideo(which, path, nt);
+
+    RecordNT* derive_nt = (RecordNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    //delete nt;
+    return ret;
+}
+
+/////////////////////////////// 停止录像 /////////////////////////////
+
+class StopRecordNT: public StopRecordVideoNT {
+public:
+#ifdef _XP
+    StopRecordNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~StopRecordNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_StopRecordVideo(int which, const std::string& path)
+{
+    StopRecordVideoNT* nt = new StopRecordNT;
+    api_agent.AsynStopRecordVideo(which, path, nt);
+
+    StopRecordNT* derive_nt = (StopRecordNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
     //delete nt;
     return ret;
 }

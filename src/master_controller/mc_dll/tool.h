@@ -46,6 +46,10 @@ public:
 
     const AllDoorStat& GetDoors();
 
+    void UpdateCams(int which, bool status);
+
+    bool QueryCam(int which);
+
 private:
     Tool() {
         paper_door_ev_ = CreateEvent(
@@ -64,9 +68,13 @@ private:
     boost::mutex door_mtx_;
     AllDoorStat doors_stat_;
 
+    bool paper_cam_;
+    bool env_cam_;
+    bool side_cam_;
+
 public:
     HANDLE      paper_door_ev_;     // 进纸门关闭事件
-}; // namespace Tool
+}; // class Tool
 
 } // namespace MC
 
