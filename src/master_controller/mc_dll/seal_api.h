@@ -75,6 +75,7 @@ public:
     // ori_dpi      --- 原始图像DPI
     // cut_dpi      --- 剪切后图像DPI
     void Snapshot(
+        int which,
         int ori_dpi, 
         int cut_dpi, 
         const std::string& ori_path, 

@@ -987,6 +987,19 @@
        <string>停止录像</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="pb_dev_type_">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>670</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>设备型号</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_stamper">
      <attribute name="title">
@@ -2184,43 +2197,17 @@
         </rect>
        </property>
        <property name="text">
-        <string>X方向宽度：</string>
+        <string>x坐标：</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="le_x_width_">
+      <widget class="QLineEdit" name="le_x_coord_">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>60</y>
+         <y>70</y>
          <width>101</width>
          <height>22</height>
         </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_21">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>100</y>
-         <width>91</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Y方向宽度：</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="le_y_width_">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>120</y>
-         <width>101</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
        </property>
       </widget>
       <widget class="QLabel" name="label_23">
@@ -2233,99 +2220,53 @@
         </rect>
        </property>
        <property name="text">
-        <string>X盖章范围最小值：</string>
+        <string>y坐标：</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="le_x_min_">
+      <widget class="QLineEdit" name="le_y_coord_">
        <property name="geometry">
         <rect>
          <x>130</x>
-         <y>60</y>
+         <y>70</y>
          <width>101</width>
          <height>22</height>
         </rect>
        </property>
       </widget>
-      <widget class="QLineEdit" name="le_x_max_">
+      <widget class="QPushButton" name="pb_check_param_">
        <property name="geometry">
         <rect>
-         <x>130</x>
-         <y>120</y>
-         <width>101</width>
-         <height>22</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_26">
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>100</y>
-         <width>131</width>
-         <height>16</height>
+         <x>140</x>
+         <y>110</y>
+         <width>93</width>
+         <height>28</height>
         </rect>
        </property>
        <property name="text">
-        <string>X盖章范围最大值：</string>
+        <string>参数检查</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="le_y_max_">
+      <widget class="QLineEdit" name="le_angle_">
        <property name="geometry">
         <rect>
-         <x>280</x>
-         <y>120</y>
+         <x>260</x>
+         <y>70</y>
          <width>101</width>
          <height>22</height>
         </rect>
        </property>
       </widget>
-      <widget class="QLineEdit" name="le_y_min_">
+      <widget class="QLabel" name="label_24">
        <property name="geometry">
         <rect>
-         <x>280</x>
-         <y>60</y>
-         <width>101</width>
-         <height>22</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_36">
-       <property name="geometry">
-        <rect>
-         <x>280</x>
-         <y>100</y>
-         <width>131</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Y盖章范围最大值：</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_45">
-       <property name="geometry">
-        <rect>
-         <x>280</x>
+         <x>260</x>
          <y>40</y>
          <width>131</width>
          <height>16</height>
         </rect>
        </property>
        <property name="text">
-        <string>Y盖章范围最小值：</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pb_read_range_">
-       <property name="geometry">
-        <rect>
-         <x>160</x>
-         <y>160</y>
-         <width>93</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>读数据</string>
+        <string>角度：</string>
        </property>
       </widget>
      </widget>

@@ -18,6 +18,26 @@
 extern "C"{
 #endif
 
+// 该接口文件包含以下4类接口：
+// 1. 印控机接口;
+// 2. 图像处理接口;
+// 3. 摄像头接口;
+// 4. 查询错误信息接口；
+
+/////////////////////// 1. 印控机API //////////////////////////////
+
+// 获取印控机与PC连接状态
+// cnn      --- 0: 断开连接
+//          --- 1: 连接
+MASTERCTRL_AGENT_API int ST_QueryCnn(
+    int& cnn);
+
+// 打开设备连接
+MASTERCTRL_AGENT_API int ST_Open();
+
+// 关闭设备连接
+MASTERCTRL_AGENT_API int ST_Close();
+
 // 获取印控仪编号
 MASTERCTRL_AGENT_API int ST_QueryMachine(
     std::string& sn);
@@ -25,10 +45,6 @@ MASTERCTRL_AGENT_API int ST_QueryMachine(
 // 设置印控机编号
 MASTERCTRL_AGENT_API int ST_SetMachine(
     const std::string& sn);
-
-// 初始化印控机
-MASTERCTRL_AGENT_API int ST_InitMachine(
-    const std::string& key);
 
 // 查询MAC地址, 一台印控机最多支持绑定2个MAC地址
 // mac1         --- mac地址1
@@ -56,55 +72,9 @@ MASTERCTRL_AGENT_API int ST_PrepareStamp(
     int             timeout, 
     std::string&    task_id);
 
-// 查询进纸门状态
-// status        --- 0-关, 1-开
-MASTERCTRL_AGENT_API int ST_QueryPaper(
-    int& status);
-
-// 凭证摄像头拍照
-// ori_dpi      --- 原图dpi
-// cut_doi      --- 切图dpi
-// ori_path     --- 存放原图路径
-// cut_path     --- 存放切图路径
-MASTERCTRL_AGENT_API int ST_Snapshot(
-    int                 ori_dpi, 
-    int                 cut_dpi, 
-    const std::string&  ori_path, 
-    const std::string&  cut_path);
-
-// 合成照片
-// p1       --- 图片1路径
-// p2       --- 图片2路径
-// merged   --- 合成图片路径
-MASTERCTRL_AGENT_API int ST_MergePhoto(
-    const std::string& p1, 
-    const std::string& p2,
-    const std::string& merged);
-
-// 版面、验证码识别
-// path         --- 切图路径
-// template_id  --- 模板ID
-// trace_num    --- 追溯码
-MASTERCTRL_AGENT_API int ST_RecognizeImage(
-    const std::string&  path, 
-    std::string&        template_id, 
-    std::string&        trace_num);
-
-// 要素识别
-// path         --- 切图路径
-MASTERCTRL_AGENT_API int ST_IdentifyElement(
-    const           std::string& path, 
-    int             x, 
-    int             y, 
-    int             width, 
-    int             height,
-    int             angle, 
-    std::string&    result);
-
 // 普通用印
 MASTERCTRL_AGENT_API int ST_OrdinaryStamp(
     const std::string&  task,       // 任务号
-    const std::string&  voucher,
     int                 num,        // 印章卡槽号(1-6)
     int                 ink,        // 0 - 不蘸印油， 1 - 蘸印油
     int                 x,          // 盖章位置x坐标, 相对于印控机坐标系
@@ -112,19 +82,14 @@ MASTERCTRL_AGENT_API int ST_OrdinaryStamp(
     int                 angle,      // 印章旋转角度, 大于等于0且小于360度
     int                 type = 0);  // 0 - 普通用印, 1 - 骑缝章
 
-// 自动用印
-MASTERCTRL_AGENT_API int ST_AutoStamp(
-    const std::string&  task,
-    const std::string&  voucher, 
-    int                 num);
-
-// 结束用印
+// 结束用印. 完成以下操作：
+// 1. 解锁印控仪;
+// 2. 删除任务号;
+// 3. 弹出纸门;
+// 
+// task         --- 准备用印时获得的用印任务号
 MASTERCTRL_AGENT_API int ST_FinishStamp(
     const std::string& task);
-
-// 释放印控机
-MASTERCTRL_AGENT_API int ST_ReleaseStamp(
-    const std::string& machine);
 
 // 印章校准
 // slot     --- 卡槽号, 从1开始
@@ -132,9 +97,20 @@ MASTERCTRL_AGENT_API int ST_Calibrate(
     int slot);
 
 // 查询印章状态
-// status   --- 0-无章, 1-有章, 如"001101"
+// status   --- 对应章槽上是否有章
+//              0 - 表示无章, 1 - 表示有章. 如"001101"
 MASTERCTRL_AGENT_API int ST_QueryStampers(
     int* status);
+
+// 查询进纸门状态
+// status        --- 0-关, 1-开
+MASTERCTRL_AGENT_API int ST_QueryPaper(
+    int& status);
+
+// 打开进纸门
+// timeout      --- 纸门超时未关闭时间，单位秒
+MASTERCTRL_AGENT_API int ST_OpenPaper(
+    int timeout = 30);
 
 // 安全门状态查询
 // status   --- 0-关,1-开
@@ -178,31 +154,14 @@ MASTERCTRL_AGENT_API int ST_Unlock();
 MASTERCTRL_AGENT_API int ST_QueryLock(
     int& lock);
 
-// 打开设备连接
-MASTERCTRL_AGENT_API int ST_Open();
-
-// 关闭设备连接
-MASTERCTRL_AGENT_API int ST_Close();
-
-// 获取连接状态
-// cnn      --- 0: 断开连接
-//          --- 1: 连接
-MASTERCTRL_AGENT_API int ST_QueryCnn(
-    int& cnn);
-
 // 设置安全门
-MASTERCTRL_AGENT_API int ST_SetSideAlarm(
+MASTERCTRL_AGENT_API int ST_SetSideDoor(
     int keep,
     int timeout);
 
 //  获取设备型号
 MASTERCTRL_AGENT_API int ST_GetDevModel(
     std::string& model);
-
-// 打开进纸门
-// timeout      --- 纸门超时未关闭时间，单位秒
-MASTERCTRL_AGENT_API int ST_OpenPaper(
-    int timeout = 30);
 
 // 补光灯控制
 // which    --- 补光灯类型
@@ -211,19 +170,52 @@ MASTERCTRL_AGENT_API int ST_OpenPaper(
 // ctrl     --- 控制开关
 //              0 -- 关; 1 -- 开
 // value    --- 打开补光灯时同步设置补光灯的亮度值
-MASTERCTRL_AGENT_API int ST_CtlrLed(
+MASTERCTRL_AGENT_API int ST_ControlLed(
     int which,
     int ctrl,
     int value);
 
-// 用印参数检查(针对印控仪的物理坐标)
+// 用印参数检查(针对印控机的物理坐标)
 // x        --- x坐标值
 // y        --- y坐标值
-// angle    --- 旋转角度值
+// angle    --- 章旋转角度值(0 ~ 360)
 MASTERCTRL_AGENT_API int ST_CheckParam(
     int x,
     int y,
     int angle);
+
+/////////////////////// 2. 图像处理API //////////////////////////////
+
+// 合成照片
+// p1       --- 图片1路径
+// p2       --- 图片2路径
+// merged   --- 合成图片路径
+MASTERCTRL_AGENT_API int ST_MergePhoto(
+    const std::string& p1, 
+    const std::string& p2,
+    const std::string& merged);
+
+// 版面、验证码识别
+// path         --- 切图路径
+// template_id  --- 模板ID
+// trace_num    --- 追溯码
+MASTERCTRL_AGENT_API int ST_RecognizeImage(
+    const std::string&  path, 
+    std::string&        template_id, 
+    std::string&        trace_num);
+
+// 要素识别
+// path         --- 切图路径
+MASTERCTRL_AGENT_API int ST_IdentifyElement(
+    const           std::string& path, 
+    int             x, 
+    int             y, 
+    int             width, 
+    int             height,
+    int             angle, 
+    std::string&    result);
+
+/////////////////////// 3. 摄像头API //////////////////////////////
 
 // 打开摄像头
 // which    --- 0：凭证摄像头
@@ -249,6 +241,21 @@ MASTERCTRL_AGENT_API int ST_QueryCamera(
     int which, 
     int& status);
 
+// 拍照
+// which        --- 0：凭证摄像头
+//                  1：环境摄像头
+//                  2：侧门摄像头
+// ori_dpi      --- 原图dpi
+// cut_doi      --- 切图dpi
+// ori_path     --- 存放原图路径
+// cut_path     --- 存放切图路径
+MASTERCTRL_AGENT_API int ST_Snapshot(
+    int                 which,
+    int                 ori_dpi, 
+    int                 cut_dpi, 
+    const std::string&  ori_path, 
+    const std::string&  cut_path);
+
 // 设置摄像头分辨率
 // which    --- 0：凭证摄像头
 //              1：环境摄像头
@@ -259,10 +266,6 @@ MASTERCTRL_AGENT_API int ST_SetResolution2(
     int which, 
     int x, 
     int y);
-
-// 设置摄像头属性
-MASTERCTRL_AGENT_API int ST_SetProperty(
-    int which);
 
 // 开始录制视频
 // which    --- 0：凭证摄像头
@@ -282,7 +285,9 @@ MASTERCTRL_AGENT_API int ST_StopRecordVideo(
     int which,
     const std::string& path);
 
-// 获取详细错误信息
+/////////////////////// 4. 查询错误信息 API //////////////////////////////
+
+// 根据错误码获取错误信息
 MASTERCTRL_AGENT_API int ST_GetError(
     int             err_code,
     std::string&    err_msg,

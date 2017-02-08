@@ -221,6 +221,7 @@ public:
     virtual void Unser();
 
 public:
+    int             which_;
     int             original_dpi_;              // 拍照的分辨率
     int             cut_dpi_;
 
@@ -644,13 +645,14 @@ class GetDevModelCmd: public BaseCmd {
 public:
     GetDevModelCmd(): ret_(MC::EC_SUCC) {
         ct_ = CT_QUERY_DEV_MODEL;
+        memset(model_, 0, sizeof(model_));
     }
 
     virtual void Ser();
     virtual void Unser();
 
 public:
-    std::string model_;
+    char model_[128];
 
     MC::ErrorCode ret_;
 };

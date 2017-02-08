@@ -836,6 +836,7 @@ int AsynAPISet::AsynQueryPaper(QueryPaperNT* nt)
 }
 
 int AsynAPISet::AsynSnapshot(
+    int which,
     int ori_dpi, 
     int cut_dpi, 
     const std::string& ori_path, 
@@ -843,6 +844,7 @@ int AsynAPISet::AsynSnapshot(
     SnapshotNT* nt)
 {
     SnapshotCmd* cmd = new SnapshotCmd;
+    cmd->which_ = which;
     cmd->original_dpi_ = ori_dpi;
     cmd->cut_dpi_ = cut_dpi;
     strcpy_s(cmd->original_path_, ori_path.c_str());

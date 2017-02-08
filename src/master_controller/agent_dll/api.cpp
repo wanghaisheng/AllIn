@@ -477,13 +477,14 @@ public:
 };
 
 int ST_Snapshot(
+    int which,
     int ori_dpi, 
     int cut_dpi,
     const std::string& ori_path, 
     const std::string& cut_path)
 {
     SnapshotNT* nt = new SnapNT;
-    api_agent.AsynSnapshot(ori_dpi, cut_dpi, ori_path, cut_path, nt);
+    api_agent.AsynSnapshot(which, ori_dpi, cut_dpi, ori_path, cut_path, nt);
 
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((SnapNT*)nt)->cv_, WAIT_TIME))
@@ -738,7 +739,6 @@ public:
 
 int ST_OrdinaryStamp(
     const std::string& task,
-    const std::string& voucher, 
     int num, 
     int ink,
     int x, 
@@ -746,6 +746,7 @@ int ST_OrdinaryStamp(
     int angle,
     int type)
 {
+    std::string voucher;
     OrdinaryStampNT* nt = new OridinaryNT;
     api_agent.AsynOrdinaryStamp(task, voucher, num, ink, x, y, angle, type, nt);
 
@@ -1816,7 +1817,7 @@ public:
     int er_;
 };
 
-int ST_SetSideAlarm(int keep, int timeout)
+int ST_SetSideDoor(int keep, int timeout)
 {
     SideDoorAlarmNT* nt = new SetSideAlarmNT;
     api_agent.AsynSetSideAlarm(keep, timeout, nt);
@@ -1981,7 +1982,7 @@ public:
     int er_;
 };
 
-int ST_CtlrLed(int which, int ctrl, int value)
+int ST_ControlLed(int which, int ctrl, int value)
 {
     CtrlLedNT* nt = new ControlLEDNT;
     api_agent.AsynCtrlLed(which, ctrl, value, nt);

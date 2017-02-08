@@ -258,6 +258,7 @@ public:
     int AsynQueryPaper(QueryPaperNT* nt);
 
     int AsynSnapshot(
+        int which,
         int ori_dpi, 
         int cut_dpi, 
         const std::string& ori_path, 

@@ -602,10 +602,11 @@ void MC::STSealAPI::QueryPaperDoor(MC::NotifyResult* notify)
 class SnapshotEv : public MC::BaseEvent {
 
 public:
-    SnapshotEv(std::string des, int original_dpi, int cut_dpi, 
+    SnapshotEv(std::string des, int which, int original_dpi, int cut_dpi, 
         const std::string& ori_path, const std::string& cut_path,
         MC::NotifyResult* notify)
         : BaseEvent(des),
+        which_(which),
         ori_dpi_(original_dpi),
         cut_dpi_(cut_dpi),
         ori_(ori_path),
@@ -625,7 +626,7 @@ public:
         }
 
         int ret = CapturePhoto(
-            PAPERCAMERA,
+            (CAMERAINDEX)which_,
             enum IMAGEFORMAT(MC::SvrConfig::GetInst()->img_format_),
             (char*)ori_.c_str());
         if (0 != ret) {
@@ -660,6 +661,7 @@ public:
     }
 
 private:
+    int which_;
     int ori_dpi_;
     int cut_dpi_;
     std::string ori_;
@@ -669,6 +671,7 @@ private:
 };
 
 void MC::STSealAPI::Snapshot(
+    int which,
     int original_dpi, 
     int cut_dpi, 
     const std::string& ori_path,
@@ -677,6 +680,7 @@ void MC::STSealAPI::Snapshot(
 {
     BaseEvent* ev = new (std::nothrow) SnapshotEv(
         "拍照", 
+        which,
         original_dpi, 
         cut_dpi, 
         ori_path,
@@ -1127,7 +1131,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        // 中行-用印结束
+        // 用印结束
         MC::TaskState ts = MC::TaskMgr::GetInst()->QueryTaskState(task_);
         // 任务号已被结束
         if (MC::TS_DEAD == ts) {
@@ -1202,7 +1206,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        // 中行-释放印控机
+        // 释放印控机
         // 是否锁定
         if (!IsLocked()) {
             ec = MC::EC_MACHINE_UNLOCKED;
@@ -2144,13 +2148,14 @@ public:
     }
 
     virtual void SpecificExecute() {
+        unsigned char sn[49] = { 0 };
         MC::ErrorCode ec = exception_;
         if (MC::EC_SUCC != ec)
             goto NT;
-
-        // to-do
-        int ret = FOpenDev(NULL);
-        if (!ret) {
+        
+        int ret = ReadBackupSN(sn, 48);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::GetDevModelEv->获取设备型号失败, er: %d", ret);
             ec = MC::EC_DRIVER_FAIL;
             goto NT;
         }
@@ -2158,8 +2163,9 @@ public:
         ec = MC::EC_SUCC;
 
     NT:
-        notify_->Notify(ec);
-        Log::WriteLog(LL_DEBUG, "MC::GetDevModelEv::SpecificExecute->获取设备型号, ec: %s",
+        notify_->Notify(ec, (char*)sn);
+        Log::WriteLog(LL_DEBUG, "MC::GetDevModelEv::SpecificExecute->获取设备型号: %s, ec: %s",
+            sn,
             MC::ErrorMsg[ec].c_str());
         delete this;
     }
@@ -2315,8 +2321,11 @@ void MC::STSealAPI::CtrlLed(int which, int switchs, int value, NotifyResult* not
 
 class CheckParaEv: public MC::BaseEvent {
 public:
-    CheckParaEv(std::string des, MC::NotifyResult* notify) :
+    CheckParaEv(std::string des, int x, int y, int angle, MC::NotifyResult* notify) :
         BaseEvent(des),
+        x_(x),
+        y_(y),
+        angle_(angle),
         notify_(notify) {
 
     }
@@ -2326,9 +2335,54 @@ public:
         if (MC::EC_SUCC != ec)
             goto NT;
 
-        int ret = FOpenDev(NULL);
-        if (!ret) {
+        char physical[12] = { 0 };
+        int ret = GetPhsicalRange(physical, 12);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::CheckParaEv->读盖章物理范围失败, er: %d", ret);
             ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        unsigned short x_width = 0;
+        memcpy(&x_width, physical, sizeof(unsigned short));
+
+        unsigned short y_width = 0;
+        memcpy(&y_width, physical + sizeof(unsigned short), sizeof(unsigned short));
+
+        unsigned short x_min = 0;
+        memcpy(&x_min, physical + 2 * sizeof(unsigned short), sizeof(unsigned short));
+
+        unsigned short x_max = 0;
+        memcpy(&x_max, physical + 3 * sizeof(unsigned short), sizeof(unsigned short));
+
+        unsigned short y_min = 0;
+        memcpy(&y_min, physical + 4 * sizeof(unsigned short), sizeof(unsigned short));
+
+        unsigned short y_max = 0;
+        memcpy(&y_max, physical + 5 * sizeof(unsigned short), sizeof(unsigned short));
+
+        if (x_ < x_min || x_ > x_max) {
+            Log::WriteLog(LL_ERROR, "MC::CheckParaEv->x坐标:%d非法, 不属于(%d, %d)",
+                x_,
+                x_min,
+                x_max);
+            ec = MC::EC_INVALID_X_PARAM;
+            goto NT;
+        }
+
+        if (y_ < y_min || y_ > y_max) {
+            Log::WriteLog(LL_ERROR, "MC::CheckParaEv->y坐标:%d非法, 不属于(%d, %d)",
+                y_,
+                y_min,
+                y_max);
+            ec = MC::EC_INVALID_Y_PARAM;
+            goto NT;
+        }
+
+        if (angle_ < 0 || angle_ > 360) {
+            Log::WriteLog(LL_ERROR, "MC::CheckParaEv->章旋转角度: %d非法",
+                angle_);
+            ec = MC::EC_INVALID_ANGLE;
             goto NT;
         }
 
@@ -2342,13 +2396,21 @@ public:
     }
 
 private:
+    int x_;
+    int y_;
+    int angle_;
     MC::NotifyResult*   notify_;
 };
 
 // 用印参数合法性检查
 void MC::STSealAPI::CheckParams(int x, int y, int angle, NotifyResult* notify)
 {
-    BaseEvent* ev = new (std::nothrow) CheckParaEv("用印参数检查", notify);
+    BaseEvent* ev = new (std::nothrow) CheckParaEv(
+        "用印参数检查", 
+        x,
+        y,
+        angle,
+        notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);
 

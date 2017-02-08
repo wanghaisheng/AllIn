@@ -794,6 +794,7 @@ void Recver::HandleSnapshot(const RecvMsg* msg)
 
     MC::NotifyResult* notify = new (std::nothrow) SnapshotNT(msg->pipe_inst, snap_cmd, this);
     MC::STSealAPI::GetInst()->Snapshot(
+        snap_cmd->which_,
         snap_cmd->original_dpi_,
         snap_cmd->cut_dpi_, 
         snap_cmd->original_path_,
@@ -1950,6 +1951,7 @@ public:
         std::cout << "GetModelNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
+        strcpy(cmd_->model_, data1.c_str());
         cmd_->Ser();
 
         bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());

@@ -49,6 +49,9 @@ enum ErrorCode {
     EC_OPEN_FAIL,               // 打开设备失败
     EC_START_RECORD_FAIL,       // 开启录像失败
     EC_STOP_RECORD_FAIL,        // 停止录像失败
+    EC_INVALID_X_PARAM,         // x坐标非法
+    EC_INVALID_Y_PARAM,         // y坐标非法
+    EC_INVALID_ANGLE,           // 章旋转角度非法
     EC_MAX
 };
 
@@ -95,7 +98,10 @@ static std::string ErrorMsg[] = {
     "关闭摄像头失败",
     "打开设备失败",
     "开启录像失败",
-    "停止录像失败"
+    "停止录像失败",
+    "x坐标非法",
+    "y坐标非法",
+    "章旋转角度非法"
 };
 
 static std::string GetErrMsg(enum ErrorCode err)

@@ -110,6 +110,8 @@ private:
     void HandleStartRecord();
     void HandleStopRecord();
 
+    void HandleGetModelType();
+
 private slots:
     void HandleErrCodeChange(const QString &);
 
@@ -275,7 +277,7 @@ private:
     void HandldeWriteCalPoints();   //写校准点
     void HandleReadPCalPoints();    //读校准点
 
-    void HandleReadRange();         //获取物理范围
+    void HandleCheckParam();         //获取物理范围
 
     void HandleReadAlarm();         //读报警器状态
 

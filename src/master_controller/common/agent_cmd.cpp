@@ -79,14 +79,14 @@ void ViewPaperCmd::Unser()
 void SnapshotCmd::Ser()
 {
     BaseCmd::Ser();
-    xs_ << original_dpi_ << cut_dpi_ << original_path_ << cut_path_ << ret_;
+    xs_ << which_ << original_dpi_ << cut_dpi_ << original_path_ << cut_path_ << ret_;
     xs_.Trim();
 }
 
 void SnapshotCmd::Unser()
 {
     BaseCmd::Unser();
-    xs_ >> original_dpi_ >> cut_dpi_ >> original_path_ >> cut_path_ >> ret_;
+    xs_ >> which_ >> original_dpi_ >> cut_dpi_ >> original_path_ >> cut_path_ >> ret_;
 }
 
 void SynthesizePhotoCmd::Ser()

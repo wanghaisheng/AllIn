@@ -139,6 +139,8 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_start_record_, &QPushButton::clicked, this, &QtDemo::HandleStartRecord);
     connect(ui.pb_stop_record_, &QPushButton::clicked, this, &QtDemo::HandleStopRecord);
 
+    connect(ui.pb_dev_type_, &QPushButton::clicked, this, &QtDemo::HandleGetModelType);
+
     //拍照/识别
     ui.pb_ori_img_->setStyleSheet("background-color: transparent;");
     ui.pb_cut_img_->setStyleSheet("background-color: transparent;");
@@ -177,6 +179,7 @@ QtDemo::QtDemo(QWidget *parent)
 
     connect(ui.pb_finish_stamp_, &QPushButton::clicked, this, &QtDemo::HandleFinishStamp);
     connect(ui.pb_release_machine_, &QPushButton::clicked, this, &QtDemo::HandleReleaseMachine);
+    ui.pb_release_machine_->hide();
 
     // 其他接口
     connect(ui.pb_lock_, &QPushButton::clicked, this, &QtDemo::HandleLock);
@@ -197,7 +200,7 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_write_cal_points_, &QPushButton::clicked, this, &QtDemo::HandldeWriteCalPoints);
     connect(ui.pb_read_cal_points_, &QPushButton::clicked, this, &QtDemo::HandleReadPCalPoints);
 
-    connect(ui.pb_read_range_, &QPushButton::clicked, this, &QtDemo::HandleReadRange);
+    connect(ui.pb_check_param_, &QPushButton::clicked, this, &QtDemo::HandleCheckParam);
 
     connect(ui.pb_read_alarm_, &QPushButton::clicked, this, &QtDemo::HandleReadAlarm);
 
@@ -460,7 +463,7 @@ void QtDemo::HandleOpenPaper()
 void QtDemo::HandleOpenPaperLED()
 {
     int value = atoi(ui.le_led_val_->text().toStdString().c_str());
-    int ret = ST_CtlrLed(2, 1, value);
+    int ret = ST_ControlLed(2, 1, value);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("开纸门补光灯失败, er: ") +
             QString::number(ret));
@@ -470,7 +473,7 @@ void QtDemo::HandleOpenPaperLED()
 
 void QtDemo::HandleClosePaperLED()
 {
-    int ret = ST_CtlrLed(2, 0, 0);
+    int ret = ST_ControlLed(2, 0, 0);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("关纸门补光灯失败, er: ") +
             QString::number(ret));
@@ -481,7 +484,7 @@ void QtDemo::HandleClosePaperLED()
 void QtDemo::HandleOpenSafeLED()
 {
     int value = atoi(ui.le_led_val_->text().toStdString().c_str());
-    int ret = ST_CtlrLed(1, 1, value);
+    int ret = ST_ControlLed(1, 1, value);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("开安全门补光灯失败, er: ") +
             QString::number(ret));
@@ -491,7 +494,7 @@ void QtDemo::HandleOpenSafeLED()
 
 void QtDemo::HandleCloseSafeLED()
 {
-    int ret = ST_CtlrLed(1, 0, 0);
+    int ret = ST_ControlLed(1, 0, 0);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("关安全门补光灯失败, er: ") +
             QString::number(ret));
@@ -531,6 +534,17 @@ void QtDemo::HandleStopRecord()
             QString::number(ret));
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("停止录制视频成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleGetModelType()
+{
+    std::string type;
+    int ret = ST_GetDevModel(type);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("获取设备型号失败, er: ") +
+            QString::number(ret));
+
+    Info(QString::fromLocal8Bit("设备型号: ") + QString::fromStdString(type));
 }
 
 void QtDemo::HandleOpenSafeDoor()
@@ -757,6 +771,7 @@ void QtDemo::HandleCapture()
     const std::string ori_path = Config::GetInst()->ori_path_;
     const std::string cut_path = Config::GetInst()->cut_path_;
     int ret = ST_Snapshot(
+        which_cam_,
         200,
         200,
         ori_path,
@@ -1132,10 +1147,8 @@ void QtDemo::HandleCheckStampInk(int checked)
 
 void QtDemo::HandleOridinary()
 {
-    std::string voucher;
     int ret = ST_OrdinaryStamp(
         ui.le_task_id_->text().toStdString(),
-        voucher,
         para_.stamp_idx,
         para_.ink,
         atoi(ui.le_x_in_img_->text().toStdString().c_str()),    // 盖章位置x坐标, 原始图片中的像素
@@ -1200,11 +1213,11 @@ void QtDemo::HandleReleaseMachine()
     if (machine.empty())
         return Info(QString::fromLocal8Bit("请先通过\"设备控制\"页获取设备编号"));
 
-    int ret = ST_ReleaseStamp(machine);
-    if (0 != ret)
-        return Info(QString::fromLocal8Bit("释放印控机失败, er: ") + QString::number(ret));
-
-    ui.statusBar->showMessage(QString::fromLocal8Bit("释放印控机成功"), STATUS_TEXT);
+//     int ret = ST_ReleaseStamp(machine);
+//     if (0 != ret)
+//         return Info(QString::fromLocal8Bit("释放印控机失败, er: ") + QString::number(ret));
+// 
+//     ui.statusBar->showMessage(QString::fromLocal8Bit("释放印控机成功"), STATUS_TEXT);
 }
 
 //////////////////////////// 其他接口 ///////////////////////////////
@@ -1302,11 +1315,12 @@ void QtDemo::HandleSetSideDoor()
     std::string time1 = ui.le_sidedoor_close_->text().toStdString();
     std::string time2 = ui.le_sidedoor_timeout_->text().toStdString();
 
-    int ret = SetSideDoor(atoi(time1.c_str()), atoi(time2.c_str()));
-    if (ret != STF_SUCCESS)
-        return Info(QString::fromLocal8Bit("设置侧门开门提示失败"));
+    int ret = ST_SetSideDoor(atoi(time1.c_str()), atoi(time2.c_str()));
+    if (ret != 0)
+        return Info(QString::fromLocal8Bit("设置安全门时间失败, er: ") + 
+            QString::number(ret));
 
-    ui.statusBar->showMessage(QString::fromLocal8Bit("设置侧门开门提示成功"), STATUS_TEXT);
+    ui.statusBar->showMessage(QString::fromLocal8Bit("设置安全门开门成功"), STATUS_TEXT);
 }
 
 void QtDemo::HandleWriteMAC()
@@ -1400,39 +1414,24 @@ void QtDemo::HandleReadPCalPoints()
     ui.statusBar->showMessage(QString::fromLocal8Bit("读校准点成功"), STATUS_TEXT);
 }
 
-void QtDemo::HandleReadRange()
+void QtDemo::HandleCheckParam()
 {
-    char physical[12] = { 0 };
-    int ret = GetPhsicalRange(physical, 12);
-    if (STF_SUCCESS != ret)
-        return Info(QString::fromLocal8Bit("读盖章物理范围失败"));
+    int x = atoi(ui.le_x_coord_->text().toStdString().c_str());
+    int y = atoi(ui.le_y_coord_->text().toStdString().c_str());
+    int angle = atoi(ui.le_angle_->text().toStdString().c_str());
+    int ret = ST_CheckParam(x, y, angle);
+    if (43 == ret)
+        return Info(QString::fromLocal8Bit("x参数非法"));
+    if (44 == ret)
+        return Info(QString::fromLocal8Bit("y参数非法"));
+    if (45 == ret)
+        return Info(QString::fromLocal8Bit("章旋转角度非法"));
 
-    unsigned short x_width = 0;
-    memcpy(&x_width, physical, sizeof(unsigned short));
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("参数检查失败, er: ") +
+            QString::number(ret));
 
-    unsigned short y_width = 0;
-    memcpy(&y_width, physical + sizeof(unsigned short), sizeof(unsigned short));
-
-    unsigned short x_min = 0;
-    memcpy(&x_min, physical + 2 * sizeof(unsigned short), sizeof(unsigned short));
-
-    unsigned short x_max = 0;
-    memcpy(&x_max, physical + 3 * sizeof(unsigned short), sizeof(unsigned short));
-
-    unsigned short y_min = 0;
-    memcpy(&y_min, physical + 4 * sizeof(unsigned short), sizeof(unsigned short));
-
-    unsigned short y_max = 0;
-    memcpy(&y_max, physical + 5 * sizeof(unsigned short), sizeof(unsigned short));
-
-    ui.le_x_width_->setText(QString::number(x_width));
-    ui.le_y_width_->setText(QString::number(y_width));
-    ui.le_x_min_->setText(QString::number(x_min));
-    ui.le_x_max_->setText(QString::number(x_max));
-    ui.le_y_min_->setText(QString::number(y_min));
-    ui.le_y_max_->setText(QString::number(y_max));
-
-    ui.statusBar->showMessage(QString::fromLocal8Bit("读盖章物理范围成功"), STATUS_TEXT);
+    ui.statusBar->showMessage(QString::fromLocal8Bit("用印参数合法"), STATUS_TEXT);
 }
 
 void QtDemo::HandleReadAlarm()
