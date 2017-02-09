@@ -28,38 +28,12 @@ bool Recver::ParseConfig()
     else
         cnn_type_ = MC::CT_MAX;
 
-    if (MC::CT_MQ == cnn_type_) {
-        recv_mq_name_ = MC::SvrConfig::GetInst()->name_;
-        send_mq_name_ = recv_mq_name_ + "copy";
-    }
-
     return true;
 }
 
 bool Recver::StartMQ()
 {
-    try {
-        boost::interprocess::message_queue::remove(recv_mq_name_.c_str());
-        boost::interprocess::message_queue::remove(send_mq_name_.c_str());
-
-        recv_mq_ = new (std::nothrow) boost::interprocess::message_queue(
-            boost::interprocess::create_only,
-            recv_mq_name_.c_str(),
-            MC::MQ_MAX_MSG_NUM,
-            MC::MQ_MAX_MSG_SIZE);
-
-        send_mq_ = new boost::interprocess::message_queue(
-            boost::interprocess::create_only,
-            send_mq_name_.c_str(),
-            MC::MQ_MAX_MSG_NUM,
-            MC::MQ_MAX_MSG_SIZE);
-    } catch (boost::interprocess::interprocess_exception &ex) {
-        std::cout << ex.what() << std::endl;
-        Log::WriteLog(LL_ERROR, "Recver::Start->消息队列创建失败: %s", ex.what());
-        return false;
-    }
-
-    return true;
+    return MQCnn::Start(MC::SvrConfig::GetInst()->name_, MC::SvrConfig::GetInst()->name_ + "copy");
 }
 
 bool Recver::StartPipe()
@@ -166,10 +140,6 @@ bool Recver::Start()
         return false;
     }
 
-    running_ = true;
-    recver_thread_ =
-        new (std::nothrow) boost::thread(boost::bind(&Recver::ReceiveFunc, this));
-
     printf("Recver::Start->start succ.\n");
     return true;
 }
@@ -186,23 +156,13 @@ void Recver::Signal()
 
 void Recver::Stop()
 {
-    if (!running_)
-        return;
-
-    running_ = false;
-    recver_thread_->join();
-
-    if (cnn_type_ == MC::CT_MQ) {
-        boost::interprocess::message_queue::remove(recv_mq_name_.c_str());
-        boost::interprocess::message_queue::remove(send_mq_name_.c_str());
-
-        delete recv_mq_;
-        delete send_mq_;
-    }
+    MQCnn::Stop();
 }
 
 bool Recver::WriteResp(LPPIPEINST pipe_inst_, char* buf)
 {
+    return MQCnn::SendMsg(buf, CMD_BUF_SIZE);
+
     // 管道连接
     if (cnn_type_ == MC::CT_PIPE) {
         boost::lock_guard<boost::mutex> lk(write_resp_mtx_);
@@ -220,194 +180,149 @@ bool Recver::WriteResp(LPPIPEINST pipe_inst_, char* buf)
         return fWrite != 0;
     }
 
-    // 消息队列连接
-    try {
-        LPTSTR lpvMessage = TEXT(buf);
-        send_mq_->send(lpvMessage, (lstrlen(lpvMessage) + 1) * sizeof(TCHAR), 0);
-    } catch (boost::interprocess::interprocess_exception &ex) {
-        Log::WriteLog(LL_ERROR, "Recver::WriteResp->消息队列方式写回复失败, er: %s", 
-            ex.what());
-        return false;
-    }
-
     return true;
 }
 
-// 接收来自客户端请求的线程, 反序列化, 分配
-void Recver::ReceiveFunc()
+void Recver::OnRecvMQMsg(char* buf, int size)
 {
-    RecvMsg* msg = NULL;
-    while (running_) {
-        char cmd;       // 消息头
-
-        if (MC::CT_MQ == cnn_type_) {   // 消息队列
-            msg = new (std::nothrow) RecvMsg;
-            msg->pipe_inst = NULL;
-
-            unsigned int priority;
-            boost::interprocess::message_queue::size_type recvd_size;
-            try {
-                // receiver is blocked if message queue is empty.
-                recv_mq_->receive(msg->msg, sizeof(msg->msg), recvd_size, priority);
-                memcpy(&cmd, msg->msg, sizeof(char));
-            } catch (boost::interprocess::interprocess_exception &ex) {
-                std::cout << "Recver::ReceiveFunc->消息队列收消息失败, er: "
-                    << ex.what() << std::endl;
-                Log::WriteLog(LL_ERROR, "Recver::ReceiveFunc->消息队列收消息失败, %s", 
-                    ex.what());
-                continue;
-            }
-        } else {
-            DWORD wait_result = WaitForSingleObject(recv_msg_ev_, INFINITE);
-            if (WAIT_OBJECT_0 != wait_result)
-                continue;
-
-            ResetEvent(recv_msg_ev_);
-            const RecvMsg* tmp_msg;
-            if (!recver_queue_.Pop(tmp_msg))
-                continue;
-
-            msg = const_cast<RecvMsg*>(tmp_msg);
-            memcpy(&cmd, msg->msg, sizeof(char));
-        }
-
-//        printf("Recver::ReceiveFunc->Received msg type: (%d)\n", cmd);
-        switch (cmd) {
-        case CT_QUERY_MACHINE:
-            HandleQueryMachine(msg);
-            break;
-        case CT_SET_MACHINE:
-            HandleSetMachine(msg);
-            break;
-        case CT_INIT_MACHINE:
-            HandleInitMachine(msg);
-            break;
-        case CT_BIND_MAC:
-            HandleBindMAC(msg);
-            break;
-        case CT_UNBIND_MAC:
-            HandleUnbindMAC(msg);
-            break;
-        case CT_PREPARE_STAMP:
-            HandlePrepareStamp(msg);
-            break;
-        case CT_PAPER_DOOR:
-            HandleQueryPaper(msg);
-            break;
-        case CT_SNAPSHOT:
-            HandleSnapshot(msg);
-            break;
-        case CT_PHOTO_SYNTHESIS:
-            HandleMergePhoto(msg);
-            break;
-        case CT_RECOGNITION:
-            HandleRecognition(msg);
-            break;
-        case CT_ELEMENT_IDENTI:
-            HandleElementIdenti(msg);
-            break;
-        case CT_ORDINARY_STAMP:
-            HandleOrdinary(msg);
-            break;
-        case CT_AUTO_STAMP:
-            HandleAuto(msg);
-            break;
-        case CT_FINISH_STAMP:
-            HandleFinish(msg);
-            break;
-        case CT_RELEASE_STAMPER:
-            HandleReleaseStamper(msg);
-            break;
-        case CT_GET_ERROR:
-            HandleGetError(msg);
-            break;
-        case CT_CALIBRATION:
-            HandleCalibrate(msg);
-            break;
-        case CT_HEART_BEAT:
-            HandleHeart(msg);
-            break;
-        case CT_QUERY_STAMPERS:
-            HandleQueryStampers(msg);
-            break;
-        case CT_QUERY_SAFE:
-            HandleQuerySafe(msg);
-            break;
-        case CT_SAFE_CTL:
-            HandleSafeControl(msg);
-            break;
-        case CT_BEEP_CTL:
-            HandleBeepControl(msg);
-            break;
-        case CT_QUERY_SLOT:
-            HandleQuerySlot(msg);
-            break;
-        case CT_ALARM_CTL:
-            HandleAlarmControl(msg);
-            break;
-        case CT_QUERY_MAC:
-            HandleQueryMAC(msg);
-            break;
-        case CT_LOCK:
-            HandleLock(msg);
-            break;
-        case CT_UNLOCK:
-            HandleUnlock(msg);
-            break;
-        case CT_LOCK_STATUS:
-            HandleQueryLock(msg);
-            break;
-        case CT_OPEN_CON:
-            HandleOpenCnn(msg);
-            break;
-        case CT_CLOSE_CON:
-            HandleCloseCnn(msg);
-            break;
-        case CT_QUERY_CON:
-            HandleQueryCnn(msg);
-            break;
-        case CT_SIDE_DOOR_ALARM:
-            HandleSetSideDoor(msg);
-            break;
-        case CT_QUERY_DEV_MODEL:
-            HandleGetDevModel(msg);
-            break;
-        case CT_OPEN_PAPER:
-            HandleOpenPaper(msg);
-            break;
-        case CT_LED_CTL:
-            HandleCtrlLED(msg);
-            break;
-        case CT_CHECK_PARAM:
-            HandleCheckParam(msg);
-            break;
-        case CT_OPEN_CAMERA:
-            HandleOpenCamera(msg);
-            break;
-        case CT_CLOSE_CAMERA:
-            HandleCloseCamera(msg);
-            break;
-        case CT_CAMERA_STATUS:
-            HandleGetCameraStatus(msg);
-            break;
-        case CT_SET_RESOLUTION:
-            HandleSetResolution(msg);
-            break;
-        case CT_SET_PROPERTY:
-            HandleSetProperty(msg);
-            break;
-        case CT_RECORD:
-            HandleRecordVideo(msg);
-            break;
-        case CT_STOP_RECORD:
-            HandleStopRecordVideo(msg);
-            break;
-        default:
-            printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
-            break;
-        }
-
-        delete msg;
+    char cmd;       // 消息头
+    memcpy(&cmd, buf, sizeof(char));
+    RecvMsg msg;
+    msg.pipe_inst = NULL;
+    strncpy(msg.msg, buf, size);
+    switch (cmd) {
+    case CT_QUERY_MACHINE:
+        HandleQueryMachine(&msg);
+        break;
+    case CT_SET_MACHINE:
+        HandleSetMachine(&msg);
+        break;
+    case CT_INIT_MACHINE:
+        HandleInitMachine(&msg);
+        break;
+    case CT_BIND_MAC:
+        HandleBindMAC(&msg);
+        break;
+    case CT_UNBIND_MAC:
+        HandleUnbindMAC(&msg);
+        break;
+    case CT_PREPARE_STAMP:
+        HandlePrepareStamp(&msg);
+        break;
+    case CT_PAPER_DOOR:
+        HandleQueryPaper(&msg);
+        break;
+    case CT_SNAPSHOT:
+        HandleSnapshot(&msg);
+        break;
+    case CT_PHOTO_SYNTHESIS:
+        HandleMergePhoto(&msg);
+        break;
+    case CT_RECOGNITION:
+        HandleRecognition(&msg);
+        break;
+    case CT_ELEMENT_IDENTI:
+        HandleElementIdenti(&msg);
+        break;
+    case CT_ORDINARY_STAMP:
+        HandleOrdinary(&msg);
+        break;
+    case CT_AUTO_STAMP:
+        HandleAuto(&msg);
+        break;
+    case CT_FINISH_STAMP:
+        HandleFinish(&msg);
+        break;
+    case CT_RELEASE_STAMPER:
+        HandleReleaseStamper(&msg);
+        break;
+    case CT_GET_ERROR:
+        HandleGetError(&msg);
+        break;
+    case CT_CALIBRATION:
+        HandleCalibrate(&msg);
+        break;
+    case CT_HEART_BEAT:
+        HandleHeart(&msg);
+        break;
+    case CT_QUERY_STAMPERS:
+        HandleQueryStampers(&msg);
+        break;
+    case CT_QUERY_SAFE:
+        HandleQuerySafe(&msg);
+        break;
+    case CT_SAFE_CTL:
+        HandleSafeControl(&msg);
+        break;
+    case CT_BEEP_CTL:
+        HandleBeepControl(&msg);
+        break;
+    case CT_QUERY_SLOT:
+        HandleQuerySlot(&msg);
+        break;
+    case CT_ALARM_CTL:
+        HandleAlarmControl(&msg);
+        break;
+    case CT_QUERY_MAC:
+        HandleQueryMAC(&msg);
+        break;
+    case CT_LOCK:
+        HandleLock(&msg);
+        break;
+    case CT_UNLOCK:
+        HandleUnlock(&msg);
+        break;
+    case CT_LOCK_STATUS:
+        HandleQueryLock(&msg);
+        break;
+    case CT_OPEN_CON:
+        HandleOpenCnn(&msg);
+        break;
+    case CT_CLOSE_CON:
+        HandleCloseCnn(&msg);
+        break;
+    case CT_QUERY_CON:
+        HandleQueryCnn(&msg);
+        break;
+    case CT_SIDE_DOOR_ALARM:
+        HandleSetSideDoor(&msg);
+        break;
+    case CT_QUERY_DEV_MODEL:
+        HandleGetDevModel(&msg);
+        break;
+    case CT_OPEN_PAPER:
+        HandleOpenPaper(&msg);
+        break;
+    case CT_LED_CTL:
+        HandleCtrlLED(&msg);
+        break;
+    case CT_CHECK_PARAM:
+        HandleCheckParam(&msg);
+        break;
+    case CT_OPEN_CAMERA:
+        HandleOpenCamera(&msg);
+        break;
+    case CT_CLOSE_CAMERA:
+        HandleCloseCamera(&msg);
+        break;
+    case CT_CAMERA_STATUS:
+        HandleGetCameraStatus(&msg);
+        break;
+    case CT_SET_RESOLUTION:
+        HandleSetResolution(&msg);
+        break;
+    case CT_SET_PROPERTY:
+        HandleSetProperty(&msg);
+        break;
+    case CT_RECORD:
+        HandleRecordVideo(&msg);
+        break;
+    case CT_STOP_RECORD:
+        HandleStopRecordVideo(&msg);
+        break;
+    default:
+        printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
+        break;
     }
 }
 

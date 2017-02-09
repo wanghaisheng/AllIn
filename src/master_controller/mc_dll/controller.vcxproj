@@ -100,6 +100,7 @@
     <ClInclude Include="..\serialization\seria.h" />
     <ClInclude Include="base_api.h" />
     <ClInclude Include="base_event.h" />
+    <ClInclude Include="mq_cnn.h" />
     <ClInclude Include="seal_api.h" />
     <ClInclude Include="event_cpu.h" />
     <ClInclude Include="ImgProcAndReco.h" />
@@ -125,6 +126,7 @@
     </ClCompile>
     <ClCompile Include="..\serialization\seria.cpp" />
     <ClCompile Include="base_event.cpp" />
+    <ClCompile Include="mq_cnn.cpp" />
     <ClCompile Include="seal_api.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="event_cpu.cpp" />

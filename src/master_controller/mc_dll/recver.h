@@ -8,6 +8,7 @@
 #include <windows.h>
 #include "syn_queue.h"
 #include "pipe_server.h"
+#include "mq_cnn.h"
 
 #ifdef _WIN32
 #ifdef MASTERCTRL_EXPORTS
@@ -19,7 +20,7 @@
 #define MASTERCTRL_API
 #endif
 
-class MASTERCTRL_API Recver {
+class MASTERCTRL_API Recver: public MQCnn {
 public:
     bool Start();
 
@@ -31,16 +32,16 @@ public:
 
     bool WriteResp(LPPIPEINST pipe_inst_, char* buf);
 
+protected:
+    virtual void OnRecvMQMsg(char* buf, int size);
+
 private:
     bool ParseConfig();
-
-    void ReceiveFunc();
 
     bool StartMQ();
 
     bool StartPipe();
 
-private:
     void HandleQueryMachine(const RecvMsg* msg);
 
     void HandleSetMachine(const RecvMsg* msg);
@@ -128,20 +129,12 @@ private:
     void HandleHeart(const RecvMsg* msg);
 
 private:
-    // relating pipe conn
     static MC::SynQueue<const RecvMsg*> recver_queue_;
     static HANDLE                       recv_msg_ev_;
-
-    volatile bool                       running_;
-    boost::thread*                      recver_thread_;
 
     boost::mutex                        write_resp_mtx_;
 
     MC::ConnType                        cnn_type_;
-    std::string                         recv_mq_name_;
-    std::string                         send_mq_name_;
-    boost::interprocess::message_queue* recv_mq_;
-    boost::interprocess::message_queue* send_mq_;
 };
 
 #endif // CONTROLLER_RECVER_H_

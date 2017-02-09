@@ -52,6 +52,7 @@ enum ErrorCode {
     EC_INVALID_X_PARAM,         // x坐标非法
     EC_INVALID_Y_PARAM,         // y坐标非法
     EC_INVALID_ANGLE,           // 章旋转角度非法
+    EC_TOP_DOOR_OPEN,           // 顶盖打开
     EC_MAX
 };
 
@@ -101,7 +102,8 @@ static std::string ErrorMsg[] = {
     "停止录像失败",
     "x坐标非法",
     "y坐标非法",
-    "章旋转角度非法"
+    "章旋转角度非法",
+    "顶盖打开"
 };
 
 static std::string GetErrMsg(enum ErrorCode err)
@@ -142,7 +144,17 @@ static std::string ErrorResolver[] = {
     "解锁印控仪失败, 重试",
     "先关闭顶盖门",
     "更新章映射失败"
-    "章槽无章"
+    "章槽无章",
+    "设置分辨率失败",
+    "打开摄像头失败",
+    "关闭摄像头失败",
+    "打开设备失败",
+    "开启录像失败",
+    "停止录像失败",
+    "x坐标非法",
+    "y坐标非法",
+    "章旋转角度在0~360°",
+    "先关闭顶盖门"
 };
 
 static std::string GetErrResolver(enum ErrorCode err)

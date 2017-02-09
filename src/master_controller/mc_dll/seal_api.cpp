@@ -28,7 +28,7 @@ public:
         if (MC::EC_SUCC != ec)
             goto NT;
 
-        // 中行-获取印控仪编号
+        // 获取印控仪编号
         int ret = ReadStamperIdentifier(sn, sizeof(sn));
         if (0 != ret) {
             ec = MC::EC_DRIVER_FAIL;
@@ -74,7 +74,7 @@ public:
         if (MC::EC_SUCC != ec)
             goto NT;
 
-        // 中行-设置印控机编号
+        // 设置印控机编号
         int ret = WriteStamperIdentifier((unsigned char*)sn_.c_str(), sn_.size());
         if (0 != ret) {
             ec = MC::EC_DRIVER_FAIL;
@@ -131,7 +131,7 @@ public:
         if (MC::EC_SUCC != ec)
             goto NT;
 
-        //中行-初始化印控机
+        // 初始化印控机
         int ret = GetDevCode(code, 511);
         if (0 != ret) {
             ec = MC::EC_DRIVER_FAIL;
@@ -561,7 +561,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        // 中行-查询进纸门
+        // 查询进纸门
         char doors[4] = { 0 };
         int ret = FGetDoorsPresent(doors, sizeof(doors));
         if (0 != ret) {
@@ -716,7 +716,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        // 中行-照片合成
+        // 照片合成
         int ret = MC::ImgPro::GetInst()->MergeImage(
             photo1_,
             photo2_,
@@ -785,7 +785,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        // 中行-版面验证码识别
+        // 版面验证码识别
         // 模板类型、角度、用印点识别
         int ret = MC::ImgPro::GetInst()->GetModelTypeAnglePoint(img_, model_type, angle, x, y);
         if (0 != ret) {
@@ -875,7 +875,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        // 中行-要素识别
+        // 要素识别
         int ret = MC::ImgPro::GetInst()->IdentifyArea(path_, x_, y_, width_, height_, angle_, result);
         if (0 != ret) {
             ec = MC::EC_ELEMENT_FAIL;
@@ -954,12 +954,32 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
+        //0x0B, 获取门状态(len = 4)
+        //P1:   推纸门状态  0 关闭，1 开启， 2检测错误
+        //P2:   电子锁状态，同上
+        //P3:   机械锁状态，同上
+        //P4:   顶盖状态，同上
+        char doors[4] = { 0 };
+        int ret = FGetDoorsPresent(doors, sizeof(doors));
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::OridinaryEv->获取门状态失败, er: %d", ret);
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        if (doors[3] == 1) {
+            Log::WriteLog(LL_ERROR, "MC::OridinaryEv->顶盖开启，请先关闭顶盖再盖章");
+            ec = MC::EC_TOP_DOOR_OPEN;
+            goto NT;
+        }
+
         // 普通用印
         MC::TaskState ts = MC::TaskMgr::GetInst()->QueryTaskState(task_);
         // check task_id state
         if (ts ==  MC::TS_ALIVE) {
             // 将原图用印坐标(像素)转换为设备用印坐标(毫米), do-do 坐标转换由接口使用者调用
             // MC::Point* ptSeal = MC::ImgPro::GetInst()->GetSealCoord(x_, y_);
+            // 
             unsigned int rfid;
             int ret = GetStamperID(num_ - 1, rfid);
             if (0 != ret) {
@@ -1065,7 +1085,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        // 中行-自动用印
+        // 自动用印
         MC::TaskState ts = MC::TaskMgr::GetInst()->QueryTaskState(task_);
         if (ts == MC::TS_ALIVE) {
             // to-do 自动用印
@@ -1269,7 +1289,7 @@ public:
             goto NT;
         }
 
-        // 中行-获取错误信息
+        // 获取错误信息
         msg = MC::GetErrMsg((MC::ErrorCode)err_);
         resolver = MC::GetErrResolver((MC::ErrorCode)err_);
         ec = MC::EC_SUCC;
@@ -1317,7 +1337,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        // 中行-校准印章
+        // 校准印章
         unsigned int rfid = 0;
         int ret = GetStamperID(num_ - 1, rfid);
         if (0 != ret) {
@@ -1385,7 +1405,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        // 中行-印章状态查询
+        // 印章状态查询
         unsigned int rfids[7] = { 0 };
         unsigned char stampers = 0;
         int ret = ReadAllRFID(rfids, 7, &stampers);
@@ -1494,7 +1514,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        // 中行-开关安全门
+        // 开关安全门
         //0x0B, 获取门状态(len = 4)
         //P1:   推纸门状态  0 关闭，1 开启， 2检测错误
         //P2:   电子锁状态，同上
@@ -1616,7 +1636,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        // 中行-蜂鸣器开关
+        // 蜂鸣器开关
         //0x16, 蜂鸣器控制
         //beep      --- 0 关闭; 1 长鸣; 2 间隔响
         //interval  --- 当beep=2时该值有效, 间隔响时常(单位秒)
@@ -1669,7 +1689,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        // 中行-卡槽数量查询
+        // 卡槽数量查询
         unsigned int rfids[7] = { 0 };
         unsigned char stampers = 0;
         int ret = ReadAllRFID(rfids, 7, &stampers);
@@ -1723,7 +1743,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        // 中行-报警器控制
+        // 报警器控制
         //alarm     --- 0(开门报警器)
         //              1(振动报警器)
         //switchs   --- 报警器开关
@@ -1785,7 +1805,7 @@ public:
         if (MC::EC_SUCC != ec)
             goto NT;
 
-        // 中行-查询MAC地址
+        // 查询MAC地址
         int ret = ReadMAC(mac1, mac2, 18);
         if (0 != ret) {
             ec = MC::EC_DRIVER_FAIL;
@@ -1834,8 +1854,6 @@ public:
         if (MC::EC_SUCC != ec)
             goto NT;
 
-        // 判断当前状态
-        
         // lock machine
         int ret = Lock();
         if (0 != ret) {
