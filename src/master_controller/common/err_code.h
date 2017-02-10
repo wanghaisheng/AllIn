@@ -52,7 +52,6 @@ enum ErrorCode {
     EC_INVALID_X_PARAM,         // x坐标非法
     EC_INVALID_Y_PARAM,         // y坐标非法
     EC_INVALID_ANGLE,           // 章旋转角度非法
-    EC_TOP_DOOR_OPEN,           // 顶盖打开
     EC_MAX
 };
 
@@ -102,8 +101,7 @@ static std::string ErrorMsg[] = {
     "停止录像失败",
     "x坐标非法",
     "y坐标非法",
-    "章旋转角度非法",
-    "顶盖打开"
+    "章旋转角度非法"
 };
 
 static std::string GetErrMsg(enum ErrorCode err)
@@ -154,7 +152,6 @@ static std::string ErrorResolver[] = {
     "x坐标非法",
     "y坐标非法",
     "章旋转角度在0~360°",
-    "先关闭顶盖门"
 };
 
 static std::string GetErrResolver(enum ErrorCode err)
