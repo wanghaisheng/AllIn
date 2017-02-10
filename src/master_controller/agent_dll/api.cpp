@@ -73,7 +73,7 @@ int ST_QueryMachine(std::string& sn)
 
     sn = ((QueryMachNT*)nt)->sn_;
     int ret = ((QueryMachNT*)nt)->er_;
-    //delete nt;
+//    delete nt;
     return ret;
 }
 
@@ -130,7 +130,7 @@ int ST_SetMachine(const std::string& sn)
         ((SetMachNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((SetMachNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -245,7 +245,7 @@ int ST_BindMAC(const std::string& mac)
         ((BindNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((BindNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -302,7 +302,7 @@ int ST_UnbindMAC(const std::string& mac)
         ((UnbindNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((UnbindNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -366,7 +366,7 @@ int ST_PrepareStamp(char stamp_num, int timeout, std::string& task_id)
 
     task_id = ((PrepareNT*)nt)->task_id_;
     int ret = ((PrepareNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -427,7 +427,7 @@ int ST_QueryPaper(int& status)
 
     status = ((PaperNT*)nt)->status_;
     int ret = ((PaperNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -495,7 +495,7 @@ int ST_Snapshot(
 #endif
 
     int ret = ((SnapNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -558,7 +558,7 @@ int ST_MergePhoto(
         ((MergeNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((MergeNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -624,7 +624,7 @@ int ST_RecognizeImage(const std::string& path,
     template_id = ((RecogNT*)nt)->template_id_;
     trace_num = ((RecogNT*)nt)->trace_num_;
     int ret = ((RecogNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -692,7 +692,7 @@ int ST_IdentifyElement(
 
     result = ((IdentiNT*)nt)->re_;
     int ret = ((IdentiNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -758,7 +758,7 @@ int ST_OrdinaryStamp(
         ((OridinaryNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((OridinaryNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -816,7 +816,7 @@ int ST_AutoStamp(const std::string& task,
         ((AutoNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((AutoNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -873,7 +873,7 @@ int ST_FinishStamp(const std::string& task)
         ((FinishNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((FinishNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -930,7 +930,7 @@ int ST_ReleaseStamp(const std::string& machine)
         ((ReleaseNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((ReleaseNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -994,7 +994,7 @@ int ST_GetError(int err_code, std::string& err_msg, std::string& err_resolver)
     err_msg = ((GetErrNT*)nt)->msg_;
     err_resolver = ((GetErrNT*)nt)->resolver_;
     int ret = ((GetErrNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1047,7 +1047,7 @@ int ST_Calibrate(int slot)
         ((CaliNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((CaliNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1110,7 +1110,7 @@ int ST_QueryStampers(int* staus)
         ((QueryStamNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((QueryStamNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1166,7 +1166,7 @@ int ST_QuerySafe(int& status)
 
     status = ((QuerySafeDoorNT*)nt)->status_;
     int ret = ((QuerySafeDoorNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1219,7 +1219,7 @@ int ST_ControlSafe(int ctrl)
         ((CtrLSafeDoorNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((CtrLSafeDoorNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1272,7 +1272,7 @@ int ST_ControlBeep(int ctrl)
         ((BeepCtrlNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((BeepCtrlNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1330,7 +1330,7 @@ int ST_QuerySlot(int& num)
 
     num = ((QuerySlNT*)nt)->num_;
     int ret = ((QuerySlNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1387,7 +1387,7 @@ int ST_ControlAlarm(int alarm, int switches)
         ((AlarmNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((AlarmNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1446,7 +1446,7 @@ int ST_QueryMAC(std::string& mac1, std::string& mac2)
     mac1 = ((QryMACNT*)nt)->mac1_;
     mac2 = ((QryMACNT*)nt)->mac2_;
     int ret = ((QryMACNT*)nt)->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1502,7 +1502,7 @@ int ST_Lock()
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1556,7 +1556,7 @@ int ST_Unlock()
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1612,7 +1612,7 @@ int ST_QueryLock(int& lock)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1666,7 +1666,7 @@ int ST_Open()
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1720,7 +1720,7 @@ int ST_Close()
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1777,7 +1777,7 @@ int ST_QueryCnn(int& cnn)
 
     cnn = derive_nt->cnn_;
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1831,7 +1831,7 @@ int ST_SetSideDoor(int keep, int timeout)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1888,7 +1888,7 @@ int ST_GetDevModel(std::string& model)
 
     model = derive_nt->model_;
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1942,7 +1942,7 @@ int ST_OpenPaper(int timeout)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -1996,7 +1996,7 @@ int ST_ControlLed(int which, int ctrl, int value)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -2050,7 +2050,7 @@ int ST_CheckParam(int x, int y, int angle)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -2104,7 +2104,7 @@ int ST_OpenCamera2(int which)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -2158,7 +2158,7 @@ int ST_CloseCamera2(int which)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -2217,7 +2217,7 @@ int ST_QueryCamera(int which, int& status)
 
     status = derive_nt->status_;
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -2271,7 +2271,7 @@ int ST_SetResolution2(int which, int x, int y)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -2325,7 +2325,7 @@ int ST_SetProperty(int which)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -2379,7 +2379,7 @@ int ST_StartRecordVideo(int which, const std::string& path)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
 
@@ -2433,6 +2433,6 @@ int ST_StopRecordVideo(int which, const std::string& path)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    //delete nt;
+    delete nt;
     return ret;
 }
