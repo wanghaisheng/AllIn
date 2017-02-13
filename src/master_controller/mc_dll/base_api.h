@@ -18,8 +18,6 @@ public:
         stat.status_ = 0 == ret ? MC::CS_FREE : MC::CS_OPEN_FAIL;
         stat.cause_ = "初始化打开设备";
         MC::Tool::GetInst()->SetStat(stat);
-
-        PrepareCamera();
     }
 
     virtual ~BaseAPI() {
@@ -29,8 +27,6 @@ public:
         stat.status_ = 0 == ret ? MC::CS_CLOSE_SUC : MC::CS_CLOSE_FAIL;
         stat.cause_ = "正常断开设备";
         MC::Tool::GetInst()->SetStat(stat);
-
-        DisableCamera();
     }
 
 private:
