@@ -126,6 +126,8 @@ private:
 
     void HandleStopRecordVideo(const RecvMsg* msg);
 
+    void HandleGetRFID(const RecvMsg* msg);
+
     void HandleHeart(const RecvMsg* msg);
 
 private:

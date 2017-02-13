@@ -55,6 +55,7 @@ enum CmdType {
     CT_OPEN_PAPER,          // 开进纸门
     CT_LED_CTL,             // 补光灯控制
     CT_CHECK_PARAM,         // 用印参数合法性检查
+    CT_GET_RFID,            // 根据卡槽号获取RFID
 
     // 摄像头接口
     CT_OPEN_CAMERA,         // 打开摄像头
@@ -105,6 +106,7 @@ static std::string cmd_des[] =
     "开进纸门",
     "补光灯控制",
     "用印参数合法性检查",
+    "根据卡槽号获取RFID",
     "打开摄像头",
     "关闭摄像头",
     "摄像头状态",
@@ -814,6 +816,22 @@ public:
 public:
     int which_;
     char path_[MAX_PATH];
+
+    MC::ErrorCode ret_;
+};
+
+class GetRFIDCmd: public BaseCmd {
+public:
+    GetRFIDCmd(): ret_(MC::EC_SUCC), slot_(0), rfid_(0) {
+        ct_ = CT_GET_RFID;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int slot_;      // 卡槽号，从1开始
+    int rfid_;      // 对应卡槽号的RFID
 
     MC::ErrorCode ret_;
 };

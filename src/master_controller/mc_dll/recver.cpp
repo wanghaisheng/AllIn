@@ -320,6 +320,9 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_STOP_RECORD:
         HandleStopRecordVideo(&msg);
         break;
+    case CT_GET_RFID:
+        HandleGetRFID(&msg);
+        break;
     default:
         printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
         break;
@@ -2376,6 +2379,54 @@ void Recver::HandleStopRecordVideo(const RecvMsg* msg)
         cmd->which_,
         cmd->path_,
         notify);
+}
+
+////////////////// 获取rfid /////////////
+
+class GetRFIDNT: public MC::NotifyResult {
+public:
+    GetRFIDNT(LPPIPEINST inst, GetRFIDCmd* cmd, Recver* recv) :
+            pipe_inst_(inst),
+            cmd_(cmd),
+            recver_(recv)
+    {
+
+    }
+
+    void Notify(
+            MC::ErrorCode ec,
+            std::string data1 = "",
+            std::string data2 = "",
+            std::string ctx1 = "",
+            std::string ctx2 = "")
+    {
+        std::cout << "GetRFIDNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->rfid_ = atoi(data1.c_str());
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    GetRFIDCmd*         cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleGetRFID(const RecvMsg* msg)
+{
+    GetRFIDCmd* cmd = new (std::nothrow) GetRFIDCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleGetRFID->获取rfid\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) GetRFIDNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->GetRFID(
+            cmd->slot_,
+            notify);
 }
 
 //////////////////////////////////////////////////////////////////////////

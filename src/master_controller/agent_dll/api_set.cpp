@@ -6,11 +6,9 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/typeof/typeof.hpp>
-#include "api_set.h"
-#include "agent_cmd.h"
 #include "log.h"
 #include "cnn.h"
-#include "common_definitions.h"
+#include "api_set.h"
 
 boost::mutex api_map_mtx;  // 全局变量, 互斥锁, 保护通知对象map
 
@@ -657,6 +655,18 @@ void AsynAPISet::HandleStopRecordVideo(char* chBuf)
         nt->Notify(cmd.ret_);
 }
 
+void AsynAPISet::HandleGetRFID(char *chBuf) {
+    GetRFIDCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleGetRFID->cmd: %s, ret: %d",
+                  cmd_des[cmd.ct_].c_str(),
+                  cmd.ret_);
+
+    GetRFIDNT* nt = (GetRFIDNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.rfid_, cmd.ret_);
+}
+
 void AsynAPISet::AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec)
 {
     switch (cmd->ct_) {
@@ -1196,6 +1206,14 @@ int AsynAPISet::AsynStopRecordVideo(int which, const std::string& path, StopReco
     StopRecordVideoCmd* cmd = new StopRecordVideoCmd;
     cmd->which_ = which;
     strcpy(cmd->path_, path.c_str());
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynGetRFID(int slot, GetRFIDNT *nt) {
+    GetRFIDCmd* cmd = new GetRFIDCmd;
+    cmd->slot_ = slot;
     InsertNotify(cmd->send_time_, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);

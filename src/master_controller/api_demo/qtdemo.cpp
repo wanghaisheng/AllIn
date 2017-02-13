@@ -205,6 +205,8 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_read_alarm_, &QPushButton::clicked, this, &QtDemo::HandleReadAlarm);
 
     connect(ui.pb_hardware_ver_, &QPushButton::clicked, this, &QtDemo::HandleHardwareVer);
+
+    connect(ui.pb_read_rfid_, &QPushButton::clicked, this, &QtDemo::HandleReadRFID);
     
     ui.cb_cam_list_->addItem(QString::fromLocal8Bit("凭证摄像头"));
     ui.cb_cam_list_->addItem(QString::fromLocal8Bit("环境摄像头"));
@@ -552,7 +554,7 @@ void QtDemo::HandleOpenSafeDoor()
     int ctrl = 1;
     int ret = ST_ControlSafe(ctrl);
     if (0 != ret)
-        return Info(QString::fromLocal8Bit("打开安全门失败") + 
+        return Info(QString::fromLocal8Bit("打开安全门失败, er: ") + 
             QString::number(ret));
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("打开安全门成功"), STATUS_TEXT);
@@ -563,7 +565,7 @@ void QtDemo::HandleCloseSafeDoor()
     int ctrl = 0;
     int ret = ST_ControlSafe(ctrl);
     if (0 != ret)
-        return Info(QString::fromLocal8Bit("关闭安全门失败") +
+        return Info(QString::fromLocal8Bit("关闭安全门失败, er: ") +
             QString::number(ret));
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("关闭安全门成功"), STATUS_TEXT);
@@ -622,7 +624,8 @@ void QtDemo::HandleQuerySlots()
     int num;
     int ret = ST_QuerySlot(num);
     if (0 != ret)
-        return Info(QString::fromLocal8Bit("查询卡槽数量失败, err: ") + QString::number(num));
+        return Info(QString::fromLocal8Bit("查询卡槽数量失败, err: ") +
+            QString::number(ret));
 
     Info(QString::fromLocal8Bit("卡槽数量: ") + QString::number(num));
 }
@@ -1459,6 +1462,18 @@ void QtDemo::HandleHardwareVer()
         return Info(QString::fromLocal8Bit("读硬件版本号失败, err:") + QString::number(ret));
 
     Info(QString::fromStdString(version));
+}
+
+void QtDemo::HandleReadRFID()
+{
+    int slot = atoi(ui.le_rfid_slot_->text().toStdString().c_str());
+    int rfid;
+    int ret = ST_GetRFID(slot, rfid);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("获取rfid失败, err:") + QString::number(ret));
+
+    Info(QString::number(slot) + QString::fromLocal8Bit("卡槽的RFID: ") +
+        QString::number(rfid));
 }
 
 //////////////////////////////////////////////////////////////////////////

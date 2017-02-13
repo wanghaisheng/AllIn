@@ -283,6 +283,8 @@ private:
 
     void HandleHardwareVer();       //读取硬件版本号
 
+    void HandleReadRFID();
+
     ////////////////////////////// 定时器 ///////////////////////////////////
 
 private slots:

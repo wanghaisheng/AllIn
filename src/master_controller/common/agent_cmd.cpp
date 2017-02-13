@@ -573,3 +573,14 @@ void StopRecordVideoCmd::Unser()
     BaseCmd::Unser();
     xs_ >> which_ >> path_ >> ret_;
 }
+
+void GetRFIDCmd::Ser() {
+    BaseCmd::Ser();
+    xs_ << slot_ << rfid_ << ret_;
+    xs_.Trim();
+}
+
+void GetRFIDCmd::Unser() {
+    BaseCmd::Unser();
+    xs_ >> slot_ >> rfid_ >> ret_;
+}

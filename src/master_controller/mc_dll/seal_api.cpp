@@ -984,7 +984,7 @@ public:
             int ret = GetStamperID(num_ - 1, rfid);
             if (0 != ret) {
                 ec = MC::EC_DRIVER_FAIL;
-                Log::WriteLog(LL_ERROR, "MC::OridinaryEv::SpecificExecute->获取章槽号%d的RFID失败, er: %d",
+                Log::WriteLog(LL_ERROR, "MC::OridinaryEv->获取章槽号%d的RFID失败, er: %d",
                     num_, ret);
                 goto NT;
             }
@@ -999,13 +999,13 @@ public:
             pa.angle = angle_;
             pa.type = type_;
 
-            Log::WriteLog(LL_DEBUG, "MC::OridinaryEv::SpecificExecute->普通用印, 物理用印点(%d, %d)",
+            Log::WriteLog(LL_DEBUG, "MC::OridinaryEv->普通用印, 物理用印点(%d, %d)",
                 x_,
                 y_);
             ret = FStartStamperstrc(&pa);
             if (0 != ret) {
                 ec = MC::EC_DRIVER_FAIL;
-                Log::WriteLog(LL_ERROR, "MC::OridinaryEv::SpecificExecute->发起盖章失败, er: %d",
+                Log::WriteLog(LL_ERROR, "MC::OridinaryEv->发起盖章失败, er: %d",
                     ret);
                 goto NT;  
             }
@@ -1474,7 +1474,7 @@ public:
 
     NT:
         notify_->Notify(ec, safe_str);
-        Log::WriteLog(LL_DEBUG, "MC::QuerySafeEv::SpecificExecute->安全门状态查询, ec: %s, 安全门状态: %s",
+        Log::WriteLog(LL_DEBUG, "MC::QuerySafeEv->安全门状态查询, ec: %s, 安全门状态: %s",
             MC::ErrorMsg[ec].c_str(),
             safe_str);
         delete this;
@@ -1698,7 +1698,7 @@ public:
             goto NT;
         }
 
-        sprintf_s(slots_str, "%d", stampers - 1);
+        sprintf_s(slots_str, "%d", stampers - 1); // 1 indicates the safe door rfid
         ec = MC::EC_SUCC;
 
     NT:
@@ -1761,7 +1761,7 @@ public:
 
     NT:
         notify_->Notify(ec, alarm_str, ctrl_str);
-        Log::WriteLog(LL_DEBUG, "MC::QuerySlotEv::SpecificExecute->报警器控制, ec: %s, 报警器类型: %s, "
+        Log::WriteLog(LL_DEBUG, "MC::QuerySlotEv->报警器控制, ec: %s, 报警器类型: %s, "
             "开关: %s",
             MC::ErrorMsg[ec].c_str(),
             alarm_str,
@@ -2076,11 +2076,6 @@ public:
         MC::ErrorCode ec = exception_;
         if (MC::EC_SUCC != ec)
             goto NT;
-
-        if (!MC::Tool::GetInst()->Connected()) {
-            ec = MC::EC_DEV_DISCONN;
-            goto NT;
-        }
 
         ec = MC::EC_CONNECTED;
 
@@ -2792,3 +2787,65 @@ void MC::STSealAPI::StopRecordVideo(int which, const std::string& path, NotifyRe
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
 
+/////////////////////////////////////////////////
+
+class GetRFIDEv: public MC::BaseEvent {
+public:
+    GetRFIDEv(std::string des, int slot, MC::NotifyResult* notify) :
+            BaseEvent(des),
+            slot_(slot),
+            notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        unsigned int rfid;
+        char rfid_str[11] = {0};
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        if (slot_ < 1 || slot_ > 6) {
+            Log::WriteLog(LL_ERROR, "MC::GetRFIDEv->章卡槽号：%d不在范围内", slot_);
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
+        //0x26, 根据印章仓位号获取对应的RFID号
+        //
+        //stamper   --- 印章仓位号, (下标从0开始)
+        //rfid      --- 对应的rfid号
+
+        int ret = GetStamperID((unsigned char)slot_ - 1, rfid);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::GetRFIDEv->获取rfid失败, er: %d", ret);
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        sprintf(rfid_str, "%u", rfid);
+        ec = MC::EC_SUCC;
+
+     NT:
+        notify_->Notify(ec, rfid_str);
+        Log::WriteLog(LL_DEBUG, "MC::GetRFIDEv::SpecificExecute->获取rfid, ec: %s",
+                      MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    int slot_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::GetRFID(int slot, NotifyResult *notify) {
+    BaseEvent* ev = new (std::nothrow) GetRFIDEv(
+            "获取rfid",
+            slot,
+            notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}

@@ -63,6 +63,10 @@ MASTERCTRL_AGENT_API int ST_BindMAC(
 MASTERCTRL_AGENT_API int ST_UnbindMAC(
     const std::string& mac);
 
+MASTERCTRL_AGENT_API int ST_GetRFID(
+        int     slot,
+        int&    rfid);
+
 // 准备用印
 // stamp_num        --- 章槽号, 从1开始
 // timeout          --- 进纸门超时未关闭时间, 单位秒

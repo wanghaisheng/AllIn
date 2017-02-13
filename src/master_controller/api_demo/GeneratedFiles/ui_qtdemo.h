@@ -208,6 +208,9 @@ public:
     QLabel *label_vibration_alarm_;
     QPushButton *pb_read_alarm_;
     QPushButton *pb_hardware_ver_;
+    QLabel *label_16;
+    QLineEdit *le_rfid_slot_;
+    QPushButton *pb_read_rfid_;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -806,6 +809,15 @@ public:
         pb_hardware_ver_ = new QPushButton(tab_3);
         pb_hardware_ver_->setObjectName(QStringLiteral("pb_hardware_ver_"));
         pb_hardware_ver_->setGeometry(QRect(910, 380, 93, 28));
+        label_16 = new QLabel(tab_3);
+        label_16->setObjectName(QStringLiteral("label_16"));
+        label_16->setGeometry(QRect(10, 590, 171, 25));
+        le_rfid_slot_ = new QLineEdit(tab_3);
+        le_rfid_slot_->setObjectName(QStringLiteral("le_rfid_slot_"));
+        le_rfid_slot_->setGeometry(QRect(10, 630, 113, 31));
+        pb_read_rfid_ = new QPushButton(tab_3);
+        pb_read_rfid_->setObjectName(QStringLiteral("pb_read_rfid_"));
+        pb_read_rfid_->setGeometry(QRect(150, 620, 81, 46));
         tabWidget->addTab(tab_3, QString());
         QtDemoClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(QtDemoClass);
@@ -821,7 +833,7 @@ public:
 
         retranslateUi(QtDemoClass);
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(3);
 
 
         QMetaObject::connectSlotsByName(QtDemoClass);
@@ -965,6 +977,8 @@ public:
         label_vibration_alarm_->setText(QString());
         pb_read_alarm_->setText(QApplication::translate("QtDemoClass", "\350\257\273\346\212\245\350\255\246\345\231\250", 0));
         pb_hardware_ver_->setText(QApplication::translate("QtDemoClass", "\347\241\254\344\273\266\347\211\210\346\234\254\345\217\267", 0));
+        label_16->setText(QApplication::translate("QtDemoClass", "\345\215\241\346\247\275\345\217\267\357\274\2101\357\274\211\357\274\232", 0));
+        pb_read_rfid_->setText(QApplication::translate("QtDemoClass", "\350\257\273RFID", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("QtDemoClass", "\345\205\266\344\273\226\346\216\245\345\217\243", 0));
     } // retranslateUi
 

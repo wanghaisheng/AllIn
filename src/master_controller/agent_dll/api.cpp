@@ -449,7 +449,8 @@ public:
     }
 #endif
 
-    virtual void Notify(int ori_dpi, int cut_dpi, std::string ori_path, std::string cut_path, int ec) {
+    virtual void Notify(int ori_dpi, int cut_dpi,
+                        std::string ori_path, std::string cut_path, int ec) {
         Log::WriteLog(LL_DEBUG, "SnapNT::Notify->拍照, ec: %d, ori_dpi: %d, cut_dpi: %d, "
             "ori_path: %s, cut_path: %s",
             ec,
@@ -2433,6 +2434,63 @@ int ST_StopRecordVideo(int which, const std::string& path)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    delete nt;
+    return ret;
+}
+
+/////////////////////////////// 获取RFID /////////////////////////////
+
+class GetrfidNT: public GetRFIDNT {
+public:
+#ifdef _XP
+    GetrfidNT() {
+        cv_ = CreateEvent(
+                NULL,
+                TRUE,
+                FALSE,
+                NULL);
+    }
+
+    ~GetrfidNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int rfid, int ec) {
+        rfid_ = rfid;
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int rfid_;
+    int er_;
+};
+
+int ST_GetRFID(int slot, int& rfid)
+{
+    GetRFIDNT* nt = new GetrfidNT;
+    api_agent.AsynGetRFID(slot, nt);
+
+    GetrfidNT* derive_nt = (GetrfidNT*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    rfid = derive_nt->rfid_;
     delete nt;
     return ret;
 }

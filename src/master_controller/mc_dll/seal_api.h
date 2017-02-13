@@ -211,6 +211,8 @@ public:
 
     void StopRecordVideo(int which, const std::string& path, NotifyResult* notify);
 
+    void GetRFID(int slot, NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC

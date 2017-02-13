@@ -322,6 +322,9 @@ void MC::Cnn::ReceiveFunc()
         case CT_STOP_RECORD:
             asyn_api_->HandleStopRecordVideo(chBuf);
             break;
+        case CT_GET_RFID:
+            asyn_api_->HandleGetRFID(chBuf);
+            break;
         default:
             printf("AsynAPISet::ReceiverFunc->Unknown cmd: %d", cmd_type);
             break;

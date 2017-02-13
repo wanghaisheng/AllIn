@@ -23,6 +23,15 @@ enum CmdType {
 
 void main()
 {
+        unsigned int rfid = 4294967295;
+        int int_str[11] = { 0 };
+        char str[11] = { 0 };
+        sprintf(str, "%u", rfid);
+
+        std::cout << "rfid str: " << str << std::endl;
+        std::cout << "Hello, World!" << std::endl;
+        return;
+
     std::string cut_img = "C:\\pj\\bin\\w32d\\cut.img";
     std::string model_type = "123";
     char out_mo_type[256] = { 0 };

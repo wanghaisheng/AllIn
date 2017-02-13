@@ -36,7 +36,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <property name="movable">
      <bool>false</bool>
@@ -2398,6 +2398,42 @@
       </property>
       <property name="text">
        <string>硬件版本号</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_16">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>590</y>
+        <width>171</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>卡槽号（1）：</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="le_rfid_slot_">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>630</y>
+        <width>113</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_read_rfid_">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>620</y>
+        <width>81</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>读RFID</string>
       </property>
      </widget>
     </widget>
