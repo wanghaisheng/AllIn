@@ -36,7 +36,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <property name="movable">
      <bool>false</bool>
@@ -883,7 +883,7 @@
       <property name="geometry">
        <rect>
         <x>490</x>
-        <y>580</y>
+        <y>550</y>
         <width>101</width>
         <height>31</height>
        </rect>
@@ -998,6 +998,19 @@
       </property>
       <property name="text">
        <string>设备型号</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_set_dpi_">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>620</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>设置DPI</string>
       </property>
      </widget>
     </widget>

@@ -120,6 +120,8 @@ private:
 
     void HandleSetResolution(const RecvMsg* msg);
 
+    void HandleSetDPI(const RecvMsg* msg);
+
     void HandleSetProperty(const RecvMsg* msg);
 
     void HandleRecordVideo(const RecvMsg* msg);

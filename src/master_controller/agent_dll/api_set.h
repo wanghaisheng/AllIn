@@ -219,6 +219,11 @@ public:
     virtual void Notify(int ec) = 0;
 };
 
+class SetDPIValueNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
 class SetPropertyNT {
 public:
     virtual void Notify(int ec) = 0;
@@ -347,6 +352,8 @@ public:
 
     int AsynSetResolution(int which, int x, int y, SetResolutionNT* nt);
 
+    int AsynSetDPI(int which, int x, int y, SetDPIValueNT* nt);
+
     int AsynSetProperty(int which, SetPropertyNT* nt);
 
     int AsynStartRecordVideo(int which, const std::string& path, RecordVideoNT* nt);
@@ -442,6 +449,8 @@ public:
     void HandleQueryCamera(char* chBuf);
 
     void HandleSetResolution(char* chBuf);
+
+    void HandleSetDPI(char* chBuf);
 
     void HandleSetProperty(char* chBuf);
 

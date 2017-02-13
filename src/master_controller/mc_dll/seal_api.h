@@ -205,6 +205,8 @@ public:
 
     void SetResolution(int which, int x, int y, NotifyResult* notify);
 
+    void SetDPI(int which, int x, int y, NotifyResult* notify);
+
     void SetProperty(int which, NotifyResult* notify);
 
     void RecordVideo(int which, const std::string& path, NotifyResult* notify);

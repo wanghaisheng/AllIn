@@ -2653,6 +2653,72 @@ void MC::STSealAPI::SetResolution(int which, int x, int y, NotifyResult* notify)
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
 
+////////////////////////// 设置DPI值 //////////////////////////////////
+
+class SetDPIEv: public MC::BaseEvent {
+public:
+    SetDPIEv(
+        std::string des, 
+        int which,
+        int x,
+        int y,
+        MC::NotifyResult* notify) :
+        BaseEvent(des),
+        which_(which),
+        x_(x),
+        y_(y),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        if (x_ < 0 || y_ < 0) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
+        int ret = SetDPIValue((CAMERAINDEX)which_, x_, y_);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::SetDPIEv->设置DPI失败, er: %d", ret);
+            ec = MC::EC_SET_DPI_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::SetDPIEv::SpecificExecute->设置DPI, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    int which_;
+    int x_;
+    int y_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::SetDPI(int which, int x, int y, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) SetDPIEv(
+        "设置DPI值",
+        which,
+        x,
+        y,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
 ////////////////////////// 设置属性 //////////////////////////////////
 
 class SetPropertyEv: public MC::BaseEvent {

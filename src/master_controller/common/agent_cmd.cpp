@@ -535,6 +535,19 @@ void SetResolutionCmd::Unser()
     xs_ >> which_ >> x_ >> y_ >> ret_;
 }
 
+void SetDPICmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << which_ << dpi_x_ << dpi_y_ << ret_;
+    xs_.Trim();
+}
+
+void SetDPICmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> which_ >> dpi_x_ >> dpi_y_ >> ret_;
+}
+
 void SetPropertyCmd::Ser()
 {
     BaseCmd::Ser();

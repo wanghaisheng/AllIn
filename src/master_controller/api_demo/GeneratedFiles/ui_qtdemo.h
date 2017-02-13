@@ -96,6 +96,7 @@ public:
     QPushButton *pb_start_record_;
     QPushButton *pb_stop_record_;
     QPushButton *pb_dev_type_;
+    QPushButton *pb_set_dpi_;
     QWidget *tab_stamper;
     QPushButton *pb_capture_;
     QPushButton *pb_select_picture_;
@@ -432,7 +433,7 @@ public:
         pb_close_safe_led_->setGeometry(QRect(160, 600, 150, 46));
         pb_set_resolution_ = new QPushButton(tab_control_dev);
         pb_set_resolution_->setObjectName(QStringLiteral("pb_set_resolution_"));
-        pb_set_resolution_->setGeometry(QRect(490, 580, 101, 31));
+        pb_set_resolution_->setGeometry(QRect(490, 550, 101, 31));
         le_cam_width_ = new QLineEdit(tab_control_dev);
         le_cam_width_->setObjectName(QStringLiteral("le_cam_width_"));
         le_cam_width_->setGeometry(QRect(360, 550, 113, 31));
@@ -460,6 +461,9 @@ public:
         pb_dev_type_ = new QPushButton(tab_control_dev);
         pb_dev_type_->setObjectName(QStringLiteral("pb_dev_type_"));
         pb_dev_type_->setGeometry(QRect(20, 670, 121, 41));
+        pb_set_dpi_ = new QPushButton(tab_control_dev);
+        pb_set_dpi_->setObjectName(QStringLiteral("pb_set_dpi_"));
+        pb_set_dpi_->setGeometry(QRect(490, 620, 101, 31));
         tabWidget->addTab(tab_control_dev, QString());
         tab_stamper = new QWidget();
         tab_stamper->setObjectName(QStringLiteral("tab_stamper"));
@@ -833,7 +837,7 @@ public:
 
         retranslateUi(QtDemoClass);
 
-        tabWidget->setCurrentIndex(3);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(QtDemoClass);
@@ -888,6 +892,7 @@ public:
         pb_start_record_->setText(QApplication::translate("QtDemoClass", "\345\274\200\345\247\213\345\275\225\345\203\217", 0));
         pb_stop_record_->setText(QApplication::translate("QtDemoClass", "\345\201\234\346\255\242\345\275\225\345\203\217", 0));
         pb_dev_type_->setText(QApplication::translate("QtDemoClass", "\350\256\276\345\244\207\345\236\213\345\217\267", 0));
+        pb_set_dpi_->setText(QApplication::translate("QtDemoClass", "\350\256\276\347\275\256DPI", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_control_dev), QApplication::translate("QtDemoClass", "\350\256\276\345\244\207\346\216\247\345\210\266", 0));
         pb_capture_->setText(QApplication::translate("QtDemoClass", "\346\213\215\347\205\247", 0));
         pb_select_picture_->setText(QApplication::translate("QtDemoClass", "\351\200\211\345\217\226\345\233\276\347\211\207", 0));

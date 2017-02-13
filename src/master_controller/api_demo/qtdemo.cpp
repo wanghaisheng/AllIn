@@ -136,6 +136,7 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_close_safe_led_, &QPushButton::clicked, this, &QtDemo::HandleCloseSafeLED);
 
     connect(ui.pb_set_resolution_, &QPushButton::clicked, this, &QtDemo::HandleSetResolution);
+    connect(ui.pb_set_dpi_, &QPushButton::clicked, this, &QtDemo::HandleSetDPI);
     connect(ui.pb_start_record_, &QPushButton::clicked, this, &QtDemo::HandleStartRecord);
     connect(ui.pb_stop_record_, &QPushButton::clicked, this, &QtDemo::HandleStopRecord);
 
@@ -516,6 +517,18 @@ void QtDemo::HandleSetResolution()
     ui.statusBar->showMessage(QString::fromLocal8Bit("设置摄像头分辨率成功"), STATUS_TEXT);
 }
 
+void QtDemo::HandleSetDPI()
+{
+    int width = atoi(ui.le_cam_width_->text().toStdString().c_str());
+    int height = atoi(ui.le_cam_height_->text().toStdString().c_str());
+    int ret = ST_SetDPIValue(which_cam_, width, height);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("设置DPI失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("设置DPI成功"), STATUS_TEXT);
+}
+
 void QtDemo::HandleStartRecord()
 {
     std::string path = ui.le_video_path_->text().toStdString();
@@ -775,8 +788,8 @@ void QtDemo::HandleCapture()
     const std::string cut_path = Config::GetInst()->cut_path_;
     int ret = ST_Snapshot(
         which_cam_,
-        200,
-        200,
+//         200,
+//         200,
         ori_path,
         cut_path);
     if (0 != ret)

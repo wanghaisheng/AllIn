@@ -311,6 +311,9 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_SET_RESOLUTION:
         HandleSetResolution(&msg);
         break;
+    case CT_SET_DPI:
+        HandleSetDPI(&msg);
+        break;
     case CT_SET_PROPERTY:
         HandleSetProperty(&msg);
         break;
@@ -2234,6 +2237,55 @@ void Recver::HandleSetResolution(const RecvMsg* msg)
         cmd->which_,
         cmd->x_,
         cmd->y_,
+        notify);
+}
+
+////////////////////////////
+
+class SetDPINT: public MC::NotifyResult {
+public:
+    SetDPINT(LPPIPEINST inst, SetDPICmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "SetDPINT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    SetDPICmd*          cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleSetDPI(const RecvMsg* msg)
+{
+    SetDPICmd* cmd = new (std::nothrow) SetDPICmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleSetDPI->设置DPI\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) SetDPINT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->SetDPI(
+        cmd->which_,
+        cmd->dpi_x_,
+        cmd->dpi_y_,
         notify);
 }
 

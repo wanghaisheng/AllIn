@@ -270,6 +270,17 @@ MASTERCTRL_AGENT_API int ST_SetResolution(
      int x,
      int y);
 
+// 设置JPG图片的DPI值
+// which    --- 0：凭证摄像头
+//              1：环境摄像头
+//              2：侧门摄像头
+// dpi_x    --- 宽的DPI值
+// dpi_y    --- 高的DPI值
+MASTERCTRL_AGENT_API int ST_SetDPIValue(
+    int which,
+    int dpi_x, 
+    int dpi_y);
+
 // 开始录制视频
 // which    --- 0：凭证摄像头
 //              1：环境摄像头

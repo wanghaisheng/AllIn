@@ -2276,6 +2276,60 @@ int ST_SetResolution(int which, int x, int y)
     return ret;
 }
 
+/////////////////////////////// 设置DPI /////////////////////////////
+
+class SetdpiNT: public SetDPIValueNT {
+public:
+#ifdef _XP
+    SetdpiNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~SetdpiNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_SetDPIValue(int which, int x, int y)
+{
+    SetDPIValueNT* nt = new SetdpiNT;
+    api_agent.AsynSetDPI(which, x, y, nt);
+
+    SetdpiNT* derive_nt = (SetdpiNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+            derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    delete nt;
+    return ret;
+}
+
 /////////////////////////////// 设置摄像头属性 /////////////////////////////
 
 class SetProNT: public SetPropertyNT {

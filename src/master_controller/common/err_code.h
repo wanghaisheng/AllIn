@@ -44,6 +44,7 @@ enum ErrorCode {
     EC_UPDATE_STAMP_FAIL,       // 更新章映射失败
     EC_STAMP_NOT_EXIST,         // 章槽无章
     EC_SET_RESO_FAIL,           // 设置分辨率失败
+    EC_SET_DPI_FAIL,            // 设置摄像头DPI失败
     EC_OPEN_CAM_FAIL,           // 打开摄像头失败
     EC_CLOSE_CAM_FAIL,          // 关闭摄像头失败
     EC_OPEN_FAIL,               // 打开设备失败
@@ -94,6 +95,7 @@ static std::string ErrorMsg[] = {
     "更新章映射失败",
     "章槽无章",
     "设置分辨率失败",
+    "设置摄像头DPI失败",
     "打开摄像头失败",
     "关闭摄像头失败",
     "打开设备失败",
@@ -144,6 +146,7 @@ static std::string ErrorResolver[] = {
     "更新章映射失败"
     "章槽无章",
     "设置分辨率失败",
+    "设置摄像头DPI失败",
     "打开摄像头失败",
     "关闭摄像头失败",
     "打开设备失败",

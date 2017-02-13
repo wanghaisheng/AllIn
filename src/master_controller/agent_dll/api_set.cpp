@@ -616,6 +616,19 @@ void AsynAPISet::HandleSetResolution(char* chBuf)
         nt->Notify(cmd.ret_);
 }
 
+void AsynAPISet::HandleSetDPI(char* chBuf)
+{
+    SetDPICmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleSetDPI->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    SetDPIValueNT* nt = (SetDPIValueNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
 void AsynAPISet::HandleSetProperty(char* chBuf)
 {
     SetPropertyCmd cmd;
@@ -1180,6 +1193,17 @@ int AsynAPISet::AsynSetResolution(int which, int x, int y, SetResolutionNT* nt)
     InsertNotify(cmd->send_time_, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynSetDPI(int which, int x, int y, SetDPIValueNT* nt)
+{
+    SetDPICmd* cmd = new SetDPICmd;
+    cmd->which_ = which;
+    cmd->dpi_x_ = x;
+    cmd->dpi_y_ = y;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);   
 }
 
 int AsynAPISet::AsynSetProperty(int which, SetPropertyNT* nt)

@@ -62,6 +62,7 @@ enum CmdType {
     CT_CLOSE_CAMERA,        // 关闭摄像头
     CT_CAMERA_STATUS,       // 摄像头状态
     CT_SET_RESOLUTION,      // 设置分辨率
+    CT_SET_DPI,             // 设置DPI值
     CT_SET_PROPERTY,        // 设置属性
     CT_SNAPSHOT,            // 拍照
     CT_RECORD,              // 录像
@@ -111,6 +112,7 @@ static std::string cmd_des[] =
     "关闭摄像头",
     "摄像头状态",
     "设置分辨率",
+    "设置DPI值",
     "设置属性",
     "拍照",
     "开始录像",
@@ -766,6 +768,23 @@ public:
     int which_;
     int x_;
     int y_;
+
+    MC::ErrorCode ret_;
+};
+
+class SetDPICmd: public BaseCmd {
+public:
+    SetDPICmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_SET_DPI;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int which_;
+    int dpi_x_;
+    int dpi_y_;
 
     MC::ErrorCode ret_;
 };

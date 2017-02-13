@@ -106,6 +106,7 @@ private:
     void HandleCloseSafeLED();
 
     void HandleSetResolution();
+    void HandleSetDPI();
 
     void HandleStartRecord();
     void HandleStopRecord();

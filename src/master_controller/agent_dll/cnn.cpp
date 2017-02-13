@@ -313,6 +313,9 @@ void MC::Cnn::ReceiveFunc()
         case CT_SET_RESOLUTION:
             asyn_api_->HandleSetResolution(chBuf);
             break;
+        case CT_SET_DPI:
+            asyn_api_->HandleSetDPI(chBuf);
+            break;
         case CT_SET_PROPERTY:
             asyn_api_->HandleSetProperty(chBuf);
             break;
