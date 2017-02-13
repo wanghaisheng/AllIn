@@ -479,12 +479,12 @@ public:
 
 int ST_Snapshot(
     int which,
-    int ori_dpi, 
-    int cut_dpi,
     const std::string& ori_path, 
     const std::string& cut_path)
 {
     SnapshotNT* nt = new SnapNT;
+    int ori_dpi = 0;
+    int cut_dpi = 0;
     api_agent.AsynSnapshot(which, ori_dpi, cut_dpi, ori_path, cut_path, nt);
 
 #ifdef _XP

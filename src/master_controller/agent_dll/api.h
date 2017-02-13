@@ -252,14 +252,10 @@ MASTERCTRL_AGENT_API int ST_QueryCamera(
 // which        --- 0：凭证摄像头
 //                  1：环境摄像头
 //                  2：侧门摄像头
-// ori_dpi      --- 原图dpi
-// cut_doi      --- 切图dpi
 // ori_path     --- 存放原图路径
 // cut_path     --- 存放切图路径
 MASTERCTRL_AGENT_API int ST_Snapshot(
-    int                 which,
-    int                 ori_dpi, 
-    int                 cut_dpi, 
+    int                 which, 
     const std::string&  ori_path, 
     const std::string&  cut_path);
 
