@@ -230,4 +230,22 @@ namespace MC {
             image);
     }
 
+    int ImgPro::SearchSrcImgStampPoint(
+        const std::string& img,
+        int in_x,
+        int in_y,
+        double in_angle,
+        int& out_x,
+        int& out_y,
+        double& out_angle) {
+        return SearchImgStampPointEx(
+            img.c_str(),
+            in_x,
+            in_y,
+            in_angle,
+            out_x,
+            out_y,
+            out_angle);
+    }
+
 } // namespace MC

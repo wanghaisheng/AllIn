@@ -849,6 +849,92 @@ void MC::STSealAPI::RecognizeImage(const std::string& img, NotifyResult* notify)
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
 
+/////////////////////////// 原图用印点查找 ////////////////////////////////
+
+class SearchPointEv : public MC::BaseEvent {
+
+public:
+    SearchPointEv(std::string des, std::string img, int x, int y, double angle, 
+        MC::NotifyResult* notify)
+        : BaseEvent(des),
+        img_(img),
+        x_(x),
+        y_(y),
+        angle_(angle),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        char out_x_str[64] = {0};
+        char out_y_str[64] = {0};
+        char out_angle_str[64] = {0};
+        MC::ErrorCode ec = exception_;
+        if (ec != MC::EC_SUCC)
+            goto NT;
+
+        int out_x;
+        int out_y;
+        double out_angle;
+        int ret = MC::ImgPro::GetInst()->SearchSrcImgStampPoint(
+            img_.c_str(),
+            x_,
+            y_,
+            angle_,
+            out_x,
+            out_y,
+            out_angle);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::SearchPointEv->原图用印点查找, er: %d",
+                          ret);
+            ec = MC::EC_SEARCH_STAMP_FAIL;
+            goto NT;
+        }
+
+        sprintf(out_x_str, "%d", out_x);
+        sprintf(out_y_str, "%d", out_y);
+        sprintf(out_angle_str, "%f", out_angle);
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(
+            ec,
+            out_x_str,
+            out_y_str,
+            out_angle_str);
+        Log::WriteLog(LL_DEBUG, "MC::SearchPointEv::SpecificExecute->原图用印点查找, ec: %s", 
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    std::string img_;
+    int x_;
+    int y_;
+    double angle_;
+
+    MC::NotifyResult* notify_;
+};
+
+void MC::STSealAPI::SearchSrcImageStampPoint(
+    const std::string&  src_img_name,
+    int                 in_x,
+    int                 in_y,
+    double              in_angle,
+    NotifyResult*       notify) {
+    BaseEvent* ev = new (std::nothrow) SearchPointEv(
+        "原图用印点查找", 
+        src_img_name, 
+        in_x,
+        in_y,
+        in_angle,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
 ///////////////////////// 要素识别 //////////////////////////////////////
 
 class IdentifyEleEv : public MC::BaseEvent {

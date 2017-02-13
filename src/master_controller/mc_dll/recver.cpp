@@ -221,6 +221,9 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_RECOGNITION:
         HandleRecognition(&msg);
         break;
+    case CT_SEARCH_STAMP:
+        HandleSearchStampPoint(&msg);
+        break;
     case CT_ELEMENT_IDENTI:
         HandleElementIdenti(&msg);
         break;
@@ -819,6 +822,60 @@ void Recver::HandleRecognition(const RecvMsg* msg)
 
     MC::NotifyResult* notify = new (std::nothrow) RecognitionNT(msg->pipe_inst, recog_cmd, this);
     MC::STSealAPI::GetInst()->RecognizeImage(recog_cmd->path_, notify);
+}
+
+/////////////////////// 原图用印点查找 //////////////////////////////////////
+
+class SearchStampNT : public MC::NotifyResult {
+public:
+    SearchStampNT(LPPIPEINST inst, SearchStampPointCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "SearchStampNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->out_x_ = atoi(data1.c_str());
+        cmd_->out_y_ = atoi(data2.c_str());
+        cmd_->out_angle_ = atof(ctx1.c_str());
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    SearchStampPointCmd* cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleSearchStampPoint(const RecvMsg* msg)
+{
+    SearchStampPointCmd* cmd = new (std::nothrow) SearchStampPointCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleSearchStampPoint->查找原图用印点: %s\n",
+        cmd->src_);
+
+    MC::NotifyResult* notify = new (std::nothrow) SearchStampNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->SearchSrcImageStampPoint(
+        cmd->src_,
+        cmd->in_x_,
+        cmd->in_y_,
+        cmd->in_angle_, 
+        notify);
 }
 
 ///////////////////////// 要素识别 //////////////////////////////////////

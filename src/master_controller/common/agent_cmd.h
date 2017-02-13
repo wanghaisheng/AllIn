@@ -27,6 +27,7 @@ enum CmdType {
     CT_PAPER_DOOR,          // 查询进纸门状态
     CT_PHOTO_SYNTHESIS,     // 照片合成
     CT_RECOGNITION,         // 版面验证码识别
+    CT_SEARCH_STAMP,        // 查找用印点
     CT_ELEMENT_IDENTI,      // 要素识别
     CT_ORDINARY_STAMP,      // 普通用印
     CT_AUTO_STAMP,          // 自动用印
@@ -79,6 +80,7 @@ static std::string cmd_des[] =
     "查询进纸门状态",
     "照片合成",
     "版面验证码识别",
+    "查找用印点",
     "要素识别",
     "普通用印",
     "自动用印",
@@ -248,6 +250,30 @@ public:
     char            photo1_[MAX_PATH];
     char            photo2_[MAX_PATH];
     char            merged_[MAX_PATH];
+
+    MC::ErrorCode   ret_;
+};
+
+class SearchStampPointCmd: public BaseCmd {
+public:
+    SearchStampPointCmd(): ret_(MC::EC_SUCC) {
+        in_x_ = 0;
+        in_y_ = 0;
+        in_angle_ = 0.0;
+        ct_ = CT_SEARCH_STAMP;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    char    src_[MAX_PATH];
+    int     in_x_;
+    int     in_y_;
+    double  in_angle_;
+    int     out_x_;
+    int     out_y_;
+    double  out_angle_;
 
     MC::ErrorCode   ret_;
 };

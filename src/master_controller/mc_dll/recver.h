@@ -60,6 +60,8 @@ private:
 
     void HandleMergePhoto(const RecvMsg* msg);
 
+    void HandleSearchStampPoint(const RecvMsg* msg);
+    
     void HandleRecognition(const RecvMsg* msg);
 
     void HandleElementIdenti(const RecvMsg* msg);

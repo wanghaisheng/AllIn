@@ -222,6 +222,16 @@ MASTERCTRL_AGENT_API int ST_IdentifyElement(
     int             angle, 
     std::string&    result);
 
+// 原图用印位置、用印角度查找
+MASTERCTRL_AGENT_API int ST_SearchSrcImageStampPoint(
+const char*     src_img_name,
+int             in_x,
+int             in_y,
+double          in_angle,
+int             &out_x,
+int             &out_y,
+double          &out_angle);
+
 /////////////////////// 3. 摄像头API //////////////////////////////
 
 // 打开摄像头

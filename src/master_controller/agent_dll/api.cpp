@@ -563,6 +563,83 @@ int ST_MergePhoto(
     return ret;
 }
 
+////////////////////////// 原图用印点查找 //////////////////////////////////
+
+class SearchStampNT : public SearchStampPointNT {
+public:
+#ifdef _XP
+    SearchStampNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~SearchStampNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int x, int y, double angle, int ec) {
+        Log::WriteLog(LL_DEBUG, "SearchStampNT::Notify->原图用印点查找, ec: %d",
+            ec);
+
+        er_ = ec;
+        x_ = x;
+        y_ = y;
+        angle_ = angle;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int x_;
+    int y_;
+    double angle_;
+    int er_;
+};
+
+int ST_SearchSrcImageStampPoint(
+    const char*     src_img_name,
+    int             in_x,
+    int             in_y,
+    double          in_angle,
+    int             &out_x,
+    int             &out_y,
+    double          &out_angle)
+{
+    SearchStampPointNT* nt = new SearchStampNT;
+    api_agent.AsynSearchStampPoint(
+        src_img_name, 
+        in_x,
+        in_y,
+        in_angle,
+        nt);
+
+    SearchStampNT* derive_nt = (SearchStampNT*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    out_x = derive_nt->x_;
+    out_y = derive_nt->y_;
+    out_angle = derive_nt->angle_;
+    delete nt;
+    return ret;
+}
 
 ////////////////////////// 版面验证码识别 //////////////////////////////////
 

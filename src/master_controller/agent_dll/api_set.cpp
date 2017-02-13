@@ -174,6 +174,20 @@ void AsynAPISet::HandleMergePhoto(char* chBuf)
         nt->Notify(cmd.photo1_, cmd.photo2_, cmd.merged_, cmd.ret_);
 }
 
+void AsynAPISet::HandleSearchStamp(char* chBuf)
+{
+    SearchStampPointCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleSearchStamp->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    SearchStampPointNT* nt = (SearchStampPointNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.out_x_, cmd.out_y_, cmd.out_angle_, cmd.ret_);
+
+}
+
 void AsynAPISet::HandleRecognition(char* chBuf)
 {
     RecognitionCmd cmd;
@@ -887,6 +901,22 @@ int AsynAPISet::AsynMergePhoto(
     strcpy_s(cmd->photo1_, p1.c_str());
     strcpy_s(cmd->photo2_, p2.c_str());
     strcpy_s(cmd->merged_, merged.c_str());
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynSearchStampPoint(
+    const std::string& img,
+    int x,
+    int y,
+    double angle,
+    SearchStampPointNT* nt) {
+    SearchStampPointCmd* cmd = new SearchStampPointCmd;
+    strcpy_s(cmd->src_, img.c_str());
+    cmd->in_x_ = x;
+    cmd->in_y_ = y;
+    cmd->in_angle_ = angle;
     InsertNotify(cmd->send_time_, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);

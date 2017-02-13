@@ -89,6 +89,13 @@ public:
         const std::string& merged,
         NotifyResult* notify);
 
+    void SearchSrcImageStampPoint(
+        const std::string&  src_img_name,
+        int                 in_x,
+        int                 in_y,
+        double              in_angle,
+        NotifyResult*       notify);
+
     // 版面、验证码识别
     void RecognizeImage(
         const std::string& img,

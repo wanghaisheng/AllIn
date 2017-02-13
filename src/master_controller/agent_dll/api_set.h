@@ -52,6 +52,12 @@ public:
     virtual void Notify(std::string p1, std::string p2, std::string merged, int ec) = 0;
 };
 
+// 原图用印点查找
+class SearchStampPointNT {
+public:
+    virtual void Notify(int x, int y, double angle, int ec) = 0;
+};
+
 // 版面、验证码识别
 class RecognizeNT {
 public:
@@ -281,6 +287,13 @@ public:
         const std::string& merged,
         MergePhotoNT* nt);
 
+    int AsynSearchStampPoint(
+        const std::string& img,
+        int x,
+        int y,
+        double angle,
+        SearchStampPointNT* nt);
+
     int AsynRecognizeImage(const std::string& path, RecognizeNT* nt);
 
     int AsynIdentifyElement(const std::string& path, int x, int y, int width, int height,
@@ -389,6 +402,8 @@ public:
     void HandleSnapshot(char* chBuf);
 
     void HandleMergePhoto(char* chBuf);
+
+    void HandleSearchStamp(char* chBuf);
 
     void HandleRecognition(char* chBuf);
 

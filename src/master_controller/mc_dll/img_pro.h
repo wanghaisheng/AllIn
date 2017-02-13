@@ -161,6 +161,15 @@ namespace MC {
                 int                 angle,
                 std::string&        result);
 
+        int SearchSrcImgStampPoint(
+            const std::string& img,
+            int in_x,
+            int in_y,
+            double in_angle,
+            int& out_x,
+            int& out_y,
+            double& out_angle);
+
     private:
         ImgPro(): search_img_ptr_(NULL), cut_img_ptr_(NULL), merge_ptr_(NULL),
                     recog_model_ptr_(NULL), model_code_ptr_(NULL), recog_area_ptr_(NULL) {

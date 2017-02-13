@@ -115,6 +115,19 @@ void RecognitionCmd::Unser()
     xs_ >> path_ >> template_id_ >> trace_num_ >> ret_;
 }
 
+void SearchStampPointCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << src_ << in_x_ << in_y_ << in_angle_ << out_x_ << out_y_ << out_angle_;
+    xs_.Trim();
+}
+
+void SearchStampPointCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> src_ >> in_x_ >> in_y_ >> in_angle_ >> out_x_ >> out_y_ >> out_angle_;
+}
+
 void IdentifyElementCmd::Ser()
 {
     BaseCmd::Ser();
