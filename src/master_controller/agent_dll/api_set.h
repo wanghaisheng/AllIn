@@ -1,4 +1,4 @@
-#ifndef MC_AGENT_API_SET_H_
+﻿#ifndef MC_AGENT_API_SET_H_
 #define MC_AGENT_API_SET_H_
 
 #include <string>

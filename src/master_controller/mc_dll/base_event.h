@@ -1,4 +1,4 @@
-#ifndef CONTROLLER_BASE_EVENT_H_
+﻿#ifndef CONTROLLER_BASE_EVENT_H_
 #define CONTROLLER_BASE_EVENT_H_
 
 #include <string>

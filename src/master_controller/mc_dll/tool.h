@@ -1,4 +1,4 @@
-#ifndef CONTROLLER_TOOL_H_
+﻿#ifndef CONTROLLER_TOOL_H_
 #define CONTROLLER_TOOL_H_
 
 #include <string>

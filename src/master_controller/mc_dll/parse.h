@@ -1,4 +1,4 @@
-#ifndef MASTER_CONTROLLER_PARSE_H_
+﻿#ifndef MASTER_CONTROLLER_PARSE_H_
 #define MASTER_CONTROLLER_PARSE_H_
 
 #include <string>

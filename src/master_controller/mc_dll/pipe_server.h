@@ -1,4 +1,4 @@
-#ifndef CONTROLLER_PIPE_SERVER_H_
+﻿#ifndef CONTROLLER_PIPE_SERVER_H_
 #define CONTROLLER_PIPE_SERVER_H_
 
 #include <windows.h> 

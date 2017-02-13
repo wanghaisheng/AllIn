@@ -1317,7 +1317,7 @@ public:
     int er_;
 };
 
-int ST_QuerySlot(int& num)
+int ST_QuerySlots(int &num)
 {
     QuerySlotNT* nt = new QuerySlNT;
     api_agent.AsynQuerySlot(nt);
@@ -2091,7 +2091,7 @@ public:
     int er_;
 };
 
-int ST_OpenCamera2(int which)
+int ST_OpenCamera(int which)
 {
     OpenCameraNT* nt = new OpenCaNT;
     api_agent.AsynOpenCamera(which, nt);
@@ -2145,7 +2145,7 @@ public:
     int er_;
 };
 
-int ST_CloseCamera2(int which)
+int ST_CloseCamera(int which)
 {
     CloseCameraNT* nt = new CloseCaNT;
     api_agent.AsynCloseCamera(which, nt);
@@ -2258,7 +2258,7 @@ public:
     int er_;
 };
 
-int ST_SetResolution2(int which, int x, int y)
+int ST_SetResolution(int which, int x, int y)
 {
     SetResolutionNT* nt = new SetResoNT;
     api_agent.AsynSetResolution(which, x, y, nt);

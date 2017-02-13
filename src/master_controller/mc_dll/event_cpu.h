@@ -1,4 +1,4 @@
-#ifndef CONTROLLER_EVENT_CPU_H_
+﻿#ifndef CONTROLLER_EVENT_CPU_H_
 #define CONTROLLER_EVENT_CPU_H_
 
 #include "syn_queue.h"

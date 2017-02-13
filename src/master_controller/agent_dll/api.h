@@ -1,4 +1,4 @@
-#ifndef MC_AGENT_API_H_
+﻿#ifndef MC_AGENT_API_H_
 #define MC_AGENT_API_H_
 
 #include <string>
@@ -63,6 +63,9 @@ MASTERCTRL_AGENT_API int ST_BindMAC(
 MASTERCTRL_AGENT_API int ST_UnbindMAC(
     const std::string& mac);
 
+// 根据卡槽号获取对应的RFID
+// slot         --- 卡槽号，从1开始
+// rfid         --- 对应卡槽号的rfid
 MASTERCTRL_AGENT_API int ST_GetRFID(
         int     slot,
         int&    rfid);
@@ -72,14 +75,14 @@ MASTERCTRL_AGENT_API int ST_GetRFID(
 // timeout          --- 进纸门超时未关闭时间, 单位秒
 // task_id          --- 任务号, 仅能使用一次
 MASTERCTRL_AGENT_API int ST_PrepareStamp(
-    char            stamp_num, 
+    char            slot,
     int             timeout, 
     std::string&    task_id);
 
 // 普通用印
 MASTERCTRL_AGENT_API int ST_OrdinaryStamp(
     const std::string&  task,       // 任务号
-    int                 num,        // 印章卡槽号(1-6)
+    int                 slot,       // 印章卡槽号(1-6)
     int                 ink,        // 0 - 不蘸印油， 1 - 蘸印油
     int                 x,          // 盖章位置x坐标, 相对于印控机坐标系
     int                 y,          // 盖章位置y坐标, 相对于印控机坐标系
@@ -143,8 +146,8 @@ MASTERCTRL_AGENT_API int ST_ControlAlarm(
 
 // 卡槽数量查询
 // num      --- 实际印章数
-MASTERCTRL_AGENT_API int ST_QuerySlot(
-    int& num);
+MASTERCTRL_AGENT_API int ST_QuerySlots(
+    int &num);
 
 // 锁定印控仪
 MASTERCTRL_AGENT_API int ST_Lock();
@@ -225,15 +228,15 @@ MASTERCTRL_AGENT_API int ST_IdentifyElement(
 // which    --- 0：凭证摄像头
 //              1：环境摄像头
 //              2：侧门摄像头
-MASTERCTRL_AGENT_API int ST_OpenCamera2(
+MASTERCTRL_AGENT_API int ST_OpenCamera(
     int which);
 
 // 关闭摄像头
 // which    --- 0：凭证摄像头
 //              1：环境摄像头
 //              2：侧门摄像头
-MASTERCTRL_AGENT_API int ST_CloseCamera2(
-    int which);
+MASTERCTRL_AGENT_API int ST_CloseCamera(
+     int which);
 
 // 查看摄像头状态
 // which    --- 0：凭证摄像头
@@ -266,10 +269,10 @@ MASTERCTRL_AGENT_API int ST_Snapshot(
 //              2：侧门摄像头
 // x        --- 宽度
 // y        --- 高度
-MASTERCTRL_AGENT_API int ST_SetResolution2(
-    int which, 
-    int x, 
-    int y);
+MASTERCTRL_AGENT_API int ST_SetResolution(
+     int which,
+     int x,
+     int y);
 
 // 开始录制视频
 // which    --- 0：凭证摄像头

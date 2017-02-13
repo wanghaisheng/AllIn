@@ -411,6 +411,11 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
+        if (num_ < 1 || num_ > 6) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
         // check top-door
         char doors[4] = { 0 };
         int ret = FGetDoorsPresent(doors, sizeof(doors));
@@ -954,6 +959,11 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
+        if (num_ < 1 || num_ > 6 || (type_ != 0 && type_ != 1)) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
         //0x0B, 获取门状态(len = 4)
         //P1:   推纸门状态  0 关闭，1 开启， 2检测错误
         //P2:   电子锁状态，同上
@@ -1336,6 +1346,11 @@ public:
         MC::ErrorCode ec = exception_;
         if (ec != MC::EC_SUCC)
             goto NT;
+
+        if (num_ < 1 || num_ > 6) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
 
         // 校准印章
         unsigned int rfid = 0;

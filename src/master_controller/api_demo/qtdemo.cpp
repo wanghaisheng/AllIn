@@ -508,7 +508,7 @@ void QtDemo::HandleSetResolution()
 {
     int width = atoi(ui.le_cam_width_->text().toStdString().c_str());
     int height = atoi(ui.le_cam_height_->text().toStdString().c_str());
-    int ret = ST_SetResolution2(which_cam_, width, height);
+    int ret = ST_SetResolution(which_cam_, width, height);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("设置摄像头分辨率失败, er: ") +
             QString::number(ret));
@@ -622,7 +622,7 @@ void QtDemo::HandleBeepOff()
 void QtDemo::HandleQuerySlots()
 {
     int num;
-    int ret = ST_QuerySlot(num);
+    int ret = ST_QuerySlots(num);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("查询卡槽数量失败, err: ") +
             QString::number(ret));
@@ -964,7 +964,7 @@ void QtDemo::HandleRecogEle()
 
 void QtDemo::HandleOpenCam()
 {
-    int ret = ST_OpenCamera2(which_cam_);
+    int ret = ST_OpenCamera(which_cam_);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("打开摄像头-") + 
             QString::number(which_cam_) +
@@ -977,7 +977,7 @@ void QtDemo::HandleOpenCam()
 
 void QtDemo::HandleCloseCam()
 {
-    int ret = ST_CloseCamera2(which_cam_);
+    int ret = ST_CloseCamera(which_cam_);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("关闭摄像头-") +
             QString::number(which_cam_) +

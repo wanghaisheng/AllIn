@@ -1,4 +1,4 @@
-#ifndef MASTERCTRL_TASK_MGR_H_
+﻿#ifndef MASTERCTRL_TASK_MGR_H_
 #define MASTERCTRL_TASK_MGR_H_
 
 #include <string>
