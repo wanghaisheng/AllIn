@@ -1,4 +1,5 @@
 ﻿#include "stdafx.h"
+#include <cstdio>
 #include <stdlib.h>
 #include <cmath>
 #include <vector>
@@ -229,6 +230,11 @@ public:
         if (MC::EC_SUCC != ec)
             goto NT;
 
+        if (mac_.length() > MAX_MAC_SIZE) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
         int ret = ReadMAC(mac1, mac2, 18);
         if (0 != ret) {
             ec = MC::EC_DRIVER_FAIL;
@@ -275,7 +281,7 @@ public:
 
     NT:
         notify_->Notify(ec, mac_);
-        Log::WriteLog(LL_DEBUG, "MC::BindMACEv::SpecificExecute->绑定MAC地址, ec: %d, 待绑定MAC: %s, "
+        Log::WriteLog(LL_DEBUG, "MC::BindMACEv->绑定MAC地址, ec: %d, 待绑定MAC: %s, "
             "已绑定地址1: %s, 已绑定地址2: %s",
             ec,
             mac_.c_str(),
@@ -317,6 +323,11 @@ public:
         MC::ErrorCode ec = exception_;
         if (MC::EC_SUCC != ec)
             goto NT;
+
+        if (mac_.length() > MAX_MAC_SIZE) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
 
         // 用印机解绑MAC
         // 首先获取所有已绑定的MAC
@@ -411,7 +422,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        if (num_ < 1 || num_ > 6) {
+        if (num_ < 1 || num_ > 6 || timeout_ < 0) {
             ec = MC::EC_INVALID_PARAMETER;
             goto NT;
         }
@@ -442,10 +453,13 @@ public:
         }
 
         // 设置推纸门开启后超时提示时间, 默认30秒
-        ret = SetPaperDoor(timeout_);
-        if (-1 == ret) {
-            ec = MC::EC_DRIVER_FAIL;
-            goto NT;
+        if (0 != timeout_) {
+            ret = SetPaperDoor(timeout_);
+            if (0  != ret) {
+                Log::WriteLog(LL_ERROR, "MC::PrepareStampEv->设置纸门超时失败, er: %d", ret);
+                ec = MC::EC_DRIVER_FAIL;
+                goto NT;
+            }
         }
 
         // 打开推纸门
@@ -721,6 +735,18 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
+        FILE* file = fopen(photo1_.c_str(), "r");
+        if (NULL == file) {
+            ec = MC::EC_FILE_NOT_EXIST;
+            goto NT;
+        }
+
+        file = fopen(photo2_.c_str(), "r");
+        if (NULL == file) {
+            ec = MC::EC_FILE_NOT_EXIST;
+            goto NT;
+        }
+
         // 照片合成
         int ret = MC::ImgPro::GetInst()->MergeImage(
             photo1_,
@@ -789,6 +815,12 @@ public:
         MC::ErrorCode ec = exception_;
         if (ec != MC::EC_SUCC)
             goto NT;
+
+        FILE* file = fopen(img_.c_str(), "r");
+        if (NULL == file) {
+            ec = MC::EC_FILE_NOT_EXIST;
+            goto NT;
+        }
 
         // 版面验证码识别
         // 模板类型、角度、用印点识别
@@ -872,6 +904,12 @@ public:
         MC::ErrorCode ec = exception_;
         if (ec != MC::EC_SUCC)
             goto NT;
+
+        FILE* file = fopen(img_.c_str(), "r");
+        if (NULL == file) {
+            ec = MC::EC_FILE_NOT_EXIST;
+            goto NT;
+        }
 
         int out_x;
         int out_y;
@@ -966,8 +1004,21 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
+        FILE* file = fopen(path_.c_str(), "r");
+        if (NULL == file) {
+            ec = MC::EC_FILE_NOT_EXIST;
+            goto NT;
+        }
+
         // 要素识别
-        int ret = MC::ImgPro::GetInst()->IdentifyArea(path_, x_, y_, width_, height_, angle_, result);
+        int ret = MC::ImgPro::GetInst()->IdentifyArea(
+            path_, 
+            x_, 
+            y_, 
+            width_, 
+            height_, 
+            angle_, 
+            result);
         if (0 != ret) {
             ec = MC::EC_ELEMENT_FAIL;
             goto NT;
@@ -1246,6 +1297,11 @@ public:
         MC::ErrorCode ec = exception_;
         if (ec != MC::EC_SUCC)
             goto NT;
+
+        if (task_.empty()) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
 
         // 用印结束
         MC::TaskState ts = MC::TaskMgr::GetInst()->QueryTaskState(task_);
@@ -1615,6 +1671,11 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
+        if (operation_ != 0 && operation_ != 1) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
         // 开关安全门
         //0x0B, 获取门状态(len = 4)
         //P1:   推纸门状态  0 关闭，1 开启， 2检测错误
@@ -1737,6 +1798,11 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
+        if (operation_ != 0 && operation_ != 1) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
         // 蜂鸣器开关
         //0x16, 蜂鸣器控制
         //beep      --- 0 关闭; 1 长鸣; 2 间隔响
@@ -1843,6 +1909,16 @@ public:
         MC::ErrorCode ec = exception_;
         if (ec != MC::EC_SUCC)
             goto NT;
+
+        if (alarm_ != 0 && alarm_ != 1) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
+        if (ctrl_ != 0 && ctrl_ != 1) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
 
         // 报警器控制
         //alarm     --- 0(开门报警器)
@@ -2217,6 +2293,11 @@ public:
         if (MC::EC_SUCC != ec)
             goto NT;
 
+        if (keep_ < 0 || timeout_ < 0) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
         int ret = SetSideDoor(keep_, timeout_);
         if (!ret) {
             ec = MC::EC_DRIVER_FAIL;
@@ -2313,6 +2394,14 @@ public:
         if (MC::EC_SUCC != ec)
             goto NT;
 
+        if (0 > timeout_) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
+        if (0 == timeout_)
+            timeout_ = 30;
+
         int ret = SetPaperDoor(timeout_);
         if (0 != ret) {
             Log::WriteLog(LL_ERROR, "MC::OpenPaperEv::SpecificExecute->设置纸门超时"
@@ -2369,6 +2458,13 @@ public:
         MC::ErrorCode ec = exception_;
         if (MC::EC_SUCC != ec)
             goto NT;
+
+        if ((which_ != 1 && which_ != 2) 
+            || (switch_ != 0 && switch_ != 1)
+            || value_ < 0) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
 
 //0x0F, 补光灯控制
 //light     --- 补光灯类型
@@ -2547,6 +2643,11 @@ public:
         if (MC::EC_SUCC != ec)
             goto NT;
 
+        if (which_ != 0 && which_ != 1 && which_ != 2) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
         int ret = OpenCamera((CAMERAINDEX)which_);
         if (0 != ret) {
             Log::WriteLog(LL_ERROR, "MC::OpenCameraEv->打开摄像头失败, er: %d", ret);
@@ -2597,6 +2698,11 @@ public:
         MC::ErrorCode ec = exception_;
         if (MC::EC_SUCC != ec)
             goto NT;
+
+        if (which_ != 0 && which_ != 1 && which_ != 2) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
 
         int ret = CloseCamera((CAMERAINDEX)which_);
         if (0 != ret) {
@@ -2650,6 +2756,11 @@ public:
         if (MC::EC_SUCC != ec)
             goto NT;
 
+        if (which_ != 0 && which_ != 1 && which_ != 2) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
         bool status = MC::Tool::GetInst()->QueryCam(which_);
         ec = MC::EC_SUCC;
 
@@ -2700,6 +2811,16 @@ public:
         MC::ErrorCode ec = exception_;
         if (MC::EC_SUCC != ec)
             goto NT;
+
+        if (which_ != 0 && which_ != 1 && which_ != 2) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
+        if (x_ <= 0 || y_ <= 0) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
 
         int ret = SetResolution((CAMERAINDEX)which_, x_, y_);
         if (0 != ret) {
@@ -2762,7 +2883,12 @@ public:
         if (MC::EC_SUCC != ec)
             goto NT;
 
-        if (x_ < 0 || y_ < 0) {
+        if (which_ != 0 && which_ != 1 && which_ != 2) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
+        if (x_ <= 0 || y_ <= 0) {
             ec = MC::EC_INVALID_PARAMETER;
             goto NT;
         }
@@ -2865,6 +2991,11 @@ public:
         if (MC::EC_SUCC != ec)
             goto NT;
 
+        if (which_ != 0 && which_ != 1 && which_ != 2) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
         int ret = StartCaptureVideo((CAMERAINDEX)which_, (char*)path_.c_str());
         if (0 != ret) {
             Log::WriteLog(LL_ERROR, "MC::RecordVideoEv->开启录像失败, er: %d", ret);
@@ -2917,6 +3048,11 @@ public:
         MC::ErrorCode ec = exception_;
         if (MC::EC_SUCC != ec)
             goto NT;
+
+        if (which_ != 0 && which_ != 1 && which_ != 2) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
 
         int ret = StopCaptureVideo((CAMERAINDEX)which_, (char*)path_.c_str());
         if (0 != ret) {

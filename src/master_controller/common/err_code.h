@@ -54,6 +54,7 @@ enum ErrorCode {
     EC_INVALID_Y_PARAM,         // y坐标非法
     EC_INVALID_ANGLE,           // 章旋转角度非法
     EC_SEARCH_STAMP_FAIL,       // 原图用印点查找失败
+    EC_FILE_NOT_EXIST,          // 文件不存在
     EC_MAX
 };
 
@@ -105,7 +106,8 @@ static std::string ErrorMsg[] = {
     "x坐标非法",
     "y坐标非法",
     "章旋转角度非法",
-    "原图用印点查找失败"
+    "原图用印点查找失败",
+    "文件不存在"
 };
 
 static std::string GetErrMsg(enum ErrorCode err)
@@ -157,7 +159,8 @@ static std::string ErrorResolver[] = {
     "x坐标非法",
     "y坐标非法",
     "章旋转角度在0~360°",
-    "原图用印点查找失败"
+    "原图用印点查找失败",
+    "文件不存在, 请检查文件路径"
 };
 
 static std::string GetErrResolver(enum ErrorCode err)

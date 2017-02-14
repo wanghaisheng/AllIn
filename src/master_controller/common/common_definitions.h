@@ -7,6 +7,7 @@
 #define PIPE_MAX_BUF    4096
 #define PIPE_BUSY_WAIT  2000
 #define CMD_BUF_SIZE    1024
+#define MAX_MAC_SIZE    17
 
 namespace MC {
 

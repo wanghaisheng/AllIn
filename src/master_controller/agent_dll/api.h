@@ -73,6 +73,7 @@ MASTERCTRL_AGENT_API int ST_GetRFID(
 // 准备用印
 // stamp_num        --- 章槽号, 从1开始
 // timeout          --- 进纸门超时未关闭时间, 单位秒
+//                      建议设置30秒以上, 当传入0时使用默认值
 // task_id          --- 任务号, 仅能使用一次
 MASTERCTRL_AGENT_API int ST_PrepareStamp(
     char            slot,
@@ -115,7 +116,8 @@ MASTERCTRL_AGENT_API int ST_QueryPaper(
     int& status);
 
 // 打开进纸门
-// timeout      --- 纸门超时未关闭时间，单位秒
+// timeout      --- 纸门超时未关闭时间，单位秒,
+//                  传入0时使用默认值
 MASTERCTRL_AGENT_API int ST_OpenPaper(
     int timeout = 30);
 
