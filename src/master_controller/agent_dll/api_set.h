@@ -137,6 +137,12 @@ public:
     virtual void Notify(int num, int ec) = 0;
 };
 
+// 报警器状态查询
+class QueryAlarmNT {
+public:
+    virtual void Notify(int door, int vibration, int ec) = 0;
+};
+
 // 开关报警器
 class CtrlAlarmNT {
 public:
@@ -333,6 +339,8 @@ public:
 
     int AsynAlarmControl(int alarm, int ctrl, CtrlAlarmNT* nt);
 
+    int AsynQueryAlarm(QueryAlarmNT* nt);
+
     int AsynQueryMAC(QueryMACNT* nt);
 
     int AsynLock(LockNT* nt);
@@ -432,6 +440,8 @@ public:
     void HandleQuerySlot(char* chBuf);
 
     void HandleAlarmControl(char* chBuf);
+
+    void HandleQueryAlarm(char* chBuf);
 
     void HandleQueryMAC(char* chBuf);
 

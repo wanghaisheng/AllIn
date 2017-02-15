@@ -266,6 +266,9 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_ALARM_CTL:
         HandleAlarmControl(&msg);
         break;
+    case CT_QUERY_ALARM:
+        HandleQueryAlarm(&msg);
+        break;
     case CT_QUERY_MAC:
         HandleQueryMAC(&msg);
         break;
@@ -1535,6 +1538,53 @@ void Recver::HandleAlarmControl(const RecvMsg* msg)
 
     MC::NotifyResult* notify = new (std::nothrow) AlarmCtrlNT(msg->pipe_inst, cmd, this);
     MC::STSealAPI::GetInst()->OperateAlarm(cmd->alarm_, cmd->ctrl_, notify);
+}
+
+//////////////////////// 报警器状态查询 ////////////////////////////////
+
+class QueryAlarmNT : public MC::NotifyResult {
+public:
+    QueryAlarmNT(LPPIPEINST inst, QueryAlarmCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "QueryAlarmNT::Notify->ec: " << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->door_ = atoi(data1.c_str());
+        cmd_->vibration_ = atoi(data2.c_str());
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    QueryAlarmCmd*      cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleQueryAlarm(const RecvMsg* msg)
+{
+    QueryAlarmCmd* cmd = new (std::nothrow) QueryAlarmCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleQueryAlarm->报警器状态查询\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) QueryAlarmNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->QueryAlarm(notify);
 }
 
 /////////////////////////// 查询已绑定MAC //////////////////////////////////

@@ -340,6 +340,19 @@ void AlarmCtrlCmd::Unser()
     xs_ >> alarm_ >> ctrl_ >> ret_;
 }
 
+void QueryAlarmCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << door_ << vibration_ << ret_;
+    xs_.Trim();
+}
+
+void QueryAlarmCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> door_ >> vibration_ >> ret_;
+}
+
 void QueryMACCmd::Ser()
 {
     BaseCmd::Ser();

@@ -90,6 +90,8 @@ private:
 
     void HandleAlarmControl(const RecvMsg* msg);
 
+    void HandleQueryAlarm(const RecvMsg* msg);
+
     void HandleQueryMAC(const RecvMsg* msg);
 
     void HandleLock(const RecvMsg* msg);

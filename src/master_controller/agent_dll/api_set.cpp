@@ -394,6 +394,19 @@ void AsynAPISet::HandleQuerySlot(char* chBuf)
         nt->Notify(cmd.num_, cmd.ret_);
 }
 
+void AsynAPISet::HandleQueryAlarm(char* chBuf)
+{
+    QueryAlarmCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleQueryAlarm->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    QueryAlarmNT* nt = (QueryAlarmNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.door_, cmd.vibration_, cmd.ret_);
+}
+
 void AsynAPISet::HandleAlarmControl(char* chBuf)
 {
     AlarmCtrlCmd cmd;
@@ -1060,7 +1073,7 @@ int AsynAPISet::AsynBeepControl(int ctrl, int type, int interval, CtrlBeepNT* nt
     BeepCtrlCmd* cmd = new BeepCtrlCmd;
     cmd->ctrl_ = ctrl;
     cmd->type_ = type;
-    cmd->inverval_ = inverval;
+    cmd->interval_ = interval;
     InsertNotify(cmd->send_time_, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
@@ -1069,6 +1082,14 @@ int AsynAPISet::AsynBeepControl(int ctrl, int type, int interval, CtrlBeepNT* nt
 int AsynAPISet::AsynQuerySlot(QuerySlotNT* nt)
 {
     QuerySlotCmd* cmd = new QuerySlotCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynQueryAlarm(QueryAlarmNT* nt)
+{
+    QueryAlarmCmd* cmd = new QueryAlarmCmd;
     InsertNotify(cmd->send_time_, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);

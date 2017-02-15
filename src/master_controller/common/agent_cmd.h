@@ -44,6 +44,7 @@ enum CmdType {
     CT_BEEP_CTL,            // 蜂鸣器控制
     CT_QUERY_SLOT,          // 卡槽数量查询
     CT_ALARM_CTL,           // 开关报警器(门报警、振动报警)
+    CT_QUERY_ALARM,         // 获取报警器状态
     CT_QUERY_MAC,           // 查询已绑定MAC地址
     CT_LOCK,                // 锁定印控仪
     CT_UNLOCK,              // 解锁印控仪
@@ -97,6 +98,7 @@ static std::string cmd_des[] =
     "蜂鸣器控制",
     "卡槽数量查询",
     "报警器控制",
+    "获取报警器状态",
     "查询已绑定MAC地址",
     "锁定印控仪",
     "解锁印控仪",
@@ -539,6 +541,22 @@ public:
     MC::ErrorCode   ret_;
 };
 
+class QueryAlarmCmd: public BaseCmd {
+public:
+    QueryAlarmCmd(): ret_(MC::EC_SUCC), door_(-1), vibration_(-1) {
+        ct_ = CT_QUERY_ALARM;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int             door_;
+    int             vibration_;
+    
+    MC::ErrorCode   ret_;
+};
+
 class AlarmCtrlCmd : public BaseCmd {
 public:
     AlarmCtrlCmd() : ret_(MC::EC_SUCC), alarm_(-1), ctrl_(-1) {
@@ -551,6 +569,7 @@ public:
 public:
     int             alarm_; // 报警器类型, 0-开门报警, 1-振动报警
     int             ctrl_;  // 控制开关, 0-关, 1-开
+
     MC::ErrorCode   ret_;
 };
 

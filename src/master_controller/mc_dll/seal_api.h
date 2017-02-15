@@ -173,6 +173,9 @@ public:
     // 报警器操作
     void OperateAlarm(int alarm, int ctrl, NotifyResult* notify);
 
+    // 报警器状态
+    void QueryAlarm(NotifyResult* notify);
+
     // 查询已绑定MAC地址
     void QueryMAC(NotifyResult* notify);
 

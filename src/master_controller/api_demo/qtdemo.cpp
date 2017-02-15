@@ -1303,19 +1303,22 @@ void QtDemo::HandleCheckParam()
 
 void QtDemo::HandleReadAlarm()
 {
-    char door = -1;
-    char vibration = -1;
-    int ret = ReadAlarmStatus(&door, &vibration);
+    int door = -1;
+    int vibration = -1;
+    int ret = ST_ReadAlarm(door, vibration);
     if (0 != ret)
-        return Info(QString::fromLocal8Bit("读报警器控制状态失败, err:") + QString::number(ret));
+        return Info(QString::fromLocal8Bit("读报警器状态失败, err:") + 
+            QString::number(ret));
 
     ui.label_door_alarm_->setText(
         0 == door ? QString::fromLocal8Bit("关"): QString::fromLocal8Bit("开"));
+    ui.label_door_alarm_->adjustSize();
+
     ui.label_vibration_alarm_->setText(
         0 == vibration ? QString::fromLocal8Bit("关") : QString::fromLocal8Bit("开"));
-    ui.label_door_alarm_->adjustSize();
-    ui.label_door_alarm_->adjustSize();
-    ui.statusBar->showMessage(QString::fromLocal8Bit("读报警器控制状态成功"), STATUS_TEXT);
+    ui.label_vibration_alarm_->adjustSize();
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("读报警器状态成功"), STATUS_TEXT);
 }
 
 void QtDemo::HandleReadRFID()

@@ -265,6 +265,9 @@ void MC::Cnn::ReceiveFunc()
         case CT_ALARM_CTL:
             asyn_api_->HandleAlarmControl(chBuf);
             break;
+        case CT_QUERY_ALARM:
+            asyn_api_->HandleQueryAlarm(chBuf);
+            break;
         case CT_QUERY_MAC:
             asyn_api_->HandleQueryMAC(chBuf);
             break;

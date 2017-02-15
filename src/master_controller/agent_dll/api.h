@@ -143,6 +143,14 @@ MASTERCTRL_AGENT_API int ST_ControlBeep(
     int type = 0,
     int interval = 2);
 
+// 读取报警器控制状态(包括振动报警和门报警)
+//
+// door          --- 门报警, 0 - 关, 1 - 开
+// vibration     --- 振动报警, 0 - 关, 1 - 开
+MASTERCTRL_AGENT_API int ST_ReadAlarm(
+    int& door, 
+    int& vibration);
+
 // 报警器开关
 //alarm     --- 0(开门报警器)
 //              1(振动报警器)

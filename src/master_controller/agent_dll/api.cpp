@@ -1340,7 +1340,7 @@ public:
 int ST_ControlBeep(int ctrl, int type, int interval)
 {
     CtrlBeepNT* nt = new BeepCtrlNT;
-    api_agent.AsynBeepControl(ctrl, type, inverval, nt);
+    api_agent.AsynBeepControl(ctrl, type, interval, nt);
 
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((BeepCtrlNT*)nt)->cv_, WAIT_TIME))
@@ -1465,6 +1465,69 @@ int ST_ControlAlarm(int alarm, int switches)
         ((AlarmNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((AlarmNT*)nt)->er_;
+    delete nt;
+    return ret;
+}
+
+///////////////////////////////// 报警器状态查询 ////////////////////////////
+
+class QryAlarmNT : public QueryAlarmNT {
+public:
+#ifdef _XP
+    QryAlarmNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~QryAlarmNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int door, int vibration, int ec) {
+        Log::WriteLog(LL_DEBUG, "QryAlarmNT::Notify->报警器状态查询: %d");
+
+        er_ = ec;
+        door_ = door;
+        vibration_ = vibration;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+
+    int door_;
+    int vibration_;
+    int er_;
+};
+
+int ST_ReadAlarm(int& door, int& vibration)
+{
+    QueryAlarmNT* nt = new QryAlarmNT;
+    api_agent.AsynQueryAlarm(nt);
+
+    QryAlarmNT* derive_nt = (QryAlarmNT*)nt;
+#ifdef _XP
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    door = derive_nt->door_;
+    vibration = derive_nt->vibration_;
     delete nt;
     return ret;
 }

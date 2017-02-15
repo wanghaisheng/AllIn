@@ -1999,6 +1999,71 @@ void MC::STSealAPI::OperateAlarm(int alarm, int ctrl, MC::NotifyResult* notify)
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
 
+/////////////////////////// 报警器状态查询 //////////////////////////////////
+
+class QueryAlarmEv : public MC::BaseEvent {
+public:
+    QueryAlarmEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        char alarm_str[5] = { 0 };
+        char ctrl_str[5] = { 0 };
+        MC::ErrorCode ec = exception_;
+        if (ec != MC::EC_SUCC)
+            goto NT;
+
+//0x38, 读取报警器控制状态(包括振动报警和门报警)
+//
+//door          --- 门报警, 0是关, 1是开
+//vibration     --- 振动报警, 0是关, 1是开
+//
+//返回值:
+//      0: 读报警器状态成功
+//      1: 失败
+//      2: 忙
+//USBCONTROLF60_API int ReadAlarmStatus(char* door, char* vibration);
+
+        char door;
+        char vibration;
+        char door_str[2] = {0};
+        char vibration_str[2] = {0};
+        int ret = ReadAlarmStatus(&door, &vibration);
+        if (0 != ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        sprintf_s(door_str, "%c", door);
+        sprintf_s(vibration_str, "%c", vibration);
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec, door_str, vibration_str);
+        Log::WriteLog(LL_DEBUG, "MC::QueryAlarmEv->报警器状态查询, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::QueryAlarm(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) QueryAlarmEv(
+    "报警器状态查询",
+    notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
 ////////////////////////// 查询已绑定MAC地址 //////////////////////////////////
 
 class QueryMACEv : public MC::BaseEvent {
