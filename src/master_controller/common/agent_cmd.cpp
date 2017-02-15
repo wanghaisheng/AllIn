@@ -317,14 +317,14 @@ void SafeCtrlCmd::Unser()
 void BeepCtrlCmd::Ser()
 {
     BaseCmd::Ser();
-    xs_ << ctrl_ << ret_;
+    xs_ << ctrl_ << type_ << interval_ << ret_;
     xs_.Trim();
 }
 
 void BeepCtrlCmd::Unser()
 {
     BaseCmd::Unser();
-    xs_ >> ctrl_ >> ret_;
+    xs_ >> ctrl_ >> type_ >> interval_ >> ret_;
 }
 
 void AlarmCtrlCmd::Ser()

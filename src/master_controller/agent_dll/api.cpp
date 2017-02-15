@@ -1337,10 +1337,10 @@ public:
     int er_;
 };
 
-int ST_ControlBeep(int ctrl)
+int ST_ControlBeep(int ctrl, int type, int interval)
 {
     CtrlBeepNT* nt = new BeepCtrlNT;
-    api_agent.AsynBeepControl(ctrl, nt);
+    api_agent.AsynBeepControl(ctrl, type, inverval, nt);
 
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((BeepCtrlNT*)nt)->cv_, WAIT_TIME))
@@ -1690,6 +1690,7 @@ int ST_QueryLock(int& lock)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    lock = derive_nt->lock_;
     delete nt;
     return ret;
 }

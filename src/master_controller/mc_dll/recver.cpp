@@ -1432,7 +1432,11 @@ void Recver::HandleBeepControl(const RecvMsg* msg)
     printf("Recver::HandleBeepControl->蜂鸣器控制, 操作: %d\n", cmd->ctrl_);
 
     MC::NotifyResult* notify = new (std::nothrow) BeepCtlNT(msg->pipe_inst, cmd, this);
-    MC::STSealAPI::GetInst()->OperateBeep(cmd->ctrl_, notify);
+    MC::STSealAPI::GetInst()->OperateBeep(
+        cmd->ctrl_, 
+        cmd->type_,
+        cmd->interval_,
+        notify);
 }
 
 ///////////////////////// 卡槽数量查询 ////////////////////////////////////
@@ -1693,10 +1697,19 @@ public:
         std::string ctx1 = "",
         std::string ctx2 = "")
     {
-        int err_code = 0;
         std::cout << "QueryLockNT::Notify->ec: " << ec << std::endl;
 
-        cmd_->ret_ = ec;
+        if (ec == 31 || ec == 32)
+            cmd_->ret_ = MC::EC_SUCC;
+        else
+            cmd_->ret_ = ec;
+
+        if (31 == ec)
+            cmd_->status_ = 1;
+        else if (32 == ec)
+            cmd_->status_ = 0;
+        else
+            cmd_->status_ = -1;
         cmd_->Ser();
 
         bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
@@ -1833,7 +1846,10 @@ public:
     {
         std::cout << "QueryCnnNT::Notify->ec: " << ec << std::endl;
 
-        cmd_->ret_ = ec;
+        if (5 == ec)
+            cmd_->ret_ = MC::EC_SUCC;
+        else
+            cmd_->ret_ = ec;
         cmd_->status_ = ec == MC::EC_CONNECTED? 1: 0;
         cmd_->Ser();
 

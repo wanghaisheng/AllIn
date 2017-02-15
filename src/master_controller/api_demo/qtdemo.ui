@@ -36,7 +36,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <property name="movable">
      <bool>false</bool>
@@ -1874,129 +1874,11 @@
        <string>印控仪状态</string>
       </property>
      </widget>
-     <widget class="QGroupBox" name="groupBox_10">
-      <property name="geometry">
-       <rect>
-        <x>260</x>
-        <y>20</y>
-        <width>461</width>
-        <height>151</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>印控仪编号</string>
-      </property>
-      <widget class="QPushButton" name="pb_write_id_">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>40</y>
-         <width>93</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>写编号</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pb_read_id_">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>90</y>
-         <width>93</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>读编号</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="le_write_id_">
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>40</y>
-         <width>311</width>
-         <height>22</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="le_read_id_">
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>90</y>
-         <width>311</width>
-         <height>22</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_11">
-      <property name="geometry">
-       <rect>
-        <x>730</x>
-        <y>30</y>
-        <width>411</width>
-        <height>141</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>备用板</string>
-      </property>
-      <widget class="QLineEdit" name="le_write_backup_sn_">
-       <property name="geometry">
-        <rect>
-         <x>90</x>
-         <y>30</y>
-         <width>311</width>
-         <height>21</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pb_write_backup_sn_">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>71</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>写序列号</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="le_read_backup_sn_">
-       <property name="geometry">
-        <rect>
-         <x>90</x>
-         <y>90</y>
-         <width>311</width>
-         <height>21</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pb_read_backup_sn_">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>90</y>
-         <width>71</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>读序列号</string>
-       </property>
-      </widget>
-     </widget>
      <widget class="QGroupBox" name="groupBox_12">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>190</y>
+        <x>400</x>
+        <y>10</y>
         <width>321</width>
         <height>161</height>
        </rect>
@@ -2064,135 +1946,11 @@
        </property>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_14">
-      <property name="geometry">
-       <rect>
-        <x>350</x>
-        <y>190</y>
-        <width>551</width>
-        <height>161</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>MAC</string>
-      </property>
-      <widget class="QLineEdit" name="le_write_mac1_">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>241</width>
-         <height>22</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pb_write_mac_">
-       <property name="geometry">
-        <rect>
-         <x>90</x>
-         <y>120</y>
-         <width>93</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>写MAC</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="le_write_mac2_">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>70</y>
-         <width>241</width>
-         <height>22</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="le_read_mac1_">
-       <property name="geometry">
-        <rect>
-         <x>300</x>
-         <y>30</y>
-         <width>241</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pb_read_mac_">
-       <property name="geometry">
-        <rect>
-         <x>380</x>
-         <y>120</y>
-         <width>93</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>读MAC</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="le_read_mac2_">
-       <property name="geometry">
-        <rect>
-         <x>300</x>
-         <y>70</y>
-         <width>241</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_15">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>360</y>
-        <width>131</width>
-        <height>201</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>校准点</string>
-      </property>
-      <widget class="QPushButton" name="pb_write_cal_points_">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>60</y>
-         <width>93</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>写校准点</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pb_read_cal_points_">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>120</y>
-         <width>93</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>读校准点</string>
-       </property>
-      </widget>
-     </widget>
      <widget class="QGroupBox" name="groupBox_17">
       <property name="geometry">
        <rect>
-        <x>150</x>
-        <y>370</y>
+        <x>20</x>
+        <y>220</y>
         <width>431</width>
         <height>191</height>
        </rect>
@@ -2283,50 +2041,11 @@
        </property>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_18">
-      <property name="geometry">
-       <rect>
-        <x>920</x>
-        <y>190</y>
-        <width>211</width>
-        <height>161</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>报警器电压</string>
-      </property>
-      <widget class="QPushButton" name="pb_read_voltage_">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>50</y>
-         <width>93</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>读电压</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="le_voltage_">
-       <property name="geometry">
-        <rect>
-         <x>60</x>
-         <y>110</y>
-         <width>71</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </widget>
      <widget class="QGroupBox" name="groupBox_19">
       <property name="geometry">
        <rect>
         <x>590</x>
-        <y>370</y>
+        <y>220</y>
         <width>221</width>
         <height>191</height>
        </rect>
@@ -2400,24 +2119,11 @@
        </property>
       </widget>
      </widget>
-     <widget class="QPushButton" name="pb_hardware_ver_">
-      <property name="geometry">
-       <rect>
-        <x>910</x>
-        <y>380</y>
-        <width>93</width>
-        <height>28</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>硬件版本号</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_16">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>590</y>
+        <y>470</y>
         <width>171</width>
         <height>25</height>
        </rect>
@@ -2430,7 +2136,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>630</y>
+        <y>520</y>
         <width>113</width>
         <height>31</height>
        </rect>
@@ -2440,7 +2146,7 @@
       <property name="geometry">
        <rect>
         <x>150</x>
-        <y>620</y>
+        <y>510</y>
         <width>81</width>
         <height>46</height>
        </rect>

@@ -270,19 +270,9 @@ private:
 
     void HandleSetSideDoor();   //设置侧门提示时间
 
-    void HandleWriteMAC();      //写MAC
-    void HandleReadMAC();       //读MAC
-
-    void HandleReadVoltage();   //读电压
-
-    void HandldeWriteCalPoints();   //写校准点
-    void HandleReadPCalPoints();    //读校准点
-
     void HandleCheckParam();         //获取物理范围
 
     void HandleReadAlarm();         //读报警器状态
-
-    void HandleHardwareVer();       //读取硬件版本号
 
     void HandleReadRFID();
 

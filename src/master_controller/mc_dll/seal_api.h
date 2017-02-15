@@ -165,7 +165,7 @@ public:
 
     // 开关蜂鸣器
     // operation        --- 0--关, 1--开
-    void OperateBeep(int operation, NotifyResult* notify);
+    void OperateBeep(int operation, int type, int interval, NotifyResult* notify);
 
     // 卡槽数量查询
     void QuerySlot(NotifyResult* notify);

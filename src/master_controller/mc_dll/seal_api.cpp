@@ -1786,9 +1786,12 @@ void MC::STSealAPI::OperateSafeDoor(int operation, int timeout, NotifyResult* no
 
 class OperateBeepEv : public MC::BaseEvent {
 public:
-    OperateBeepEv(std::string des, int operation, MC::NotifyResult* notify) :
+    OperateBeepEv(std::string des, int operation, int type, int interval, 
+        MC::NotifyResult* notify) :
         BaseEvent(des),
         operation_(operation),
+        type_(type),
+        interval_(interval),
         notify_(notify) {
 
     }
@@ -1803,15 +1806,42 @@ public:
             goto NT;
         }
 
+        if (type_ != 0 && type_ != 1) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
         // 蜂鸣器开关
         //0x16, 蜂鸣器控制
         //beep      --- 0 关闭; 1 长鸣; 2 间隔响
         //interval  --- 当beep=2时该值有效, 间隔响时常(单位秒)
-        int ret = FBeepCtrl(operation_, 0);
-        if (0 != ret) {
-            ec = MC::EC_DRIVER_FAIL;
-            goto NT;
+        if (operation_ == 0) {
+            int ret = FBeepCtrl(0, 0);
+            if (0 != ret) {
+                ec = MC::EC_DRIVER_FAIL;
+                goto NT;
+            }
+        } else if (1 == operation_) {
+            if (0 == type_) {
+                int ret = FBeepCtrl(1, 0);
+                if (0 != ret) {
+                    ec = MC::EC_DRIVER_FAIL;
+                    goto NT;
+                }
+            } else if (1 == type_) {
+                if (interval_ < 0) {
+                    ec = MC::EC_INVALID_PARAMETER;
+                    goto NT;
+                }
+
+                int ret = FBeepCtrl(2, interval_);
+                if (0 != ret) {
+                    ec = MC::EC_DRIVER_FAIL;
+                    goto NT;
+                }
+            }
         }
+
 
         ec = MC::EC_SUCC;
 
@@ -1824,15 +1854,19 @@ public:
 
 private:
     int operation_;
+    int type_;
+    int interval_;
 
     MC::NotifyResult* notify_;
 };
 
-void MC::STSealAPI::OperateBeep(int operation, NotifyResult* notify)
+void MC::STSealAPI::OperateBeep(int operation, int type, int interval, NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) OperateBeepEv(
         "蜂鸣器开关",
         operation,
+        type,
+        interval,
         notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);
@@ -2299,7 +2333,7 @@ public:
         }
 
         int ret = SetSideDoor(keep_, timeout_);
-        if (!ret) {
+        if (0 != ret) {
             ec = MC::EC_DRIVER_FAIL;
             goto NT;
         }

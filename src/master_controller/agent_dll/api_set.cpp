@@ -498,7 +498,7 @@ void AsynAPISet::HandleQueryCnn(char* chBuf)
     QueryCnnCmd cmd;
     ParseCmd(&cmd, chBuf);
     Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleQueryCnn->cmd: %s, "
-        "status: cmd.status_, ret: %d",
+        "status: %d, ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.status_,
         cmd.ret_);
@@ -1055,10 +1055,12 @@ int AsynAPISet::AsynSafeControl(int ctrl, CtrlSafeNT* nt)
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
 
-int AsynAPISet::AsynBeepControl(int ctrl, CtrlBeepNT* nt)
+int AsynAPISet::AsynBeepControl(int ctrl, int type, int interval, CtrlBeepNT* nt)
 {
     BeepCtrlCmd* cmd = new BeepCtrlCmd;
     cmd->ctrl_ = ctrl;
+    cmd->type_ = type;
+    cmd->inverval_ = inverval;
     InsertNotify(cmd->send_time_, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);

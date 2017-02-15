@@ -327,7 +327,7 @@ public:
 
     int AsynSafeControl(int ctrl, CtrlSafeNT* nt);
 
-    int AsynBeepControl(int ctrl, CtrlBeepNT* nt);
+    int AsynBeepControl(int ctrl, int type, int interval, CtrlBeepNT* nt);
 
     int AsynQuerySlot(QuerySlotNT* nt);
 

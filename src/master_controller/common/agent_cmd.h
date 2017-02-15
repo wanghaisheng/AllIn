@@ -520,6 +520,8 @@ public:
 
 public:
     int             ctrl_;      // 0-关, 1-开
+    int             type_;
+    int             interval_;
     MC::ErrorCode   ret_;
 };
 

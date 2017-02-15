@@ -187,25 +187,11 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_unlock_, &QPushButton::clicked, this, &QtDemo::HandleUnlock);
     connect(ui.pb_stamper_lock_, &QPushButton::clicked, this, &QtDemo::HandleIsLock);
 
-    connect(ui.pb_write_id_, &QPushButton::clicked, this, &QtDemo::HandleWriteID);
-    connect(ui.pb_read_id_, &QPushButton::clicked, this, &QtDemo::HandleReadID);
-    connect(ui.pb_write_backup_sn_, &QPushButton::clicked, this, &QtDemo::HandleWriteBackupSN);
-    connect(ui.pb_read_backup_sn_, &QPushButton::clicked, this, &QtDemo::HandleReadBackupSN);
     connect(ui.pb_set_sidedoor_, &QPushButton::clicked, this, &QtDemo::HandleSetSideDoor);
-
-    connect(ui.pb_write_mac_, &QPushButton::clicked, this, &QtDemo::HandleWriteMAC);
-    connect(ui.pb_read_mac_, &QPushButton::clicked, this, &QtDemo::HandleReadMAC);
-
-    connect(ui.pb_read_voltage_, &QPushButton::clicked, this, &QtDemo::HandleReadVoltage);
-
-    connect(ui.pb_write_cal_points_, &QPushButton::clicked, this, &QtDemo::HandldeWriteCalPoints);
-    connect(ui.pb_read_cal_points_, &QPushButton::clicked, this, &QtDemo::HandleReadPCalPoints);
 
     connect(ui.pb_check_param_, &QPushButton::clicked, this, &QtDemo::HandleCheckParam);
 
     connect(ui.pb_read_alarm_, &QPushButton::clicked, this, &QtDemo::HandleReadAlarm);
-
-    connect(ui.pb_hardware_ver_, &QPushButton::clicked, this, &QtDemo::HandleHardwareVer);
 
     connect(ui.pb_read_rfid_, &QPushButton::clicked, this, &QtDemo::HandleReadRFID);
     
@@ -423,13 +409,11 @@ void QtDemo::HandleCnnStatus()
     if (0 != ret)
         return Info(QString::fromLocal8Bit("获取连接状态失败, er: ") + 
             QString::number(ret));
-
-    if (0 == cnn)
-        ui.statusBar->showMessage(QString::fromLocal8Bit("设备断开"), STATUS_TEXT);
-    else if (1 == cnn)
+        
+    if (1 == cnn)
         ui.statusBar->showMessage(QString::fromLocal8Bit("设备连接"), STATUS_TEXT);
     else
-        ui.statusBar->showMessage(QString::fromLocal8Bit("状态错误"), STATUS_TEXT);
+        ui.statusBar->showMessage(QString::fromLocal8Bit("设备断开"), STATUS_TEXT);
 }
 
 void QtDemo::HandleOpenCnn()
@@ -1012,9 +996,8 @@ void QtDemo::HandleQueryCam()
             QString::fromLocal8Bit("-失败, er: ") +
             QString::number(ret));
 
-    std::string status_text = status == 0 ? "关闭" : "打开";
     Info(ui.cb_cam_list_->currentText() + QString::fromLocal8Bit(": ") +
-        QString::fromStdString(status_text));
+        QString::fromLocal8Bit(status == 0 ? "关闭" : "打开"));
 }
 
 void QtDemo::HandlePreStamp()
@@ -1272,58 +1255,10 @@ void QtDemo::HandleIsLock()
         return Info(QString::fromLocal8Bit("获取锁定状态失败, er: ") + 
             QString::number(ret));
 
-    Info(QString::fromLocal8Bit("锁定状态: ") + QString::number(lock));
-}
-
-void QtDemo::HandleWriteID()
-{
-    std::string id = ui.le_write_id_->text().toStdString();
-    if (id.empty())
-        return Info(QString::fromLocal8Bit("输入编号为空"));
-
-    int ret = ::WriteStamperIdentifier((unsigned char*)id.c_str(), id.length());
-    if (STF_SUCCESS != ret)
-        return Info(QString::fromLocal8Bit("写编号失败"));
-
-    ui.statusBar->showMessage(QString::fromLocal8Bit("写编号成功"), STATUS_TEXT);
-}
-
-void QtDemo::HandleReadID()
-{
-    std::string sn;
-    int ret = ST_QueryMachine(sn);
-    if (0 != ret)
-        return Info(QString::fromLocal8Bit("读编号失败"));
-
-    ui.le_read_id_->setText(QString::fromStdString(sn));
-    ui.statusBar->showMessage(QString::fromLocal8Bit("读编号成功"), STATUS_TEXT);
-}
-
-void QtDemo::HandleWriteBackupSN()
-{
-    std::string sn = ui.le_write_backup_sn_->text().toStdString();
-    if (sn.empty())
-        return Info(QString::fromLocal8Bit("序列号为空"));
-
-    if (sn.length() > 48)
-        return Info(QString::fromLocal8Bit("序列号超过最大长度"));
-
-    int ret = WriteBackupSN((unsigned char*)sn.c_str(), sn.length());
-    if (ret != STF_SUCCESS)
-        return Info(QString::fromLocal8Bit("写备板序列号失败"));
-
-    ui.statusBar->showMessage(QString::fromLocal8Bit("写备板序列号成功"), STATUS_TEXT);
-}
-
-void QtDemo::HandleReadBackupSN()
-{
-    unsigned char sn[49] = { 0 };
-    int ret = ReadBackupSN(sn, 48);
-    if (ret != STF_SUCCESS)
-        return Info(QString::fromLocal8Bit("读备板序列号失败"));
-
-    ui.le_read_backup_sn_->setText(QString::fromStdString((char*)sn));
-    ui.statusBar->showMessage(QString::fromLocal8Bit("读备板序列号成功"), STATUS_TEXT);
+    if (1 == lock)
+        Info(QString::fromLocal8Bit("未锁定"));
+    else if (0 == lock)
+        Info(QString::fromLocal8Bit("已锁定"));
 }
 
 void QtDemo::HandleSetSideDoor()
@@ -1339,95 +1274,11 @@ void QtDemo::HandleSetSideDoor()
     ui.statusBar->showMessage(QString::fromLocal8Bit("设置安全门开门成功"), STATUS_TEXT);
 }
 
-void QtDemo::HandleWriteMAC()
-{
-    std::string mac1 = ui.le_write_mac1_->text().toStdString();
-    std::string mac2 = ui.le_write_mac2_->text().toStdString();
-
-    int ret = WriteMAC(
-        mac1.empty()? NULL: (unsigned char*)mac1.c_str(),
-        mac2.empty()? NULL: (unsigned char*)mac2.c_str(),
-        mac1.length(),
-        mac2.length());
-    if (STF_SUCCESS != ret)
-        return Info(QString::fromLocal8Bit("写MAC地址失败"));
-
-    ui.statusBar->showMessage(QString::fromLocal8Bit("写MAC地址成功"), STATUS_TEXT);
-}
-
 void QtDemo::ShowTimeElapsed(unsigned long begin)
 {
     unsigned long end = GetTickCount();
     unsigned long interval = end - begin;
     Info(QString::fromLocal8Bit("耗时(毫秒): ") + QString::number(interval));
-}
-
-void QtDemo::HandleReadMAC()
-{
-    unsigned char mac1[18] = { 0 };
-    unsigned char mac2[18] = { 0 };
-    unsigned long begin = GetTickCount();
-    int ret = ReadMAC(
-        mac1,
-        mac2,
-        18);
-    ShowTimeElapsed(begin);
-
-    if (STF_SUCCESS != ret)
-        return Info(QString::fromLocal8Bit("读MAC地址失败"));
-
-    ui.le_read_mac1_->setText(QString::fromStdString((char*)mac1));
-    ui.le_read_mac2_->setText(QString::fromStdString((char*)mac2));
-    ui.statusBar->showMessage(QString::fromLocal8Bit("读MAC地址成功"), STATUS_TEXT);
-}
-
-void QtDemo::HandleReadVoltage()
-{
-    unsigned char voltage = 0;
-    int ret = ReadAlarmVoltage(&voltage);
-    if (STF_SUCCESS != ret)
-        return Info(QString::fromLocal8Bit("读报警器电压失败"));
-
-    ui.le_voltage_->setText(QString::fromLocal8Bit("电压值(伏): ") + QString::number(voltage * 0.1));
-    ui.le_voltage_->adjustSize();
-    ui.statusBar->showMessage(QString::fromLocal8Bit("读报警器电压成功"), STATUS_TEXT);
-}
-
-void QtDemo::HandldeWriteCalPoints()
-{
-    unsigned short pts[] = 
-    {
-        12, 34,
-        54, 104,
-        209, 45,
-        232, 13,
-        101, 110
-    };
-
-    int ret = WriteCalibrationPoint(pts, 10);
-    if (STF_SUCCESS != ret)
-        return Info(QString::fromLocal8Bit("写校准点失败"));
-
-    ui.statusBar->showMessage(QString::fromLocal8Bit("写校准点成功"), STATUS_TEXT);
-}
-
-void QtDemo::HandleReadPCalPoints()
-{
-    unsigned short pts[10] = { 0 };
-    int ret = CalibrationPoint(pts, 10);
-    if (STF_SUCCESS != ret)
-        return Info(QString::fromLocal8Bit("读校准点失败"));
-
-    QString str;
-    str = QString::fromLocal8Bit("校准点:\n") + 
-        QString::fromLocal8Bit("(") + QString::number(pts[0]) + QString::fromLocal8Bit(",") + QString::number(pts[1]) + QString::fromLocal8Bit(")\n") +
-        QString::fromLocal8Bit("(") + QString::number(pts[2]) + QString::fromLocal8Bit(",") + QString::number(pts[3]) + QString::fromLocal8Bit(")\n") +
-        QString::fromLocal8Bit("(") + QString::number(pts[4]) + QString::fromLocal8Bit(",") + QString::number(pts[5]) + QString::fromLocal8Bit(")\n") +
-        QString::fromLocal8Bit("(") + QString::number(pts[6]) + QString::fromLocal8Bit(",") + QString::number(pts[7]) + QString::fromLocal8Bit(")\n") +
-        QString::fromLocal8Bit("(") + QString::number(pts[8]) + QString::fromLocal8Bit(",") + QString::number(pts[9]) + QString::fromLocal8Bit(")");
-    
-    Info(str);
-    ui.statusBar->showMessage(QString::fromLocal8Bit("读校准点成功"), STATUS_TEXT);
 }
 
 void QtDemo::HandleCheckParam()
@@ -1467,26 +1318,16 @@ void QtDemo::HandleReadAlarm()
     ui.statusBar->showMessage(QString::fromLocal8Bit("读报警器控制状态成功"), STATUS_TEXT);
 }
 
-void QtDemo::HandleHardwareVer()
-{
-    char version[255] = { 0 };
-    int ret = GetHardwareVer(version, 254);
-    if (0 != ret)
-        return Info(QString::fromLocal8Bit("读硬件版本号失败, err:") + QString::number(ret));
-
-    Info(QString::fromStdString(version));
-}
-
 void QtDemo::HandleReadRFID()
 {
     int slot = atoi(ui.le_rfid_slot_->text().toStdString().c_str());
     int rfid;
-    int ret = ST_GetRFID(slot, rfid);
-    if (0 != ret)
-        return Info(QString::fromLocal8Bit("获取rfid失败, err:") + QString::number(ret));
-
+//     int ret = ST_GetRFID(slot, rfid);
+//     if (0 != ret)
+//         return Info(QString::fromLocal8Bit("获取rfid失败, err:") + QString::number(ret));
+    rfid = 255;
     Info(QString::number(slot) + QString::fromLocal8Bit("卡槽的RFID: ") +
-        QString::number(rfid));
+        QString::number(rfid, 16));
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -28,7 +28,10 @@ extern "C"{
 
 // 获取印控机与PC连接状态
 // cnn      --- 0: 断开连接
-//          --- 1: 连接
+//          --- 1: 已连接
+// 返回值：
+//          --- 0：成功
+//          --- 7：连接线已断开(印控机与PC未线连)
 MASTERCTRL_AGENT_API int ST_QueryCnn(
     int& cnn);
 
@@ -133,8 +136,12 @@ MASTERCTRL_AGENT_API int ST_ControlSafe(
 
 // 蜂鸣器开关
 // ctrl     --- 0 - 关, 1 - 开
+// type     --- 0 - 长鸣，1 - 间隔响
+// interval --- 当type = 1时该参数有效, 间隔响时常(单位秒)
 MASTERCTRL_AGENT_API int ST_ControlBeep(
-    int ctrl);
+    int ctrl,
+    int type = 0,
+    int interval = 2);
 
 // 报警器开关
 //alarm     --- 0(开门报警器)
