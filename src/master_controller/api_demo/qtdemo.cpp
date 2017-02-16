@@ -152,7 +152,8 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_select_picture_, &QPushButton::clicked, this, &QtDemo::HandleSelectPic);
 
     connect(ui.pb_illustrate_, &QPushButton::clicked, this, &QtDemo::HandleIllusrate);
-    connect(ui.pb_check_stamp_, &QPushButton::clicked, this, &QtDemo::HandleCheckStamp);
+    //connect(ui.pb_check_stamp_, &QPushButton::clicked, this, &QtDemo::HandleCheckStamp);
+    ui.pb_check_stamp_->hide();
 
     connect(ui.combo_img_sel_, SIGNAL(activated(int)), this, SLOT(HandleSelectImg(int)));
     connect(ui.pb_recog_code_, &QPushButton::clicked, this, &QtDemo::HandleRecogCode);
@@ -176,7 +177,8 @@ QtDemo::QtDemo(QWidget *parent)
 
     connect(ui.pb_prepare_, &QPushButton::clicked, this, &QtDemo::HandlePrepare);
     connect(ui.pb_ordinary_stamp_, &QPushButton::clicked, this, &QtDemo::HandleOridinary);
-    connect(ui.pb_auto_stamp_, &QPushButton::clicked, this, &QtDemo::HandleAutoStamp);
+    //connect(ui.pb_auto_stamp_, &QPushButton::clicked, this, &QtDemo::HandleAutoStamp);
+    ui.pb_auto_stamp_->hide();
 
     connect(ui.pb_finish_stamp_, &QPushButton::clicked, this, &QtDemo::HandleFinishStamp);
     connect(ui.pb_release_machine_, &QPushButton::clicked, this, &QtDemo::HandleReleaseMachine);
@@ -1011,9 +1013,9 @@ void QtDemo::InitSnapshot()
     ui.combo_img_sel_->addItem(QString::fromLocal8Bit("原图"));
     ui.combo_img_sel_->addItem(QString::fromLocal8Bit("切图"));
     ui.combo_img_sel_->setFixedSize(111, 22);
-
-    ui.le_x_in_dev_->setText(QString::number(3));
-    ui.le_y_in_dev_->setText(QString::number(60));
+// 
+//     ui.le_x_in_dev_->setText(QString::number(3));
+//     ui.le_y_in_dev_->setText(QString::number(60));
 
     ui.pb_select_picture_->hide();
 }
@@ -1150,8 +1152,8 @@ void QtDemo::HandleOridinary()
         ui.le_task_id_->text().toStdString(),
         para_.stamp_idx,
         para_.ink,
-        atoi(ui.le_x_in_img_->text().toStdString().c_str()),    // 盖章位置x坐标, 原始图片中的像素
-        atoi(ui.le_y_in_img_->text().toStdString().c_str()),    // 盖章位置y坐标, 原始图片中的像素
+        atoi(ui.le_x_in_dev_->text().toStdString().c_str()),    // 盖章位置x坐标
+        atoi(ui.le_y_in_dev_->text().toStdString().c_str()),    // 盖章位置y坐标
         0);                                                     // 印章旋转角度, 大于等于0且小于360度
     if (0 != ret)
         return Info(QString::fromLocal8Bit("普通用印失败,er: ") + QString::number(ret));

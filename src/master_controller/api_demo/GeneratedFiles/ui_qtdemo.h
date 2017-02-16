@@ -136,7 +136,6 @@ public:
     QComboBox *cb_cam_list_;
     QPushButton *pb_open_cam_;
     QPushButton *pb_close_cam_;
-    QPushButton *pushButton_3;
     QPushButton *pb_status_cam_;
     QWidget *tab;
     QGroupBox *groupBox_5;
@@ -196,12 +195,12 @@ public:
     {
         if (QtDemoClass->objectName().isEmpty())
             QtDemoClass->setObjectName(QStringLiteral("QtDemoClass"));
-        QtDemoClass->resize(1200, 859);
+        QtDemoClass->resize(1200, 915);
         centralWidget = new QWidget(QtDemoClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         tabWidget = new QTabWidget(centralWidget);
         tabWidget->setObjectName(QStringLiteral("tabWidget"));
-        tabWidget->setGeometry(QRect(10, 20, 1191, 771));
+        tabWidget->setGeometry(QRect(10, 20, 1191, 801));
         QFont font;
         font.setFamily(QString::fromUtf8("\345\276\256\350\275\257\351\233\205\351\273\221"));
         font.setPointSize(9);
@@ -511,7 +510,7 @@ public:
         label_27->setStyleSheet(QStringLiteral("color: rgb(255, 0, 0);"));
         groupBox_2 = new QGroupBox(tab_stamper);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
-        groupBox_2->setGeometry(QRect(0, 610, 351, 121));
+        groupBox_2->setGeometry(QRect(0, 610, 351, 141));
         combo_img_sel_ = new QComboBox(groupBox_2);
         combo_img_sel_->setObjectName(QStringLiteral("combo_img_sel_"));
         combo_img_sel_->setGeometry(QRect(0, 20, 111, 22));
@@ -547,7 +546,7 @@ public:
         pb_check_stamp_->setGeometry(QRect(210, 30, 93, 28));
         groupBox_24 = new QGroupBox(tab_stamper);
         groupBox_24->setObjectName(QStringLiteral("groupBox_24"));
-        groupBox_24->setGeometry(QRect(380, 610, 791, 121));
+        groupBox_24->setGeometry(QRect(380, 610, 791, 131));
         label_3 = new QLabel(groupBox_24);
         label_3->setObjectName(QStringLiteral("label_3"));
         label_3->setGeometry(QRect(10, 40, 53, 16));
@@ -569,9 +568,6 @@ public:
         pb_close_cam_ = new QPushButton(tab_stamper);
         pb_close_cam_->setObjectName(QStringLiteral("pb_close_cam_"));
         pb_close_cam_->setGeometry(QRect(150, 60, 61, 31));
-        pushButton_3 = new QPushButton(tab_stamper);
-        pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
-        pushButton_3->setGeometry(QRect(650, 700, 61, 31));
         pb_status_cam_ = new QPushButton(tab_stamper);
         pb_status_cam_->setObjectName(QStringLiteral("pb_status_cam_"));
         pb_status_cam_->setGeometry(QRect(30, 60, 61, 31));
@@ -741,7 +737,7 @@ public:
 
         retranslateUi(QtDemoClass);
 
-        tabWidget->setCurrentIndex(3);
+        tabWidget->setCurrentIndex(2);
 
 
         QMetaObject::connectSlotsByName(QtDemoClass);
@@ -826,7 +822,6 @@ public:
         label_4->setText(QApplication::translate("QtDemoClass", "\345\210\207\345\233\276:", 0));
         pb_open_cam_->setText(QApplication::translate("QtDemoClass", "\346\211\223\345\274\200", 0));
         pb_close_cam_->setText(QApplication::translate("QtDemoClass", "\345\205\263\351\227\255", 0));
-        pushButton_3->setText(QApplication::translate("QtDemoClass", "\346\211\223\345\274\200", 0));
         pb_status_cam_->setText(QApplication::translate("QtDemoClass", "\347\212\266\346\200\201", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_stamper), QApplication::translate("QtDemoClass", "\346\213\215\347\205\247/\350\257\206\345\210\253", 0));
         groupBox_5->setTitle(QApplication::translate("QtDemoClass", "\347\233\226\347\253\240", 0));
