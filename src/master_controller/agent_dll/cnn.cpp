@@ -158,16 +158,13 @@ bool MC::Cnn::RecvBuf(TCHAR* buf, int buf_len, DWORD* actual_read)
             actual_read,                    // 实际读的字节
             NULL) == 0? false: true;        // 非 overlapped
     } else {                                                // 消息队列
-        unsigned int priority;
+        unsigned int priority = 0;
         boost::interprocess::message_queue::size_type recvd_size;
         try {
             heart_mtx_.lock();
-            bool server_dead = server_dead_;
-            heart_mtx_.unlock();
-            if (!server_dead && NULL != recv_mq_) {
-                recv_mq_->receive(buf, buf_len, recvd_size, priority);
+            if (recv_mq_->try_receive(buf, buf_len, recvd_size, priority))
                 *actual_read = recvd_size;
-            }
+            heart_mtx_.unlock();
         } catch (boost::interprocess::interprocess_exception &ex) {
             std::cout << ex.what() << std::endl;
             Log::WriteLog(LL_ERROR, "AsynAPISet::ReceiverFunc->消息队列异常: %s", ex.what());

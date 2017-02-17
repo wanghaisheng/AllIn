@@ -193,7 +193,8 @@ MASTERCTRL_AGENT_API int ST_GetDevModel(
 //              2 -- 凭证摄像头的补光灯
 // ctrl     --- 控制开关
 //              0 -- 关; 1 -- 开
-// value    --- 打开补光灯时同步设置补光灯的亮度值
+// value    --- 打开补光灯同时设置补光灯的亮度值,
+//              1-100, 1为最弱, 100为最亮。
 MASTERCTRL_AGENT_API int ST_ControlLed(
     int which,
     int ctrl,

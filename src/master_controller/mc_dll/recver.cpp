@@ -1896,11 +1896,15 @@ public:
     {
         std::cout << "QueryCnnNT::Notify->ec: " << ec << std::endl;
 
-        if (5 == ec)
+        if (5 == ec) {
             cmd_->ret_ = MC::EC_SUCC;
-        else
+            cmd_->status_ = 1;
+        } else if (7 == ec){
+            cmd_->ret_ = MC::EC_SUCC;
+            cmd_->status_ = 0;
+        } else {
             cmd_->ret_ = ec;
-        cmd_->status_ = ec == MC::EC_CONNECTED? 1: 0;
+        }
         cmd_->Ser();
 
         bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());

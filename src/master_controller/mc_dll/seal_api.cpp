@@ -2029,22 +2029,24 @@ public:
 
         char door;
         char vibration;
-        char door_str[2] = {0};
-        char vibration_str[2] = {0};
+        char door_str[11] = {0};
+        char vibration_str[11] = {0};
         int ret = ReadAlarmStatus(&door, &vibration);
         if (0 != ret) {
             ec = MC::EC_DRIVER_FAIL;
             goto NT;
         }
 
-        sprintf_s(door_str, "%c", door);
-        sprintf_s(vibration_str, "%c", vibration);
+        sprintf_s(door_str, "%d", door);
+        sprintf_s(vibration_str, "%d", vibration);
 
         ec = MC::EC_SUCC;
 
     NT:
         notify_->Notify(ec, door_str, vibration_str);
-        Log::WriteLog(LL_DEBUG, "MC::QueryAlarmEv->报警器状态查询, ec: %s",
+        Log::WriteLog(LL_DEBUG, "MC::QueryAlarmEv->报警器状态查询, 门报警: %s, 振动报警: %s, ec: %s",
+            door_str,
+            vibration_str,
             MC::ErrorMsg[ec].c_str());
         delete this;
     }
@@ -2560,7 +2562,7 @@ public:
 
         if ((which_ != 1 && which_ != 2) 
             || (switch_ != 0 && switch_ != 1)
-            || value_ < 0) {
+            || value_ <= 0) {
             ec = MC::EC_INVALID_PARAMETER;
             goto NT;
         }
