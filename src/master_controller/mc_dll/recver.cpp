@@ -1262,11 +1262,9 @@ public:
         cmd_->ret_ = ec;
         if (ec == MC::EC_SUCC) {
             for (int i = 0; i < MAX_STAMPER_NUM; ++i) {
-                if (data1.at(i) == 0x30)
-                    cmd_->stamper_status_[i] = 0;
-                else if (data1.at(i) == 0x31)
-                    cmd_->stamper_status_[i] = 1;
+                cmd_->stamper_status_[i] = data1.at(i);
             }
+            cmd_->stamper_status_[MAX_STAMPER_NUM] = 0x0;
         }
         cmd_->Ser();
 

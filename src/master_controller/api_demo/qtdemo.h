@@ -74,7 +74,9 @@ private:
     void HandleBeepOn();        //长鸣
     void HandleBeepOff();       //关闭蜂鸣器
 
-    void HandleQuerySlots();    //获取红外状态
+    void HandleQuerySlots();
+
+    void HandleQueryStampers();
 
     void HandleABCCheck();          //农行校准
 

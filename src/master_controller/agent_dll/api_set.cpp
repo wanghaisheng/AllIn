@@ -18,6 +18,25 @@ void AsynAPISet::ParseCmd(BaseCmd* cmd, char* chBuf)
     cmd->Unser();
 }
 
+void AsynAPISet::DeleteNotify(void* nt)
+{
+    boost::lock_guard<boost::mutex> lk(api_map_mtx);
+    std::map<void*, std::string>::iterator nt_it = nt_maps_.find(nt);
+    if (nt_it != nt_maps_.end()) {
+        std::map<std::string, void*>::iterator it = api_maps_.begin();
+        for (; it != api_maps_.end(); ++it) {
+            if (it->first == nt_it->second) {
+                Log::WriteLog(LL_DEBUG, "AsynAPISet::DeleteNotify->发送时间: %s, 通知对象值: %d",
+                    nt_it->second.c_str(),
+                    it->second);
+
+                api_maps_.erase(it);
+                break;
+            }
+        }
+    }
+}
+
 void* AsynAPISet::LookupSendTime(const std::string& send_time)
 {
     void* ptr = NULL;
@@ -26,8 +45,7 @@ void* AsynAPISet::LookupSendTime(const std::string& send_time)
     for (; it != api_maps_.end(); ++it) {
         if (it->first == send_time) {
             ptr = it->second;
-            api_maps_.erase(it);
-
+            
             Log::WriteLog(LL_DEBUG, "AsynAPISet::LookupSendTime->发送时间: %s, 通知对象值: %d",
                 send_time.c_str(),
                 ptr);
@@ -323,7 +341,7 @@ void AsynAPISet::HandleQueryStampers(char* chBuf)
 {
     QueryStampersCmd cmd;
     ParseCmd(&cmd, chBuf);
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleQueryStampers->cmd: %s, 操作: %d, "
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleQueryStampers->cmd: %s, 章状态: %s, "
         "ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.stamper_status_,
@@ -963,6 +981,7 @@ void AsynAPISet::InsertNotify(const std::string& st, const void* const nt)
 {
     api_map_mtx.lock();
     api_maps_.insert(std::make_pair(st, (void*)nt));
+    nt_maps_.insert(std::make_pair((void*)nt, st));
     Log::WriteLog(LL_DEBUG, "AsynAPISet::InsertNotify->通知对象值: %d, 发送时间: %s",
         nt,
         st.c_str());

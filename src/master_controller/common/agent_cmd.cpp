@@ -144,7 +144,7 @@ void IdentifyElementCmd::Unser()
 void OridinaryStampCmd::Ser()
 {
     BaseCmd::Ser();
-    xs_ << task_id_ /*<< type_ */<< stamper_num_ << ink_ << x_ << y_ << angle_
+    xs_ << task_id_ << type_ << stamper_num_ << ink_ << x_ << y_ << angle_
         << seal_type_ << ret_;
     xs_.Trim();
 }
@@ -152,8 +152,8 @@ void OridinaryStampCmd::Ser()
 void OridinaryStampCmd::Unser()
 {
     BaseCmd::Unser();
-    xs_ >> task_id_ /*>> type_ */>> stamper_num_ >> ink_ >> x_ >> y_ >> 
-        angle_ >> seal_type_ >> ret_;
+    xs_ >> task_id_ >> type_ >> stamper_num_ >> ink_ >> x_ >> y_ >> angle_ 
+        >> seal_type_ >> ret_;
 }
 
 void AutoStampCmd::Ser()
@@ -276,18 +276,18 @@ void CalibrateCmd::Unser()
 void QueryStampersCmd::Ser()
 {
     BaseCmd::Ser();
-    for (int i = 0; i < MAX_STAMPER_NUM; ++i)
-        xs_ << stamper_status_[i];
-    xs_ << ret_;
+//     for (int i = 0; i < MAX_STAMPER_NUM; ++i)
+//         xs_ << stamper_status_[i];
+    xs_ << stamper_status_ << ret_;
     xs_.Trim();
 }
 
 void QueryStampersCmd::Unser()
 {
     BaseCmd::Unser();
-    for (int i = 0; i < MAX_STAMPER_NUM; ++i)
-        xs_ >> stamper_status_[i];
-    xs_ >> ret_;
+//     for (int i = 0; i < MAX_STAMPER_NUM; ++i)
+//         xs_ >> stamper_status_[i];
+    xs_ >> stamper_status_ >> ret_;
 }
 
 void QuerySafeCmd::Ser()

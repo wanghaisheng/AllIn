@@ -9,7 +9,6 @@
 #include "log.h"
 #include "api.h"
 
-
 AsynAPISet api_agent;
 
 const int WAIT_TIME = 5000; // 等待异步通知回调超时时间(毫秒)
@@ -73,7 +72,8 @@ int ST_QueryMachine(std::string& sn)
 
     sn = ((QueryMachNT*)nt)->sn_;
     int ret = ((QueryMachNT*)nt)->er_;
-//    delete nt;
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
     return ret;
 }
 
@@ -130,6 +130,7 @@ int ST_SetMachine(const std::string& sn)
         ((SetMachNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((SetMachNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -188,7 +189,8 @@ int ST_InitMachine(const std::string& key)
 #endif
 
     int ret = ((InitMaNT*)nt)->er_;
-    //delete nt;
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
     return ret;
 }
 
@@ -245,6 +247,7 @@ int ST_BindMAC(const std::string& mac)
         ((BindNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((BindNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -302,6 +305,7 @@ int ST_UnbindMAC(const std::string& mac)
         ((UnbindNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((UnbindNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -366,6 +370,7 @@ int ST_PrepareStamp(char stamp_num, int timeout, std::string& task_id)
 
     task_id = ((PrepareNT*)nt)->task_id_;
     int ret = ((PrepareNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -427,6 +432,7 @@ int ST_QueryPaper(int& status)
 
     status = ((PaperNT*)nt)->status_;
     int ret = ((PaperNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -496,6 +502,7 @@ int ST_Snapshot(
 #endif
 
     int ret = ((SnapNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -559,6 +566,7 @@ int ST_MergePhoto(
         ((MergeNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((MergeNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -637,6 +645,7 @@ int ST_SearchSrcImageStampPoint(
     out_x = derive_nt->x_;
     out_y = derive_nt->y_;
     out_angle = derive_nt->angle_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -702,6 +711,7 @@ int ST_RecognizeImage(const std::string& path,
     template_id = ((RecogNT*)nt)->template_id_;
     trace_num = ((RecogNT*)nt)->trace_num_;
     int ret = ((RecogNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -770,6 +780,7 @@ int ST_IdentifyElement(
 
     result = ((IdentiNT*)nt)->re_;
     int ret = ((IdentiNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -829,13 +840,16 @@ int ST_OrdinaryStamp(
     api_agent.AsynOrdinaryStamp(task, voucher, num, ink, x, y, angle, type, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((OridinaryNT*)nt)->cv_, STAMPING_WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((OridinaryNT*)nt)->cv_, 1000 * STAMPING_WAIT_TIME))
 #else
-    if (!((OridinaryNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(STAMPING_WAIT_TIME)))
+    if (!((OridinaryNT*)nt)->cv_.timed_wait(
+        lk, 
+        boost::posix_time::milliseconds(1000 * STAMPING_WAIT_TIME)))
 #endif
         ((OridinaryNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((OridinaryNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -894,6 +908,7 @@ int ST_AutoStamp(const std::string& task,
         ((AutoNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((AutoNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -951,6 +966,7 @@ int ST_FinishStamp(const std::string& task)
         ((FinishNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((FinishNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1008,6 +1024,7 @@ int ST_ReleaseStamp(const std::string& machine)
         ((ReleaseNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((ReleaseNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1072,6 +1089,7 @@ int ST_GetError(int err_code, std::string& err_msg, std::string& err_resolver)
     err_msg = ((GetErrNT*)nt)->msg_;
     err_resolver = ((GetErrNT*)nt)->resolver_;
     int ret = ((GetErrNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1125,6 +1143,7 @@ int ST_Calibrate(int slot)
         ((CaliNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((CaliNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1133,8 +1152,9 @@ int ST_Calibrate(int slot)
 
 class QueryStamNT: public QueryStampersNT {
 public:
-    QueryStamNT(int* sta) {
-        stat_ = sta;
+    QueryStamNT(char* sta, int len) {
+        status_ = sta;
+        len_ = len;
 #ifdef _XP
         cv_ = CreateEvent(
             NULL,
@@ -1150,14 +1170,16 @@ public:
     }
 #endif
 
-    virtual void Notify(int* status, int ec) {
-        int i = 0;
-        while (status[i] != 0x0) {
-            stat_[i] = status[i];
-            ++i;
+    virtual void Notify(char* status, int ec) {
+        er_ = ec;
+        if (0 == er_) {
+            int i = 0;
+            while (i < len_) {
+                status_[i] = status[i];
+                ++i;
+            }
         }
 
-        er_ = ec;
 #ifdef _XP
         SetEvent(cv_);
 #else
@@ -1171,13 +1193,15 @@ public:
 #else
     boost::condition_variable cv_;
 #endif
-    int* stat_;
+
+    char* status_;
+    int len_;
     int er_;
 };
 
-int ST_QueryStampers(int* staus)
+int ST_QueryStampers(char* status, int len)
 {
-    QueryStampersNT* nt = new QueryStamNT(staus);
+    QueryStampersNT* nt = new QueryStamNT(status, len);
     api_agent.AsynQueryStampers(nt);
 
 #ifdef _XP
@@ -1188,6 +1212,7 @@ int ST_QueryStampers(int* staus)
         ((QueryStamNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((QueryStamNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1244,6 +1269,7 @@ int ST_QuerySafe(int& status)
 
     status = ((QuerySafeDoorNT*)nt)->status_;
     int ret = ((QuerySafeDoorNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1297,6 +1323,7 @@ int ST_ControlSafe(int ctrl)
         ((CtrLSafeDoorNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((CtrLSafeDoorNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1350,6 +1377,7 @@ int ST_ControlBeep(int ctrl, int type, int interval)
         ((BeepCtrlNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((BeepCtrlNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1408,6 +1436,7 @@ int ST_QuerySlots(int &num)
 
     num = ((QuerySlNT*)nt)->num_;
     int ret = ((QuerySlNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1465,6 +1494,7 @@ int ST_ControlAlarm(int alarm, int switches)
         ((AlarmNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((AlarmNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1528,6 +1558,7 @@ int ST_ReadAlarm(int& door, int& vibration)
     int ret = derive_nt->er_;
     door = derive_nt->door_;
     vibration = derive_nt->vibration_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1587,6 +1618,7 @@ int ST_QueryMAC(std::string& mac1, std::string& mac2)
     mac1 = ((QryMACNT*)nt)->mac1_;
     mac2 = ((QryMACNT*)nt)->mac2_;
     int ret = ((QryMACNT*)nt)->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1643,6 +1675,7 @@ int ST_Lock()
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1697,6 +1730,7 @@ int ST_Unlock()
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1754,6 +1788,7 @@ int ST_QueryLock(int& lock)
 
     int ret = derive_nt->er_;
     lock = derive_nt->lock_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1808,6 +1843,7 @@ int ST_Open()
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1862,6 +1898,7 @@ int ST_Close()
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1919,6 +1956,7 @@ int ST_QueryCnn(int& cnn)
 
     cnn = derive_nt->cnn_;
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -1973,6 +2011,7 @@ int ST_SetSideDoor(int keep, int timeout)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -2030,6 +2069,7 @@ int ST_GetDevModel(std::string& model)
 
     model = derive_nt->model_;
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -2084,6 +2124,7 @@ int ST_OpenPaper(int timeout)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -2138,6 +2179,7 @@ int ST_ControlLed(int which, int ctrl, int value)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -2192,6 +2234,7 @@ int ST_CheckParam(int x, int y, int angle)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -2246,6 +2289,7 @@ int ST_OpenCamera(int which)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -2300,6 +2344,7 @@ int ST_CloseCamera(int which)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -2359,6 +2404,7 @@ int ST_QueryCamera(int which, int& status)
 
     status = derive_nt->status_;
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -2413,6 +2459,7 @@ int ST_SetResolution(int which, int x, int y)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -2467,6 +2514,7 @@ int ST_SetDPIValue(int which, int x, int y)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -2521,6 +2569,7 @@ int ST_SetProperty(int which)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -2575,6 +2624,7 @@ int ST_StartRecordVideo(int which, const std::string& path)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -2629,6 +2679,7 @@ int ST_StopRecordVideo(int which, const std::string& path)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }
@@ -2686,6 +2737,7 @@ int ST_GetRFID(int slot, int& rfid)
 
     int ret = derive_nt->er_;
     rfid = derive_nt->rfid_;
+    api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
 }

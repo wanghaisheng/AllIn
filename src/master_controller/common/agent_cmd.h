@@ -333,7 +333,7 @@ public:
 
 public:
     char            task_id_[TASK_ID_SIZE];     // 任务ID
-/*    char            type_[VOUCHER_TYPE_SIZE];   // 凭证类型*/
+    char            type_[VOUCHER_TYPE_SIZE];   // 凭证类型
     int             stamper_num_;               // 印章卡槽号
     int             ink_;                       // 是否蘸印油, 0-否, 1-是
     int             x_;                         // 印章位置X(物理坐标)
@@ -471,14 +471,14 @@ class QueryStampersCmd : public BaseCmd {
 public:
     QueryStampersCmd() : ret_(MC::EC_SUCC) {
         ct_ = CT_QUERY_STAMPERS;
-        memset(stamper_status_, 0x0, sizeof(int) * MAX_STAMPER_NUM);
+        memset(stamper_status_, 0x0, sizeof(char) * MAX_STAMPER_NUM + 1);
     }
 
     virtual void Ser();
     virtual void Unser();
 
 public:
-    int             stamper_status_[MAX_STAMPER_NUM];
+    char            stamper_status_[MAX_STAMPER_NUM + 1];
     MC::ErrorCode   ret_;
 };
 

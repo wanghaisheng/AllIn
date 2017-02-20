@@ -36,7 +36,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <property name="movable">
      <bool>false</bool>
@@ -1011,6 +1011,19 @@
       </property>
       <property name="text">
        <string>设置DPI</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_query_stamper_">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>670</y>
+        <width>150</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>印章状态</string>
       </property>
      </widget>
     </widget>

@@ -111,7 +111,7 @@ public:
 // 查询印章信息
 class QueryStampersNT {
 public:
-    virtual void Notify(int* status, int ec) = 0;
+    virtual void Notify(char* status, int ec) = 0;
 };
 
 // 安全门状态
@@ -263,6 +263,8 @@ public:
 };
 
 class AsynAPISet {
+public:
+    void DeleteNotify(void* nt);
 
 public:
     int AsynQueryMachine(const QueryMachineNT* const nt);
@@ -487,6 +489,7 @@ public:
 
 private:
     std::map<std::string, void*> api_maps_;
+    std::map<void*, std::string> nt_maps_;
 };
 
 #endif

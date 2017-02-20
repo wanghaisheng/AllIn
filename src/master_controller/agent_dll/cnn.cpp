@@ -339,7 +339,7 @@ void MC::Cnn::ReceiveFunc()
         chBuf[0] = 0x0;
     }
 
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::ReceiverFunc->thread exited, %s.",
+    Log::WriteLog(LL_DEBUG, "Cnn::ReceiverFunc->thread exited, %s.",
         running_? "running_为true": "running_为false");
 }
 

@@ -109,9 +109,10 @@ MASTERCTRL_AGENT_API int ST_Calibrate(
 
 // 查询印章状态
 // status   --- 对应章槽上是否有章
-//              0 - 表示无章, 1 - 表示有章. 如"001101"
+//              0 - 表示无章, 1 - 表示有章. 如"001101\0"
+// len      --- 数组长度（包括结尾0字符）
 MASTERCTRL_AGENT_API int ST_QueryStampers(
-    int* status);
+    char* status, int len = 7);
 
 // 查询进纸门状态
 // status        --- 0-关, 1-开

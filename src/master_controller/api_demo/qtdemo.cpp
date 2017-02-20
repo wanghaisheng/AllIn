@@ -120,6 +120,8 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_query_mac_, &QPushButton::clicked, this, &QtDemo::HandleQueryMAC);
    
     connect(ui.pb_query_slots_, &QPushButton::clicked, this, &QtDemo::HandleQuerySlots);
+    connect(ui.pb_query_stamper_, &QPushButton::clicked, this, &QtDemo::HandleQueryStampers);
+    
     connect(ui.pb_cali_stamp_, &QPushButton::clicked, this, &QtDemo::HandleABCCheck);
 
     connect(ui.le_err_code_, SIGNAL(textChanged(const QString &)), this, 
@@ -616,6 +618,17 @@ void QtDemo::HandleBeepOff()
         return Info(QString::fromLocal8Bit("关闭蜂鸣器失败, er: ") + QString::number(ret));
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("关闭蜂鸣器成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleQueryStampers()
+{
+    char stampers[7] = { 0 };
+    int ret = ST_QueryStampers(stampers, 7);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("章状态查询失败, err: ") +
+            QString::number(ret));
+
+    Info(QString::fromLocal8Bit("章状态: ") + QString::fromStdString(stampers));
 }
 
 void QtDemo::HandleQuerySlots()

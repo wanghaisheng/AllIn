@@ -97,6 +97,7 @@ public:
     QPushButton *pb_stop_record_;
     QPushButton *pb_dev_type_;
     QPushButton *pb_set_dpi_;
+    QPushButton *pb_query_stamper_;
     QWidget *tab_stamper;
     QPushButton *pb_capture_;
     QPushButton *pb_select_picture_;
@@ -439,6 +440,9 @@ public:
         pb_set_dpi_ = new QPushButton(tab_control_dev);
         pb_set_dpi_->setObjectName(QStringLiteral("pb_set_dpi_"));
         pb_set_dpi_->setGeometry(QRect(490, 620, 101, 31));
+        pb_query_stamper_ = new QPushButton(tab_control_dev);
+        pb_query_stamper_->setObjectName(QStringLiteral("pb_query_stamper_"));
+        pb_query_stamper_->setGeometry(QRect(190, 670, 150, 46));
         tabWidget->addTab(tab_control_dev, QString());
         tab_stamper = new QWidget();
         tab_stamper->setObjectName(QStringLiteral("tab_stamper"));
@@ -737,7 +741,7 @@ public:
 
         retranslateUi(QtDemoClass);
 
-        tabWidget->setCurrentIndex(2);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(QtDemoClass);
@@ -793,6 +797,7 @@ public:
         pb_stop_record_->setText(QApplication::translate("QtDemoClass", "\345\201\234\346\255\242\345\275\225\345\203\217", 0));
         pb_dev_type_->setText(QApplication::translate("QtDemoClass", "\350\256\276\345\244\207\345\236\213\345\217\267", 0));
         pb_set_dpi_->setText(QApplication::translate("QtDemoClass", "\350\256\276\347\275\256DPI", 0));
+        pb_query_stamper_->setText(QApplication::translate("QtDemoClass", "\345\215\260\347\253\240\347\212\266\346\200\201", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_control_dev), QApplication::translate("QtDemoClass", "\350\256\276\345\244\207\346\216\247\345\210\266", 0));
         pb_capture_->setText(QApplication::translate("QtDemoClass", "\346\213\215\347\205\247", 0));
         pb_select_picture_->setText(QApplication::translate("QtDemoClass", "\351\200\211\345\217\226\345\233\276\347\211\207", 0));
