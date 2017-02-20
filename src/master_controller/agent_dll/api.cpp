@@ -829,9 +829,9 @@ int ST_OrdinaryStamp(
     api_agent.AsynOrdinaryStamp(task, voucher, num, ink, x, y, angle, type, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((OridinaryNT*)nt)->cv_, 2 * WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((OridinaryNT*)nt)->cv_, STAMPING_WAIT_TIME))
 #else
-    if (!((OridinaryNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(2 * WAIT_TIME)))
+    if (!((OridinaryNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(STAMPING_WAIT_TIME)))
 #endif
         ((OridinaryNT*)nt)->er_ = MC::EC_TIMEOUT;
 

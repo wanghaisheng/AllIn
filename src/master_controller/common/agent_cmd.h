@@ -333,7 +333,7 @@ public:
 
 public:
     char            task_id_[TASK_ID_SIZE];     // 任务ID
-    char            type_[VOUCHER_TYPE_SIZE];   // 凭证类型
+/*    char            type_[VOUCHER_TYPE_SIZE];   // 凭证类型*/
     int             stamper_num_;               // 印章卡槽号
     int             ink_;                       // 是否蘸印油, 0-否, 1-是
     int             x_;                         // 印章位置X(物理坐标)
