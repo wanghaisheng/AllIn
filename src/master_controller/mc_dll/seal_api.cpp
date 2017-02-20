@@ -6,6 +6,7 @@
 #include "event_cpu.h"
 #include "tool.h"
 #include "task_mgr.h"
+#include "stamping_mgr.h"
 #include "seal_api.h"
 
 MC::STSealAPI* MC::STSealAPI::inst_ = NULL;
@@ -1096,7 +1097,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        if (num_ < 1 || num_ > 6 || (type_ != 0 && type_ != 1)) {
+        if (num_ < 1 || num_ > 6 || task_.empty() || (type_ != 0 && type_ != 1)) {
             ec = MC::EC_INVALID_PARAMETER;
             goto NT;
         }
@@ -1157,8 +1158,17 @@ public:
                 goto NT;  
             }
 
-            // 成功发起盖章, 标记当前任务号
+            // 成功发起盖章, 标记当前任务号used
             MC::TaskMgr::GetInst()->MarkUsed(task_);
+
+            // waits stamping completion
+            if (0 != StampingMgr::GetInst()->Wait(STAMPING_WAIT_TIME)) {
+                ec = MC::EC_STAMPING_TIMEOUT;
+                goto NT;
+            }
+
+            ec = StampingMgr::GetInst()->QueryStampingResult();
+            goto NT;
         } else if (ts == MC::TS_USED) {
             ec = MC::EC_TASK_CONSUMED;
             goto NT;
@@ -1166,8 +1176,6 @@ public:
             ec = MC::EC_TASK_NON_EXIST;
             goto NT;
         }
-
-        ec = MC::EC_SUCC;
 
     NT:
         notify_->Notify(ec, task_);

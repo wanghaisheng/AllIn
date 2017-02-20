@@ -78,6 +78,9 @@
     <ClInclude Include="mq_cnn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="stamping_mgr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -126,6 +129,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mq_cnn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stamping_mgr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

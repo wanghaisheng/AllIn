@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "log.h"
+#include "stamping_mgr.h"
 #include "tool.h"
 
 MC::Tool* MC::Tool::g_inst = NULL;
@@ -193,7 +194,15 @@ int _stdcall DevMsgCallBack(
     unsigned char len)
 {
     switch (uMsg) {
+    case 0xA2: {
+        StampingMgr::GetInst()->SetStampingResult(0 == wParam ? MC::EC_SUCC: MC::EC_FAIL);
+        StampingMgr::GetInst()->Signal();
+    }
+        break;
     case 0xA3:  {
+        StampingMgr::GetInst()->SetStampingResult(MC::EC_STAMPER_DROP);
+        StampingMgr::GetInst()->Signal();
+
         // 印章掉落通知
         MC::DeviceStat stat;
         stat.conn_ = true;
@@ -204,6 +213,10 @@ int _stdcall DevMsgCallBack(
         break;
     case 0xA4: // 纸门信号
         MC::Tool::GetInst()->SetPaper(wParam);
+        break;
+    case 0xA5:
+        StampingMgr::GetInst()->SetStampingResult(MC::EC_FAIL);
+        StampingMgr::GetInst()->Signal();
         break;
     case 0xA6: // 侧门信号
         MC::Tool::GetInst()->SeteSafe(wParam);
