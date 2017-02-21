@@ -198,6 +198,7 @@ int PSBCSTDZDeviceSTAMPDeviceApp::DevMessageCallBack(
         WriteLog(4, "DevMessageCallBack->印章掉落通知");
     }
         break;
+    case 0xA8:
     case STAMPER_SIDEDOOR_CLOSE: {
         if (0 == wParam) {
              WriteLog(4, "DevMessageCallBack->机械锁关闭通知");
@@ -1171,7 +1172,7 @@ char* PSBCSTDZDeviceSTAMPDeviceApp::readOpenBackDoorExceptionInfo(void)
         return (char*)readOpenBackDoorExceptionInfo_str_;
 
     // 进制转换
-    int recorded = strtol((char*)&mark[0], NULL, 16);
+    int recorded = (int)mark[0];
 
     // 如果异常记录已经清空
     if (0 == recorded) {
@@ -1332,11 +1333,18 @@ int PSBCSTDZDeviceSTAMPDeviceApp::getImageFormat(
         type,
         isEraseBorder);
 
-    // 打开摄像头、打开摄像头补光灯
+    // 参数正确, 打开摄像头并打开摄像头补光灯
     openVideoCap();
     openVideoCapLight();
 
-    // 以时间为文件名
+    // 根据参数type构造文件扩展名
+    char extension[10] = { 0 };
+    if (0 == type)
+        sprintf_s(extension, ".%s", "bmp");
+    else
+        sprintf_s(extension, ".%s", "jpg");
+
+    // 构造以时间为文件名
     int year = 0;
     int month = 0;
     int date = 0;
@@ -1347,7 +1355,7 @@ int PSBCSTDZDeviceSTAMPDeviceApp::getImageFormat(
     std::string working_path;
     GetMoudulePath(working_path);
     char file_path[MAX_PATH] = { 0 };
-    sprintf_s(file_path, "%s\\tmp\\%s.jpg", working_path.c_str(), file_name);
+    sprintf_s(file_path, "%stmp\\%s%s", working_path.c_str(), file_name, extension);
 
 	std::string src_path(file_path); // 源图路径名
     src_image_ = src_path;
@@ -1365,6 +1373,19 @@ int PSBCSTDZDeviceSTAMPDeviceApp::getImageFormat(
 
     char dst_path[MAX_PATH] = { 0 };
     memcpy(dst_path, filePath, strlen(filePath));
+    if (0 == type) {
+        std::string dst(dst_path);
+        std::size_t last_dot = dst.find_last_of(".");
+        if (last_dot != std::string::npos) {
+            std::string sub_dst = dst.substr(0, last_dot + 1); // 包括"."字符
+            char jpeg_copy_bmp[MAX_PATH] = { 0 };
+            sprintf_s(jpeg_copy_bmp, "%s%s", sub_dst.c_str(), "jpg");
+            WriteLog(4, "getImageFormat->bmp图片: %s ,的同名jpg图片: %s", jpeg_copy_bmp);
+
+            CutImgEdgeEx(src_path.c_str(), jpeg_copy_bmp);
+        }
+    }
+
     // 图片不进行处理, 只是复制图片
     if (isEraseBorder == 0) {
         CopyFile(src_path, dst_path);
@@ -1447,11 +1468,11 @@ Point* PSBCSTDZDeviceSTAMPDeviceApp::GetSealCoord(int nX, int nY)
     int y0 = nY;            //--原件盖章Y坐标
 
     const PSBCConfig* config = PSBCConfig::GetInst();
-    int x1 = /*config->check_pt1_.x*/1929;              //--A4像素最小X坐标 像素 右上角坐标
-    int y1 = /*config->check_pt1_.y*/139;              //--A4像素最小Y坐标 像素
+    int x1 = config->check_pt1_.x/*1929*/;              //--A4像素最小X坐标 像素 右上角坐标
+    int y1 = config->check_pt1_.y/*139*/;              //--A4像素最小Y坐标 像素
 
-    int x2 = /*config->check_pt3_.x*/296;              //--[===[A4像素最大X坐标 像素]===] 左下角坐标
-    int y2 = /*config->check_pt3_.y*/1221;              //--[===[A4像素最大Y坐标 像素]===]
+    int x2 = config->check_pt3_.x/*296*/;              //--[===[A4像素最大X坐标 像素]===] 左下角坐标
+    int y2 = config->check_pt3_.y/*1221*/;              //--[===[A4像素最大Y坐标 像素]===]
     WriteLog(4, "GetSealCoord->右上角(%d, %d), 左下角(%d, %d)",
         x1, y1,
         x2, y2);

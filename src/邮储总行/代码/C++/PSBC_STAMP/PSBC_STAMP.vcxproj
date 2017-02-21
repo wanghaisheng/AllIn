@@ -65,7 +65,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>.\PSBC_STAMP.def</ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>.\lib\;$(droot)\dpd\bin\w32d\;$(droot)\bin\w32d\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(droot)\dpd\bin\w32d\;$(droot)\bin\w32d\</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
