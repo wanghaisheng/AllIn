@@ -56,6 +56,14 @@ enum ErrorCode {
     EC_SEARCH_STAMP_FAIL,       // 原图用印点查找失败
     EC_FILE_NOT_EXIST,          // 文件不存在
     EC_STAMPING_TIMEOUT,        // 规定时间内未完成用印
+    EC_QUERY_DEV_STATUS_FAIL,   // 查询设备状态失败
+    EC_UN_INITIATION,           // 未初始化
+    EC_SELF_EXAMIN,             // 设备自检
+    EC_EXAMIN_STAMPER,          // 检测章
+    EC_IN_TEST,                 // 测试模式
+    EC_IN_BREAK_DOWN,           // 故障模式
+    EC_IN_STAMPING,             // 盖章模式
+    EC_IN_MAINTAIN,             // 维护模式
     EC_MAX
 };
 
@@ -109,7 +117,15 @@ static std::string ErrorMsg[] = {
     "章旋转角度非法",
     "原图用印点查找失败",
     "文件不存在",
-    "规定时间内未完成用印"
+    "规定时间内未完成用印",
+    "查询设备状态失败",
+    "未初始化",
+    "设备自检",
+    "检测章",
+    "测试模式",
+    "故障模式",
+    "盖章模式",
+    "维护模式"
 };
 
 static std::string GetErrMsg(enum ErrorCode err)
@@ -123,6 +139,7 @@ static std::string ErrorResolver[] = {
     "超时错误",
     "进纸门超时未关闭",
     "调用驱动接口失败",
+    "设备已连接",
     "通信连接断开",
     "设备已断开",
     "成功连接, 打开设备失败",
@@ -136,6 +153,9 @@ static std::string ErrorResolver[] = {
     "成功, 后续只能先调用绑定MAC地址",
     "该MAC地址未绑定",
     "合成照片失败",
+    "模板类型、角度识别失败",
+    "版面、验证码识别失败",
+    "要素识别失败",
     "查询门状态失败",
     "安全门已关闭",
     "安全门已打开",
@@ -163,7 +183,15 @@ static std::string ErrorResolver[] = {
     "章旋转角度在0~360°",
     "原图用印点查找失败",
     "文件不存在, 请检查文件路径",
-    "规定时间内未完成用印"
+    "规定时间内未完成用印",
+    "查询设备状态失败",
+    "未初始化",
+    "设备自检",
+    "检测章",
+    "测试模式",
+    "故障模式",
+    "盖章模式",
+    "维护模式"
 };
 
 static std::string GetErrResolver(enum ErrorCode err)

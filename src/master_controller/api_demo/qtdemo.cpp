@@ -1302,11 +1302,11 @@ void QtDemo::HandleCheckParam()
     int y = atoi(ui.le_y_coord_->text().toStdString().c_str());
     int angle = atoi(ui.le_angle_->text().toStdString().c_str());
     int ret = ST_CheckParam(x, y, angle);
-    if (43 == ret)
-        return Info(QString::fromLocal8Bit("x参数非法"));
     if (44 == ret)
-        return Info(QString::fromLocal8Bit("y参数非法"));
+        return Info(QString::fromLocal8Bit("x参数非法"));
     if (45 == ret)
+        return Info(QString::fromLocal8Bit("y参数非法"));
+    if (46 == ret)
         return Info(QString::fromLocal8Bit("章旋转角度非法"));
 
     if (0 != ret)

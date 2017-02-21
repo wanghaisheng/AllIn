@@ -1440,19 +1440,17 @@ public:
         char err_code_str[64] = { 0 };
         std::string msg;
         std::string resolver;
-        MC::ErrorCode ec = exception_;
-        if (ec != MC::EC_SUCC)
-            goto NT;
+        MC::ErrorCode ec = MC::EC_SUCC;
 
         if (err_ < 0 || err_ > MC::EC_MAX) {
             msg = "未定义的错误码";
+            resolver = "重新输入错误码";
             goto NT;
         }
 
         // 获取错误信息
         msg = MC::GetErrMsg((MC::ErrorCode)err_);
         resolver = MC::GetErrResolver((MC::ErrorCode)err_);
-        ec = MC::EC_SUCC;
 
     NT:
         notify_->Notify(ec, msg, resolver, _itoa(err_, err_code_str, 10));
