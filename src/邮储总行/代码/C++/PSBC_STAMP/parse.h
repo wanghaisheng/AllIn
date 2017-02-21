@@ -50,4 +50,6 @@ public:
     int brightness_;
 };
 
+bool GetMoudulePath(std::string& path);
+
 #endif // MASTER_CONTROLLER_PARSE_H_

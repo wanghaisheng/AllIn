@@ -118,6 +118,7 @@ int PSBCSTDZDeviceSTAMPDeviceApp::Test()
 
 int PrepareCamera()
 {
+    FOpenDev(NULL);
     int ret = FLightCtrl(2, 1);
     if (0 != ret)
         WriteLog(3, "PrepareCamera->打开凭证补光灯失败, er: %d", ret);
@@ -744,7 +745,7 @@ int PSBCSTDZDeviceSTAMPDeviceApp::ManualStart(
         return EC_FAIL;
     }
 
-    // 10秒内盖章完成
+    // 20秒内盖章完成
     DWORD finish = WaitForSingleObject(notify_finish, 20 * 1000);
     switch (finish) {
     case WAIT_OBJECT_0: {
@@ -1337,15 +1338,20 @@ int PSBCSTDZDeviceSTAMPDeviceApp::getImageFormat(
     openVideoCap();
     openVideoCapLight();
 
+    // 以时间为文件名
     int year = 0;
     int month = 0;
     int date = 0;
     getSystemTime(year, month, date);
-    char name[32] = { 0 };
-    sprintf_s(name, "%d%d%d", year, month, date);
-    char tmp_file[MAX_PATH] = { 0 };
-    sprintf_s(tmp_file, "C:\\三泰印控仪\\tmp\\%s.jpg", name);
-	std::string src_path(tmp_file); // 源图路径名
+    char file_name[32] = { 0 };
+    sprintf_s(file_name, "%d%d%d", year, month, date);
+
+    std::string working_path;
+    GetMoudulePath(working_path);
+    char file_path[MAX_PATH] = { 0 };
+    sprintf_s(file_path, "%s\\tmp\\%s.jpg", working_path.c_str(), file_name);
+
+	std::string src_path(file_path); // 源图路径名
     src_image_ = src_path;
 
 	int ret = CapturePhoto(
@@ -1353,7 +1359,9 @@ int PSBCSTDZDeviceSTAMPDeviceApp::getImageFormat(
 		CvtType(type), 
 		(char*)src_path.c_str());
     if (0 != ret) {
-        WriteLog(3, "getImageFormat->拍照失败, er: %d", ret);
+        WriteLog(3, "getImageFormat->原图路径: %s, 拍照失败, er: %d", 
+            src_path.c_str(),
+            ret);
         return EC_CAPTURE_FAIL;
     }
 
