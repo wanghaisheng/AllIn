@@ -196,9 +196,14 @@ public:
     {
         if (QtDemoClass->objectName().isEmpty())
             QtDemoClass->setObjectName(QStringLiteral("QtDemoClass"));
-        QtDemoClass->resize(1200, 915);
+        QtDemoClass->resize(1400, 1041);
         centralWidget = new QWidget(QtDemoClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(centralWidget->sizePolicy().hasHeightForWidth());
+        centralWidget->setSizePolicy(sizePolicy);
         tabWidget = new QTabWidget(centralWidget);
         tabWidget->setObjectName(QStringLiteral("tabWidget"));
         tabWidget->setGeometry(QRect(10, 20, 1191, 801));
@@ -317,6 +322,7 @@ public:
         pb_query_slots_->setFont(font2);
         groupBox_8 = new QGroupBox(tab_control_dev);
         groupBox_8->setObjectName(QStringLiteral("groupBox_8"));
+        groupBox_8->setEnabled(true);
         groupBox_8->setGeometry(QRect(320, 260, 211, 91));
         groupBox_8->setFont(font3);
         le_stamper_idx_ = new QLineEdit(groupBox_8);
@@ -730,7 +736,7 @@ public:
         QtDemoClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(QtDemoClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1200, 38));
+        menuBar->setGeometry(QRect(0, 0, 1400, 38));
         QtDemoClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(QtDemoClass);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));

@@ -123,6 +123,10 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_query_stamper_, &QPushButton::clicked, this, &QtDemo::HandleQueryStampers);
     
     connect(ui.pb_cali_stamp_, &QPushButton::clicked, this, &QtDemo::HandleABCCheck);
+    ui.groupBox_8->hide();
+    ui.label->hide();
+    ui.le_stamper_idx_->hide();
+    ui.pb_cali_stamp_->hide();
 
     connect(ui.le_err_code_, SIGNAL(textChanged(const QString &)), this, 
         SLOT(HandleErrCodeChange(const QString &)));
@@ -645,10 +649,10 @@ void QtDemo::HandleQuerySlots()
 void QtDemo::HandleABCCheck()
 {
     std::string str = ui.le_stamper_idx_->text().toStdString();
-    int ret = ST_Calibrate(atoi(str.c_str()));
-    if (0 != ret) {
-        return Info(QString::fromLocal8Bit("校准印章失败, er: ") + QString::number(ret));
-    }
+    /*int ret = ST_Calibrate(atoi(str.c_str()));*/
+//     if (0 != ret) {
+//         return Info(QString::fromLocal8Bit("校准印章失败, er: ") + QString::number(ret));
+//     }
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("校准印章成功"), STATUS_TEXT);
     return;
@@ -656,7 +660,7 @@ void QtDemo::HandleABCCheck()
     //////////////////////////////////////////////////////////////////////////
 
     unsigned int rfid = 0;
-    ret = GetStamperID(atoi(str.c_str()) - 1, rfid);
+    int ret = GetStamperID(atoi(str.c_str()) - 1, rfid);
     if (STF_SUCCESS != ret)
         return Info(QString::fromLocal8Bit("获取印章ID失败"));
 

@@ -102,11 +102,6 @@ MASTERCTRL_AGENT_API int ST_OrdinaryStamp(
 MASTERCTRL_AGENT_API int ST_FinishStamp(
     const std::string& task);
 
-// 印章校准
-// slot     --- 卡槽号, 从1开始
-MASTERCTRL_AGENT_API int ST_Calibrate(
-    int slot);
-
 // 查询印章状态
 // status   --- 对应章槽上是否有章
 //              0 - 表示无章, 1 - 表示有章. 如"001101\0"
