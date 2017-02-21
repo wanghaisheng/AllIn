@@ -1699,13 +1699,6 @@ public:
         
         switch (operation_) {
         case 0: { // 关安全门
-            // 安全门已关闭
-            if (doors[1] == 0) {
-                ec = MC::EC_SAFE_CLOSED;
-                Log::WriteLog(LL_DEBUG, "MC::OperateSafeEv::SpecificExecute->安全门已关闭");
-                goto NT;
-            }
-
             // 更新章映射
             ret = SetStampMap();
             if (0 != ret) {
