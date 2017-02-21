@@ -2569,8 +2569,7 @@ public:
             goto NT;
 
         if ((which_ != 1 && which_ != 2) 
-            || (switch_ != 0 && switch_ != 1)
-            || value_ <= 0) {
+            || (switch_ != 0 && switch_ != 1)) {
             ec = MC::EC_INVALID_PARAMETER;
             goto NT;
         }
