@@ -1,4 +1,4 @@
-#ifndef MASTER_CONTROLLER_PARSE_H_
+ï»¿#ifndef MASTER_CONTROLLER_PARSE_H_
 #define MASTER_CONTROLLER_PARSE_H_
 
 #include <windows.h>
@@ -29,24 +29,24 @@ private:
     static PSBCConfig* config_inst;
 
 public:
-    int wait_time_;         // ÕÂµ½Î»µÈ´ıÊ±¼ä
+    int wait_time_;         // ç« åˆ°ä½ç­‰å¾…æ—¶é—´
 
-    Point check_pt0_;   // Ğ£×¼µã
+    Point check_pt0_;   // æ ¡å‡†ç‚¹
     Point check_pt1_;
     Point check_pt2_;
     Point check_pt3_;
     Point check_pt4_;
 
-    // Æ¾Ö¤ÉãÏñÍ·Í¼Æ¬¸ñÊ½, Ä¬ÈÏjpg, ÖµÎª0
+    // å‡­è¯æ‘„åƒå¤´å›¾ç‰‡æ ¼å¼, é»˜è®¤jpg, å€¼ä¸º0
     int img_format_;
 
     int dpi_;
 
-    // Æ¾Ö¤ÉãÏñÍ··Ö±æÂÊ, Ä¬ÈÏ300W
+    // å‡­è¯æ‘„åƒå¤´åˆ†è¾¨ç‡, é»˜è®¤300W
     int resolution_width_;
     int resolution_height_;
 
-    // Æ¾Ö¤ÉãÏñÍ·²¹¹âµÆÁÁ¶È
+    // å‡­è¯æ‘„åƒå¤´è¡¥å…‰ç¯äº®åº¦
     int brightness_;
 };
 

@@ -1,4 +1,4 @@
-// PSBC_STAMP.h : main header file for the PSBC_STAMP DLL
+ï»¿// PSBC_STAMP.h : main header file for the PSBC_STAMP DLL
 //
 
 #pragma once
@@ -13,6 +13,8 @@
 #endif
 
 #include "resource.h"		// main symbols
+
+#define WAIT_STAMP_COMPLETION 20    // ç­‰å¾…ç›–ç« å®Œæˆ(æ”¶åˆ°ç›–ç« å®Œæˆé€šçŸ¥), å•ä½ç§’
 
 enum FontLib {
     image = 0,
@@ -33,7 +35,7 @@ public:
     PSBCSTDZDeviceSTAMPDeviceApp();
 
     int Test();
-    // ÖØĞ´
+    // é‡å†™
 
 public:
     // No.1
@@ -85,7 +87,7 @@ public:
     char* getMachineNum(void);
 
     // No.15
-    // ²éÑ¯Éè±¸ĞÍºÅ(ST-SCM-F60)
+    // æŸ¥è¯¢è®¾å¤‡å‹å·(ST-SCM-F60)
     char* getMachineType(void);
 
     // No.16
@@ -166,7 +168,7 @@ public:
     static HANDLE notify_finish;
 
 private:
-    // slotNumAndStampId --- 0×Ö·û½áÎ²
+    // slotNumAndStampId --- 0å­—ç¬¦ç»“å°¾
     bool ParseSlotAndStamperID(
         const char* slotNumAndStampId, 
         std::map<int, std::string>& slot_stamper);
@@ -177,9 +179,9 @@ private:
 
 	bool CopyFile(std::string strFrom,std::string strTo);
 
-    // ÓÉÓÚÓÊ´¢½Ó¿ÚÖĞÃ»ÓĞ¹Ø°²È«ÃÅ½Ó¿Ú, 
-    // Ôİ°´ÒÔÏÂÔ­Ôò´¦Àí:
-    //     Èç¹û¿ª°²È«ÃÅºóµ÷ÓÃÆäËüÈÎºÎ½Ó¿Ú(³ıisConnMachine)ÔòÍË³öÎ¬»¤Ä£Ê½²¢¹Ø°²È«ÃÅ
+    // ç”±äºé‚®å‚¨æ¥å£ä¸­æ²¡æœ‰å…³å®‰å…¨é—¨æ¥å£, 
+    // æš‚æŒ‰ä»¥ä¸‹åŸåˆ™å¤„ç†:
+    //     å¦‚æœå¼€å®‰å…¨é—¨åè°ƒç”¨å…¶å®ƒä»»ä½•æ¥å£(é™¤isConnMachine)åˆ™é€€å‡ºç»´æŠ¤æ¨¡å¼å¹¶å…³å®‰å…¨é—¨
     void ExitIfInMaintain();
 
     // type     --- 0(BMP), 1(JPG), 2(RAW)
@@ -196,14 +198,14 @@ private:
     }
 
 private:
-    // ¼ÇÂ¼Êµ¼ÊĞ´ÈëÓ¡ÕÂĞÅÏ¢³¤¶È
+    // è®°å½•å®é™…å†™å…¥å°ç« ä¿¡æ¯é•¿åº¦
     static const int SLOT_STAMPER_WRITTEN_OFFSET = 148;
     static const int SLOT_STAMPER_WRITTEN_SIZE = 1;
     static const int SLOT_STAMPER_OFFSET = 150;
     static const int MAX_SLOT_STAMPER_SIZE = 90; // 15 * 6
 
     static const int STEP = 2;
-    // ¼ÇÂ¼Òì³£¿ªËøĞÅÏ¢
+    // è®°å½•å¼‚å¸¸å¼€é”ä¿¡æ¯
     static const int MAX_EXCEPTION_OPEN_COUNT = 4;
     static const int OPEN_SAFE_DOOR_EXCEPTION_MARK_OFFSET = 
         SLOT_STAMPER_OFFSET + 
@@ -216,10 +218,10 @@ private:
         OPEN_SAFE_DOOR_EXCEPTION_MARK_SIZE;
     static const int OPEN_SAFE_DOOR_EXCEPTION_SIZE = 16;
 
-    static bool connected_;     // Ó¡¿Ø»úÓëPCÁ¬½Ó×´¿ö±ê¼Ç
+    static bool connected_;     // å°æ§æœºä¸PCè¿æ¥çŠ¶å†µæ ‡è®°
 
 private:
-    bool            across_page_seal_called_;   // ¸ÇÆï·ìÕÂ±ê¼Ç
+    bool            across_page_seal_called_;   // ç›–éª‘ç¼ç« æ ‡è®°
 
     char*           querySealInfo_str_;
     char*           querySloatInfo_str_;
@@ -227,26 +229,26 @@ private:
     unsigned char*  readOpenBackDoorExceptionInfo_str_;
     char*           getMachineType_str_;
 
-    bool            init_;              // ±ê¼ÇÊÇ·ñ×Ô¼ì
-    bool            mainintain_mode_;   // µ±Ç°ÊÇ·ñÊÇÎ¬»¤Ä£Ê½
+    bool            init_;              // æ ‡è®°æ˜¯å¦è‡ªæ£€
+    bool            mainintain_mode_;   // å½“å‰æ˜¯å¦æ˜¯ç»´æŠ¤æ¨¡å¼
 
-    bool            video_opened_;      // Æ¾Ö¤ÉãÏñÍ·ÊÇ·ñ¿ªÆô
+    bool            video_opened_;      // å‡­è¯æ‘„åƒå¤´æ˜¯å¦å¼€å¯
 
-    std::string     src_image_;         // ´æ·ÅÔ­Í¼Â·¾¶
+    std::string     src_image_;         // å­˜æ”¾åŸå›¾è·¯å¾„
 };
 
 void WriteLog(int level, const char * fmt, ...);
 
-// ´ò¿ª/¹Ø±ÕÆ¾Ö¤ÉãÏñÍ·
+// æ‰“å¼€/å…³é—­å‡­è¯æ‘„åƒå¤´
 int PrepareCamera();
 
 void DisableCamera();
 
-//¸ÇÕÂ²ÎÊı
+//ç›–ç« å‚æ•°
 struct StampPara {
-    static const int MAX_X = 275; //ºÁÃ×
-    static const int MAX_Y = 250; //ºÁÃ×
-    static const int MAX_ANGLE = 360; //¶È
+    static const int MAX_X = 275; //æ¯«ç±³
+    static const int MAX_Y = 250; //æ¯«ç±³
+    static const int MAX_ANGLE = 360; //åº¦
 
     static const int DEFAULT_X = 100;
     static const int DEFAULT_Y = 100;
@@ -256,9 +258,9 @@ struct StampPara {
     static const int DEFAULT_TIMES = 9999;
 
     unsigned int rfid;
-    unsigned char stamp_idx; //Ó¡ÕÂºÅ, ´Ó1¿ªÊ¼
-    unsigned char ink;       //ÊÇ·ñÕºÓ¡ÓÍ, 1--ÊÇ
-    unsigned char wait;      //µÈ´ıÊ±¼ä,Ãë
+    unsigned char stamp_idx; //å°ç« å·, ä»1å¼€å§‹
+    unsigned char ink;       //æ˜¯å¦è˜¸å°æ²¹, 1--æ˜¯
+    unsigned char wait;      //ç­‰å¾…æ—¶é—´,ç§’
     unsigned short x;
     unsigned short y;
     unsigned short angle;

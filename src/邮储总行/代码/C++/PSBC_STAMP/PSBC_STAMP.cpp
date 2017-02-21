@@ -1,4 +1,4 @@
-// PSBC_STAMP.cpp : Defines the initialization routines for the DLL.
+ï»¿// PSBC_STAMP.cpp : Defines the initialization routines for the DLL.
 //
 
 #include "stdafx.h"
@@ -62,15 +62,15 @@ END_MESSAGE_MAP()
 
 PSBCSTDZDeviceSTAMPDeviceApp::PSBCSTDZDeviceSTAMPDeviceApp()
 {
-    // TODO: ÔÚ´Ë´¦Ìí¼Ó¹¹Ôì´úÂë£¬
-    // ½«ËùÓĞÖØÒªµÄ³õÊ¼»¯·ÅÖÃÔÚ InitInstance ÖĞ
+    // TODO: åœ¨æ­¤å¤„æ·»åŠ æ„é€ ä»£ç ï¼Œ
+    // å°†æ‰€æœ‰é‡è¦çš„åˆå§‹åŒ–æ”¾ç½®åœ¨ InitInstance ä¸­
 }
 
-// Î¨Ò»µÄÒ»¸ö CABCSTDZDeviceSTAMPDeviceApp ¶ÔÏó
+// å”¯ä¸€çš„ä¸€ä¸ª CABCSTDZDeviceSTAMPDeviceApp å¯¹è±¡
 PSBCSTDZDeviceSTAMPDeviceApp theApp;
 
 
-// CABCSTDZDeviceSTAMPDeviceApp ³õÊ¼»¯
+// CABCSTDZDeviceSTAMPDeviceApp åˆå§‹åŒ–
 
 BOOL PSBCSTDZDeviceSTAMPDeviceApp::InitInstance()
 {
@@ -79,7 +79,7 @@ BOOL PSBCSTDZDeviceSTAMPDeviceApp::InitInstance()
 
     F_RegisterDevCallBack(PSBCSTDZDeviceSTAMPDeviceApp::DevConnCallBack);
     FRegisterDevCallBack(PSBCSTDZDeviceSTAMPDeviceApp::DevMessageCallBack);
-    FOpenDev(NULL); // ·ÀÖ¹¶¯Ì¬¼ÓÔØ¿â(ÑÓ³Ù¼ÓÔØ)¶øµ¼ÖÂµÄ´íÎó
+    FOpenDev(NULL); // é˜²æ­¢åŠ¨æ€åŠ è½½åº“(å»¶è¿ŸåŠ è½½)è€Œå¯¼è‡´çš„é”™è¯¯
 
     init_                               = false;
     across_page_seal_called_            = false;
@@ -97,8 +97,6 @@ int PSBCSTDZDeviceSTAMPDeviceApp::ExitInstance()
 {
     CWinApp::ExitInstance();
 
-//     F_RegisterDevCallBack(NULL);
-//     FRegisterDevCallBack(NULL);
     delete[] querySealInfo_str_;
     delete[] querySloatInfo_str_;
     delete[] getMachineNum_str_;
@@ -121,24 +119,24 @@ int PrepareCamera()
     FOpenDev(NULL);
     int ret = FLightCtrl(2, 1);
     if (0 != ret)
-        WriteLog(3, "PrepareCamera->´ò¿ªÆ¾Ö¤²¹¹âµÆÊ§°Ü, er: %d", ret);
+        WriteLog(3, "PrepareCamera->æ‰“å¼€å‡­è¯è¡¥å…‰ç¯å¤±è´¥, er: %d", ret);
 
     ret = FLightBrightness(2, PSBCConfig::GetInst()->brightness_);
     if (0 != ret)
-        WriteLog(3, "PrepareCamera->Æ¾Ö¤²¹¹âµÆÁÁ¶Èµ÷½ÚÊ§°Ü, er: %d", ret);
+        WriteLog(3, "PrepareCamera->å‡­è¯è¡¥å…‰ç¯äº®åº¦è°ƒèŠ‚å¤±è´¥, er: %d", ret);
 
     ret = OpenCamera(PAPERCAMERA);
     if (0 != ret)
-        WriteLog(3, "PrepareCamera->´ò¿ªÆ¾Ö¤ÉãÏñÍ·Ê§°Ü, er: %d", ret);
+        WriteLog(3, "PrepareCamera->æ‰“å¼€å‡­è¯æ‘„åƒå¤´å¤±è´¥, er: %d", ret);
 
     ret = SetResolution(
         PAPERCAMERA,
         PSBCConfig::GetInst()->resolution_width_,
         PSBCConfig::GetInst()->resolution_height_);
     if (0 != ret)
-        WriteLog(3, "PrepareCamera->ÉèÖÃÆ¾Ö¤ÉãÏñÍ··Ö±æÂÊÊ§°Ü, er: %d", ret);
+        WriteLog(3, "PrepareCamera->è®¾ç½®å‡­è¯æ‘„åƒå¤´åˆ†è¾¨ç‡å¤±è´¥, er: %d", ret);
 
-    WriteLog(4, "PrepareCamera->Æ¾Ö¤ÉãÏñÍ·ÒÑ×¼±¸ºÃ, ret: %d", ret);
+    WriteLog(4, "PrepareCamera->å‡­è¯æ‘„åƒå¤´å·²å‡†å¤‡å¥½, ret: %d", ret);
     return ret;
 }
 
@@ -151,15 +149,15 @@ int PSBCSTDZDeviceSTAMPDeviceApp::DevConnCallBack(
     const char*     DevPath,
     unsigned int    uMsg)
 {
-    // uMsg: 1 Á¬½Ó, 0 ¶Ï¿ª
+    // uMsg: 1 è¿æ¥, 0 æ–­å¼€
     switch (uMsg) {
     case 0: {
         ::FCloseDev();
         connected_ = false;
         DisableCamera();
 
-        WriteLog(4, "DevConnCallBack->Éè±¸¶Ï¿ª²¢¹Ø±ÕÉè±¸, %s", 
-            connected_ ? "Á¬½Ó" : "¶Ï¿ª");
+        WriteLog(4, "DevConnCallBack->è®¾å¤‡æ–­å¼€å¹¶å…³é—­è®¾å¤‡, %s", 
+            connected_ ? "è¿æ¥" : "æ–­å¼€");
     }
         break;
     case 1: {
@@ -167,8 +165,8 @@ int PSBCSTDZDeviceSTAMPDeviceApp::DevConnCallBack(
         connected_ = true;
 /*        PrepareCamera();*/
 
-        WriteLog(4, "DevConnCallBack->Éè±¸ÖØÁ¬²¢´ò¿ªÉè±¸, %s",
-            connected_ ? "Á¬½Ó" : "¶Ï¿ª");
+        WriteLog(4, "DevConnCallBack->è®¾å¤‡é‡è¿å¹¶æ‰“å¼€è®¾å¤‡, %s",
+            connected_ ? "è¿æ¥" : "æ–­å¼€");
     }
         break;
     default:
@@ -186,25 +184,25 @@ int PSBCSTDZDeviceSTAMPDeviceApp::DevMessageCallBack(
     unsigned char   len)
 {
     switch (uMsg) {
-    case STAMPER_DOWN: {            // ¸ÇÕÂÏÂÑ¹Í¨Öª
-        WriteLog(4, "DevMessageCallBack->ÕÂÏÂÑ¹Í¨Öª");
+    case STAMPER_DOWN: {            // ç›–ç« ä¸‹å‹é€šçŸ¥
+        WriteLog(4, "DevMessageCallBack->ç« ä¸‹å‹é€šçŸ¥");
     }
         break;
-    case STAMPER_COMPLETE: {        // ¸ÇÕÂÍê³ÉÍ¨Öª
-        WriteLog(4, "DevMessageCallBack->¸ÇÕÂÍê³ÉÍ¨Öª, ½á¹û: %s",
-            wParam == 0 ? "³É¹¦": "Ê§°Ü");
+    case STAMPER_COMPLETE: {        // ç›–ç« å®Œæˆé€šçŸ¥
+        WriteLog(4, "DevMessageCallBack->ç›–ç« å®Œæˆé€šçŸ¥, ç»“æœ: %s",
+            wParam == 0 ? "æˆåŠŸ": "å¤±è´¥");
         SetEvent(notify_finish);
     }
         break;
-    case STAMPER_SEALERR: {         // Ó¡ÕÂµôÂäÍ¨Öª
-        WriteLog(4, "DevMessageCallBack->Ó¡ÕÂµôÂäÍ¨Öª");
+    case STAMPER_SEALERR: {         // å°ç« æ‰è½é€šçŸ¥
+        WriteLog(4, "DevMessageCallBack->å°ç« æ‰è½é€šçŸ¥");
     }
         break;
     case STAMPER_SIDEDOOR_CLOSE: {
         if (0 == wParam) {
-             WriteLog(4, "DevMessageCallBack->»úĞµËø¹Ø±ÕÍ¨Öª");
+             WriteLog(4, "DevMessageCallBack->æœºæ¢°é”å…³é—­é€šçŸ¥");
              SetStampMap();
-             FCloseDoorSafe();   // ¹Øµç×ÓËø
+             FCloseDoorSafe();   // å…³ç”µå­é”
              FQuitMaintainMode();
        }
     }
@@ -229,46 +227,46 @@ void WriteLog(int level, const char * fmt, ...)
     WriteSealLog(level, buf);
 }
 
-//////////////////////// Ó¡¿Ø»ú-ÓÊ´¢½Ó¿ÚÊµÏÖ /////////////////////////////////////
+//////////////////////// å°æ§æœº-é‚®å‚¨æ¥å£å®ç° /////////////////////////////////////
 
 int PSBCSTDZDeviceSTAMPDeviceApp::InitializeMachine(void)
 {
     WriteLog(4, "InitializeMachine->IN");
 
-    // ¹¦ÄÜ:	ÓÃÓ¡»ú×Ô¼ì
-    // ËµÃ÷ : ¼ì²é»úÆ÷×´Ì¬ÊÇ·ñÕı³££¬ÀıÈç£º¼ì²âÓ¡ÕÂ
-    // Éè±¸µÚÒ»´ÎÊ¹ÓÃ»ò¸ü»»Ó¡ÕÂÊ±µ÷ÓÃ
+    // åŠŸèƒ½:	ç”¨å°æœºè‡ªæ£€
+    // è¯´æ˜ : æ£€æŸ¥æœºå™¨çŠ¶æ€æ˜¯å¦æ­£å¸¸ï¼Œä¾‹å¦‚ï¼šæ£€æµ‹å°ç« 
+    // è®¾å¤‡ç¬¬ä¸€æ¬¡ä½¿ç”¨æˆ–æ›´æ¢å°ç« æ—¶è°ƒç”¨
 
     ExitIfInMaintain();
 
-    // Ê×ÏÈ´ò¿ªÉè±¸
+    // é¦–å…ˆæ‰“å¼€è®¾å¤‡
     int ret = FOpenDev(NULL);
     if (0 != ret) {
-        WriteLog(3, "InitializeMachine->Éè±¸´ò¿ªÊ§°Ü, er: %d", ret);
+        WriteLog(3, "InitializeMachine->è®¾å¤‡æ‰“å¼€å¤±è´¥, er: %d", ret);
         return EC_OPEN_FAIL;
     }
 
     init_ = true;
 
-    // ¸üĞÂÕÂÓ³Éä 
+    // æ›´æ–°ç« æ˜ å°„ 
     ret = SetStampMap();
     if (0 != ret) {
-        WriteLog(3, "InitializeMachine->¸üĞÂÕÂÓ³ÉäÊ§°Ü, er: %d", ret);
+        WriteLog(3, "InitializeMachine->æ›´æ–°ç« æ˜ å°„å¤±è´¥, er: %d", ret);
         return EC_QUERY_STAMP_FAIL;
     }
 
-    // ¸´Î»Ó¡¿Ø»ú
+    // å¤ä½å°æ§æœº
     Reset();
 
-    // ¼ì²âÏµÍ³×´Ì¬
+    // æ£€æµ‹ç³»ç»ŸçŠ¶æ€
     unsigned char status[24] = { 0 };
     ret = FGetDevStatus(status, 24);
     if (0 != ret) {
-        WriteLog(3, "InitializeMachine->¼ì²âÕÂÏµÍ³Ê§°Ü, er: %d", ret);
+        WriteLog(3, "InitializeMachine->æ£€æµ‹ç« ç³»ç»Ÿå¤±è´¥, er: %d", ret);
         return EC_QUERY_DEVICE_FAIL;
     }
 
-    WriteLog(4, "InitializeMachine->µ±Ç°ÏµÍ³×´Ì¬: %d", status[1]);
+    WriteLog(4, "InitializeMachine->å½“å‰ç³»ç»ŸçŠ¶æ€: %d", status[1]);
     WriteLog(4, "InitializeMachine->OUT");
 
     switch (status[1]) {
@@ -299,7 +297,7 @@ char* PSBCSTDZDeviceSTAMPDeviceApp::querySealInfo(const char* machineNum)
     memset(querySealInfo_str_, 0x0, MAX_SLOT_STAMPER_SIZE + 1);
 
     if (NULL == machineNum) {
-        WriteLog(3, "PSBCSTDZDeviceSTAMPDeviceApp::querySealInfo->´«Èë²ÎÊıÎª¿Õ");
+        WriteLog(3, "PSBCSTDZDeviceSTAMPDeviceApp::querySealInfo->ä¼ å…¥å‚æ•°ä¸ºç©º");
         return querySealInfo_str_;
     }
 
@@ -308,16 +306,16 @@ char* PSBCSTDZDeviceSTAMPDeviceApp::querySealInfo(const char* machineNum)
 
     ExitIfInMaintain();
 
-    // ¸ñÊ½: ²ÛÎ»ºÅ : Ó¡ÕÂID; ²ÛÎ»ºÅ:Ó¡ÕÂID(0 ±íÊ¾ÎŞÕÂ)...
-    // Àı(1:00000000001a; 2:00000000002b; 3:0...)
+    // æ ¼å¼: æ§½ä½å· : å°ç« ID; æ§½ä½å·:å°ç« ID(0 è¡¨ç¤ºæ— ç« )...
+    // ä¾‹(1:00000000001a; 2:00000000002b; 3:0...)
 
-    // ÏÈĞ£ÑéÉè±¸±àºÅ
+    // å…ˆæ ¡éªŒè®¾å¤‡ç¼–å·
     ErrorCode ec = CheckMachineNum(machineNum);
     if (EC_SUC != ec)
         return querySealInfo_str_;
 
-    // Éè±¸±àºÅÕıÈ·, ¶Á²ÛÎ»ºÅÓëÓ¡ÕÂID
-    // ·ÖÁ½´Î¶Á³ö
+    // è®¾å¤‡ç¼–å·æ­£ç¡®, è¯»æ§½ä½å·ä¸å°ç« ID
+    // åˆ†ä¸¤æ¬¡è¯»å‡º
     int ret1, ret2;
     unsigned char len = 0;
     unsigned char data[] = { 0 };
@@ -356,7 +354,7 @@ char* PSBCSTDZDeviceSTAMPDeviceApp::querySloatInfo(const char* machineNum)
     memset(querySloatInfo_str_, 0x0, 25);
 
     if (NULL == machineNum) {
-        WriteLog(3, "querySloatInfo->²ÎÊıÎª¿Õ");
+        WriteLog(3, "querySloatInfo->å‚æ•°ä¸ºç©º");
         return querySloatInfo_str_;
     }
 
@@ -365,24 +363,24 @@ char* PSBCSTDZDeviceSTAMPDeviceApp::querySloatInfo(const char* machineNum)
 
     ExitIfInMaintain();
 
-    // ¸ñÊ½: ²ÛÎ»ºÅ:Ó¡ÕÂÊÇ·ñ´æÔÚ;²ÛÎ»ºÅ:Ó¡ÕÂÊÇ·ñ´æÔÚ (0 ±íÊ¾ÎŞÕÂ,1 ±íÊ¾ÓĞÕÂ)...
-    // Àı(1:0; 2:1; 3:0...)
+    // æ ¼å¼: æ§½ä½å·:å°ç« æ˜¯å¦å­˜åœ¨;æ§½ä½å·:å°ç« æ˜¯å¦å­˜åœ¨ (0 è¡¨ç¤ºæ— ç« ,1 è¡¨ç¤ºæœ‰ç« )...
+    // ä¾‹(1:0; 2:1; 3:0...)
     
-    // Ğ£ÑéÉè±¸±àºÅ
+    // æ ¡éªŒè®¾å¤‡ç¼–å·
     ErrorCode ec = CheckMachineNum(machineNum);
     if (EC_SUC != ec)
         return querySloatInfo_str_;
 
-    // ÈôÉè±¸±àºÅÆ¥Åä
+    // è‹¥è®¾å¤‡ç¼–å·åŒ¹é…
     char* seal_info = querySealInfo(machineNum);
     if (strlen(seal_info) == 0) {
-        WriteLog(3, "querySloatInfo->»ñÈ¡Ó¡ÕÂĞÅÏ¢Ê§°Ü");
+        WriteLog(3, "querySloatInfo->è·å–å°ç« ä¿¡æ¯å¤±è´¥");
         return querySloatInfo_str_;
     }
 
     std::map<int, std::string> slot_stamper;
     if (!ParseSlotAndStamperID(seal_info, slot_stamper)) {
-        WriteLog(3, "querySloatInfo->ÓĞÖØ¸´µÄÕÂ²ÛºÅ");
+        WriteLog(3, "querySloatInfo->æœ‰é‡å¤çš„ç« æ§½å·");
         return querySloatInfo_str_;
     }
 
@@ -401,9 +399,9 @@ int PSBCSTDZDeviceSTAMPDeviceApp::initStamp(
     const char* machineNum, 
     const char* slotNumAndStampId)
 {
-    // ²ÎÊı¼ì²é
+    // å‚æ•°æ£€æŸ¥
     if (NULL == machineNum || NULL == slotNumAndStampId) {
-        WriteLog(3, "initStamp->²ÎÊıÎª¿Õ");
+        WriteLog(3, "initStamp->å‚æ•°ä¸ºç©º");
         return EC_INVALID_PARAMETER;
     }
 
@@ -411,43 +409,43 @@ int PSBCSTDZDeviceSTAMPDeviceApp::initStamp(
         machineNum,
         slotNumAndStampId);
 
-    // ²ÛÎ»ºÅÓëÓ¡ÕÂIDÑ­»·´®
-    // Àı(1:00000000001a; 2:00000000002b; 3:0...), ³¤¶È²»´óÓÚ15*¿¨²ÛÊıÁ¿
+    // æ§½ä½å·ä¸å°ç« IDå¾ªç¯ä¸²
+    // ä¾‹(1:00000000001a; 2:00000000002b; 3:0...), é•¿åº¦ä¸å¤§äº15*å¡æ§½æ•°é‡
 
     std::map<int, std::string> slot_stamper;
     if (!ParseSlotAndStamperID(slotNumAndStampId, slot_stamper)) {
-        WriteLog(3, "initStamp->ÓĞÖØ¸´µÄÕÂ²ÛºÅ");
+        WriteLog(3, "initStamp->æœ‰é‡å¤çš„ç« æ§½å·");
         return EC_DUP_SLOT_NUM;
     }
 
     std::map<int, std::string>::iterator it = slot_stamper.begin();
     for (; it != slot_stamper.end(); ++it) {
-        // ÅĞ¶ÏÕÂ²ÛºÅÊÇ·ñºÏ·¨
+        // åˆ¤æ–­ç« æ§½å·æ˜¯å¦åˆæ³•
         if (it->first < 1 || it->first > 6) {
-            WriteLog(3, "initStamp->ÓĞ·Ç·¨ÕÂ²ÛºÅ: %d", it->first);
+            WriteLog(3, "initStamp->æœ‰éæ³•ç« æ§½å·: %d", it->first);
             return EC_INVALID_PARAMETER;
         }
 
-        // ÅĞ¶ÏÃ¿¸öÕÂ²ÛºÅ¶ÔÓ¦µÄÓ¡ÕÂĞÅÏ¢ÊÇ·ñºÏ·¨
+        // åˆ¤æ–­æ¯ä¸ªç« æ§½å·å¯¹åº”çš„å°ç« ä¿¡æ¯æ˜¯å¦åˆæ³•
         if (it->second.length() > 12) {
-            WriteLog(3, "initStamp->ÓĞ·Ç·¨ÕÂĞÅÏ¢(%d, %s)", 
+            WriteLog(3, "initStamp->æœ‰éæ³•ç« ä¿¡æ¯(%d, %s)", 
                 it->first,
                 it->second.c_str());
             return EC_INVALID_PARAMETER;
         }
     }
 
-    // ²ÎÊıºÏ·¨
+    // å‚æ•°åˆæ³•
     ExitIfInMaintain();
 
-    // Ğ£ÑéÉè±¸±àºÅ
+    // æ ¡éªŒè®¾å¤‡ç¼–å·
     ErrorCode ec = CheckMachineNum(machineNum);
     if (EC_SUC != ec)
         return ec;
 
-    // Éè±¸±àºÅÆ¥Åä, Ôò½«Êı¾İĞ´µ½Ó¡¿Ø»ú´æ´¢Çø
+    // è®¾å¤‡ç¼–å·åŒ¹é…, åˆ™å°†æ•°æ®å†™åˆ°å°æ§æœºå­˜å‚¨åŒº
     int ret1, ret2;
-    // Êı¾İ¹ı³¤, ·ÖÁ½´ÎĞ´Èë
+    // æ•°æ®è¿‡é•¿, åˆ†ä¸¤æ¬¡å†™å…¥
     if (strlen(slotNumAndStampId) > 45) {
         ret1 = WriteIntoStamper(
             SLOT_STAMPER_OFFSET,
@@ -466,12 +464,12 @@ int PSBCSTDZDeviceSTAMPDeviceApp::initStamp(
                 SLOT_STAMPER_WRITTEN_SIZE);
             return EC_SUC;
         } else {
-            WriteLog(3, "initStamp->Ğ´ÕÂĞÅÏ¢Ê§°Ü");
+            WriteLog(3, "initStamp->å†™ç« ä¿¡æ¯å¤±è´¥");
             return EC_FAIL;
         }
     }
 
-    // ²»³¬¹ı45×Ö½Ú¿ÉÒ»´ÎĞÔĞ´Èë
+    // ä¸è¶…è¿‡45å­—èŠ‚å¯ä¸€æ¬¡æ€§å†™å…¥
     ret1 = WriteIntoStamper(
         SLOT_STAMPER_OFFSET,
         (unsigned char*)slotNumAndStampId,
@@ -505,7 +503,7 @@ int PSBCSTDZDeviceSTAMPDeviceApp::setAcrossPageSeal(void)
 int PSBCSTDZDeviceSTAMPDeviceApp::setMachineNum(const char* machineNum)
 {
     if (NULL == machineNum) {
-        WriteLog(3, "setMachineNum->²ÎÊıÎª¿Õ");
+        WriteLog(3, "setMachineNum->å‚æ•°ä¸ºç©º");
         return EC_INVALID_PARAMETER;
     }
 
@@ -513,17 +511,17 @@ int PSBCSTDZDeviceSTAMPDeviceApp::setMachineNum(const char* machineNum)
 
     ExitIfInMaintain();
 
-    // ²ÎÊı¼ì²é, ×î¶à20Î»×Ö·û´®
+    // å‚æ•°æ£€æŸ¥, æœ€å¤š20ä½å­—ç¬¦ä¸²
     if (strlen(machineNum) > 20) {
-        WriteLog(3, "setMachineNum->²ÎÊı³¬¹ıÖ¸¶¨³¤¶È(%d)", 20);
+        WriteLog(3, "setMachineNum->å‚æ•°è¶…è¿‡æŒ‡å®šé•¿åº¦(%d)", 20);
         return EC_INVALID_PARAMETER;
     }
 
     int ret = WriteStamperIdentifier(
         (unsigned char*)machineNum, 
-        strlen(machineNum) + 1); // °Ñ0½áÎ²×Ö·ûĞ´ÏÂÈ¥
+        strlen(machineNum) + 1); // æŠŠ0ç»“å°¾å­—ç¬¦å†™ä¸‹å»
     if (0 != ret) {
-        WriteLog(3, "setMachineNum->µ÷ÓÃÇı¶¯½Ó¿ÚÊ§°Ü, er: %d", ret);
+        WriteLog(3, "setMachineNum->è°ƒç”¨é©±åŠ¨æ¥å£å¤±è´¥, er: %d", ret);
         return EC_API_FAIL;
     }
 
@@ -541,22 +539,22 @@ int PSBCSTDZDeviceSTAMPDeviceApp::openPaperDoor(void)
     while (true) {
         int ret = FGetDevStatus(status, 24);
         if (0 != ret) {
-            WriteLog(3, "openPaperDoor->¼ì²âÕÂÏµÍ³Ê§°Ü, er: %d", ret);
+            WriteLog(3, "openPaperDoor->æ£€æµ‹ç« ç³»ç»Ÿå¤±è´¥, er: %d", ret);
             break;
         }
 
-        // ²»ÊÇ¸ÇÕÂ¹ı³ÌÖĞ, ÍË³ö
+        // ä¸æ˜¯ç›–ç« è¿‡ç¨‹ä¸­, é€€å‡º
         if (status[1] != 6)
             break;
     }
     
-    // ¹Ø±Õ±¨¾¯Æ÷
+    // å…³é—­æŠ¥è­¦å™¨
     SetAlarm(0, 0);
     SetAlarm(1, 0);
     
     int ret = FOpenDoorPaper();
     if (0 != ret) {
-        WriteLog(3, "openPaperDoor->µ÷ÓÃÇı¶¯½Ó¿ÚÊ§°Ü, er: %d", ret);
+        WriteLog(3, "openPaperDoor->è°ƒç”¨é©±åŠ¨æ¥å£å¤±è´¥, er: %d", ret);
         return EC_API_FAIL;
     }
 
@@ -571,13 +569,13 @@ char* PSBCSTDZDeviceSTAMPDeviceApp::geterrMsg(int errNo)
     ExitIfInMaintain();
 
     if (errNo >= EC_MAX || errNo < 0)
-        return "Î´¶¨ÒåµÄ´íÎóÂë";
+        return "æœªå®šä¹‰çš„é”™è¯¯ç ";
     
     WriteLog(4, "geterrMsg->OUT, (errNo) = (%d)", errNo);
     return (char*)ec_des[errNo].c_str();
 }
 
-// ÇĞÍ¼ÏñËØ×ø±ê, pointX, pointY
+// åˆ‡å›¾åƒç´ åæ ‡, pointX, pointY
 int PSBCSTDZDeviceSTAMPDeviceApp::checkManualPrintPara(int pointX, int pointY, int angle)
 {
     WriteLog(4, "checkManualPrintPara->IN, (pointX, pointY, angle)"
@@ -588,34 +586,34 @@ int PSBCSTDZDeviceSTAMPDeviceApp::checkManualPrintPara(int pointX, int pointY, i
 
     ExitIfInMaintain();
 
-    // ×ø±ê×ª»»
+    // åæ ‡è½¬æ¢
     int ori_x = -1;
     int ori_y = -1;
     int ori_angle = 0;
     int ret = SearchImgStampPointForPSBC(
-        src_image_.c_str(),      // Ô­Í¼ÎÄ¼ş
-        pointX,                  // ÇĞÍ¼ÓÃÓ¡µã
+        src_image_.c_str(),      // åŸå›¾æ–‡ä»¶
+        pointX,                  // åˆ‡å›¾ç”¨å°ç‚¹
         pointY,
         angle,
         ori_x,
         ori_y,
         ori_angle);
     if (0 != ret) {
-        WriteLog(3, "checkManualPrintPara->ÇĞÍ¼×ªÔ­Í¼×ø±êÊ§°Ü");
+        WriteLog(3, "checkManualPrintPara->åˆ‡å›¾è½¬åŸå›¾åæ ‡å¤±è´¥");
         return EC_CUT_TO_ORI_FAIL;
     }
 
     ret = FOpenDev(NULL);
     if (0 != ret)
-        WriteLog(3, "checkManualPrintPara->´ò¿ªÉè±¸Ê§°Ü");
+        WriteLog(3, "checkManualPrintPara->æ‰“å¼€è®¾å¤‡å¤±è´¥");
 
-    WriteLog(4, "checkManualPrintPara->ÇĞÍ¼×ªÔ­Í¼×ø±ê(%d, %d)ÏñËØ³É¹¦",
+    WriteLog(4, "checkManualPrintPara->åˆ‡å›¾è½¬åŸå›¾åæ ‡(%d, %d)åƒç´ æˆåŠŸ",
         ori_x,
         ori_y);
 
-    // ½«Ô­Í¼ÏñËØ×ø±ê×ª»»µ½ÎïÀí×ø±ê
+    // å°†åŸå›¾åƒç´ åæ ‡è½¬æ¢åˆ°ç‰©ç†åæ ‡
     struct Point* pt = GetSealCoord(ori_x, ori_y);
-    WriteLog(3, "checkManualPrintPara->Ô­Í¼:(%d, %d)×ªÎïÀí×ø±ê:(%d, %d)",
+    WriteLog(3, "checkManualPrintPara->åŸå›¾:(%d, %d)è½¬ç‰©ç†åæ ‡:(%d, %d)",
         ori_x,
         ori_y,
         pt->x,
@@ -630,89 +628,89 @@ int PSBCSTDZDeviceSTAMPDeviceApp::checkManualPrintPara(int pointX, int pointY, i
     return EC_SUC;
 }
 
-// ¸ÇÕÂ(ÊÇ·ñÕºÓ¡ÓÍ)
-// pointX, pointY   --- ÓÃÓ¡ÇĞÍ¼ÏñËØ×ø±ê
+// ç›–ç« (æ˜¯å¦è˜¸å°æ²¹)
+// pointX, pointY   --- ç”¨å°åˆ‡å›¾åƒç´ åæ ‡
 int PSBCSTDZDeviceSTAMPDeviceApp::ManualStart(
     int printNum,
     int pointX,
     int pointY,
     int angle,
-    int ink)        // ÊÇ·ñÕºÓ¡ÓÍ
+    int ink)        // æ˜¯å¦è˜¸å°æ²¹
 {
     WriteLog(4, "ManualStart->IN");
 
-    // ÓÃÓ¡²ÎÊı¼ì²é
+    // ç”¨å°å‚æ•°æ£€æŸ¥
     if (printNum <= 0 || printNum > 6 || angle < 0 || angle > 360 || pointX < 0 || pointY < 0) {
-        WriteLog(3, "ManualStart->²ÎÊı·Ç·¨");
+        WriteLog(3, "ManualStart->å‚æ•°éæ³•");
         return EC_INVALID_PARAMETER;
     }
 
     ExitIfInMaintain();
 
-    // ½øÖ½ÃÅ×´Ì¬
+    // è¿›çº¸é—¨çŠ¶æ€
     if (1 == checkPaperDoorState()) {
-        WriteLog(4, "ManualStart->½øÖ½ÃÅÎ´¹Ø±Õ");
+        WriteLog(4, "ManualStart->è¿›çº¸é—¨æœªå…³é—­");
         return EC_PAPER_OPEN;
     }
 
-    // °²È«ÃÅ×´Ì¬
+    // å®‰å…¨é—¨çŠ¶æ€
     if (1 == checkBackDoorState()) {
-        WriteLog(4, "ManualStart->°²È«ÃÅÎ´¹Ø±Õ");
+        WriteLog(4, "ManualStart->å®‰å…¨é—¨æœªå…³é—­");
         return EC_SAFE_OPEN;
     }
 
-    // ÕÂ²ÛºÅÊÇ·ñÓĞĞ§
+    // ç« æ§½å·æ˜¯å¦æœ‰æ•ˆ
     unsigned int rfids[7] = { 0 };
     unsigned char stampers = 0;
     if (0 == ReadAllRFID(rfids, 7, &stampers)) {
         if (rfids[printNum - 1] == 0) {
-            WriteLog(3, "ManualStart->%dºÅÕÂ²ÛÎŞÕÂ", printNum);
+            WriteLog(3, "ManualStart->%då·ç« æ§½æ— ç« ", printNum);
             return EC_NO_SEAL;
         }
     }
 
-    // ´òÓ¡Ô­Í¼Â·¾¶
-    WriteLog(4, "ManualStart->Æ¾Ö¤Ô­Í¼Â·¾¶: %s, Ñ°ÕÒÔ­Í¼×ø±ê",
+    // æ‰“å°åŸå›¾è·¯å¾„
+    WriteLog(4, "ManualStart->å‡­è¯åŸå›¾è·¯å¾„: %s, å¯»æ‰¾åŸå›¾åæ ‡",
         src_image_.c_str());
 
-    // ×ø±ê×ª»»
+    // åæ ‡è½¬æ¢
     int ori_x = -1;
     int ori_y = -1;
     int ori_angle = 0;
     int ret = SearchImgStampPointForPSBC(
-        src_image_.c_str(),      // Ô­Í¼ÎÄ¼ş
-        pointX,                  // ÇĞÍ¼ÓÃÓ¡µã
+        src_image_.c_str(),      // åŸå›¾æ–‡ä»¶
+        pointX,                  // åˆ‡å›¾ç”¨å°ç‚¹
         pointY,
         angle,
         ori_x,
         ori_y,
         ori_angle);
     if (0 != ret) {
-        WriteLog(3, "ManualStart->ÇĞÍ¼×ªÔ­Í¼×ø±êÊ§°Ü");
+        WriteLog(3, "ManualStart->åˆ‡å›¾è½¬åŸå›¾åæ ‡å¤±è´¥");
         return EC_CUT_TO_ORI_FAIL;
     }
 
     ret = FOpenDev(NULL);
     if (0 != ret)
-        WriteLog(3, "ManualStart->´ò¿ªÉè±¸Ê§°Ü");
+        WriteLog(3, "ManualStart->æ‰“å¼€è®¾å¤‡å¤±è´¥");
 
-    WriteLog(4, "ManualStart->ÇĞÍ¼(%d, %d)×ªÎªÔ­Í¼×ø±ê(%d, %d)ÏñËØ³É¹¦",
+    WriteLog(4, "ManualStart->åˆ‡å›¾(%d, %d)è½¬ä¸ºåŸå›¾åæ ‡(%d, %d)åƒç´ æˆåŠŸ",
         pointX,
         pointY,
         ori_x,
         ori_y);
 
     struct Point* pt = GetSealCoord(ori_x, ori_y);
-    WriteLog(4, "ManualStart->Ô­Í¼×ªÎïÀí×ø±ê:(%d, %d)ºÁÃ×³É¹¦, ·½Ê½: %s",
+    WriteLog(4, "ManualStart->åŸå›¾è½¬ç‰©ç†åæ ‡:(%d, %d)æ¯«ç±³æˆåŠŸ, æ–¹å¼: %s",
         pt->x,
         pt->y,
-        across_page_seal_called_ ? "¸ÇÆï·ìÕÂ" : "¸ÇÆÕÍ¨ÕÂ");
+        across_page_seal_called_ ? "ç›–éª‘ç¼ç« " : "ç›–æ™®é€šç« ");
 
     StampPara para;
     para.stamp_idx = printNum;
     ret = GetStamperID(para.stamp_idx - 1, para.rfid);
     if (0 != ret) {
-        WriteLog(3, "ManualStart->»ñÈ¡Ó¡ÕÂ(%d)µÄrfidÊ§°Ü", para.stamp_idx);
+        WriteLog(3, "ManualStart->è·å–å°ç« (%d)çš„rfidå¤±è´¥", para.stamp_idx);
         return EC_GET_RFID_FAIL;
     }
 
@@ -729,39 +727,39 @@ int PSBCSTDZDeviceSTAMPDeviceApp::ManualStart(
     pa.type = across_page_seal_called_ ? 1 : 0;
     across_page_seal_called_ = false;
 
-    // ÏÈ¹Ø±ÕÕğ¶¯±¨¾¯
+    // å…ˆå…³é—­éœ‡åŠ¨æŠ¥è­¦
     ret = SetAlarm(1, 0);
     if (0 != ret)
-        WriteLog(3, "ManualStart->¹ØÕğ¶¯±¨¾¯Ê§°Ü");
+        WriteLog(3, "ManualStart->å…³éœ‡åŠ¨æŠ¥è­¦å¤±è´¥");
 
-    // ·äÃùÒ»ÉùÌáÊ¾¸ÇÕÂ
+    // èœ‚é¸£ä¸€å£°æç¤ºç›–ç« 
     FBeepCtrl(2, 1);
     FBeepCtrl(0, 0);
     Sleep(500);
     ret = FStartStamperstrc(&pa);
     if (0 != ret) {
-        WriteLog(3, "ManualStart->·¢Æğ¸ÇÕÂÊ§°Ü, er: %d", ret);
+        WriteLog(3, "ManualStart->å‘èµ·ç›–ç« å¤±è´¥, er: %d", ret);
         delete pt;
         return EC_FAIL;
     }
 
-    // 20ÃëÄÚ¸ÇÕÂÍê³É
-    DWORD finish = WaitForSingleObject(notify_finish, 20 * 1000);
+    // WAIT_STAMP_COMPLETION ç§’å†…ç›–ç« å®Œæˆ
+    DWORD finish = WaitForSingleObject(notify_finish, WAIT_STAMP_COMPLETION * 1000);
     switch (finish) {
     case WAIT_OBJECT_0: {
        ResetEvent(notify_finish);
        ret = 0;
-       WriteLog(4, "ManualStart->µÈ´ı¸ÇÕÂÍê³É³É¹¦");
+       WriteLog(4, "ManualStart->ç­‰å¾…ç›–ç« å®ŒæˆæˆåŠŸ");
     }
         break;
     case WAIT_TIMEOUT: {
        ret = 0;
-       WriteLog(4, "ManualStart->µÈ´ı¸ÇÕÂÍê³É³¬Ê±");
+       WriteLog(4, "ManualStart->ç­‰å¾…ç›–ç« å®Œæˆè¶…æ—¶");
     }
         break;
     default: {
        ret = 0;
-       WriteLog(4, "ManualStart->µÈ´ı¸ÇÕÂÍê³É´íÎó");
+       WriteLog(4, "ManualStart->ç­‰å¾…ç›–ç« å®Œæˆé”™è¯¯");
     }
         break;
     }
@@ -771,8 +769,8 @@ int PSBCSTDZDeviceSTAMPDeviceApp::ManualStart(
     return ret;
 }
 
-// printNum         --- ÕÂ²ÛºÅ(1~6)
-// pointX, pointY   --- ÏñËØ×ø±ê, »ùÓÚÍ¼Æ¬×óÉÏ½Ç
+// printNum         --- ç« æ§½å·(1~6)
+// pointX, pointY   --- åƒç´ åæ ‡, åŸºäºå›¾ç‰‡å·¦ä¸Šè§’
 int PSBCSTDZDeviceSTAMPDeviceApp::manualPrintStart(
     int printNum, 
     int pointX, 
@@ -789,8 +787,8 @@ int PSBCSTDZDeviceSTAMPDeviceApp::manualPrintStart(
     return ManualStart(printNum, pointX, pointY, angle, 1);
 }
 
-// ¹âÃôÕÂÓÃÓ¡(²»ÕºÓ¡ÓÍ)
-// pointX, pointY   --- ÏñËØ×ø±ê
+// å…‰æ•ç« ç”¨å°(ä¸è˜¸å°æ²¹)
+// pointX, pointY   --- åƒç´ åæ ‡
 int PSBCSTDZDeviceSTAMPDeviceApp::manualPrintStartByLight(
     int printNum, 
     int pointX, 
@@ -807,8 +805,8 @@ int PSBCSTDZDeviceSTAMPDeviceApp::manualPrintStartByLight(
     return ManualStart(printNum, pointX, pointY, angle, 0);
 }
 
-// ×Ô¶¯ÓÃÓ¡
-// pointX, pointY   --- ÓÃÓ¡ÎïÀí×ø±ê, µ¥Î»ºÁÃ×
+// è‡ªåŠ¨ç”¨å°
+// pointX, pointY   --- ç”¨å°ç‰©ç†åæ ‡, å•ä½æ¯«ç±³
 int PSBCSTDZDeviceSTAMPDeviceApp::autoPrintStart(
     int printNum, 
     int pointX, 
@@ -822,14 +820,14 @@ int PSBCSTDZDeviceSTAMPDeviceApp::autoPrintStart(
         pointY,
         angle);
 
-    // ºÁÃ××ªÏñËØ
+    // æ¯«ç±³è½¬åƒç´ 
     int x_in_pixel = 0;
     int ret = ConvertMM2Dpi(
         pointX,
         PSBCConfig::GetInst()->dpi_,
         x_in_pixel);
     if (0 != ret) {
-        WriteLog(3, "autoPrintStart->xÎïÀí×ø±ê(%d)×ªÏñËØ×ø±êÊ§°Ü, er: %d",
+        WriteLog(3, "autoPrintStart->xç‰©ç†åæ ‡(%d)è½¬åƒç´ åæ ‡å¤±è´¥, er: %d",
             pointX,
             ret);
         return EC_FAIL;
@@ -841,13 +839,13 @@ int PSBCSTDZDeviceSTAMPDeviceApp::autoPrintStart(
         PSBCConfig::GetInst()->dpi_,
         y_in_pixel);
     if (0 != ret) {
-        WriteLog(3, "autoPrintStart->yÎïÀí×ø±ê(%d)×ªÏñËØ×ø±êÊ§°Ü, er: %d",
+        WriteLog(3, "autoPrintStart->yç‰©ç†åæ ‡(%d)è½¬åƒç´ åæ ‡å¤±è´¥, er: %d",
             pointY,
             ret);
         return EC_FAIL;
     }
 
-    WriteLog(4, "autoPrintStart->ÎïÀí×ø±ê(%d, %d)×ªÏñËØ×ø±êÖµ(%d, %d)³É¹¦",
+    WriteLog(4, "autoPrintStart->ç‰©ç†åæ ‡(%d, %d)è½¬åƒç´ åæ ‡å€¼(%d, %d)æˆåŠŸ",
         pointX,
         pointY,
         x_in_pixel,
@@ -869,21 +867,21 @@ int PSBCSTDZDeviceSTAMPDeviceApp::openMachineBackDoor(void)
 
     ExitIfInMaintain();
 
-    // Ê×ÏÈ¹Ø±ÕÕğ¶¯±¨¾¯
+    // é¦–å…ˆå…³é—­éœ‡åŠ¨æŠ¥è­¦
     SetAlarm(0, 0);
     SetAlarm(1, 0);
 
-    // ½øÈëÎ¬»¤Ä£Ê½
+    // è¿›å…¥ç»´æŠ¤æ¨¡å¼
     int ret = FMaintenanceMode();
     if (0 != ret) {
-        WriteLog(3, "openMachineBackDoor->½øÈëÎ¬»¤Ä£Ê½Ê§°Ü, er: %d", ret);
+        WriteLog(3, "openMachineBackDoor->è¿›å…¥ç»´æŠ¤æ¨¡å¼å¤±è´¥, er: %d", ret);
         return EC_INTO_MAINTAIN_FAIL;
     }
 
-    // µ±Ç°ÊÇ¡°Î¬»¤Ä£Ê½¡±
-    ret = FOpenDoorSafe();  // ´ò¿ªµç×ÓËø
+    // å½“å‰æ˜¯â€œç»´æŠ¤æ¨¡å¼â€
+    ret = FOpenDoorSafe();  // æ‰“å¼€ç”µå­é”
     if (0 != ret) {
-        WriteLog(3, "openMachineBackDoor->´ò¿ªµç×ÓËøÊ§°Ü, er: %d", ret);
+        WriteLog(3, "openMachineBackDoor->æ‰“å¼€ç”µå­é”å¤±è´¥, er: %d", ret);
         return EC_QUIT_MAINTAIN_FAIL;
     }
 
@@ -894,22 +892,22 @@ int PSBCSTDZDeviceSTAMPDeviceApp::openMachineBackDoor(void)
 int PSBCSTDZDeviceSTAMPDeviceApp::openMachineBackDoorUnNormal(const char* openInfo)
 {
     if (NULL == openInfo) {
-        WriteLog(3, "openMachineBackDoorUnNormal->²ÎÊıÎª¿Õ");
+        WriteLog(3, "openMachineBackDoorUnNormal->å‚æ•°ä¸ºç©º");
         return EC_INVALID_PARAMETER;
     }
 
     WriteLog(4, "openMachineBackDoorUnNormal->IN, (openInfo) = (%s)",
         openInfo);
 
-    // Òì³£¿ªËøĞÅÏ¢×î¶à15¸ö×Ö·û, ²»°üÀ¨0½áÎ²×Ö·û
+    // å¼‚å¸¸å¼€é”ä¿¡æ¯æœ€å¤š15ä¸ªå­—ç¬¦, ä¸åŒ…æ‹¬0ç»“å°¾å­—ç¬¦
     if (strlen(openInfo) > 15) {
-        WriteLog(3, "openMachineBackDoorUnNormal->²ÎÊı³¤¶È³¬¹ı¹æ¶¨µÄ×î´ó³¤¶È%d", 15);
+        WriteLog(3, "openMachineBackDoorUnNormal->å‚æ•°é•¿åº¦è¶…è¿‡è§„å®šçš„æœ€å¤§é•¿åº¦%d", 15);
         return EC_INVALID_PARAMETER;
     }
 
     unsigned char data[2] = { 0 };
     unsigned char len = 0;
-    // ÒÑ¼ÇÂ¼Òì³£¿ªËøĞÅÏ¢ÌõÊı
+    // å·²è®°å½•å¼‚å¸¸å¼€é”ä¿¡æ¯æ¡æ•°
     int ret = ReadStamperMem(
         OPEN_SAFE_DOOR_EXCEPTION_MARK_OFFSET,
         OPEN_SAFE_DOOR_EXCEPTION_MARK_SIZE,
@@ -918,19 +916,19 @@ int PSBCSTDZDeviceSTAMPDeviceApp::openMachineBackDoorUnNormal(const char* openIn
     if (0 != ret)
         return EC_API_FAIL;
 
-    // ÅĞ¶ÏÊÇ·ñÒÑ¾­Ğ´×î´óÒì³£¿ªËø¼ÇÂ¼
+    // åˆ¤æ–­æ˜¯å¦å·²ç»å†™æœ€å¤§å¼‚å¸¸å¼€é”è®°å½•
     int recorded = strtol((char*)&data[0], NULL, 16);
     if (recorded > MAX_EXCEPTION_OPEN_COUNT - 1) {
-        WriteLog(3, "openMachineBackDoorUnNormal->ÒÑ¾­Ğ´×î´óÒì³£¿ªËø¼ÇÂ¼");
+        WriteLog(3, "openMachineBackDoorUnNormal->å·²ç»å†™æœ€å¤§å¼‚å¸¸å¼€é”è®°å½•");
         return EC_UPTO_MAX_EXCEPTION;
     }
 
-    // ²ÎÊıÕıÈ·²¢¿ÉÒÔĞ´Èë
+    // å‚æ•°æ­£ç¡®å¹¶å¯ä»¥å†™å…¥
     ExitIfInMaintain();
 
     ret = openMachineBackDoor();
     if (EC_SUC != ret) {
-        WriteLog(3, "openMachineBackDoorUnNormal->´ò¿ª°²È«ÃÅÊ§°Ü, er: %d",
+        WriteLog(3, "openMachineBackDoorUnNormal->æ‰“å¼€å®‰å…¨é—¨å¤±è´¥, er: %d",
             ret);
         return ret;
     }
@@ -945,7 +943,7 @@ int PSBCSTDZDeviceSTAMPDeviceApp::openMachineBackDoorUnNormal(const char* openIn
     if (0 != ret)
         return ret;
 
-    // Ğ´Òì³£¿ªËøĞÅÏ¢³É¹¦, ¸üĞÂ¼ÇÂ¼Òì³£¿ªËøĞÅÏ¢ÌõÄ¿
+    // å†™å¼‚å¸¸å¼€é”ä¿¡æ¯æˆåŠŸ, æ›´æ–°è®°å½•å¼‚å¸¸å¼€é”ä¿¡æ¯æ¡ç›®
     data[0] += 1;
     ret = WriteIntoStamper(
         OPEN_SAFE_DOOR_EXCEPTION_MARK_OFFSET,
@@ -971,7 +969,7 @@ char* PSBCSTDZDeviceSTAMPDeviceApp::getMachineNum(void)
 
     int ret = ReadStamperIdentifier(getMachineNum_str_, 21);
     if (0 != ret) {
-        WriteLog(3, "getMachineNum->ReadStamperIdentifierÊ§°Ü, er: %d",
+        WriteLog(3, "getMachineNum->ReadStamperIdentifierå¤±è´¥, er: %d",
             ret);
         return (char*)getMachineNum_str_;
     }
@@ -995,7 +993,7 @@ char* PSBCSTDZDeviceSTAMPDeviceApp::getMachineType(void)
     unsigned char sn[49] = { 0 };
     int ret = ReadBackupSN(sn, 48);
     if (0 != ret) {
-        WriteLog(3, "getMachineType->ReadBackupSNÊ§°Ü, er: %d", ret);
+        WriteLog(3, "getMachineType->ReadBackupSNå¤±è´¥, er: %d", ret);
         sprintf(getMachineType_str_, "-@#%d", ret);
         return getMachineType_str_;
     }
@@ -1010,11 +1008,11 @@ int PSBCSTDZDeviceSTAMPDeviceApp::checkPaperDoorState(void)
 
     ExitIfInMaintain();
 
-    // »ñÈ¡ÃÅ×´Ì¬(len = 4)
-    // P1:   ÍÆÖ½ÃÅ×´Ì¬  0 ¹Ø±Õ£¬1 ¿ªÆô£¬ 2¼ì²â´íÎó
-    // P2:   µç×ÓËø×´Ì¬£¬Í¬ÉÏ
-    // P3:   »úĞµËø×´Ì¬£¬Í¬ÉÏ
-    // P4:   ¶¥¸Ç×´Ì¬£¬Í¬ÉÏ
+    // è·å–é—¨çŠ¶æ€(len = 4)
+    // P1:   æ¨çº¸é—¨çŠ¶æ€  0 å…³é—­ï¼Œ1 å¼€å¯ï¼Œ 2æ£€æµ‹é”™è¯¯
+    // P2:   ç”µå­é”çŠ¶æ€ï¼ŒåŒä¸Š
+    // P3:   æœºæ¢°é”çŠ¶æ€ï¼ŒåŒä¸Š
+    // P4:   é¡¶ç›–çŠ¶æ€ï¼ŒåŒä¸Š
 
     char doors[4] = { 0 };
     int ret = FGetDoorsPresent(doors, sizeof(doors));
@@ -1028,14 +1026,14 @@ int PSBCSTDZDeviceSTAMPDeviceApp::checkBackDoorState(void)
 {
     WriteLog(4, "checkBackDoorState->IN");
 
-    // ¸Ã½Ó¿Ú²»ÄÜµ÷ÓÃExitIfInMaintain(Èç¹ûÏÈµ÷ÓÃ¿ª°²È«ÃÅ½Ó¿Ú, Ôò»á±»×Ô¶¯¹Ø±Õ, ÄÇÃ´ÅĞ¶Ï°²È«ÃÅ×´Ì¬»á³ö´í).
+    // è¯¥æ¥å£ä¸èƒ½è°ƒç”¨ExitIfInMaintain(å¦‚æœå…ˆè°ƒç”¨å¼€å®‰å…¨é—¨æ¥å£, åˆ™ä¼šè¢«è‡ªåŠ¨å…³é—­, é‚£ä¹ˆåˆ¤æ–­å®‰å…¨é—¨çŠ¶æ€ä¼šå‡ºé”™).
 
     char doors[4] = { 0 };
     int ret = FGetDoorsPresent(doors, sizeof(doors));
     if (0 != ret)
         return EC_API_FAIL;
 
-    // ÒÔµç×ÓËøÎªÅĞ¶ÏÒÀ¾İ
+    // ä»¥ç”µå­é”ä¸ºåˆ¤æ–­ä¾æ®
     return doors[1] == 0 ? 2 : 1;
 }
 
@@ -1064,33 +1062,33 @@ int PSBCSTDZDeviceSTAMPDeviceApp::checkLockState(void)
     return IsLocked() ? 0 : -1;
 }
 
-// ´ò¿ªÉãÏñÍ·ÕÕÃ÷µÆ
+// æ‰“å¼€æ‘„åƒå¤´ç…§æ˜ç¯
 int PSBCSTDZDeviceSTAMPDeviceApp::openVideoCapLight(void)
 {
     WriteLog(4, "openVideoCapLight->IN");
 
     ExitIfInMaintain();
 
-    // ²¹¹âµÆ¿ØÖÆ
-    // light     --- ²¹¹âµÆÀàĞÍ
-    //              1 -- °²È«ÃÅÅÔ±ßµÄ²¹¹âµÆ; 
-    //              2 -- Æ¾Ö¤ÉãÏñÍ·ÅÔ±ßµÄ²¹¹âµÆ
-    // op        --- ²Ù×÷(0 -- ¹Ø; 1 -- ¿ª)
+    // è¡¥å…‰ç¯æ§åˆ¶
+    // light     --- è¡¥å…‰ç¯ç±»å‹
+    //              1 -- å®‰å…¨é—¨æ—è¾¹çš„è¡¥å…‰ç¯; 
+    //              2 -- å‡­è¯æ‘„åƒå¤´æ—è¾¹çš„è¡¥å…‰ç¯
+    // op        --- æ“ä½œ(0 -- å…³; 1 -- å¼€)
 
-    // ²¹¹âµÆÁÁ¶Èµ÷½Ú
-    // light         --- ²¹¹âµÆÀàĞÍ
-    //                  1 °²È«ÃÅÅÔ±ßµÄ²¹¹âµÆ
-    //                  2 Æ¾Ö¤ÉãÏñÍ·ÅÔ±ßµÄ²¹¹âµÆ
-    // brightness    --- ÁÁ¶ÈÖµ(½¨Òé·¶Î§ 1-100, 1Îª×îÈõ, 100Îª×îÁÁ)
+    // è¡¥å…‰ç¯äº®åº¦è°ƒèŠ‚
+    // light         --- è¡¥å…‰ç¯ç±»å‹
+    //                  1 å®‰å…¨é—¨æ—è¾¹çš„è¡¥å…‰ç¯
+    //                  2 å‡­è¯æ‘„åƒå¤´æ—è¾¹çš„è¡¥å…‰ç¯
+    // brightness    --- äº®åº¦å€¼(å»ºè®®èŒƒå›´ 1-100, 1ä¸ºæœ€å¼±, 100ä¸ºæœ€äº®)
     // int FLightBrightness(char light, char brightness);
     
     int ret = FLightCtrl(2, 1);
     if (0 != ret) {
-        WriteLog(3, "openVideoCapLight->²¹¹âµÆ´ò¿ªÊ§°Ü, er: %d", ret);
+        WriteLog(3, "openVideoCapLight->è¡¥å…‰ç¯æ‰“å¼€å¤±è´¥, er: %d", ret);
         return EC_OPEN_CAMERA_LED_FAIL;
     }
 
-    // ´ò¿ªÉãÏñÍ·ºóĞèÒªÉèÖÃÁÁ¶È
+    // æ‰“å¼€æ‘„åƒå¤´åéœ€è¦è®¾ç½®äº®åº¦
     return 0 != FLightBrightness(2, PSBCConfig::GetInst()->brightness_) ? EC_ADJUST_LED_FAIL : EC_SUC;
 }
 
@@ -1105,7 +1103,7 @@ int PSBCSTDZDeviceSTAMPDeviceApp::closeVideoCapLight(void)
 int PSBCSTDZDeviceSTAMPDeviceApp::connMachine(const char* seriaID)
 {
     if (NULL == seriaID) {
-        WriteLog(3, "connMachine->²ÎÊıÎª¿Õ");
+        WriteLog(3, "connMachine->å‚æ•°ä¸ºç©º");
         return EC_INVALID_PARAMETER;
     }
 
@@ -1114,16 +1112,16 @@ int PSBCSTDZDeviceSTAMPDeviceApp::connMachine(const char* seriaID)
     ExitIfInMaintain();
     int ret = FOpenDev(NULL);
     if (0 != ret) {
-        WriteLog(3, "connMachine->´ò¿ªÉè±¸Ê§°Ü, er: %d", ret);
+        WriteLog(3, "connMachine->æ‰“å¼€è®¾å¤‡å¤±è´¥, er: %d", ret);
         return EC_OPEN_FAIL;
     }
 
     connected_ = true;
 
-//     // ½«ĞòÁĞºÅĞ´ÈëÓ¡¿Ø»ú
+//     // å°†åºåˆ—å·å†™å…¥å°æ§æœº
 //     ret = WriteBackupSN((unsigned char*)seriaID, strlen(seriaID));
 //     if (0 != ret) {
-//         WriteLog(3, "PSBCSTDZDeviceSTAMPDeviceApp::connMachine->Ğ´ĞòÁĞºÅÊ§°Ü, er: %d", ret);
+//         WriteLog(3, "PSBCSTDZDeviceSTAMPDeviceApp::connMachine->å†™åºåˆ—å·å¤±è´¥, er: %d", ret);
 //         return EC_API_FAIL;
 //     }
 
@@ -1161,7 +1159,7 @@ char* PSBCSTDZDeviceSTAMPDeviceApp::readOpenBackDoorExceptionInfo(void)
         0x0,
         OPEN_SAFE_DOOR_EXCEPTION_SIZE * MAX_EXCEPTION_OPEN_COUNT + 1);
 
-    // ¶ÁÒÑ¼ÇÂ¼ÌõÊı
+    // è¯»å·²è®°å½•æ¡æ•°
     unsigned char len = 0;
     unsigned char mark[2] = { 0 };
     int ret = ReadStamperMem(
@@ -1172,12 +1170,12 @@ char* PSBCSTDZDeviceSTAMPDeviceApp::readOpenBackDoorExceptionInfo(void)
     if (0 != ret)
         return (char*)readOpenBackDoorExceptionInfo_str_;
 
-    // ½øÖÆ×ª»»
+    // è¿›åˆ¶è½¬æ¢
     int recorded = strtol((char*)&mark[0], NULL, 16);
 
-    // Èç¹ûÒì³£¼ÇÂ¼ÒÑ¾­Çå¿Õ
+    // å¦‚æœå¼‚å¸¸è®°å½•å·²ç»æ¸…ç©º
     if (0 == recorded) {
-        WriteLog(3, "readOpenBackDoorExceptionInfo->Òì³£¼ÇÂ¼ĞÅÏ¢ÒÑ±»Çå¿Õ");
+        WriteLog(3, "readOpenBackDoorExceptionInfo->å¼‚å¸¸è®°å½•ä¿¡æ¯å·²è¢«æ¸…ç©º");
         return (char*)readOpenBackDoorExceptionInfo_str_;
     }
 
@@ -1217,9 +1215,9 @@ int PSBCSTDZDeviceSTAMPDeviceApp::delOpenBackDoorExceptionInfo(void)
     return ret;
 }
 
-//////////////////////////// ÉãÏñÍ·API //////////////////////////////////
+//////////////////////////// æ‘„åƒå¤´API //////////////////////////////////
 
-// ´ò¿ªÉãÏñÍ·
+// æ‰“å¼€æ‘„åƒå¤´
 int PSBCSTDZDeviceSTAMPDeviceApp::openVideoCap(void)
 {
     WriteLog(4, "openVideoCap->IN");
@@ -1229,7 +1227,7 @@ int PSBCSTDZDeviceSTAMPDeviceApp::openVideoCap(void)
 
     int ret1 = OpenCamera(PAPERCAMERA);
     if (0 != ret1)
-        WriteLog(3, "openVideoCap->´ò¿ªÆ¾Ö¤ÉãÏñÍ·Ê§°Ü, er: %d", 
+        WriteLog(3, "openVideoCap->æ‰“å¼€å‡­è¯æ‘„åƒå¤´å¤±è´¥, er: %d", 
             ret1);
 
     int ret2 = SetResolution(
@@ -1237,7 +1235,7 @@ int PSBCSTDZDeviceSTAMPDeviceApp::openVideoCap(void)
         PSBCConfig::GetInst()->resolution_width_,
         PSBCConfig::GetInst()->resolution_height_);
     if (0 != ret2)
-        WriteLog(3, "openVideoCap->ÉèÖÃÆ¾Ö¤ÉãÏñÍ··Ö±æÂÊÊ§°Ü, er: %d",
+        WriteLog(3, "openVideoCap->è®¾ç½®å‡­è¯æ‘„åƒå¤´åˆ†è¾¨ç‡å¤±è´¥, er: %d",
             ret2);
 
     if (0 == ret1 && 0 == ret2)
@@ -1309,22 +1307,22 @@ int getSystemTime(int& year, int& month, int& date)
 }
 
 int PSBCSTDZDeviceSTAMPDeviceApp::getImageFormat(
-    const char* filePath,   // ÇĞÍ¼Â·¾¶
+    const char* filePath,   // åˆ‡å›¾è·¯å¾„
     int type,
     int isEraseBorder)
 {
     if (NULL == filePath) {
-        WriteLog(3, "getImageFormat->Â·¾¶Îª¿Õ");
+        WriteLog(3, "getImageFormat->è·¯å¾„ä¸ºç©º");
         return EC_INVALID_PARAMETER;
     }
 
     if (type != 0 && type != 1 && type != 2) {
-        WriteLog(3, "getImageFormat->Í¼Æ¬ÀàĞÍ²ÎÊı(%d)·Ç·¨", type);
+        WriteLog(3, "getImageFormat->å›¾ç‰‡ç±»å‹å‚æ•°(%d)éæ³•", type);
         return EC_INVALID_PARAMETER;
     }
 
     if (isEraseBorder != 0 && isEraseBorder != 1) {
-        WriteLog(3, "getImageFormat->Í¼Æ¬´¦Àí²ÎÊı(%d)·Ç·¨", isEraseBorder);
+        WriteLog(3, "getImageFormat->å›¾ç‰‡å¤„ç†å‚æ•°(%d)éæ³•", isEraseBorder);
         return EC_INVALID_PARAMETER;
     }
 
@@ -1334,11 +1332,11 @@ int PSBCSTDZDeviceSTAMPDeviceApp::getImageFormat(
         type,
         isEraseBorder);
 
-    // ´ò¿ªÉãÏñÍ·¡¢´ò¿ªÉãÏñÍ·²¹¹âµÆ
+    // æ‰“å¼€æ‘„åƒå¤´ã€æ‰“å¼€æ‘„åƒå¤´è¡¥å…‰ç¯
     openVideoCap();
     openVideoCapLight();
 
-    // ÒÔÊ±¼äÎªÎÄ¼şÃû
+    // ä»¥æ—¶é—´ä¸ºæ–‡ä»¶å
     int year = 0;
     int month = 0;
     int date = 0;
@@ -1351,7 +1349,7 @@ int PSBCSTDZDeviceSTAMPDeviceApp::getImageFormat(
     char file_path[MAX_PATH] = { 0 };
     sprintf_s(file_path, "%s\\tmp\\%s.jpg", working_path.c_str(), file_name);
 
-	std::string src_path(file_path); // Ô´Í¼Â·¾¶Ãû
+	std::string src_path(file_path); // æºå›¾è·¯å¾„å
     src_image_ = src_path;
 
 	int ret = CapturePhoto(
@@ -1359,7 +1357,7 @@ int PSBCSTDZDeviceSTAMPDeviceApp::getImageFormat(
 		CvtType(type), 
 		(char*)src_path.c_str());
     if (0 != ret) {
-        WriteLog(3, "getImageFormat->Ô­Í¼Â·¾¶: %s, ÅÄÕÕÊ§°Ü, er: %d", 
+        WriteLog(3, "getImageFormat->åŸå›¾è·¯å¾„: %s, æ‹ç…§å¤±è´¥, er: %d", 
             src_path.c_str(),
             ret);
         return EC_CAPTURE_FAIL;
@@ -1367,14 +1365,14 @@ int PSBCSTDZDeviceSTAMPDeviceApp::getImageFormat(
 
     char dst_path[MAX_PATH] = { 0 };
     memcpy(dst_path, filePath, strlen(filePath));
-    // Í¼Æ¬²»½øĞĞ´¦Àí, Ö»ÊÇ¸´ÖÆÍ¼Æ¬
+    // å›¾ç‰‡ä¸è¿›è¡Œå¤„ç†, åªæ˜¯å¤åˆ¶å›¾ç‰‡
     if (isEraseBorder == 0) {
         CopyFile(src_path, dst_path);
     } else {
-        // ¾ÀÆ«È¥ºÚ±ß
+        // çº åå»é»‘è¾¹
         ret = CutImgEdgeEx(src_path.c_str(), dst_path);
         if (0 != ret) {
-            WriteLog(3, "getImageFormat->¾ÀÆ«È¥ºÚ±ßÊ§°Ü, er: %d", ret);
+            WriteLog(3, "getImageFormat->çº åå»é»‘è¾¹å¤±è´¥, er: %d", ret);
             return EC_IMG_PROCESS_FAIL;
         }
     }
@@ -1392,7 +1390,7 @@ int PSBCSTDZDeviceSTAMPDeviceApp::revolveImg(
     return RotateImg(filePath, angle, targetPath);
 }
 
-// ¹Ø±ÕÆ¾Ö¤ÉãÏñÍ·
+// å…³é—­å‡­è¯æ‘„åƒå¤´
 int PSBCSTDZDeviceSTAMPDeviceApp::closeVideoCap(void)
 {
     WriteLog(4, "closeVideoCap->IN");
@@ -1410,14 +1408,14 @@ int PSBCSTDZDeviceSTAMPDeviceApp::checkVideoState(void)
 
 //////////////////////////////////////////////////////////////////////////
 
-// slotNumAndStampId    --- ĞÎÈç: (1:00000000001a;2:00000000002b;3:0...)
+// slotNumAndStampId    --- å½¢å¦‚: (1:00000000001a;2:00000000002b;3:0...)
 bool PSBCSTDZDeviceSTAMPDeviceApp::ParseSlotAndStamperID(
     const char* slotNumAndStampId,
     std::map<int, std::string>& slot_stamper)
 {
     char buf[128] = { 0 };
     strcpy(buf, slotNumAndStampId);
-    char *token = std::strtok(buf, ";"); // strtok»á¸Ä±äbuf
+    char *token = std::strtok(buf, ";"); // strtokä¼šæ”¹å˜buf
     while (token != NULL) {
         std::string str = token;
         size_t comma = str.find_first_of(":");
@@ -1436,29 +1434,29 @@ bool PSBCSTDZDeviceSTAMPDeviceApp::ParseSlotAndStamperID(
     return true;
 }
 
-// ½«Ô­Í¼ÓÃÓ¡ÏñËØ×ø±ê×ª»»ÎªÉè±¸(Ó¡¿Ø»ú)ÓÃÓ¡×ø±ê(ºÁÃ×)
+// å°†åŸå›¾ç”¨å°åƒç´ åæ ‡è½¬æ¢ä¸ºè®¾å¤‡(å°æ§æœº)ç”¨å°åæ ‡(æ¯«ç±³)
 Point* PSBCSTDZDeviceSTAMPDeviceApp::GetSealCoord(int nX, int nY)
 {
     int dminx = 3;          //2//6
     int dminy = 60;         //56//60
     int dmaxx = 260;        //270//270
     int dmaxy = 230;        // 250//239
-    int w = dmaxx - dminx;  //--Ó¡ÕÂĞ£×¼Î»ÖÃ×î´óX-Ó¡ÕÂĞ£×¼Î»ÖÃ×îĞ¡X ÎïÀí=239
-    int h = dmaxy - dminy;  //--Ó¡ÕÂĞ£×¼Î»ÖÃ×î´óY-Ó¡ÕÂĞ£×¼Î»ÖÃ×îĞ¡Y ÎïÀí=182
-    int x0 = nX;            //--Ô­¼ş¸ÇÕÂX×ø±ê
-    int y0 = nY;            //--Ô­¼ş¸ÇÕÂY×ø±ê
+    int w = dmaxx - dminx;  //--å°ç« æ ¡å‡†ä½ç½®æœ€å¤§X-å°ç« æ ¡å‡†ä½ç½®æœ€å°X ç‰©ç†=239
+    int h = dmaxy - dminy;  //--å°ç« æ ¡å‡†ä½ç½®æœ€å¤§Y-å°ç« æ ¡å‡†ä½ç½®æœ€å°Y ç‰©ç†=182
+    int x0 = nX;            //--åŸä»¶ç›–ç« Xåæ ‡
+    int y0 = nY;            //--åŸä»¶ç›–ç« Yåæ ‡
 
     const PSBCConfig* config = PSBCConfig::GetInst();
-    int x1 = /*config->check_pt1_.x*/1929;              //--A4ÏñËØ×îĞ¡X×ø±ê ÏñËØ ÓÒÉÏ½Ç×ø±ê
-    int y1 = /*config->check_pt1_.y*/139;              //--A4ÏñËØ×îĞ¡Y×ø±ê ÏñËØ
+    int x1 = /*config->check_pt1_.x*/1929;              //--A4åƒç´ æœ€å°Xåæ ‡ åƒç´  å³ä¸Šè§’åæ ‡
+    int y1 = /*config->check_pt1_.y*/139;              //--A4åƒç´ æœ€å°Yåæ ‡ åƒç´ 
 
-    int x2 = /*config->check_pt3_.x*/296;              //--[===[A4ÏñËØ×î´óX×ø±ê ÏñËØ]===] ×óÏÂ½Ç×ø±ê
-    int y2 = /*config->check_pt3_.y*/1221;              //--[===[A4ÏñËØ×î´óY×ø±ê ÏñËØ]===]
-    WriteLog(4, "GetSealCoord->ÓÒÉÏ½Ç(%d, %d), ×óÏÂ½Ç(%d, %d)",
+    int x2 = /*config->check_pt3_.x*/296;              //--[===[A4åƒç´ æœ€å¤§Xåæ ‡ åƒç´ ]===] å·¦ä¸‹è§’åæ ‡
+    int y2 = /*config->check_pt3_.y*/1221;              //--[===[A4åƒç´ æœ€å¤§Yåæ ‡ åƒç´ ]===]
+    WriteLog(4, "GetSealCoord->å³ä¸Šè§’(%d, %d), å·¦ä¸‹è§’(%d, %d)",
         x1, y1,
         x2, y2);
 
-    // ¶ÁÈ¡Ğ£×¼µãÊı¾İ
+    // è¯»å–æ ¡å‡†ç‚¹æ•°æ®
     //         std::vector<struct Point*> VerifyPoists;
     //         unsigned short buffer[10] = { 0 };
     //         int ret = CalibrationPoint(buffer, 10);
@@ -1470,12 +1468,12 @@ Point* PSBCSTDZDeviceSTAMPDeviceApp::GetSealCoord(int nX, int nY)
     //                 VerifyPoists.push_back(pt);
     //             }
     //         } else {
-    //             Log::WriteLog(LL_DEBUG, "Î´¶ÁÈ¡µ½Ğ£×¼µãÊı¾İ,Ê¹ÓÃÏµÍ³Ä¬ÈÏÖµ");
+    //             Log::WriteLog(LL_DEBUG, "æœªè¯»å–åˆ°æ ¡å‡†ç‚¹æ•°æ®,ä½¿ç”¨ç³»ç»Ÿé»˜è®¤å€¼");
     //         }
     // 
     //         if (VerifyPoists.size() > 4 && VerifyPoists.at(1)->x != 65535 &&
     //             VerifyPoists.at(1)->y != 65535) {
-    //             // ×óÉÏ, ÓÒÉÏ(1), ÓÒÏÂ, ×óÏÂ(3), ÖĞ¼ä
+    //             // å·¦ä¸Š, å³ä¸Š(1), å³ä¸‹, å·¦ä¸‹(3), ä¸­é—´
     //             x1 = VerifyPoists[1]->x;
     //             y1 = VerifyPoists[1]->y;
     //             x2 = VerifyPoists[3]->x;
@@ -1491,7 +1489,7 @@ Point* PSBCSTDZDeviceSTAMPDeviceApp::GetSealCoord(int nX, int nY)
     //             y2 = MC::SvrConfig::GetInst()->check_pt4_.y;
     //         }
 
-    // ±ÈÀı¼ÆËã
+    // æ¯”ä¾‹è®¡ç®—
     double dRateX = (double)(fabs(float(x2 - x1)) * 1000) / (double)(fabs(float(dmaxx - dminx)) * 1000); // 7.85
     double dRateY = (double)(fabs(float(y2 - y1)) * 1000) / (double)(fabs(float(dmaxy - dminy)) * 1000); // 7.88
     double devX = (double)(fabs(float(x1 - nX)) * 1000) / (double)(dRateX * 1000) + dminx;
@@ -1518,7 +1516,7 @@ Point* PSBCSTDZDeviceSTAMPDeviceApp::GetSealCoord(int nX, int nY)
     }
 
     if (bFix) {
-        WriteLog(4, "ĞŞÕıÉè±¸ÓÃÓ¡Î»ÖÃ, Device({2},{3})", nX, nY, x, y);
+        WriteLog(4, "ä¿®æ­£è®¾å¤‡ç”¨å°ä½ç½®, Device({2},{3})", nX, nY, x, y);
     }
 
     return new Point(x, y);
@@ -1532,7 +1530,7 @@ ErrorCode PSBCSTDZDeviceSTAMPDeviceApp::CheckMachineNum(const char* machine)
         return EC_API_FAIL;
 
     if (0 != strcmp((char*)id, machine)) {
-        WriteLog(3, "CheckMachineNum->Éè±¸±àºÅ²»Æ¥Åä, ¹ÌÓĞ: %s, ´«Èë: %s",
+        WriteLog(3, "CheckMachineNum->è®¾å¤‡ç¼–å·ä¸åŒ¹é…, å›ºæœ‰: %s, ä¼ å…¥: %s",
             id,
             machine);
         return EC_MACHINE_MISMATCH;
@@ -1551,10 +1549,10 @@ void PSBCSTDZDeviceSTAMPDeviceApp::ExitIfInMaintain()
     if (0 != ret)
         return;
 
-    // Èç¹ûÊÇÎ¬»¤Ä£Ê½
+    // å¦‚æœæ˜¯ç»´æŠ¤æ¨¡å¼
     if (status[1] == 7) {
         SetStampMap();
-        FCloseDoorSafe();   //  ¹Øµç×ÓËø
+        FCloseDoorSafe();   //  å…³ç”µå­é”
         FQuitMaintainMode();
     }
 }
@@ -1571,8 +1569,8 @@ bool PSBCSTDZDeviceSTAMPDeviceApp::CopyFile(std::string strFrom,std::string strT
     pTo[nToLen+1]='\0';
 
     SHFILEOPSTRUCT FileOp={0};
-    FileOp.fFlags = FOF_NOCONFIRMATION|   //²»³öÏÖÈ·ÈÏ¶Ô»°¿ò
-        FOF_NOCONFIRMMKDIR ; //ĞèÒªÊ±Ö±½Ó´´½¨Ò»¸öÎÄ¼ş¼Ğ,²»ĞèÓÃ»§È·¶¨
+    FileOp.fFlags = FOF_NOCONFIRMATION|   //ä¸å‡ºç°ç¡®è®¤å¯¹è¯æ¡†
+        FOF_NOCONFIRMMKDIR ; //éœ€è¦æ—¶ç›´æ¥åˆ›å»ºä¸€ä¸ªæ–‡ä»¶å¤¹,ä¸éœ€ç”¨æˆ·ç¡®å®š
     FileOp.pFrom = pFrom;
     FileOp.pTo = pTo;
     FileOp.wFunc = FO_COPY;

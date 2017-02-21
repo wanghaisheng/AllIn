@@ -1,4 +1,4 @@
-// PSBC.STDZ.Device.STAMP.Device.cpp : ¶¨Òå DLL µÄ³õÊ¼»¯Àı³Ì¡£
+ï»¿// PSBC.STDZ.Device.STAMP.Device.cpp : å®šä¹‰ DLL çš„åˆå§‹åŒ–ä¾‹ç¨‹ã€‚
 //
 
 #include "stdafx.h"
@@ -58,7 +58,7 @@ STMAP_DEVICE_PSBC_API int Execute(\
 	return theApp.Test();
 }
 
-////////////////////////////// ÓÃÓ¡»ú½Ó¿Ú //////////////////////////////////
+////////////////////////////// ç”¨å°æœºæ¥å£ //////////////////////////////////
 
 // No. 1
 STMAP_DEVICE_PSBC_API int initializationMachine(void)
