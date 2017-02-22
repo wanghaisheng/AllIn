@@ -58,6 +58,11 @@ public:
     virtual void Notify(int x, int y, double angle, int ec) = 0;
 };
 
+class RecogModelPointNT {
+public:
+    virtual void Notify(std::string model, double angle, int x, int y, int ec) = 0;
+};
+
 // 版面、验证码识别
 class RecognizeNT {
 public:
@@ -302,9 +307,20 @@ public:
         double angle,
         SearchStampPointNT* nt);
 
-    int AsynRecognizeImage(const std::string& path, RecognizeNT* nt);
+    int AsynRecogModelPoint(
+        const std::string& path,
+        RecogModelPointNT* nt);
 
-    int AsynIdentifyElement(const std::string& path, int x, int y, int width, int height,
+    int AsynRecognizeImage(
+        const std::string& path, 
+        RecognizeNT* nt);
+
+    int AsynIdentifyElement(
+        const std::string& path,
+        int x,
+        int y, 
+        int width, 
+        int height,
         int angle, IdentifyNT* nt);
 
     int AsynOrdinaryStamp(
@@ -414,6 +430,8 @@ public:
     void HandleMergePhoto(char* chBuf);
 
     void HandleSearchStamp(char* chBuf);
+
+    void HandleRecogModelPoint(char* chBuf);
 
     void HandleRecognition(char* chBuf);
 

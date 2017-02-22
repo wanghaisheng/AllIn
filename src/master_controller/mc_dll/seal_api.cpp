@@ -882,6 +882,86 @@ void MC::STSealAPI::RecognizeImage(const std::string& img, NotifyResult* notify)
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
 
+/////////////////////////// 模板类型、角度、用印点识别 ////////////////////////////////
+
+class RecogEtcEv : public MC::BaseEvent {
+
+public:
+    RecogEtcEv(std::string des, std::string img, MC::NotifyResult* notify)
+        : BaseEvent(des),
+        img_(img),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        std::string model;
+        double angle = 0.f;
+        int x = 0;
+        int y = 0;
+        char angle_str[64] = { 0 };
+        char x_str[11] = { 0 };
+        char y_str[11] = { 0 };
+        MC::ErrorCode ec = MC::EC_SUCC;
+
+        FILE* file = fopen(img_.c_str(), "r");
+        if (NULL == file) {
+            ec = MC::EC_FILE_NOT_EXIST;
+            goto NT;
+        }
+
+        // 模板类型、角度、用印点识别
+        int ret = MC::ImgPro::GetInst()->GetModelTypeAnglePoint(
+            img_, 
+            model, 
+            angle, 
+            x, 
+            y);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::RecogEtcEv::SpecificExecute->模版类型角度识别失败, er: %d",
+                ret);
+            ec = MC::EC_MODEL_TYPE_FAIL;
+            goto NT;
+        }
+
+        sprintf(angle_str, "%f", angle);
+        sprintf(x_str, "%d", x);
+        sprintf(y_str, "%d", y);
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(
+            ec,
+            model,
+            angle_str,
+            x_str,
+            y_str);
+        Log::WriteLog(LL_DEBUG, "MC::RecogEtcEv->模板及用印点, ec: %s, "
+            "角度: %f, x: %d, y: %d", 
+            MC::ErrorMsg[ec].c_str(),
+            angle,
+            x,
+            y);
+        delete this;
+    }
+
+private:
+    std::string img_;
+
+    MC::NotifyResult* notify_;
+};
+
+void MC::STSealAPI::RecoModelEtc(
+    const std::string& img,
+    NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) RecogEtcEv("模板及用印点", img, notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
 /////////////////////////// 原图用印点查找 ////////////////////////////////
 
 class SearchPointEv : public MC::BaseEvent {

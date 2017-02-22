@@ -58,6 +58,7 @@ enum CmdType {
     CT_LED_CTL,             // 补光灯控制
     CT_CHECK_PARAM,         // 用印参数合法性检查
     CT_GET_RFID,            // 根据卡槽号获取RFID
+    CT_RECOG_MODEL,         // 模板及用印点查找
 
     // 摄像头接口
     CT_OPEN_CAMERA,         // 打开摄像头
@@ -112,6 +113,7 @@ static std::string cmd_des[] =
     "补光灯控制",
     "用印参数合法性检查",
     "根据卡槽号获取RFID",
+    "模板及用印点查找",
     "打开摄像头",
     "关闭摄像头",
     "摄像头状态",
@@ -316,6 +318,26 @@ public:
     int             angle_;                 // 旋转角度(0, 90, 180, 270)
 
     char            content_str_[64];       // 识别结果
+
+    MC::ErrorCode   ret_;
+};
+
+class RecoModelTypeEtcCmd: public BaseCmd {
+public:
+    RecoModelTypeEtcCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_RECOG_MODEL;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    char            path_[MAX_PATH];
+
+    char            model_result_[64];
+    double          angle_;
+    int             x_;
+    int             y_;
 
     MC::ErrorCode   ret_;
 };

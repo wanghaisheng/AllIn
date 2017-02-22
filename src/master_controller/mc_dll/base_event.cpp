@@ -66,11 +66,12 @@ void MC::BaseEvent::Execute()
         exception_ = MC::EC_IN_MAINTAIN;
         break;
     default:
+        Log::WriteLog(LL_ERROR, "BaseEvent::Execute->设备处于未知状态");
         exception_ = MC::EC_FAIL;
         break;
     }
 
-    if (MC::EC_SUCC != exception_)
+    if (MC::EC_SUCC == exception_)
         goto NOR;
 
     // 异常处理

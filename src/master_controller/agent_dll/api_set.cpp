@@ -192,6 +192,19 @@ void AsynAPISet::HandleMergePhoto(char* chBuf)
         nt->Notify(cmd.photo1_, cmd.photo2_, cmd.merged_, cmd.ret_);
 }
 
+void AsynAPISet::HandleRecogModelPoint(char* chBuf)
+{
+    RecoModelTypeEtcCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleRecogModelPoint->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    RecogModelPointNT* nt = (RecogModelPointNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.model_result_, cmd.angle_, cmd.x_, cmd.y_, cmd.ret_);
+}
+
 void AsynAPISet::HandleSearchStamp(char* chBuf)
 {
     SearchStampPointCmd cmd;
@@ -932,6 +945,16 @@ int AsynAPISet::AsynMergePhoto(
     strcpy_s(cmd->photo1_, p1.c_str());
     strcpy_s(cmd->photo2_, p2.c_str());
     strcpy_s(cmd->merged_, merged.c_str());
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+int AsynAPISet::AsynRecogModelPoint(
+    const std::string& path,
+    RecogModelPointNT* nt) {
+    RecoModelTypeEtcCmd* cmd = new RecoModelTypeEtcCmd;
+    strcpy_s(cmd->path_, path.c_str());
     InsertNotify(cmd->send_time_, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);

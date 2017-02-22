@@ -650,6 +650,82 @@ int ST_SearchSrcImageStampPoint(
     return ret;
 }
 
+////////////////////////// 模板用印点查找 //////////////////////////////////
+
+class RecogModelPtNT : public RecogModelPointNT {
+public:
+#ifdef _XP
+    RecogModelPtNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~RecogModelPtNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(std::string model, double angle, int x, int y, int ec) {
+        Log::WriteLog(LL_DEBUG, "RecogModelPtNT::Notify->模板用印点查找, ec: %d",
+            ec);
+
+        er_ = ec;
+        model_ = model;
+        x_ = x;
+        y_ = y;
+        angle_ = angle;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    std::string model_;
+    int x_;
+    int y_;
+    double angle_;
+    int er_;
+};
+
+int ST_RecoModelTypeAndAngleAndModelPointByImg(
+    const char*     src_img,
+    std::string&    model_type,
+    double&         outangle,
+    int&            x,
+    int&            y) {
+    RecogModelPointNT* nt = new RecogModelPtNT;
+    api_agent.AsynRecogModelPoint(
+        src_img,
+        nt);
+
+    RecogModelPtNT* derive_nt = (RecogModelPtNT*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    model_type = derive_nt->model_;
+    x = derive_nt->x_;
+    y = derive_nt->y_;
+    outangle = derive_nt->angle_;
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}
+
 ////////////////////////// 版面验证码识别 //////////////////////////////////
 
 class RecogNT : public RecognizeNT {

@@ -66,6 +66,8 @@ private:
 
     void HandleElementIdenti(const RecvMsg* msg);
 
+    void HandleRegcoEtc(const RecvMsg* msg);
+
     void HandleOrdinary(const RecvMsg* msg);
 
     void HandleAuto(const RecvMsg* msg);

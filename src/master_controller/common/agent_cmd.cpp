@@ -115,6 +115,17 @@ void RecognitionCmd::Unser()
     xs_ >> path_ >> template_id_ >> trace_num_ >> ret_;
 }
 
+void RecoModelTypeEtcCmd::Ser() {
+    BaseCmd::Ser();
+    xs_ << path_ << model_result_ << angle_ << x_ << y_ << ret_;
+    xs_.Trim();
+}
+
+void RecoModelTypeEtcCmd::Unser() {
+    BaseCmd::Unser();
+    xs_ >> path_ >> model_result_ >> angle_ >> x_ >> y_ >> ret_;
+}
+
 void SearchStampPointCmd::Ser()
 {
     BaseCmd::Ser();

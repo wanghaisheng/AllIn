@@ -936,6 +936,58 @@ void Recver::HandleElementIdenti(const RecvMsg* msg)
         notify);
 }
 
+///////////////////////// 模板及用印点 //////////////////////////////////////
+
+class RegcoEtcNT : public MC::NotifyResult {
+public:
+    RegcoEtcNT(LPPIPEINST inst, RecoModelTypeEtcCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "RegcoEtcNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        memcpy(cmd_->model_result_, data1.c_str(), data1.length());
+        cmd_->angle_ = atof(data2.c_str());
+        cmd_->x_ = atoi(ctx1.c_str());
+        cmd_->y_ = atoi(ctx2.c_str());
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    RecoModelTypeEtcCmd*cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleRegcoEtc(const RecvMsg* msg)
+{
+    RecoModelTypeEtcCmd* cmd = new (std::nothrow) RecoModelTypeEtcCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleRegcoEtc->图片路径: %s\n",
+        cmd->path_);
+
+    MC::NotifyResult* notify = new (std::nothrow) RegcoEtcNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->RecoModelEtc(
+        cmd->path_,
+        notify);
+}
+
 ////////////////////////// 普通用印 /////////////////////////////////////
 
 class OridinaryStampNT: public MC::NotifyResult {

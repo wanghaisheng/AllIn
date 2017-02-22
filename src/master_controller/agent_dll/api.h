@@ -238,13 +238,21 @@ MASTERCTRL_AGENT_API int ST_IdentifyElement(
 
 // 原图用印位置、用印角度查找
 MASTERCTRL_AGENT_API int ST_SearchSrcImageStampPoint(
-const char*     src_img_name,
-int             in_x,
-int             in_y,
-double          in_angle,
-int             &out_x,
-int             &out_y,
-double          &out_angle);
+    const char*     src_img_name,
+    int             in_x,
+    int             in_y,
+    double          in_angle,
+    int             &out_x,
+    int             &out_y,
+    double          &out_angle);
+
+// 文件名中查找模板类型、用印角度、用印坐标
+MASTERCTRL_AGENT_API int ST_RecoModelTypeAndAngleAndModelPointByImg(
+    const char*     src_img,
+    std::string&    model_type,
+    double&         outangle,
+    int&            x,
+    int&            y);
 
 /////////////////////// 3. 摄像头API //////////////////////////////
 

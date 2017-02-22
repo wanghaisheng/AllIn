@@ -206,7 +206,7 @@ public:
         centralWidget->setSizePolicy(sizePolicy);
         tabWidget = new QTabWidget(centralWidget);
         tabWidget->setObjectName(QStringLiteral("tabWidget"));
-        tabWidget->setGeometry(QRect(10, 20, 1191, 801));
+        tabWidget->setGeometry(QRect(10, 20, 1351, 901));
         QFont font;
         font.setFamily(QString::fromUtf8("\345\276\256\350\275\257\351\233\205\351\273\221"));
         font.setPointSize(9);

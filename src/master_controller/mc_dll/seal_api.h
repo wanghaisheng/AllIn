@@ -111,6 +111,10 @@ public:
         int angle_,
         NotifyResult* notify);
 
+    void RecoModelEtc(
+        const std::string& img,
+        NotifyResult* notify);
+
     // 普通用印
     void OrdinaryStamp(
         const std::string& task,

@@ -220,6 +220,9 @@ void MC::Cnn::ReceiveFunc()
         case CT_SEARCH_STAMP:
             asyn_api_->HandleSearchStamp(chBuf);
             break;
+        case CT_RECOG_MODEL:
+            asyn_api_->HandleRecogModelPoint(chBuf);
+            break;
         case CT_RECOGNITION:
             asyn_api_->HandleRecognition(chBuf);
             break;
