@@ -1701,10 +1701,10 @@ public:
     virtual void SpecificExecute() {
         char safe_str[5] = { 0 };
         MC::ErrorCode ec = exception_;
-        if (ec != MC::EC_SUCC)
+        if (ec != MC::EC_SUCC && ec != MC::EC_IN_MAINTAIN)
             goto NT;
 
-        // 中行-安全门状态查询
+        // 安全门状态查询
         char doors[4] = { 0 };
         int ret = FGetDoorsPresent(doors, sizeof(doors));
         if (0 != ret) {
@@ -1754,7 +1754,7 @@ public:
         char ctrl_str[5] = { 0 };
         char timeout_str[5] = { 0 };
         MC::ErrorCode ec = exception_;
-        if (ec != MC::EC_SUCC)
+        if (ec != MC::EC_SUCC && 0 != operation_ && 1 != operation_)
             goto NT;
 
         if (operation_ != 0 && operation_ != 1) {
