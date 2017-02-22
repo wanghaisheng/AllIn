@@ -11,7 +11,7 @@
 
 AsynAPISet api_agent;
 
-const int WAIT_TIME = 5000; // 等待异步通知回调超时时间(毫秒)
+const int SYNC_WAIT_TIME = 10000; // 等待异步通知回调超时时间(毫秒)
 
 // 同步接口, 异步改同步接口, 同步阻塞等异步通知
 
@@ -64,9 +64,9 @@ int ST_QueryMachine(std::string& sn)
     api_agent.AsynQueryMachine(nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((QueryMachNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((QueryMachNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((QueryMachNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((QueryMachNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((QueryMachNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -123,9 +123,9 @@ int ST_SetMachine(const std::string& sn)
     api_agent.AsynSetMachine(sn, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((SetMachNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((SetMachNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((SetMachNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((SetMachNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((SetMachNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -181,10 +181,10 @@ int ST_InitMachine(const std::string& key)
     api_agent.AsynInitMachine(key, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((InitMaNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((InitMaNT*)nt)->cv_, SYNC_WAIT_TIME))
         ((InitMaNT*)nt)->er_ = MC::EC_TIMEOUT;
 #else
-    if (!((InitMaNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((InitMaNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
         ((InitMaNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
 
@@ -240,9 +240,9 @@ int ST_BindMAC(const std::string& mac)
     api_agent.AsynBindMAC(mac, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((BindNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((BindNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((BindNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((BindNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((BindNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -298,9 +298,9 @@ int ST_UnbindMAC(const std::string& mac)
     api_agent.AsynUnbindMAC(mac, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((UnbindNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((UnbindNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((UnbindNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((UnbindNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((UnbindNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -424,9 +424,9 @@ int ST_QueryPaper(int& status)
     api_agent.AsynQueryPaper(nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((PaperNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((PaperNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((PaperNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((PaperNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((PaperNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -494,10 +494,10 @@ int ST_Snapshot(
     api_agent.AsynSnapshot(which, ori_dpi, cut_dpi, ori_path, cut_path, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((SnapNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((SnapNT*)nt)->cv_, SYNC_WAIT_TIME))
         ((SnapNT*)nt)->er_ = MC::EC_TIMEOUT;
 #else
-    if (!((SnapNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((SnapNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
         ((SnapNT*)nt)->er_ = MC::EC_TIMEOUT;
 #endif
 
@@ -559,9 +559,9 @@ int ST_MergePhoto(
     api_agent.AsynMergePhoto(p1, p2, merged, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((MergeNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((MergeNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((MergeNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((MergeNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((MergeNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -635,9 +635,9 @@ int ST_SearchSrcImageStampPoint(
 
     SearchStampNT* derive_nt = (SearchStampNT*)nt;
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
         derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -710,9 +710,9 @@ int ST_RecoModelTypeAndAngleAndModelPointByImg(
 
     RecogModelPtNT* derive_nt = (RecogModelPtNT*)nt;
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
         derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -778,9 +778,9 @@ int ST_RecognizeImage(const std::string& path,
     api_agent.AsynRecognizeImage(path, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((RecogNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((RecogNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((RecogNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((RecogNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((RecogNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -848,9 +848,9 @@ int ST_IdentifyElement(
     api_agent.AsynIdentifyElement(path, x, y, width, height, angle, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((IdentiNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((IdentiNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((IdentiNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((IdentiNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((IdentiNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -977,9 +977,9 @@ int ST_AutoStamp(const std::string& task,
     api_agent.AsynAutoStamp(task, voucher, num, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((AutoNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((AutoNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((AutoNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((AutoNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((AutoNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -1035,9 +1035,9 @@ int ST_FinishStamp(const std::string& task)
     api_agent.AsynFinishStamp(task, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((FinishNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((FinishNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((FinishNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((FinishNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((FinishNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -1093,9 +1093,9 @@ int ST_ReleaseStamp(const std::string& machine)
     api_agent.AsynReleaseStamp(machine, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((ReleaseNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((ReleaseNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((ReleaseNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((ReleaseNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((ReleaseNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -1156,9 +1156,9 @@ int ST_GetError(int err_code, std::string& err_msg, std::string& err_resolver)
     api_agent.AsynGetError(err_code, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((GetErrNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((GetErrNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((GetErrNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((GetErrNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((GetErrNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -1212,9 +1212,9 @@ int ST_Calibrate(int slot)
     api_agent.AsynCalibrate(slot, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((CaliNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((CaliNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((CaliNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((CaliNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((CaliNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -1281,9 +1281,9 @@ int ST_QueryStampers(char* status, int len)
     api_agent.AsynQueryStampers(nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((QueryStamNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((QueryStamNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((QueryStamNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((QueryStamNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((QueryStamNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -1337,9 +1337,9 @@ int ST_QuerySafe(int& status)
     api_agent.AsynQuerySafe(nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((QuerySafeDoorNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((QuerySafeDoorNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((QuerySafeDoorNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((QuerySafeDoorNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((QuerySafeDoorNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -1392,9 +1392,9 @@ int ST_ControlSafe(int ctrl)
     api_agent.AsynSafeControl(ctrl, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((CtrLSafeDoorNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((CtrLSafeDoorNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((CtrLSafeDoorNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((CtrLSafeDoorNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((CtrLSafeDoorNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -1446,9 +1446,9 @@ int ST_ControlBeep(int ctrl, int type, int interval)
     api_agent.AsynBeepControl(ctrl, type, interval, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((BeepCtrlNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((BeepCtrlNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((BeepCtrlNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((BeepCtrlNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((BeepCtrlNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -1504,9 +1504,9 @@ int ST_QuerySlots(int &num)
     api_agent.AsynQuerySlot(nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((QuerySlNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((QuerySlNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((QuerySlNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((QuerySlNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((QuerySlNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -1563,9 +1563,9 @@ int ST_ControlAlarm(int alarm, int switches)
     api_agent.AsynAlarmControl(alarm, switches, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((AlarmNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((AlarmNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((AlarmNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((AlarmNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((AlarmNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -1625,9 +1625,9 @@ int ST_ReadAlarm(int& door, int& vibration)
 
     QryAlarmNT* derive_nt = (QryAlarmNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
         derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -1685,9 +1685,9 @@ int ST_QueryMAC(std::string& mac1, std::string& mac2)
     api_agent.AsynQueryMAC(nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((QryMACNT*)nt)->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((QryMACNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
-    if (!((QryMACNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME)))
+    if (!((QryMACNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
         ((QryMACNT*)nt)->er_ = MC::EC_TIMEOUT;
 
@@ -1744,9 +1744,9 @@ int ST_Lock()
 
     LockMachineNT* derive_nt = (LockMachineNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -1799,9 +1799,9 @@ int ST_Unlock()
 
     UnlockMachineNT* derive_nt = (UnlockMachineNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -1856,9 +1856,9 @@ int ST_QueryLock(int& lock)
 
     QryLockNT* derive_nt = (QryLockNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -1912,9 +1912,9 @@ int ST_Open()
 
     OpenNT* derive_nt = (OpenNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -1967,9 +1967,9 @@ int ST_Close()
 
     CloseNT* derive_nt = (CloseNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -2024,9 +2024,9 @@ int ST_QueryCnn(int& cnn)
 
     QryCnnNT* derive_nt = (QryCnnNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -2080,9 +2080,9 @@ int ST_SetSideDoor(int keep, int timeout)
 
     SetSideAlarmNT* derive_nt = (SetSideAlarmNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -2137,9 +2137,9 @@ int ST_GetDevModel(std::string& model)
 
     GetModelNT* derive_nt = (GetModelNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -2193,9 +2193,9 @@ int ST_OpenPaper(int timeout)
 
     OpenPaperDoorNT* derive_nt = (OpenPaperDoorNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -2248,9 +2248,9 @@ int ST_ControlLed(int which, int ctrl, int value)
 
     ControlLEDNT* derive_nt = (ControlLEDNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -2303,9 +2303,9 @@ int ST_CheckParam(int x, int y, int angle)
 
     ChkParaNT* derive_nt = (ChkParaNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -2358,9 +2358,9 @@ int ST_OpenCamera(int which)
 
     OpenCaNT* derive_nt = (OpenCaNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -2413,9 +2413,9 @@ int ST_CloseCamera(int which)
 
     CloseCaNT* derive_nt = (CloseCaNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -2472,9 +2472,9 @@ int ST_QueryCamera(int which, int& status)
 
     QryCameraNT* derive_nt = (QryCameraNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -2528,9 +2528,9 @@ int ST_SetResolution(int which, int x, int y)
 
     SetResoNT* derive_nt = (SetResoNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -2583,9 +2583,9 @@ int ST_SetDPIValue(int which, int x, int y)
 
     SetdpiNT* derive_nt = (SetdpiNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -2638,9 +2638,9 @@ int ST_SetProperty(int which)
 
     SetProNT* derive_nt = (SetProNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -2693,9 +2693,9 @@ int ST_StartRecordVideo(int which, const std::string& path)
 
     RecordNT* derive_nt = (RecordNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -2748,9 +2748,9 @@ int ST_StopRecordVideo(int which, const std::string& path)
 
     StopRecordNT* derive_nt = (StopRecordNT*)nt;
 #ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
@@ -2805,9 +2805,9 @@ int ST_GetRFID(int slot, int& rfid)
 
     GetrfidNT* derive_nt = (GetrfidNT*)nt;
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(WAIT_TIME))))
+        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
         derive_nt->er_ = MC::EC_TIMEOUT;
 

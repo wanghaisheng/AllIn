@@ -45,7 +45,7 @@ MASTERCTRL_AGENT_API int ST_Close();
 MASTERCTRL_AGENT_API int ST_QueryMachine(
     std::string& sn);
 
-// 设置印控机编号
+// 设置印控机编号, 最多支持20个字节
 MASTERCTRL_AGENT_API int ST_SetMachine(
     const std::string& sn);
 
@@ -194,7 +194,7 @@ MASTERCTRL_AGENT_API int ST_GetDevModel(
 MASTERCTRL_AGENT_API int ST_ControlLed(
     int which,
     int ctrl,
-    int value);
+    int value = 23);
 
 // 用印参数检查(针对印控机的物理坐标)
 // x        --- x坐标值

@@ -345,7 +345,7 @@ void MC::Cnn::ReceiveFunc()
             printf("AsynAPISet::ReceiverFunc->Unknown cmd: %d", cmd_type);
             break;
         }
-        if (CT_HEART_BEAT != cmd_type && 0 != cmd_type)
+        if (0 != cmd_type)
             ResetEvent(send_ev_);
 
         chBuf[0] = 0x0;
@@ -512,6 +512,7 @@ void MC::Cnn::HeartBeatingFunc()
         case WAIT_OBJECT_0: {
             HeartCmd heart_cmd;
             WriteCnn(&heart_cmd);
+            SetEvent(send_ev_);
         }
             break;
         case WAIT_TIMEOUT: {    // 超时未收到心跳响应

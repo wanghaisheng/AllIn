@@ -460,20 +460,20 @@ void QtDemo::HandleOpenPaperLED()
     int value = atoi(ui.le_led_val_->text().toStdString().c_str());
     int ret = ST_ControlLed(2, 1, value);
     if (0 != ret)
-        return Info(QString::fromLocal8Bit("开纸门补光灯失败, er: ") +
+        return Info(QString::fromLocal8Bit("开凭证补光灯失败, er: ") +
             QString::number(ret));
 
-    ui.statusBar->showMessage(QString::fromLocal8Bit("开纸门补光灯成功"), STATUS_TEXT);
+    ui.statusBar->showMessage(QString::fromLocal8Bit("开凭证补光灯成功"), STATUS_TEXT);
 }
 
 void QtDemo::HandleClosePaperLED()
 {
     int ret = ST_ControlLed(2, 0, 0);
     if (0 != ret)
-        return Info(QString::fromLocal8Bit("关纸门补光灯失败, er: ") +
+        return Info(QString::fromLocal8Bit("关凭证补光灯失败, er: ") +
             QString::number(ret));
 
-    ui.statusBar->showMessage(QString::fromLocal8Bit("关纸门补光灯成功"), STATUS_TEXT);
+    ui.statusBar->showMessage(QString::fromLocal8Bit("关凭证补光灯成功"), STATUS_TEXT);
 }
 
 void QtDemo::HandleOpenSafeLED()

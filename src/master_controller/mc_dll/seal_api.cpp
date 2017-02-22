@@ -2392,7 +2392,7 @@ public:
             goto NT;
 
         int ret = FCloseDev();
-        if (!ret) {
+        if (0 != ret) {
             ec = MC::EC_DRIVER_FAIL;
             goto NT;
         }
@@ -2645,6 +2645,12 @@ public:
             goto NT;
         }
 
+        if (1 == switch_) {
+            if (value_ < 1 || value_ > 100) {
+                ec = MC::EC_INVALID_PARAMETER;
+                goto NT;
+            }
+        }
 //0x0F, 补光灯控制
 //light     --- 补光灯类型
 //              1 -- 安全门旁边的补光灯; 
@@ -3166,7 +3172,10 @@ public:
     }
 
     virtual void SpecificExecute() {
-        MC::ErrorCode ec = MC::EC_SUCC;
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
         if (which_ != 0 && which_ != 1 && which_ != 2) {
             ec = MC::EC_INVALID_PARAMETER;
             goto NT;
@@ -3233,7 +3242,10 @@ public:
     }
 
     virtual void SpecificExecute() {
-        MC::ErrorCode ec = MC::EC_SUCC;
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
         if (which_ != 0 && which_ != 1 && which_ != 2) {
             ec = MC::EC_INVALID_PARAMETER;
             goto NT;

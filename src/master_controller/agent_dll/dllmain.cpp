@@ -8,6 +8,8 @@ extern AsynAPISet api_agent;
 
 void Start()
 {
+    MC::KillProcessByName(MC::SERVER_NAME.c_str());
+
     MC::Config::GetInst()->Parse();
     MC::Cnn::GetInst()->SetAgent(&api_agent);
     MC::Cnn::GetInst()->Start();
