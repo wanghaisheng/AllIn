@@ -636,3 +636,16 @@ void GetRFIDCmd::Unser() {
     BaseCmd::Unser();
     xs_ >> slot_ >> rfid_ >> ret_;
 }
+
+void GetDevStatusCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << status_code_ << ret_;
+    xs_.Trim();
+}
+
+void GetDevStatusCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> status_code_ >> ret_;
+}

@@ -332,6 +332,9 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_GET_RFID:
         HandleGetRFID(&msg);
         break;
+    case CT_GET_DEV_STATUS:
+        HandleGetDevStatus(&msg);
+        break;
     default:
         printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
         break;
@@ -2656,6 +2659,52 @@ void Recver::HandleGetRFID(const RecvMsg* msg)
     MC::STSealAPI::GetInst()->GetRFID(
             cmd->slot_,
             notify);
+}
+
+////////////////// 获取设备状态 /////////////
+
+class GetDevStatusNT : public MC::NotifyResult {
+public:
+    GetDevStatusNT(LPPIPEINST inst, GetDevStatusCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "GetDevStatusNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->status_code_ = atoi(data1.c_str());
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    GetDevStatusCmd*    cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleGetDevStatus(const RecvMsg* msg)
+{
+    GetDevStatusCmd* cmd = new (std::nothrow) GetDevStatusCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleGetDevStatus->获取设备状态\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) GetDevStatusNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->GetDevStatus(notify);
 }
 
 //////////////////////////////////////////////////////////////////////////

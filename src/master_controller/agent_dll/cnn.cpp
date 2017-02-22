@@ -127,8 +127,8 @@ bool MC::Cnn::Start()
         TRUE,      // default signaled 
         NULL);
     // 心跳线程
-    heart_thread_ =
-        new (std::nothrow) boost::thread(boost::bind(&Cnn::HeartBeatingFunc, this));
+//     heart_thread_ =
+//         new (std::nothrow) boost::thread(boost::bind(&Cnn::HeartBeatingFunc, this));
 
     return true;
 }
@@ -138,7 +138,7 @@ void MC::Cnn::Stop()
     running_ = false;
     recver_thread_->join();
     sender_thread_->join();
-    heart_thread_->join();
+/*    heart_thread_->join();*/
 
     delete send_mq_;
     delete recv_mq_;
@@ -341,6 +341,9 @@ void MC::Cnn::ReceiveFunc()
         case CT_GET_RFID:
             asyn_api_->HandleGetRFID(chBuf);
             break;
+        case CT_GET_DEV_STATUS:
+            asyn_api_->HandleGetStatus(chBuf);
+            break;
         default:
             printf("AsynAPISet::ReceiverFunc->Unknown cmd: %d", cmd_type);
             break;
@@ -426,6 +429,8 @@ int MC::Cnn::WriteMQ(BaseCmd* cmd)
 
 int MC::Cnn::WriteCnn(BaseCmd* cmd)
 {
+    SetEvent(send_ev_);
+
     if (MC::CT_PIPE == Config::GetInst()->conn_type_)
         return WritePipe(cmd);
     else if (MC::CT_MQ == Config::GetInst()->conn_type_)
@@ -441,7 +446,6 @@ void MC::Cnn::SendFunc()
         if (0 == send_cmd_queue_.WaitForRead(SEND_QUEUE_WAIT)) {
             send_cmd_queue_.Pop(cmd);
             WriteCnn(cmd);
-            SetEvent(send_ev_);
             delete cmd;
         }
     }
@@ -497,22 +501,12 @@ void MC::Cnn::HandleServerDeath()
 
 void MC::Cnn::HeartBeatingFunc()
 {
-    while (running_) {
-        // if (ProcessExisted(MC::SERVER_NAME)) {
-        //     Sleep(HEART_BEATING_WAIT);
-        // } else {
-        //     HandleServerDeath();
-        // }
-        // continue;
-
-        //////////////////////
-        
+    while (running_) {        
         DWORD ret = WaitForSingleObject(heart_ev_, HEART_BEATING_WAIT);
         switch (ret) {
         case WAIT_OBJECT_0: {
             HeartCmd heart_cmd;
             WriteCnn(&heart_cmd);
-            SetEvent(send_ev_);
         }
             break;
         case WAIT_TIMEOUT: {    // 超时未收到心跳响应

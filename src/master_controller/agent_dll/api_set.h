@@ -261,6 +261,11 @@ public:
     virtual void Notify(int rfid, int ec) = 0;
 };
 
+class GetStatusNT {
+public:
+    virtual void Notify(int code, int ec) = 0;
+};
+
 // 心跳
 class HeartNT {
 public:
@@ -401,6 +406,8 @@ public:
 
     int AsynGetRFID(int slot, GetRFIDNT* nt);
 
+    int AsynGetStatus(GetStatusNT* nt);
+
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);
     
@@ -504,6 +511,8 @@ public:
     void HandleStopRecordVideo(char* chBuf);
 
     void HandleGetRFID(char* chBuf);
+
+    void HandleGetStatus(char* chBuf);
 
 private:
     std::map<std::string, void*> api_maps_;

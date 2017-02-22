@@ -59,6 +59,7 @@ enum CmdType {
     CT_CHECK_PARAM,         // 用印参数合法性检查
     CT_GET_RFID,            // 根据卡槽号获取RFID
     CT_RECOG_MODEL,         // 模板及用印点查找
+    CT_GET_DEV_STATUS,      // 获取设备状态
 
     // 摄像头接口
     CT_OPEN_CAMERA,         // 打开摄像头
@@ -114,6 +115,7 @@ static std::string cmd_des[] =
     "用印参数合法性检查",
     "根据卡槽号获取RFID",
     "模板及用印点查找",
+    "获取设备状态",
     "打开摄像头",
     "关闭摄像头",
     "摄像头状态",
@@ -920,6 +922,29 @@ public:
 public:
     int slot_;      // 卡槽号，从1开始
     int rfid_;      // 对应卡槽号的RFID
+
+    MC::ErrorCode ret_;
+};
+
+class GetDevStatusCmd : public BaseCmd {
+public:
+    GetDevStatusCmd() : ret_(MC::EC_SUCC), status_code_(-1) {
+        ct_ = CT_GET_DEV_STATUS;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    // 0 ---- "未初始化"
+    // 1 ---- "启动自检"
+    // 2 ---  "检测章"
+    // 3 ---- "空闲状态"
+    // 4 ---- "测试模式"
+    // 5 ---- "故障模式"
+    // 6 ---- "盖章模式"
+    // 7 ---- "维护模式"
+    int status_code_;
 
     MC::ErrorCode ret_;
 };

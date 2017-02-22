@@ -114,6 +114,7 @@ private:
     void HandleStopRecord();
 
     void HandleGetModelType();
+    void HandleGetDevStatus();
 
 private slots:
     void HandleErrCodeChange(const QString &);

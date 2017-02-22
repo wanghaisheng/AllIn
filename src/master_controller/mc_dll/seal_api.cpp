@@ -1701,7 +1701,7 @@ public:
     virtual void SpecificExecute() {
         char safe_str[5] = { 0 };
         MC::ErrorCode ec = exception_;
-        if (ec != MC::EC_SUCC && ec != MC::EC_IN_MAINTAIN)
+        if (ec != MC::EC_SUCC)
             goto NT;
 
         // 安全门状态查询
@@ -1754,7 +1754,7 @@ public:
         char ctrl_str[5] = { 0 };
         char timeout_str[5] = { 0 };
         MC::ErrorCode ec = exception_;
-        if (ec != MC::EC_SUCC && 0 != operation_ && 1 != operation_)
+        if (ec != MC::EC_SUCC)
             goto NT;
 
         if (operation_ != 0 && operation_ != 1) {
@@ -3345,6 +3345,99 @@ void MC::STSealAPI::GetRFID(int slot, NotifyResult *notify) {
             "获取rfid",
             slot,
             notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+////////////////////////// 设备状态 ////////////////////////////////////
+
+class GetDevStatusEv : public MC::BaseEvent {
+public:
+    GetDevStatusEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        char status_str[11] = { 0 };
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        unsigned char dev_status[24] = { 0 };
+        int ret = ::FGetDevStatus(dev_status, sizeof(dev_status));
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "GetDevStatusEv::Execute->查询设备状态失败, er: %d", 
+                ret);
+            exception_ = MC::EC_QUERY_DEV_STATUS_FAIL;
+            goto NT;
+        }
+
+        // 设备状态机描述
+        // char* status_des[] = {
+        //     "未初始化",
+        //     "启动自检",
+        //     "检测章",
+        //     "空闲状态",
+        //     "测试模式",
+        //     "故障模式",
+        //     "盖章模式",
+        //     "维护模式"
+        // };
+//         switch (dev_status[1]) {
+//         case 0:
+//             exception_ = MC::EC_UN_INITIATION;
+//             break;
+//         case 1:
+//             exception_ = MC::EC_SELF_EXAMIN;
+//             break;
+//         case 2:
+//             exception_ = MC::EC_EXAMIN_STAMPER;
+//             break;
+//         case 3:
+//             exception_ = MC::EC_SUCC;
+//             break;
+//         case 4:
+//             exception_ = MC::EC_IN_TEST;
+//             break;
+//         case 5:
+//             exception_ = MC::EC_IN_BREAK_DOWN;
+//             break;
+//         case 6:
+//             exception_ = MC::EC_IN_STAMPING;
+//             break;
+//         case 7:
+//             exception_ = MC::EC_IN_MAINTAIN;
+//             break;
+//         default:
+//             Log::WriteLog(LL_ERROR, "GetDevStatusEv::Execute->设备处于未知状态");
+//             exception_ = MC::EC_FAIL;
+//             break;
+//         }
+
+        sprintf(status_str, "%d", (int)dev_status[1]);
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec, status_str);
+        Log::WriteLog(LL_DEBUG, "MC::GetDevStatusEv->获取设备状态, ec: %s, 状态: %s",
+            MC::ErrorMsg[ec].c_str(),
+            status_str);
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::GetDevStatus(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) GetDevStatusEv(
+        "获取设备状态",
+        notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);
 

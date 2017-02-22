@@ -76,6 +76,7 @@ bool MQCnn::SendMsg(const char* buf, int size)
     try {
         LPTSTR lpvMessage = TEXT((char*)buf);
         send_mq_->send(lpvMessage, (lstrlen(lpvMessage) + 1) * sizeof(TCHAR), 0);
+        Log::WriteLog(LL_DEBUG, "MQCnn::SendMsg->消息队列发送%d大小的消息", size);
         return true;
     } catch (boost::interprocess::interprocess_exception &ex) {
         Log::WriteLog(LL_ERROR, "MQCnn::SendMsg->消息队列方式写消息失败, er: %s",

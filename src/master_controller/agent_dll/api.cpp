@@ -2817,3 +2817,61 @@ int ST_GetRFID(int slot, int& rfid)
     delete nt;
     return ret;
 }
+
+/////////////////////////////// 设备状态 /////////////////////////////
+
+class GetDeviceStatNT : public GetStatusNT {
+public:
+#ifdef _XP
+    GetDeviceStatNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~GetDeviceStatNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int code, int ec) {
+        code_ = code;
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int code_;
+    int er_;
+};
+
+int ST_GetDevStatus(int& code)
+{
+    GetStatusNT* nt = new GetDeviceStatNT;
+    api_agent.AsynGetStatus(nt);
+
+    GetDeviceStatNT* derive_nt = (GetDeviceStatNT*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    code = derive_nt->code_;
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}

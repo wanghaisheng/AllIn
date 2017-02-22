@@ -9,7 +9,7 @@
 #include "syn_queue.h"
 
 #define SEND_QUEUE_WAIT     5000
-#define HEART_BEATING_WAIT  3000
+#define HEART_BEATING_WAIT  5000
 
 typedef struct {
     OVERLAPPED oOverlap;

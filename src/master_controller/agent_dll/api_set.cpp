@@ -1337,3 +1337,25 @@ int AsynAPISet::AsynGetRFID(int slot, GetRFIDNT *nt) {
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
+
+int AsynAPISet::AsynGetStatus(GetStatusNT* nt)
+{
+    GetDevStatusCmd* cmd = new GetDevStatusCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleGetStatus(char* chBuf)
+{
+    GetDevStatusCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleGetStatus->cmd: %s, status: %d, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.status_code_,
+        cmd.ret_);
+
+    GetStatusNT* nt = (GetStatusNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.status_code_, cmd.ret_);
+}

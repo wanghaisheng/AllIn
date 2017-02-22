@@ -229,6 +229,8 @@ public:
 
     void GetRFID(int slot, NotifyResult* notify);
 
+    void GetDevStatus(NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC

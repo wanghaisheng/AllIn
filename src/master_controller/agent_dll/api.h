@@ -41,6 +41,18 @@ MASTERCTRL_AGENT_API int ST_Open();
 // 关闭设备连接
 MASTERCTRL_AGENT_API int ST_Close();
 
+// 获取设备状态
+// 0 ---- "未初始化"
+// 1 ---- "启动自检"
+// 2 ---  "检测章"
+// 3 ---- "空闲状态"
+// 4 ---- "测试模式"
+// 5 ---- "故障模式"
+// 6 ---- "盖章模式"
+// 7 ---- "维护模式"
+MASTERCTRL_AGENT_API int ST_GetDevStatus(
+    int& code);
+
 // 获取印控仪编号
 MASTERCTRL_AGENT_API int ST_QueryMachine(
     std::string& sn);
@@ -70,8 +82,8 @@ MASTERCTRL_AGENT_API int ST_UnbindMAC(
 // slot         --- 卡槽号，从1开始
 // rfid         --- 对应卡槽号的rfid
 MASTERCTRL_AGENT_API int ST_GetRFID(
-        int     slot,
-        int&    rfid);
+    int     slot,
+    int&    rfid);
 
 // 准备用印
 // stamp_num        --- 章槽号, 从1开始

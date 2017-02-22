@@ -136,6 +136,8 @@ private:
 
     void HandleGetRFID(const RecvMsg* msg);
 
+    void HandleGetDevStatus(const RecvMsg* msg);
+
     void HandleHeart(const RecvMsg* msg);
 
 private:

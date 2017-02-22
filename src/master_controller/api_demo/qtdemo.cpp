@@ -147,6 +147,8 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_stop_record_, &QPushButton::clicked, this, &QtDemo::HandleStopRecord);
 
     connect(ui.pb_dev_type_, &QPushButton::clicked, this, &QtDemo::HandleGetModelType);
+    connect(ui.pb_dev_status_, &QPushButton::clicked, this, &QtDemo::HandleGetDevStatus);
+
 
     //拍照/识别
     ui.pb_ori_img_->setStyleSheet("background-color: transparent;");
@@ -1407,4 +1409,28 @@ void QtDemo::OpenDevPost(const Message* msg)
 void QtDemo::CloseDevPost(const Message* msg)
 {
     open_called = msg->err_ != 0;
+}
+
+void QtDemo::HandleGetDevStatus()
+{
+    int code;
+    int ret = ST_GetDevStatus(code);
+    if (0 != ret) {
+        return Info(QString::fromLocal8Bit("获取设备状态失败, err:") + 
+            QString::number(ret));
+    }
+
+     // 设备状态机描述
+     char* status_des[] = {
+         "未初始化",
+         "启动自检",
+         "检测章",
+         "空闲状态",
+         "测试模式",
+         "故障模式",
+         "盖章模式",
+         "维护模式"
+     };
+    Info(QString::fromLocal8Bit("设备状态: ") +
+        QString::fromLocal8Bit(status_des[code]));
 }
