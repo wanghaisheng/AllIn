@@ -499,6 +499,8 @@ void QtDemo::HandleCloseSafeLED()
 
 void QtDemo::HandleSetResolution()
 {
+    Info(QString::fromLocal8Bit("请确保摄像头已经打开"));
+
     int width = atoi(ui.le_cam_width_->text().toStdString().c_str());
     int height = atoi(ui.le_cam_height_->text().toStdString().c_str());
     int ret = ST_SetResolution(which_cam_, width, height);
@@ -511,6 +513,8 @@ void QtDemo::HandleSetResolution()
 
 void QtDemo::HandleSetDPI()
 {
+    Info(QString::fromLocal8Bit("请确保摄像头已经打开"));
+
     int width = atoi(ui.le_cam_width_->text().toStdString().c_str());
     int height = atoi(ui.le_cam_height_->text().toStdString().c_str());
     int ret = ST_SetDPIValue(which_cam_, width, height);

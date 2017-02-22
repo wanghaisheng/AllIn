@@ -9,6 +9,8 @@
 #define CMD_BUF_SIZE    1024
 #define MAX_MAC_SIZE    17
 #define STAMPING_WAIT_TIME  30  // 用印等待完成时间(从发起盖章到等待盖章完成通知)
+#define PREVIEW_WIDTH   640
+#define PREVIEW_HEIGHT  480
 
 namespace MC {
 

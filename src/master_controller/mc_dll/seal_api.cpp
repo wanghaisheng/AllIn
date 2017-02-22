@@ -3166,16 +3166,25 @@ public:
     }
 
     virtual void SpecificExecute() {
-        MC::ErrorCode ec = exception_;
-        if (MC::EC_SUCC != ec)
-            goto NT;
-
+        MC::ErrorCode ec = MC::EC_SUCC;
         if (which_ != 0 && which_ != 1 && which_ != 2) {
             ec = MC::EC_INVALID_PARAMETER;
             goto NT;
         }
 
-        int ret = StartCaptureVideo((CAMERAINDEX)which_, (char*)path_.c_str());
+        // start preview before capture video
+        int ret = StartPreview(
+            (CAMERAINDEX)which_,
+            PREVIEW_WIDTH, 
+            PREVIEW_HEIGHT, 
+            NULL);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::RecordVideoEv->开启预览失败, er: %d", ret);
+            ec = MC::EC_START_PREVIEW_FAIL;
+            goto NT;
+        }
+
+        ret = StartCaptureVideo((CAMERAINDEX)which_, (char*)path_.c_str());
         if (0 != ret) {
             Log::WriteLog(LL_ERROR, "MC::RecordVideoEv->开启录像失败, er: %d", ret);
             ec = MC::EC_START_RECORD_FAIL;
@@ -3224,15 +3233,13 @@ public:
     }
 
     virtual void SpecificExecute() {
-        MC::ErrorCode ec = exception_;
-        if (MC::EC_SUCC != ec)
-            goto NT;
-
+        MC::ErrorCode ec = MC::EC_SUCC;
         if (which_ != 0 && which_ != 1 && which_ != 2) {
             ec = MC::EC_INVALID_PARAMETER;
             goto NT;
         }
 
+        StopPreview((CAMERAINDEX)which_);
         int ret = StopCaptureVideo((CAMERAINDEX)which_, (char*)path_.c_str());
         if (0 != ret) {
             Log::WriteLog(LL_ERROR, "MC::StopRecordVideoEv->停止录像失败, er: %d", ret);
