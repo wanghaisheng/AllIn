@@ -108,6 +108,11 @@ bool MC::Cnn::Start()
     else if (Config::GetInst()->conn_type_ == CT_MQ)
         ret = StartMQ(Config::GetInst()->send_mq_name_, Config::GetInst()->recv_mq_name_);
 
+    send_ev_ = CreateEvent(
+        NULL,
+        TRUE,
+        FALSE,
+        NULL);
     running_ = true;
     // 收消息线程
     recver_thread_ =
@@ -181,14 +186,16 @@ void MC::Cnn::ReceiveFunc()
     TCHAR chBuf[CMD_BUF_SIZE] = { 0 };
     DWORD cbRead;
     while (true) {
+        DWORD suc = WaitForSingleObject(send_ev_, INFINITE);
+        if (suc == WAIT_TIMEOUT)
+            continue;
+
         RecvBuf(chBuf, sizeof(chBuf), &cbRead);
         // 如实际读字节为0, 结束本次循环
         if (0 == cbRead)
             continue;
 
-        // 解析消息头, 判断具体消息类型
-        char cmd_type;
-        memcpy(&cmd_type, chBuf, sizeof(char));
+        char cmd_type = GetCmdHeader(chBuf);
         switch (cmd_type) {
         case CT_QUERY_MACHINE:
             asyn_api_->HandleQueryMachine(chBuf);
@@ -338,6 +345,8 @@ void MC::Cnn::ReceiveFunc()
             printf("AsynAPISet::ReceiverFunc->Unknown cmd: %d", cmd_type);
             break;
         }
+        if (CT_HEART_BEAT != cmd_type && 0 != cmd_type)
+            ResetEvent(send_ev_);
 
         chBuf[0] = 0x0;
     }
@@ -432,6 +441,7 @@ void MC::Cnn::SendFunc()
         if (0 == send_cmd_queue_.WaitForRead(SEND_QUEUE_WAIT)) {
             send_cmd_queue_.Pop(cmd);
             WriteCnn(cmd);
+            SetEvent(send_ev_);
             delete cmd;
         }
     }

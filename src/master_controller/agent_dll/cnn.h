@@ -71,6 +71,14 @@ private:
 
     void ReceiveFunc();
 
+    char GetCmdHeader(TCHAR * chBuf)
+    {
+        // 解析消息头, 判断具体消息类型
+        char cmd_type;
+        memcpy(&cmd_type, chBuf, sizeof(char));
+        return cmd_type;
+    }
+
     void HandleServerDeath();
 
     void HeartBeatingFunc();
@@ -88,6 +96,7 @@ private:
 private:
     AsynAPISet*             asyn_api_;
 
+    HANDLE                  send_ev_;   // 有消息发送置为有信号
     bool                    running_;
     boost::thread*          recver_thread_;
     boost::thread*          sender_thread_;
@@ -98,7 +107,7 @@ private:
     bool                    server_dead_;
     HANDLE                  heart_ev_;
     boost::mutex            heart_mtx_;
-    boost::thread*          heart_thread_;   // 心跳线程, 监听服务进程"mc_exe"是否存在
+    boost::thread*          heart_thread_;   // 心跳线程, 监听服务进程"mc_exe.exe"是否存在
 
     LPPIPEINST                          pipe_inst_;
     HANDLE                              pipe_;

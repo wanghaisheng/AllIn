@@ -64,7 +64,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(droot)\dpd\bin\w32d\;..\bin\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(droot)\dpd\bin\w32d\;$(droot)\bin\w32d\</AdditionalLibraryDirectories>
       <AdditionalDependencies>ABC.STDZ.Device.STAMP.SealLog.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
