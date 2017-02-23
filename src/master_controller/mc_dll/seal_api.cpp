@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <cmath>
 #include <vector>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include "event_cpu.h"
 #include "tool.h"
 #include "task_mgr.h"
@@ -10,6 +11,23 @@
 #include "seal_api.h"
 
 MC::STSealAPI* MC::STSealAPI::inst_ = NULL;
+
+// typedef boost::posix_time::ptime Time;
+// typedef boost::posix_time::time_duration TimeDuration;
+// Time t1(boost::posix_time::microsec_clock::local_time());
+// 
+// Time t2(boost::posix_time::microsec_clock::local_time());
+// 
+// TimeDuration dt = t2 - t1;
+// 
+// //print formatted date
+// std::cout << dt << std::endl;
+// 
+// //number of elapsed miliseconds
+// long msec = dt.total_milliseconds();
+// 
+// //print elapsed seconds (with millisecond precision)
+// std::cout << msec / 1000.0 << std::endl;
 
 //////////////////////////// 获取用印机编号 ///////////////////////////////
 
