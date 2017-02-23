@@ -127,8 +127,8 @@ bool MC::Cnn::Start()
         TRUE,      // default signaled 
         NULL);
     // 心跳线程
-//     heart_thread_ =
-//         new (std::nothrow) boost::thread(boost::bind(&Cnn::HeartBeatingFunc, this));
+    heart_thread_ =
+        new (std::nothrow) boost::thread(boost::bind(&Cnn::HeartBeatingFunc, this));
 
     return true;
 }
@@ -138,7 +138,7 @@ void MC::Cnn::Stop()
     running_ = false;
     recver_thread_->join();
     sender_thread_->join();
-/*    heart_thread_->join();*/
+    heart_thread_->join();
 
     delete send_mq_;
     delete recv_mq_;
@@ -490,8 +490,8 @@ void MC::Cnn::HandleServerDeath()
         heart_mtx_.unlock();
 
         // 启动成功后需要发送一次心跳
-        HeartCmd heart_cmd;
-        WriteCnn(&heart_cmd);
+//         HeartCmd heart_cmd;
+//         WriteCnn(&heart_cmd);
     } else {
         Log::WriteLog(LL_ERROR, "MC::Cnn::HandleServerDeath->启动%s失败",
             MC::SERVER_NAME.c_str());
@@ -501,7 +501,16 @@ void MC::Cnn::HandleServerDeath()
 
 void MC::Cnn::HeartBeatingFunc()
 {
-    while (running_) {        
+    while (running_) { 
+        Sleep(HEART_BEATING_WAIT);
+        bool is_alive = LookupProcessByName(MC::SERVER_NAME.c_str());
+        if (!is_alive) {
+            Log::WriteLog(LL_DEBUG, "AsynAPISet::HeartBeatingFunc->timeout");
+            MC::KillProcessByName(MC::SERVER_NAME.c_str());
+            HandleServerDeath();
+        }
+        continue;
+
         DWORD ret = WaitForSingleObject(heart_ev_, HEART_BEATING_WAIT);
         switch (ret) {
         case WAIT_OBJECT_0: {

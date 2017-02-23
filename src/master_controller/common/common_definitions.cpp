@@ -41,3 +41,22 @@ void MC::KillProcessByName(const char* filename)
     }
     CloseHandle(hSnapShot);
 }
+
+bool MC::LookupProcessByName(const char* filename)
+{
+    HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPALL, NULL);
+    PROCESSENTRY32 pEntry;
+    pEntry.dwSize = sizeof(pEntry);
+    BOOL hRes = Process32First(hSnapShot, &pEntry);
+    while (hRes) {
+        if (strcmp(pEntry.szExeFile, filename) == 0) {
+            CloseHandle(hSnapShot);
+            return true;
+        }
+
+        hRes = Process32Next(hSnapShot, &pEntry);
+    }
+
+    CloseHandle(hSnapShot);
+    return false;
+}
