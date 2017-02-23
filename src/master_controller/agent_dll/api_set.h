@@ -58,6 +58,12 @@ public:
     virtual void Notify(int x, int y, double angle, int ec) = 0;
 };
 
+// 坐标转换
+class CvtCoordNT {
+public:
+    virtual void Notify(int x_dev, int y_dev, int ec) = 0;
+};
+
 class RecogModelPointNT {
 public:
     virtual void Notify(std::string model, double angle, int x, int y, int ec) = 0;
@@ -326,7 +332,13 @@ public:
         int y, 
         int width, 
         int height,
-        int angle, IdentifyNT* nt);
+        int angle,
+        IdentifyNT* nt);
+
+    int AsynGetSealCoord(
+        int x_img,
+        int y_img,
+        CvtCoordNT* nt);
 
     int AsynOrdinaryStamp(
         const std::string& task, 
@@ -513,6 +525,8 @@ public:
     void HandleGetRFID(char* chBuf);
 
     void HandleGetStatus(char* chBuf);
+
+    void HandleCvtCoord(char* chBuf);
 
 private:
     std::map<std::string, void*> api_maps_;

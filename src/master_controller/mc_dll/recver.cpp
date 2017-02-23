@@ -335,6 +335,9 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_GET_DEV_STATUS:
         HandleGetDevStatus(&msg);
         break;
+    case CT_GET_SEAL_COORD:
+        HandleCvtCoord(&msg);
+        break;
     default:
         printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
         break;
@@ -2704,6 +2707,53 @@ void Recver::HandleGetDevStatus(const RecvMsg* msg)
     printf("Recver::HandleGetDevStatus->获取设备状态\n");
 
     MC::NotifyResult* notify = new (std::nothrow) GetDevStatusNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->GetDevStatus(notify);
+}
+
+////////////////// 获取设备状态 /////////////
+
+class CvtCoordNT : public MC::NotifyResult {
+public:
+    CvtCoordNT(LPPIPEINST inst, CoordCvtCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "CvtCoordNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->x_dev_ = atoi(data1.c_str());
+        cmd_->y_dev_ = atoi(data2.c_str());
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    CoordCvtCmd*        cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleCvtCoord(const RecvMsg* msg)
+{
+    CoordCvtCmd* cmd = new (std::nothrow) CoordCvtCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleCvtCoord->坐标转换\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) CvtCoordNT(msg->pipe_inst, cmd, this);
     MC::STSealAPI::GetInst()->GetDevStatus(notify);
 }
 

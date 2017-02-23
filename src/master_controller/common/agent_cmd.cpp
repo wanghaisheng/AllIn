@@ -649,3 +649,16 @@ void GetDevStatusCmd::Unser()
     BaseCmd::Unser();
     xs_ >> status_code_ >> ret_;
 }
+
+void CoordCvtCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << x_img_ << y_img_ << x_dev_ << y_dev_ << ret_;
+    xs_.Trim();
+}
+
+void CoordCvtCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> x_img_ >> y_img_ >> x_dev_ >> y_dev_ >> ret_;
+}

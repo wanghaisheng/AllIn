@@ -60,6 +60,7 @@ enum CmdType {
     CT_GET_RFID,            // 根据卡槽号获取RFID
     CT_RECOG_MODEL,         // 模板及用印点查找
     CT_GET_DEV_STATUS,      // 获取设备状态
+    CT_GET_SEAL_COORD,      // 原图转设备坐标
 
     // 摄像头接口
     CT_OPEN_CAMERA,         // 打开摄像头
@@ -945,6 +946,25 @@ public:
     // 6 ---- "盖章模式"
     // 7 ---- "维护模式"
     int status_code_;
+
+    MC::ErrorCode ret_;
+};
+
+class CoordCvtCmd : public BaseCmd {
+public:
+    CoordCvtCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_GET_SEAL_COORD;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int x_img_;
+    int y_img_;
+
+    int x_dev_;
+    int y_dev_;
 
     MC::ErrorCode ret_;
 };

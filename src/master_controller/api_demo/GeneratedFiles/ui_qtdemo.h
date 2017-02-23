@@ -135,6 +135,7 @@ public:
     QPushButton *pb_open_cam_;
     QPushButton *pb_close_cam_;
     QPushButton *pb_status_cam_;
+    QPushButton *pb_cvt_coord_;
     QWidget *tab;
     QGroupBox *groupBox_5;
     QGroupBox *groupBox_3;
@@ -573,6 +574,9 @@ public:
         pb_status_cam_ = new QPushButton(tab_stamper);
         pb_status_cam_->setObjectName(QStringLiteral("pb_status_cam_"));
         pb_status_cam_->setGeometry(QRect(30, 60, 61, 31));
+        pb_cvt_coord_ = new QPushButton(tab_stamper);
+        pb_cvt_coord_->setObjectName(QStringLiteral("pb_cvt_coord_"));
+        pb_cvt_coord_->setGeometry(QRect(380, 70, 91, 31));
         tabWidget->addTab(tab_stamper, QString());
         tab = new QWidget();
         tab->setObjectName(QStringLiteral("tab"));
@@ -751,7 +755,7 @@ public:
 
         retranslateUi(QtDemoClass);
 
-        tabWidget->setCurrentIndex(3);
+        tabWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(QtDemoClass);
@@ -836,6 +840,7 @@ public:
         pb_open_cam_->setText(QApplication::translate("QtDemoClass", "\346\211\223\345\274\200", 0));
         pb_close_cam_->setText(QApplication::translate("QtDemoClass", "\345\205\263\351\227\255", 0));
         pb_status_cam_->setText(QApplication::translate("QtDemoClass", "\347\212\266\346\200\201", 0));
+        pb_cvt_coord_->setText(QApplication::translate("QtDemoClass", "\345\235\220\346\240\207\350\275\254\346\215\242", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_stamper), QApplication::translate("QtDemoClass", "\346\213\215\347\205\247/\350\257\206\345\210\253", 0));
         groupBox_5->setTitle(QApplication::translate("QtDemoClass", "\347\233\226\347\253\240", 0));
         groupBox_3->setTitle(QApplication::translate("QtDemoClass", "\347\224\250\345\215\260\345\211\215\345\207\206\345\244\207", 0));

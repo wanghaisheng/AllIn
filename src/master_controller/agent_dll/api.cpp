@@ -2875,3 +2875,64 @@ int ST_GetDevStatus(int& code)
     delete nt;
     return ret;
 }
+
+/////////////////////////////// 坐标转换 /////////////////////////////
+
+class CoordCvtNT : public CvtCoordNT {
+public:
+#ifdef _XP
+    CoordCvtNT() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~CoordCvtNT() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int x_dev, int y_dev, int ec) {
+        x_dev_ = x_dev;
+        y_dev_ = y_dev;
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int x_dev_;
+    int y_dev_;
+    int er_;
+};
+
+int ST_GetSealCoord(int x_img, int y_img, int& x_dev, int& y_dev)
+{
+    CvtCoordNT* nt = new CoordCvtNT;
+    api_agent.AsynGetSealCoord(x_img, y_img, nt);
+
+    CoordCvtNT* derive_nt = (CoordCvtNT*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    x_dev = derive_nt->x_dev_;
+    y_dev = derive_nt->y_dev_;
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}

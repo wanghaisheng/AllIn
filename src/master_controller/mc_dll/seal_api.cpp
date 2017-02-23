@@ -1208,13 +1208,13 @@ public:
         if (0 != ret) {
             Log::WriteLog(LL_ERROR, "OridinaryEv::Execute->查询设备状态失败, er: %d",
                 ret);
-            exception_ = MC::EC_QUERY_DEV_STATUS_FAIL;
+            ec = MC::EC_QUERY_DEV_STATUS_FAIL;
             goto NT;
         }
         if (dev_status[1] != 3) {
             Log::WriteLog(LL_ERROR, "OridinaryEv::Execute->设备不处于空闲状态,不能盖章, status: %d",
                 (int)dev_status[1]);
-            exception_ = MC::EC_NOT_FREE;
+            ec = MC::EC_NOT_FREE;
             goto NT;
         }
 
@@ -3196,11 +3196,22 @@ public:
         }
 
         // start preview before capture video
+        HWND preview_hwnd = ::CreateWindowA(
+            "STATIC",
+            "record", 
+            WS_MINIMIZE,
+            0, 
+            0, 
+            PREVIEW_WIDTH,
+            PREVIEW_HEIGHT,
+            NULL, NULL, NULL, NULL);
+/*        ::SetWindowTextA(preview_hwnd, "Record Window!");*/
+
         int ret = StartPreview(
             (CAMERAINDEX)which_,
             PREVIEW_WIDTH, 
             PREVIEW_HEIGHT, 
-            NULL);
+            preview_hwnd);
         if (0 != ret) {
             Log::WriteLog(LL_ERROR, "MC::RecordVideoEv->开启预览失败, er: %d", ret);
             ec = MC::EC_START_PREVIEW_FAIL;
@@ -3209,7 +3220,9 @@ public:
 
         ret = StartCaptureVideo((CAMERAINDEX)which_, (char*)path_.c_str());
         if (0 != ret) {
-            Log::WriteLog(LL_ERROR, "MC::RecordVideoEv->开启录像失败, er: %d", ret);
+            Log::WriteLog(LL_ERROR, "MC::RecordVideoEv->开启录像失败, er: %d, 存放路径: %s",
+                ret,
+                path_.c_str());
             ec = MC::EC_START_RECORD_FAIL;
             goto NT;
         }
@@ -3330,13 +3343,15 @@ public:
         //
         //stamper   --- 印章仓位号, (下标从0开始)
         //rfid      --- 对应的rfid号
-
         int ret = GetStamperID((unsigned char)slot_ - 1, rfid);
-        if (0 != ret) {
+        if (0 != ret && 1 != ret) {
             Log::WriteLog(LL_ERROR, "MC::GetRFIDEv->获取rfid失败, er: %d", ret);
             ec = MC::EC_DRIVER_FAIL;
             goto NT;
         }
+
+        if (1 == ret)
+            rfid = 0;
 
         sprintf(rfid_str, "%u", rfid);
         ec = MC::EC_SUCC;
@@ -3451,6 +3466,64 @@ void MC::STSealAPI::GetDevStatus(NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) GetDevStatusEv(
         "获取设备状态",
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+///////////////////////////// 坐标转换 /////////////////////////////////
+
+class CoordCvtEv : public MC::BaseEvent {
+public:
+    CoordCvtEv(std::string des, int x, int y, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        x_img_(x),
+        y_img_(y),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        char x_str[11] = { 0 };
+        char y_str[11] = { 0 };
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        if (x_img_ <= 0 || y_img_ <= 0) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
+        MC::Point* dev_pt = MC::ImgPro::GetInst()->GetSealCoord(x_img_, y_img_);
+        sprintf(x_str, "%d", dev_pt->x);
+        sprintf(y_str, "%d", dev_pt->y);
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec, x_str, y_str);
+        Log::WriteLog(LL_DEBUG, "MC::CoordCvtEv::SpecificExecute->坐标转换, ec: %s, x: %s, y: %s",
+            MC::ErrorMsg[ec].c_str(),
+            x_str,
+            y_str);
+        delete this;
+    }
+
+private:
+    int x_img_;
+    int y_img_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::CvtCoord(int x_img, int y_img, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) CoordCvtEv(
+        "坐标转换",
+        x_img,
+        y_img,
         notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);

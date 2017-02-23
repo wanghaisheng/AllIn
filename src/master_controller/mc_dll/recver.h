@@ -138,6 +138,8 @@ private:
 
     void HandleGetDevStatus(const RecvMsg* msg);
 
+    void HandleCvtCoord(const RecvMsg* msg);
+
     void HandleHeart(const RecvMsg* msg);
 
 private:

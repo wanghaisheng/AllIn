@@ -172,6 +172,7 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_cut_img_, &QPushButton::clicked, this, &QtDemo::HandleCutImgClick);
 
     connect(ui.pb_capture_, &QPushButton::clicked, this, &QtDemo::HandleCapture);
+    connect(ui.pb_cvt_coord_, &QPushButton::clicked, this, &QtDemo::HandleCvtCoord);
     connect(ui.pb_select_picture_, &QPushButton::clicked, this, &QtDemo::HandleSelectPic);
 
     connect(ui.pb_illustrate_, &QPushButton::clicked, this, &QtDemo::HandleIllusrate);
@@ -814,6 +815,24 @@ void QtDemo::mouseMoveEvent(QMouseEvent *)
         QString::number(mouse_moving_pt_.y()) + ")", STATUS_TEXT);
 }
 
+void QtDemo::HandleCvtCoord()
+{
+    int x_img = atoi(ui.le_x_in_img_->text().toStdString().c_str());
+    int y_img = atoi(ui.le_y_in_img_->text().toStdString().c_str());
+
+    int x_dev = 0;
+    int y_dev = 0;
+    int ret = ST_GetSealCoord(x_img, y_img, x_dev, y_dev);
+    if (0 != ret) {
+        return Info(QString::fromLocal8Bit("坐标转换失败, er: ") + 
+            QString::number(ret));
+    }
+
+    Info(QString::fromLocal8Bit("坐标转换成功"));
+    ui.le_x_in_dev_->setText(QString::number(x_dev));
+    ui.le_y_in_dev_->setText(QString::number(y_dev));
+}
+
 void QtDemo::HandleCapture()
 {
     const std::string ori_path = Config::GetInst()->ori_path_;
@@ -1202,7 +1221,7 @@ void QtDemo::HandleOridinary()
         atoi(ui.le_y_in_dev_->text().toStdString().c_str()),    // 盖章位置y坐标
         0);                                                     // 印章旋转角度, 大于等于0且小于360度
     if (0 != ret)
-        return Info(QString::fromLocal8Bit("普通用印失败,er: ") + QString::number(ret));
+        return Info(QString::fromLocal8Bit("普通用印失败, er: ") + QString::number(ret));
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("普通盖章成功"), STATUS_TEXT);
 }

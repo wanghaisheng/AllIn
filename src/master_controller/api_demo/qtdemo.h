@@ -157,6 +157,7 @@ private:
     void HandleOriImgClick();   // 点按原图
     void HandleCutImgClick();   // 点按切图
     void HandleCapture();       // 拍照
+    void HandleCvtCoord();
     void HandleSelectPic();     // 选择图片
     void HandlePreStamp();      // 选章
 

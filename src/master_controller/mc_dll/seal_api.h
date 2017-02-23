@@ -231,6 +231,8 @@ public:
 
     void GetDevStatus(NotifyResult* notify);
 
+    void CvtCoord(int x_img, int y_img, NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC

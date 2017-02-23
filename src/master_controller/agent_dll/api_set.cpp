@@ -1359,3 +1359,26 @@ void AsynAPISet::HandleGetStatus(char* chBuf)
     if (NULL != nt)
         nt->Notify(cmd.status_code_, cmd.ret_);
 }
+
+int AsynAPISet::AsynGetSealCoord(int x_img, int y_img, CvtCoordNT* nt)
+{
+    CoordCvtCmd* cmd = new CoordCvtCmd;
+    cmd->x_img_ = x_img;
+    cmd->y_img_ = y_img;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleCvtCoord(char* chBuf)
+{
+    CoordCvtCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleCvtCoord->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    CvtCoordNT* nt = (CvtCoordNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.x_dev_, cmd.y_dev_, cmd.ret_);
+}
