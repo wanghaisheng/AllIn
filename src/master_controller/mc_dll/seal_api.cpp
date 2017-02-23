@@ -3334,25 +3334,19 @@ public:
             goto NT;
 
         if (slot_ < 1 || slot_ > 6) {
-            Log::WriteLog(LL_ERROR, "MC::GetRFIDEv->章卡槽号：%d不在范围内", slot_);
             ec = MC::EC_INVALID_PARAMETER;
             goto NT;
         }
 
-        //0x26, 根据印章仓位号获取对应的RFID号
-        //
-        //stamper   --- 印章仓位号, (下标从0开始)
-        //rfid      --- 对应的rfid号
-        int ret = GetStamperID((unsigned char)slot_ - 1, rfid);
-        if (0 != ret && 1 != ret) {
-            Log::WriteLog(LL_ERROR, "MC::GetRFIDEv->获取rfid失败, er: %d", ret);
+        unsigned int rfids[7] = { 0 };
+        unsigned char stampers = 0;
+        int ret = ReadAllRFID(rfids, 7, &stampers);
+        if (0 != ret) {
             ec = MC::EC_DRIVER_FAIL;
             goto NT;
         }
 
-        if (1 == ret)
-            rfid = 0;
-
+        rfid = rfids[slot_ - 1];
         sprintf(rfid_str, "%u", rfid);
         ec = MC::EC_SUCC;
 
