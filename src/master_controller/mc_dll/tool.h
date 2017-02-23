@@ -52,6 +52,10 @@ public:
 
 private:
     Tool() {
+        paper_cam_ = false;
+        env_cam_ = false;
+        side_cam_ = false;
+
         paper_door_ev_ = CreateEvent(
             NULL,       // 默认属性
             TRUE,       // 手动reset
