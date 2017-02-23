@@ -266,6 +266,13 @@ MASTERCTRL_AGENT_API int ST_RecoModelTypeAndAngleAndModelPointByImg(
     int&            x,
     int&            y);
 
+// 将原图用印像素坐标转换为设备(印控机)用印坐标(毫米)
+// MASTERCTRL_AGENT_API int ST_GetSealCoord(
+//     int x_img, 
+//     int y_img,
+//     int& x_dev,
+//     int& y_dev);
+
 /////////////////////// 3. 摄像头API //////////////////////////////
 
 // 打开摄像头

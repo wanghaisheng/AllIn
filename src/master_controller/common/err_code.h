@@ -65,6 +65,7 @@ enum ErrorCode {
     EC_IN_BREAK_DOWN,           // 故障模式
     EC_IN_STAMPING,             // 盖章模式
     EC_IN_MAINTAIN,             // 维护模式
+    EC_NOT_FREE,                // 设备不处于空闲状态
     EC_MAX
 };
 
@@ -127,7 +128,8 @@ static std::string ErrorMsg[] = {
     "测试模式",
     "故障模式",
     "盖章模式",
-    "维护模式"
+    "维护模式",
+    "设备不处于空闲状态"
 };
 
 static std::string GetErrMsg(enum ErrorCode err)
@@ -193,7 +195,8 @@ static std::string ErrorResolver[] = {
     "测试模式",
     "故障模式",
     "盖章模式",
-    "维护模式"
+    "维护模式",
+    "设备不处于空闲状态"
 };
 
 static std::string GetErrResolver(enum ErrorCode err)

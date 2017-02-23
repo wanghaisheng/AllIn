@@ -1177,7 +1177,8 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        if (num_ < 1 || num_ > 6 || task_.empty() || (type_ != 0 && type_ != 1)) {
+        if (num_ < 1 || num_ > 6 || task_.empty() || (type_ != 0 && type_ != 1)
+            || x_ <= 0 || y_ <= 0) {
             ec = MC::EC_INVALID_PARAMETER;
             goto NT;
         }
@@ -1201,13 +1202,26 @@ public:
             goto NT;
         }
 
+        // 设备只有处于“空闲状态”才允许盖章
+        unsigned char dev_status[24] = { 0 };
+        ret = ::FGetDevStatus(dev_status, sizeof(dev_status));
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "OridinaryEv::Execute->查询设备状态失败, er: %d",
+                ret);
+            exception_ = MC::EC_QUERY_DEV_STATUS_FAIL;
+            goto NT;
+        }
+        if (dev_status[1] != 3) {
+            Log::WriteLog(LL_ERROR, "OridinaryEv::Execute->设备不处于空闲状态,不能盖章, status: %d",
+                (int)dev_status[1]);
+            exception_ = MC::EC_NOT_FREE;
+            goto NT;
+        }
+
         // 普通用印
         MC::TaskState ts = MC::TaskMgr::GetInst()->QueryTaskState(task_);
         // check task_id state
         if (ts ==  MC::TS_ALIVE) {
-            // 将原图用印坐标(像素)转换为设备用印坐标(毫米), do-do 坐标转换由接口使用者调用
-            // MC::Point* ptSeal = MC::ImgPro::GetInst()->GetSealCoord(x_, y_);
-            // 
             unsigned int rfid;
             int ret = GetStamperID(num_ - 1, rfid);
             if (0 != ret) {

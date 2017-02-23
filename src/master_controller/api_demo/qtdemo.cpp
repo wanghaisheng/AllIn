@@ -16,6 +16,21 @@
 boost::mutex QtDemo::mtx;
 int QtDemo::connected = -1;
 
+bool GetMoudulePath(std::string& path)
+{
+    char file_path[_MAX_PATH] = { 0 };
+    if (GetModuleFileName(NULL, file_path, _MAX_FNAME) == 0)
+        return false;
+
+    std::string file_path_str = file_path;
+    size_t last_slash = file_path_str.find_last_of("\\");
+    if (last_slash == std::string::npos)
+        return false;
+
+    path = file_path_str.substr(0, last_slash + 1);
+    return true;
+}
+
 int QtDemo::ConnectCallBack(const char* path, unsigned int msg)
 {
     switch (msg) {
@@ -208,6 +223,14 @@ QtDemo::QtDemo(QWidget *parent)
     ui.cb_cam_list_->addItem(QString::fromLocal8Bit("凭证摄像头"));
     ui.cb_cam_list_->addItem(QString::fromLocal8Bit("环境摄像头"));
     ui.cb_cam_list_->addItem(QString::fromLocal8Bit("侧门摄像头"));
+
+    ui.le_x_in_dev_->setText(QString::number(100));
+    ui.le_y_in_dev_->setText(QString::number(100));
+
+    std::string module_path;
+    GetMoudulePath(module_path);
+    module_path.append("record1.avi");
+    ui.le_video_path_->setText(QString::fromStdString(module_path));
 
     // 默认显示第一个tab
     ui.tabWidget->setCurrentIndex(0);
