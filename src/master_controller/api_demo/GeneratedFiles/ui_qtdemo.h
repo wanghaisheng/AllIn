@@ -194,6 +194,8 @@ public:
     QLineEdit *le_ratio_y_;
     QPushButton *pb_write_ratio_;
     QPushButton *pb_read_ratio_;
+    QPushButton *pb_write_cal_pts_;
+    QPushButton *pb_read_cal_pts_;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -756,6 +758,12 @@ public:
         pb_read_ratio_ = new QPushButton(tab_3);
         pb_read_ratio_->setObjectName(QStringLiteral("pb_read_ratio_"));
         pb_read_ratio_->setGeometry(QRect(150, 480, 111, 31));
+        pb_write_cal_pts_ = new QPushButton(tab_3);
+        pb_write_cal_pts_->setObjectName(QStringLiteral("pb_write_cal_pts_"));
+        pb_write_cal_pts_->setGeometry(QRect(300, 440, 111, 31));
+        pb_read_cal_pts_ = new QPushButton(tab_3);
+        pb_read_cal_pts_->setObjectName(QStringLiteral("pb_read_cal_pts_"));
+        pb_read_cal_pts_->setGeometry(QRect(300, 480, 111, 31));
         tabWidget->addTab(tab_3, QString());
         QtDemoClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(QtDemoClass);
@@ -904,6 +912,8 @@ public:
         pb_stop_record_->setText(QApplication::translate("QtDemoClass", "\345\201\234\346\255\242\345\275\225\345\203\217", 0));
         pb_write_ratio_->setText(QApplication::translate("QtDemoClass", "\345\206\231\345\200\215\347\216\207", 0));
         pb_read_ratio_->setText(QApplication::translate("QtDemoClass", "\350\257\273\345\200\215\347\216\207", 0));
+        pb_write_cal_pts_->setText(QApplication::translate("QtDemoClass", "\345\206\231\346\240\241\345\207\206\347\202\271", 0));
+        pb_read_cal_pts_->setText(QApplication::translate("QtDemoClass", "\350\257\273\346\240\241\345\207\206\347\202\271", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("QtDemoClass", "\345\205\266\344\273\226\346\216\245\345\217\243", 0));
     } // retranslateUi
 

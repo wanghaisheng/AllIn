@@ -242,7 +242,6 @@ MASTERCTRL_AGENT_API int ST_CheckParam(
     int y,
     int angle);
 
-
 // 写图像转换倍率
 // x, y坐标
 MASTERCTRL_AGENT_API int ST_WriteImageConvRatio(
@@ -253,6 +252,19 @@ MASTERCTRL_AGENT_API int ST_WriteImageConvRatio(
 MASTERCTRL_AGENT_API int ST_ReadImageConvRatio(
     float& x, 
     float& y);
+
+// 存储校准点数据
+// 根据硬件尺寸大小,每个校准点的x,y值用2个字节存放即可, 有5个校准点.
+// points    --- 顺序存放每个点的x,y值,即x1,y1,x2,y2...x5,y5
+// len       --- 数据长度
+MASTERCTRL_AGENT_API int ST_WriteCalibrationPoint(
+    unsigned short* points,
+    unsigned char len = 10);
+
+// 获取校准点数据
+MASTERCTRL_AGENT_API int ST_ReadCalibrationPoint(
+    unsigned short* points, 
+    unsigned char len = 10);
 
 /////////////////////// 2. 图像处理API //////////////////////////////
 

@@ -353,6 +353,12 @@ void MC::Cnn::ReceiveFunc()
         case CT_READ_CVT_RATIO:
             asyn_api_->HandleReadRatio(chBuf);
             break;
+        case CT_WRITE_CALIBRATION:
+            asyn_api_->HandleWriteCali(chBuf);
+            break;
+        case CT_READ_CALIBRATION:
+            asyn_api_->HandleReadCali(chBuf);
+            break;
         default:
             printf("AsynAPISet::ReceiverFunc->Unknown cmd: %d", cmd_type);
             break;

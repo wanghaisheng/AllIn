@@ -288,6 +288,16 @@ public:
     virtual void Notify(float x, float y, int ec) = 0;
 };
 
+class WriteCaliNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class ReadCaliNT {
+public:
+    virtual void Notify(unsigned short* pts, unsigned char len, int ec) = 0;
+};
+
 class AsynAPISet {
 public:
     void DeleteNotify(void* nt);
@@ -434,6 +444,10 @@ public:
 
     int AsynReadRatio(ReadRatioNT* nt);
 
+    int AsynWriteCali(unsigned short* pts, unsigned short len, WriteCaliNT* nt);
+
+    int AsynReadCali(ReadCaliNT* nt);
+
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);
     
@@ -545,6 +559,10 @@ public:
     void HandleWriteRatio(char* chBuf);
 
     void HandleReadRatio(char* chBuf);
+
+    void HandleWriteCali(char* chBuf);
+
+    void HandleReadCali(char* chBuf);
 
 private:
     std::map<std::string, void*> api_maps_;

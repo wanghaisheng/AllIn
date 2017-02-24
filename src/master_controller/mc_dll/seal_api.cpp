@@ -3661,3 +3661,105 @@ void MC::STSealAPI::ReadRatio(NotifyResult* notify)
 
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
+
+///////////////////////////// 写校准点 /////////////////////////////////
+
+class WriteCaliEv : public MC::BaseEvent {
+public:
+    WriteCaliEv(std::string des, unsigned short* pts, unsigned short len, 
+        MC::NotifyResult* notify) :
+        BaseEvent(des),
+        pts_(pts),
+        len_(len),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = WriteCalibrationPoint(pts_, (unsigned char)len_);
+        if (0 != ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::WriteCaliEv->写校准点, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    unsigned short* pts_;
+    unsigned short len_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::WriteCalibration(unsigned short* pts, unsigned short len, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) WriteCaliEv(
+        "写校准点",
+        pts,
+        len,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+///////////////////////////// 读校准点 /////////////////////////////////
+
+class ReadCaliEv : public MC::BaseEvent {
+public:
+    ReadCaliEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        const unsigned short len = 10;
+        unsigned short pts[len] = { 0 };
+        char pts_addr[64] = { 0 };
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = CalibrationPoint(pts, len);
+        if (0 != ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        sprintf(pts_addr, "%p", pts);
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec, pts_addr);
+        Log::WriteLog(LL_DEBUG, "MC::ReadCaliEv->读校准点, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::ReadCalibration(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) ReadCaliEv(
+        "读校准点",
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}

@@ -10,7 +10,11 @@
 #include "log.h"
 #include "api.h"
 
+#ifdef _DEBUG
+#pragma comment(lib, "ABC.STDZ.Device.STAMP.USBF60APID.lib")
+#else
 #pragma comment(lib, "ABC.STDZ.Device.STAMP.USBF60API.lib")
+#endif
 
 AsynAPISet api_agent;
 
@@ -3063,6 +3067,122 @@ int ST_ReadImageConvRatio(float& x, float& y)
     int ret = derive_nt->er_;
     x = derive_nt->x_;
     y = derive_nt->y_;
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}
+
+/////////////////////////////// 写校准点 /////////////////////////////
+
+class WriteCalibrationNt : public WriteCaliNT {
+public:
+#ifdef _XP
+    WriteCalibrationNt() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~WriteCalibrationNt() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_WriteCalibrationPoint(unsigned short* points, unsigned char len /*= 10*/)
+{
+    WriteCaliNT* nt = new WriteCalibrationNt;
+    api_agent.AsynWriteCali(points, len, nt);
+
+    WriteCalibrationNt* derive_nt = (WriteCalibrationNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}
+
+/////////////////////////////// 读校准点 /////////////////////////////
+
+class ReadCalibrationNt : public ReadCaliNT {
+public:
+#ifdef _XP
+    ReadCalibrationNt() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~ReadCalibrationNt() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(unsigned short* pts, unsigned char len, int ec) {
+        pts_ = pts;
+        len_ = len;
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    unsigned short* pts_;
+    unsigned char len_;
+    int er_;
+};
+
+int ST_ReadCalibrationPoint(unsigned short* points, unsigned char len /*= 10*/)
+{
+    ReadCaliNT* nt = new ReadCalibrationNt;
+    api_agent.AsynReadCali(nt);
+
+    ReadCalibrationNt* derive_nt = (ReadCalibrationNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    if (0 == ret)
+        memcpy(points, derive_nt->pts_, derive_nt->len_ * sizeof(unsigned short));
     api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;

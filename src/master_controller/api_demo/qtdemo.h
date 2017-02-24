@@ -197,6 +197,9 @@ private:
     void HandleWriteKey();                  //写设备key值
     void HandleReadKey();                   //读设备key值
 
+    void HandldeWriteCalPoints();
+    void HandleReadPCalPoints();
+
 private:
     QString current_ids[6];                 //当前印章ID, “读取章状态”按钮会修改该值
 

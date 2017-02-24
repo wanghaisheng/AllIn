@@ -2236,6 +2236,32 @@
        <string>读倍率</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="pb_write_cal_pts_">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>440</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>写校准点</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_read_cal_pts_">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>480</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>读校准点</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>

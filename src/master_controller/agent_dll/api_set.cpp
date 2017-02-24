@@ -1426,3 +1426,47 @@ void AsynAPISet::HandleReadRatio(char* chBuf)
     if (NULL != nt)
         nt->Notify(cmd.x_, cmd.y_, cmd.ret_);
 }
+
+int AsynAPISet::AsynWriteCali(unsigned short* pts, unsigned short len, WriteCaliNT* nt)
+{
+    WriteCaliPtsCmd* cmd = new WriteCaliPtsCmd;
+    cmd->len_ = len;
+    memcpy(cmd->pts_, pts, len * sizeof(unsigned short));
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleWriteCali(char* chBuf)
+{
+    WriteCaliPtsCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleWriteCali->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    WriteCaliNT* nt = (WriteCaliNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+int AsynAPISet::AsynReadCali(ReadCaliNT* nt)
+{
+    ReadCaliPtsCmd* cmd = new ReadCaliPtsCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleReadCali(char* chBuf)
+{
+    ReadCaliPtsCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleReadCali->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    ReadCaliNT* nt = (ReadCaliNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.pts_, cmd.len_, cmd.ret_);
+}

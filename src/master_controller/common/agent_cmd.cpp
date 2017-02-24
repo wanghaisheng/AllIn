@@ -688,3 +688,41 @@ void ReadRatioCmd::Unser()
     BaseCmd::Unser();
     xs_ >> x_ >> y_ >> ret_;
 }
+
+void WriteCaliPtsCmd::Ser()
+{
+    BaseCmd::Ser();
+    int i = 0;
+    while (i < len_)
+        xs_ << pts_[i++];
+    xs_ << ret_;
+    xs_.Trim();
+}
+
+void WriteCaliPtsCmd::Unser()
+{
+    BaseCmd::Unser();
+    int i = 0;
+    while (i < len_)
+        xs_ >> pts_[i++];
+    xs_ >> ret_;
+}
+
+void ReadCaliPtsCmd::Ser()
+{
+    BaseCmd::Ser();
+    int i = 0;
+    while (i < len_)
+        xs_ << pts_[i++];
+    xs_ << ret_;
+    xs_.Trim();
+}
+
+void ReadCaliPtsCmd::Unser()
+{
+    BaseCmd::Unser();
+    int i = 0;
+    while (i < len_)
+        xs_ >> pts_[i++];
+    xs_ >> ret_;
+}

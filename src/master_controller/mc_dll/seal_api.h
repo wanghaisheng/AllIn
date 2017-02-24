@@ -237,6 +237,10 @@ public:
 
     void ReadRatio(NotifyResult* notify);
 
+    void WriteCalibration(unsigned short* pts, unsigned short len, NotifyResult* notify);
+
+    void ReadCalibration(NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC

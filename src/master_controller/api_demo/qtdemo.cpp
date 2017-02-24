@@ -174,6 +174,9 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_write_ratio_, &QPushButton::clicked, this, &QtDemo::HandleWriteConvRatio);
     connect(ui.pb_read_ratio_, &QPushButton::clicked, this, &QtDemo::HandleReadConvRatio);
 
+    connect(ui.pb_write_cal_pts_, &QPushButton::clicked, this, &QtDemo::HandldeWriteCalPoints);
+    connect(ui.pb_read_cal_pts_, &QPushButton::clicked, this, &QtDemo::HandleReadPCalPoints);
+
     //拍照/识别
     ui.pb_ori_img_->setStyleSheet("background-color: transparent;");
     ui.pb_cut_img_->setStyleSheet("background-color: transparent;");
@@ -1515,4 +1518,41 @@ void QtDemo::HandleReadConvRatio()
     ui.le_ratio_x_->setText(QString::number(x));
     ui.le_ratio_y_->setText(QString::number(y));
     Info(QString::fromLocal8Bit("读倍率成功: "));
+}
+
+void QtDemo::HandldeWriteCalPoints()
+{
+    unsigned short pts[] =
+    {
+        12, 34,
+        54, 104,
+        209, 45,
+        232, 13,
+        101, 110
+    };
+
+    int ret = ST_WriteCalibrationPoint(pts, 10);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("写校准点失败, er: ") + QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("写校准点成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleReadPCalPoints()
+{
+    unsigned short pts[10] = { 0 };
+    int ret = ST_ReadCalibrationPoint(pts, 10);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("读校准点失败, er: ") + QString::number(ret));
+
+    QString str;
+    str = QString::fromLocal8Bit("校准点:\n") +
+        QString::fromLocal8Bit("(") + QString::number(pts[0]) + QString::fromLocal8Bit(",") + QString::number(pts[1]) + QString::fromLocal8Bit(")\n") +
+        QString::fromLocal8Bit("(") + QString::number(pts[2]) + QString::fromLocal8Bit(",") + QString::number(pts[3]) + QString::fromLocal8Bit(")\n") +
+        QString::fromLocal8Bit("(") + QString::number(pts[4]) + QString::fromLocal8Bit(",") + QString::number(pts[5]) + QString::fromLocal8Bit(")\n") +
+        QString::fromLocal8Bit("(") + QString::number(pts[6]) + QString::fromLocal8Bit(",") + QString::number(pts[7]) + QString::fromLocal8Bit(")\n") +
+        QString::fromLocal8Bit("(") + QString::number(pts[8]) + QString::fromLocal8Bit(",") + QString::number(pts[9]) + QString::fromLocal8Bit(")");
+
+    Info(str);
+    ui.statusBar->showMessage(QString::fromLocal8Bit("读校准点成功"), STATUS_TEXT);
 }

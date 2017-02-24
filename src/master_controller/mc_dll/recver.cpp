@@ -344,6 +344,12 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_READ_CVT_RATIO:
         HandleReadRatio(&msg);
         break;
+    case CT_WRITE_CALIBRATION:
+        HandleWriteCali(&msg);
+        break;
+    case CT_READ_CALIBRATION:
+        HandleReadCali(&msg);
+        break;
     default:
         printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
         break;
@@ -2864,4 +2870,103 @@ void Recver::HandleReadRatio(const RecvMsg* msg)
 
     MC::NotifyResult* notify = new (std::nothrow) ReadRatioNT(msg->pipe_inst, cmd, this);
     MC::STSealAPI::GetInst()->ReadRatio(notify);
+}
+
+////////////////// 写校准点 /////////////
+
+class WriteCaliNT : public MC::NotifyResult {
+public:
+    WriteCaliNT(LPPIPEINST inst, WriteCaliPtsCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "WriteCaliNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    WriteCaliPtsCmd*    cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleWriteCali(const RecvMsg* msg)
+{
+    WriteCaliPtsCmd* cmd = new (std::nothrow) WriteCaliPtsCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleReadRatio->写校准点\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) WriteCaliNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->WriteCalibration(cmd->pts_, cmd->len_, notify);
+}
+
+////////////////// 读校准点 /////////////
+
+class ReadCaliNT : public MC::NotifyResult {
+public:
+    ReadCaliNT(LPPIPEINST inst, ReadCaliPtsCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "ReadCaliNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        if (0 == ec) {
+            int pts_addr = atoi(data1.c_str());
+            for (int i = 0; i < 10; ++i) {
+                memcpy(
+                    &cmd_->pts_[i],
+                    (void*)(pts_addr + i * sizeof(unsigned short)),
+                    sizeof(unsigned short));
+            }
+        }
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    ReadCaliPtsCmd*     cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleReadCali(const RecvMsg* msg)
+{
+    ReadCaliPtsCmd* cmd = new (std::nothrow) ReadCaliPtsCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleReadCali->读校准点\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) ReadCaliNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->ReadCalibration(notify);
 }

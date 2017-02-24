@@ -63,6 +63,8 @@ enum CmdType {
     CT_GET_SEAL_COORD,      // 原图转设备坐标
     CT_WRITE_CVT_RATIO,     // 写图像转换倍率
     CT_READ_CVT_RATIO,      // 读图像转换倍率
+    CT_WRITE_CALIBRATION,   // 写较准点
+    CT_READ_CALIBRATION,    // 读较准点
 
     // 摄像头接口
     CT_OPEN_CAMERA,         // 打开摄像头
@@ -121,6 +123,8 @@ static std::string cmd_des[] =
     "获取设备状态",
     "写图像转换倍率",
     "读图像转换倍率",
+    "写较准点",
+    "读较准点"
 
     "打开摄像头",
     "关闭摄像头",
@@ -1002,6 +1006,40 @@ public:
 public:
     float x_;
     float y_;
+
+    MC::ErrorCode ret_;
+};
+
+class WriteCaliPtsCmd : public BaseCmd {
+public:
+    WriteCaliPtsCmd(): len_(10), ret_(MC::EC_SUCC) {
+        ct_ = CT_WRITE_CALIBRATION;
+        memset(pts_, 0, len_ * sizeof(unsigned short));
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    unsigned short pts_[10];
+    unsigned short len_;
+
+    MC::ErrorCode ret_;
+};
+
+class ReadCaliPtsCmd : public BaseCmd {
+public:
+    ReadCaliPtsCmd(): len_(10), ret_(MC::EC_SUCC) {
+        ct_ = CT_READ_CALIBRATION;
+        memset(pts_, 0, len_ * sizeof(unsigned short));
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    unsigned short pts_[10];
+    unsigned short len_;
 
     MC::ErrorCode ret_;
 };

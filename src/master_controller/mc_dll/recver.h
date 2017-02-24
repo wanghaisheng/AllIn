@@ -144,6 +144,10 @@ private:
 
     void HandleReadRatio(const RecvMsg* msg);
 
+    void HandleWriteCali(const RecvMsg* msg);
+
+    void HandleReadCali(const RecvMsg* msg);
+
     void HandleHeart(const RecvMsg* msg);
 
 private:
