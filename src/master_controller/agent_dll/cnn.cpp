@@ -103,10 +103,10 @@ bool MC::Cnn::Start()
     Sleep(2000); // 适当延时, 以便消息队列准备好
 
     bool ret;
-    if (Config::GetInst()->conn_type_ == CT_PIPE)
-        ret = StartPipe(Config::GetInst()->pipe_name_.c_str());
-    else if (Config::GetInst()->conn_type_ == CT_MQ)
-        ret = StartMQ(Config::GetInst()->send_mq_name_, Config::GetInst()->recv_mq_name_);
+    if (AgentConfig::GetInst()->conn_type_ == CT_PIPE)
+        ret = StartPipe(AgentConfig::GetInst()->pipe_name_.c_str());
+    else if (AgentConfig::GetInst()->conn_type_ == CT_MQ)
+        ret = StartMQ(AgentConfig::GetInst()->send_mq_name_, AgentConfig::GetInst()->recv_mq_name_);
 
     send_ev_ = CreateEvent(
         NULL,
@@ -155,7 +155,7 @@ bool MC::Cnn::PushCmd(BaseCmd* cmd)
 bool MC::Cnn::RecvBuf(TCHAR* buf, int buf_len, DWORD* actual_read)
 {
     bool fSuccess = true;
-    if (MC::CT_PIPE == Config::GetInst()->conn_type_) {      // 收管道消息
+    if (MC::CT_PIPE == AgentConfig::GetInst()->conn_type_) {      // 收管道消息
         fSuccess = ReadFile(
             pipe_,                          // 句柄
             buf,                            // 读取内容的缓存
@@ -434,9 +434,9 @@ int MC::Cnn::WriteCnn(BaseCmd* cmd)
 {
     SetEvent(send_ev_);
 
-    if (MC::CT_PIPE == Config::GetInst()->conn_type_)
+    if (MC::CT_PIPE == AgentConfig::GetInst()->conn_type_)
         return WritePipe(cmd);
-    else if (MC::CT_MQ == Config::GetInst()->conn_type_)
+    else if (MC::CT_MQ == AgentConfig::GetInst()->conn_type_)
         return WriteMQ(cmd);
     else
         return -1;
@@ -479,11 +479,11 @@ void MC::Cnn::HandleServerDeath()
         try {
             send_mq_ = new (std::nothrow) boost::interprocess::message_queue(
                 boost::interprocess::open_only,
-                Config::GetInst()->send_mq_name_.c_str());
+                AgentConfig::GetInst()->send_mq_name_.c_str());
 
             recv_mq_ = new (std::nothrow) boost::interprocess::message_queue(
                 boost::interprocess::open_only,
-                Config::GetInst()->recv_mq_name_.c_str());
+                AgentConfig::GetInst()->recv_mq_name_.c_str());
         }  catch (boost::interprocess::interprocess_exception &ex) {
             std::cout << "MC::Cnn::HandleServerDeath->打开消息队列失败: " 
                 << ex.what() << std::endl;

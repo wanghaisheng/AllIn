@@ -5,9 +5,9 @@
 #include "parse.h"
 #include "log.h"
 
-MC::Config* MC::Config::config_inst = NULL;
+MC::AgentConfig* MC::AgentConfig::config_inst = NULL;
 
-bool MC::Config::Parse()
+bool MC::AgentConfig::Parse()
 {
     std::string path;
     if (!MC::GetMoudulePath(path))

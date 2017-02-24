@@ -6,11 +6,11 @@
 
 namespace MC {
 
-class Config {
+class AgentConfig {
 public:
-    static Config* GetInst() {
+    static AgentConfig* GetInst() {
         if (NULL == config_inst)
-            config_inst = new (std::nothrow) Config;
+            config_inst = new (std::nothrow) AgentConfig;
 
         return config_inst;
     }
@@ -18,12 +18,12 @@ public:
     bool Parse();
 
 private:
-    Config() : conn_type_(CT_MAX) {
+    AgentConfig() : conn_type_(CT_MAX) {
 
     }
 
 private:
-    static Config* config_inst;
+    static AgentConfig* config_inst;
 
 public:
     MC::ConnType    conn_type_;  // 是否是管道连接通信
@@ -31,7 +31,7 @@ public:
     std::string     pipe_name_;
     std::string     send_mq_name_;
     std::string     recv_mq_name_;
-}; // class Config
+}; // class AgentConfig
 
 } // namespace MC
 
