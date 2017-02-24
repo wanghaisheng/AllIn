@@ -6,9 +6,9 @@
 #include "parse.h"
 #include "common_definitions.h"
 
-Config* Config::config_inst = NULL;
+ClientConfig* ClientConfig::config_inst = NULL;
 
-bool Config::Parse()
+bool ClientConfig::Parse()
 {
     std::string path;
     if (!MC::GetMoudulePath(path))

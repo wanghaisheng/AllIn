@@ -1,13 +1,13 @@
 #ifndef API_DEMO_PARSE_H_
 #define API_DEMO_PARSE_H_
 
-#include <windows.h>
+#include <string>
 
-class Config {
+class ClientConfig {
 public:
-    static Config* GetInst() {
+    static ClientConfig* GetInst() {
         if (NULL == config_inst)
-            config_inst = new Config;
+            config_inst = new ClientConfig;
 
         return config_inst;
     }
@@ -15,12 +15,12 @@ public:
     bool Parse();
 
 private:
-    Config() {
+    ClientConfig() {
 
     }
 
 private:
-    static Config* config_inst;
+    static ClientConfig* config_inst;
 
 public:
     std::string     ori_path_;

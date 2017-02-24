@@ -271,7 +271,7 @@ void QtDemo::HandleTabChange(int index)
 
 bool QtDemo::Init()
 {
-    if (!Config::GetInst()->Parse())
+    if (!ClientConfig::GetInst()->Parse())
         return false;
 
     InitDevControl(); //需要手动调用一次
@@ -842,8 +842,8 @@ void QtDemo::HandleCvtCoord()
 
 void QtDemo::HandleCapture()
 {
-    const std::string ori_path = Config::GetInst()->ori_path_;
-    const std::string cut_path = Config::GetInst()->cut_path_;
+    const std::string ori_path = ClientConfig::GetInst()->ori_path_;
+    const std::string cut_path = ClientConfig::GetInst()->cut_path_;
     int ret = ST_Snapshot(
         which_cam_,
 //         200,
@@ -917,7 +917,7 @@ void QtDemo::HandleSelectPic()
 void QtDemo::HandleIllusrate()
 {
     QImage cut_img;
-    if (cut_img.load(Config::GetInst()->cut_path_.c_str())) {
+    if (cut_img.load(ClientConfig::GetInst()->cut_path_.c_str())) {
         QPixmap pix = QPixmap::fromImage(cut_img);
         QPainter painter(&pix);
         painter.begin(this);
@@ -992,10 +992,10 @@ void QtDemo::HandleRecogCode()
     std::string trace_num;
     int ret;
     if (0 == img_type_) {
-        ret = ST_RecognizeImage(Config::GetInst()->ori_path_, template_id, trace_num);
+        ret = ST_RecognizeImage(ClientConfig::GetInst()->ori_path_, template_id, trace_num);
     }
     else if (1 == img_type_) {
-        ret = ST_RecognizeImage(Config::GetInst()->cut_path_, template_id, trace_num);
+        ret = ST_RecognizeImage(ClientConfig::GetInst()->cut_path_, template_id, trace_num);
     }
 
     if (0 != ret)
@@ -1012,9 +1012,9 @@ void QtDemo::HandleRecogEle()
 
     std::string img_path;
     if (0 == img_type_)
-        img_path = Config::GetInst()->ori_path_;
+        img_path = ClientConfig::GetInst()->ori_path_;
     else
-        img_path = Config::GetInst()->cut_path_;
+        img_path = ClientConfig::GetInst()->cut_path_;
 
     std::string result;
     int ret = ST_IdentifyElement(
