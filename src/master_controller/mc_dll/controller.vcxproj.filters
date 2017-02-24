@@ -27,9 +27,6 @@
     <ClInclude Include="base_event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="USBControlF60.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="tool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -79,6 +76,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stamping_mgr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\USBControlF60.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

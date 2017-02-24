@@ -42,7 +42,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>3</number>
     </property>
     <property name="movable">
      <bool>false</bool>
@@ -2188,6 +2188,52 @@
       </property>
       <property name="text">
        <string>停止录像</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="le_ratio_x_">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>440</y>
+        <width>113</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="le_ratio_y_">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>480</y>
+        <width>113</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_write_ratio_">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>440</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>写倍率</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_read_ratio_">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>480</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>读倍率</string>
       </property>
      </widget>
     </widget>

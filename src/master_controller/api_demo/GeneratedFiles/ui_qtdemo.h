@@ -190,6 +190,10 @@ public:
     QLineEdit *le_video_path_;
     QPushButton *pb_start_record_;
     QPushButton *pb_stop_record_;
+    QLineEdit *le_ratio_x_;
+    QLineEdit *le_ratio_y_;
+    QPushButton *pb_write_ratio_;
+    QPushButton *pb_read_ratio_;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -740,6 +744,18 @@ public:
         pb_stop_record_ = new QPushButton(tab_3);
         pb_stop_record_->setObjectName(QStringLiteral("pb_stop_record_"));
         pb_stop_record_->setGeometry(QRect(990, 230, 91, 46));
+        le_ratio_x_ = new QLineEdit(tab_3);
+        le_ratio_x_->setObjectName(QStringLiteral("le_ratio_x_"));
+        le_ratio_x_->setGeometry(QRect(20, 440, 113, 31));
+        le_ratio_y_ = new QLineEdit(tab_3);
+        le_ratio_y_->setObjectName(QStringLiteral("le_ratio_y_"));
+        le_ratio_y_->setGeometry(QRect(20, 480, 113, 31));
+        pb_write_ratio_ = new QPushButton(tab_3);
+        pb_write_ratio_->setObjectName(QStringLiteral("pb_write_ratio_"));
+        pb_write_ratio_->setGeometry(QRect(150, 440, 111, 31));
+        pb_read_ratio_ = new QPushButton(tab_3);
+        pb_read_ratio_->setObjectName(QStringLiteral("pb_read_ratio_"));
+        pb_read_ratio_->setGeometry(QRect(150, 480, 111, 31));
         tabWidget->addTab(tab_3, QString());
         QtDemoClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(QtDemoClass);
@@ -755,7 +771,7 @@ public:
 
         retranslateUi(QtDemoClass);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(3);
 
 
         QMetaObject::connectSlotsByName(QtDemoClass);
@@ -886,6 +902,8 @@ public:
         label_14->setText(QApplication::translate("QtDemoClass", "\350\247\206\351\242\221\345\205\250\350\267\257\345\276\204\357\274\232", 0));
         pb_start_record_->setText(QApplication::translate("QtDemoClass", "\345\274\200\345\247\213\345\275\225\345\203\217", 0));
         pb_stop_record_->setText(QApplication::translate("QtDemoClass", "\345\201\234\346\255\242\345\275\225\345\203\217", 0));
+        pb_write_ratio_->setText(QApplication::translate("QtDemoClass", "\345\206\231\345\200\215\347\216\207", 0));
+        pb_read_ratio_->setText(QApplication::translate("QtDemoClass", "\350\257\273\345\200\215\347\216\207", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("QtDemoClass", "\345\205\266\344\273\226\346\216\245\345\217\243", 0));
     } // retranslateUi
 

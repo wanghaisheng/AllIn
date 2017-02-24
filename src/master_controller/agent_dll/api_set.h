@@ -278,6 +278,16 @@ public:
     virtual void Notify() {}
 };
 
+class WriteRatioNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class ReadRatioNT {
+public:
+    virtual void Notify(float x, float y, int ec) = 0;
+};
+
 class AsynAPISet {
 public:
     void DeleteNotify(void* nt);
@@ -420,6 +430,10 @@ public:
 
     int AsynGetStatus(GetStatusNT* nt);
 
+    int AsynWriteRatio(float x, float y, WriteRatioNT* nt);
+
+    int AsynReadRatio(ReadRatioNT* nt);
+
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);
     
@@ -527,6 +541,10 @@ public:
     void HandleGetStatus(char* chBuf);
 
     void HandleCvtCoord(char* chBuf);
+
+    void HandleWriteRatio(char* chBuf);
+
+    void HandleReadRatio(char* chBuf);
 
 private:
     std::map<std::string, void*> api_maps_;

@@ -662,3 +662,29 @@ void CoordCvtCmd::Unser()
     BaseCmd::Unser();
     xs_ >> x_img_ >> y_img_ >> x_dev_ >> y_dev_ >> ret_;
 }
+
+void WriteRatioCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << x_ << y_ << ret_;
+    xs_.Trim();
+}
+
+void WriteRatioCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> x_ >> y_ >> ret_;
+}
+
+void ReadRatioCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << x_ << y_ << ret_;
+    xs_.Trim();
+}
+
+void ReadRatioCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> x_ >> y_ >> ret_;
+}

@@ -2949,3 +2949,121 @@ int RegisterConnCallBack(ConnectCallback func)
 {
     return F_RegisterDevCallBack(func);
 }
+
+/////////////////////////////// 写倍率 /////////////////////////////
+
+class WriteCvtRatioNt : public WriteRatioNT {
+public:
+#ifdef _XP
+    WriteCvtRatioNt() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~WriteCvtRatioNt() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int x_dev_;
+    int y_dev_;
+    int er_;
+};
+
+int ST_WriteImageConvRatio(float x, float y)
+{
+    WriteRatioNT* nt = new WriteCvtRatioNt;
+    api_agent.AsynWriteRatio(x, y, nt);
+
+    WriteCvtRatioNt* derive_nt = (WriteCvtRatioNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}
+
+/////////////////////////////// 读倍率 /////////////////////////////
+
+class ReadCvtRatioNt : public ReadRatioNT {
+public:
+#ifdef _XP
+    ReadCvtRatioNt() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~ReadCvtRatioNt() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(float x, float y, int ec) {
+        x_ = x;
+        y_ = y;
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    float x_;
+    float y_;
+    int er_;
+};
+
+int ST_ReadImageConvRatio(float& x, float& y)
+{
+    ReadRatioNT* nt = new ReadCvtRatioNt;
+    api_agent.AsynReadRatio(nt);
+
+    ReadCvtRatioNt* derive_nt = (ReadCvtRatioNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    x = derive_nt->x_;
+    y = derive_nt->y_;
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}

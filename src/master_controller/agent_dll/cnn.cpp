@@ -347,6 +347,12 @@ void MC::Cnn::ReceiveFunc()
         case CT_GET_SEAL_COORD:
             asyn_api_->HandleCvtCoord(chBuf);
             break;
+        case CT_WRITE_CVT_RATIO:
+            asyn_api_->HandleWriteRatio(chBuf);
+            break;
+        case CT_READ_CVT_RATIO:
+            asyn_api_->HandleReadRatio(chBuf);
+            break;
         default:
             printf("AsynAPISet::ReceiverFunc->Unknown cmd: %d", cmd_type);
             break;

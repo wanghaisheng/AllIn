@@ -233,6 +233,10 @@ public:
 
     void CvtCoord(int x_img, int y_img, NotifyResult* notify);
 
+    void WriteRatio(float x, float y, NotifyResult* notify);
+
+    void ReadRatio(NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC

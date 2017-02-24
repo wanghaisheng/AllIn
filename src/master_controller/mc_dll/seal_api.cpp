@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include <cstdio>
 #include <stdlib.h>
+#include <sstream>
 #include <cmath>
 #include <vector>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -3536,6 +3537,124 @@ void MC::STSealAPI::CvtCoord(int x_img, int y_img, NotifyResult* notify)
         "坐标转换",
         x_img,
         y_img,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+///////////////////////////// 写图像转换倍率 /////////////////////////////////
+
+class WriteRatioEv : public MC::BaseEvent {
+public:
+    WriteRatioEv(std::string des, float x, float y, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        x_(x),
+        y_(y),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        if (x_ < 0 || y_ < 0) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
+        int ret = WriteImageConvRatio(&x_, &y_);
+        if (0 != ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::WriteRatioEv->写倍率, ec: %s, x: %f, y: %f",
+            MC::ErrorMsg[ec].c_str(),
+            x_,
+            y_);
+        delete this;
+    }
+
+private:
+    float x_;
+    float y_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::WriteRatio(float x, float y, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) WriteRatioEv(
+        "写倍率",
+        x,
+        y,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+///////////////////////////// 读图像转换倍率 /////////////////////////////////
+
+class ReadRatioEv : public MC::BaseEvent {
+public:
+    ReadRatioEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        float x = 0.f;
+        float y = 0.f;
+        char x_str[24] = { 0 };
+        char y_str[24] = { 0 };
+        std::stringstream stream;
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = ReadImageConvRatio(&x, &y);
+        if (0 != ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        stream << std::fixed << std::setprecision(2) << x;
+        sprintf(x_str, "%s", stream.str());
+        
+        stream.clear();
+        stream << std::fixed << std::setprecision(2) << y;
+        sprintf(y_str, "%s", stream.str());
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec, x_str, y_str);
+        Log::WriteLog(LL_DEBUG, "MC::ReadRatioEv->读倍率, ec: %s, x: %f, y: %f",
+            MC::ErrorMsg[ec].c_str(),
+            x,
+            y);
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::ReadRatio(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) ReadRatioEv(
+        "读倍率",
         notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);

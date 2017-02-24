@@ -338,6 +338,12 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_GET_SEAL_COORD:
         HandleCvtCoord(&msg);
         break;
+    case CT_WRITE_CVT_RATIO:
+        HandleWriteRatio(&msg);
+        break;
+    case CT_READ_CVT_RATIO:
+        HandleReadRatio(&msg);
+        break;
     default:
         printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
         break;
@@ -2766,4 +2772,96 @@ void Recver::HandleHeart(const RecvMsg* msg)
     heart_cmd.Unser();
 
     bool suc = this->WriteResp(msg->pipe_inst, heart_cmd.xs_.GetBuf());
+}
+
+////////////////// 写转换倍率 /////////////
+
+class WriteRatioNT : public MC::NotifyResult {
+public:
+    WriteRatioNT(LPPIPEINST inst, WriteRatioCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "WriteRatioNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    WriteRatioCmd*      cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleWriteRatio(const RecvMsg* msg)
+{
+    WriteRatioCmd* cmd = new (std::nothrow) WriteRatioCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleWriteRatio->写倍率\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) WriteRatioNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->WriteRatio(cmd->x_, cmd->y_, notify);
+}
+
+////////////////// 读转换倍率 /////////////
+
+class ReadRatioNT : public MC::NotifyResult {
+public:
+    ReadRatioNT(LPPIPEINST inst, ReadRatioCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "ReadRatioNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        cmd_->x_ = (float)atof(data1.c_str());
+        cmd_->y_ = (float)atof(data2.c_str());
+        cmd_->Ser();
+
+        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
+        delete cmd_;
+    }
+
+private:
+    ReadRatioCmd*       cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleReadRatio(const RecvMsg* msg)
+{
+    ReadRatioCmd* cmd = new (std::nothrow) ReadRatioCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+    printf("Recver::HandleReadRatio->读倍率\n");
+
+    MC::NotifyResult* notify = new (std::nothrow) ReadRatioNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->ReadRatio(notify);
 }

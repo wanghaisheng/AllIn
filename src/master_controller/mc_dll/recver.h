@@ -140,6 +140,10 @@ private:
 
     void HandleCvtCoord(const RecvMsg* msg);
 
+    void HandleWriteRatio(const RecvMsg* msg);
+
+    void HandleReadRatio(const RecvMsg* msg);
+
     void HandleHeart(const RecvMsg* msg);
 
 private:

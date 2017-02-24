@@ -171,6 +171,8 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_dev_type_, &QPushButton::clicked, this, &QtDemo::HandleGetModelType);
     connect(ui.pb_dev_status_, &QPushButton::clicked, this, &QtDemo::HandleGetDevStatus);
 
+    connect(ui.pb_write_ratio_, &QPushButton::clicked, this, &QtDemo::HandleWriteConvRatio);
+    connect(ui.pb_read_ratio_, &QPushButton::clicked, this, &QtDemo::HandleReadConvRatio);
 
     //拍照/识别
     ui.pb_ori_img_->setStyleSheet("background-color: transparent;");
@@ -1482,4 +1484,35 @@ void QtDemo::HandleGetDevStatus()
      };
     Info(QString::fromLocal8Bit("设备状态: ") +
         QString::fromLocal8Bit(status_des[code]));
+}
+
+void QtDemo::HandleWriteConvRatio()
+{
+    float x = atof(ui.le_ratio_x_->text().toStdString().c_str());
+    float y = atof(ui.le_ratio_y_->text().toStdString().c_str());
+
+    int ret = ST_WriteImageConvRatio(x, y);
+    if (0 != ret) {
+        return Info(QString::fromLocal8Bit("写倍率失败, er: ") + QString::number(ret));
+    }
+
+    Info(QString::fromLocal8Bit("写倍率成功: ") + QString::number(x) + QString::fromLocal8Bit(", ")
+        + QString::number(y));
+}
+
+void QtDemo::HandleReadConvRatio()
+{
+    ui.le_ratio_x_->clear();
+    ui.le_ratio_y_->clear();
+
+    float x = 0.f;
+    float y = 0.f;
+    int ret = ST_ReadImageConvRatio(x, y);
+    if (0 != ret) {
+        return Info(QString::fromLocal8Bit("读倍率失败, er: ") + QString::number(ret));
+    }
+
+    ui.le_ratio_x_->setText(QString::number(x));
+    ui.le_ratio_y_->setText(QString::number(y));
+    Info(QString::fromLocal8Bit("读倍率成功: "));
 }

@@ -242,6 +242,18 @@ MASTERCTRL_AGENT_API int ST_CheckParam(
     int y,
     int angle);
 
+
+// 写图像转换倍率
+// x, y坐标
+MASTERCTRL_AGENT_API int ST_WriteImageConvRatio(
+    float x, 
+    float y);
+
+// 读取图像转换倍率
+MASTERCTRL_AGENT_API int ST_ReadImageConvRatio(
+    float& x, 
+    float& y);
+
 /////////////////////// 2. 图像处理API //////////////////////////////
 
 // 合成照片

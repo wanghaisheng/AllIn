@@ -97,6 +97,7 @@
     <ClInclude Include="..\common\agent_cmd.h" />
     <ClInclude Include="..\common\common_definitions.h" />
     <ClInclude Include="..\common\log.h" />
+    <ClInclude Include="..\common\USBControlF60.h" />
     <ClInclude Include="..\serialization\seria.h" />
     <ClInclude Include="base_api.h" />
     <ClInclude Include="base_event.h" />
@@ -115,7 +116,6 @@
     <ClInclude Include="syn_queue.h" />
     <ClInclude Include="task_mgr.h" />
     <ClInclude Include="tool.h" />
-    <ClInclude Include="USBControlF60.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\agent_cmd.cpp" />

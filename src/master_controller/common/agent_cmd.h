@@ -61,6 +61,8 @@ enum CmdType {
     CT_RECOG_MODEL,         // 模板及用印点查找
     CT_GET_DEV_STATUS,      // 获取设备状态
     CT_GET_SEAL_COORD,      // 原图转设备坐标
+    CT_WRITE_CVT_RATIO,     // 写图像转换倍率
+    CT_READ_CVT_RATIO,      // 读图像转换倍率
 
     // 摄像头接口
     CT_OPEN_CAMERA,         // 打开摄像头
@@ -117,6 +119,9 @@ static std::string cmd_des[] =
     "根据卡槽号获取RFID",
     "模板及用印点查找",
     "获取设备状态",
+    "写图像转换倍率",
+    "读图像转换倍率",
+
     "打开摄像头",
     "关闭摄像头",
     "摄像头状态",
@@ -965,6 +970,38 @@ public:
 
     int x_dev_;
     int y_dev_;
+
+    MC::ErrorCode ret_;
+};
+
+class WriteRatioCmd : public BaseCmd {
+public:
+    WriteRatioCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_WRITE_CVT_RATIO;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    float x_;
+    float y_;
+
+    MC::ErrorCode ret_;
+};
+
+class ReadRatioCmd : public BaseCmd {
+public:
+    ReadRatioCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_READ_CVT_RATIO;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    float x_;
+    float y_;
 
     MC::ErrorCode ret_;
 };

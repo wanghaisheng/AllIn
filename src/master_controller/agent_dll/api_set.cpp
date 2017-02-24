@@ -1382,3 +1382,47 @@ void AsynAPISet::HandleCvtCoord(char* chBuf)
     if (NULL != nt)
         nt->Notify(cmd.x_dev_, cmd.y_dev_, cmd.ret_);
 }
+
+int AsynAPISet::AsynWriteRatio(float x, float y, WriteRatioNT* nt)
+{
+    WriteRatioCmd* cmd = new WriteRatioCmd;
+    cmd->x_ = x;
+    cmd->y_ = y;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleWriteRatio(char* chBuf)
+{
+    WriteRatioCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleWriteRatio->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    WriteRatioNT* nt = (WriteRatioNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+int AsynAPISet::AsynReadRatio(ReadRatioNT* nt)
+{
+    ReadRatioCmd* cmd = new ReadRatioCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleReadRatio(char* chBuf)
+{
+    ReadRatioCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleReadRatio->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    ReadRatioNT* nt = (ReadRatioNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.x_, cmd.y_, cmd.ret_);
+}
