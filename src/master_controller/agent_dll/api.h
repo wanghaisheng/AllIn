@@ -18,6 +18,31 @@
 extern "C"{
 #endif
 
+// 设备连接状态回调函数
+// path     设备路径
+// msg	    1 连接, 0 断开
+typedef int (_stdcall *ConnectCallback)(const char* path, unsigned int msg);
+
+// USB通信回调函数
+// msg:
+// 0xA0:    盖章过程中下压通知
+// 0xA1:    盖章过程中机械手臂回到印油线，提示可以拍照
+// 0xA2:    盖章完成通知，w_param 0 成功， 1 失败
+// 0xA3:    盖章过程中 印章掉落通知
+// 0xA4:    纸门关闭通知, (w_param为0表示门关闭通知)
+// 0xA5:    盖章过程错误通知
+// 0xA6:    侧门关闭通知, (w_param为0表示侧门关闭通知; 1表示侧门打开通知)
+// 0xA7:    顶盖门关闭通知, (w_param为0表示顶盖关闭通知; 1表示顶盖打开通知)
+// 0xA8:    电子锁上锁通知
+// 
+typedef int (_stdcall *EventCallback)(unsigned int msg, unsigned int w_param, long l_param,
+    unsigned char* data, unsigned char len);
+
+MASTERCTRL_AGENT_API int RegisterConnCallBack(ConnectCallback func);
+
+MASTERCTRL_AGENT_API int RegisterEventCallBack(EventCallback func);
+
+
 // 该接口文件包含以下4类接口：
 // 1. 印控机接口;
 // 2. 图像处理接口;

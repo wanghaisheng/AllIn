@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <fstream>
 #include "RZCamera.h"
+#include "log.h"
 #include "api.h"
 #include "USBControlF60.h"
 #include "common.h"
@@ -33,6 +34,8 @@ bool GetMoudulePath(std::string& path)
 
 int QtDemo::ConnectCallBack(const char* path, unsigned int msg)
 {
+    Log::WriteLog(LL_DEBUG, "QtDemo::ConnectCallBack->msg: %d", msg);
+
     switch (msg) {
     case 0:
     {
@@ -61,6 +64,8 @@ int QtDemo::ConnectCallBack(const char* path, unsigned int msg)
 int QtDemo::DevMsgCallBack(unsigned int uMsg, unsigned int wParam, long lParam, 
                             unsigned char* data, unsigned char len)
 {
+    Log::WriteLog(LL_DEBUG, "QtDemo::DevMsgCallBack->msg: %d", uMsg);
+
     if (STAMPER_COMPLETE == uMsg) {
     }
 
@@ -102,8 +107,10 @@ QtDemo::QtDemo(QWidget *parent)
     ui.setupUi(this);
     setWindowTitle(DIALOG_HEADER);
 
-    register_conn_cb_ = F_RegisterDevCallBack(QtDemo::ConnectCallBack);
-    register_msg_cb_ = FRegisterDevCallBack(QtDemo::DevMsgCallBack);
+//     register_conn_cb_ = F_RegisterDevCallBack(QtDemo::ConnectCallBack);
+//     register_msg_cb_ = FRegisterDevCallBack(QtDemo::DevMsgCallBack);
+    RegisterConnCallBack(QtDemo::ConnectCallBack);
+    RegisterEventCallBack(QtDemo::DevMsgCallBack);
 
     connect(this, SIGNAL(ConnectStatus(const char*, unsigned int)), this, 
         SLOT(HandleConnect(const char*, unsigned int)));

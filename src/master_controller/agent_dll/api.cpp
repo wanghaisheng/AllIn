@@ -5,9 +5,12 @@
 #include <boost/thread/condition_variable.hpp>
 #endif
 
+#include "USBControlF60.h"
 #include "api_set.h"
 #include "log.h"
 #include "api.h"
+
+#pragma comment(lib, "ABC.STDZ.Device.STAMP.USBF60API.lib")
 
 AsynAPISet api_agent;
 
@@ -2935,4 +2938,14 @@ int ST_GetSealCoord(int x_img, int y_img, int& x_dev, int& y_dev)
     api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
+}
+
+int RegisterEventCallBack(EventCallback func)
+{
+    return FRegisterDevCallBack(func);
+}
+
+int RegisterConnCallBack(ConnectCallback func)
+{
+    return F_RegisterDevCallBack(func);
 }

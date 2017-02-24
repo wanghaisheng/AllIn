@@ -1,20 +1,9 @@
 #include <iostream>
 #include <stdarg.h>
 #include <stdlib.h>
-#include <windows.h>
-#include <boost/log/core.hpp>
-#include <boost/log/trivial.hpp>
-#include <boost/log/expressions.hpp>
-#include <boost/log/sinks/text_file_backend.hpp>
-#include <boost/log/utility/setup/file.hpp>
-#include <boost/log/utility/setup/console.hpp>
-#include <boost/log/support/date_time.hpp>
-#include <boost/log/utility/setup/common_attributes.hpp>
-#include <boost/log/sources/severity_logger.hpp>
-#include <boost/log/sources/record_ostream.hpp>
 #include "common_definitions.h"
-#include "log.h"
 #include "SealLog.h"
+#include "log.h"
 
 void Log::WriteLog(LogLevel level, const char * fmt, ...)
 {

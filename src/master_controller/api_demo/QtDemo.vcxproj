@@ -127,7 +127,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;$(droot)\dpd\bin\w32r\;$(droot)\bin\w32r\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;ABC.STDZ.Device.STAMP.USBF60API.lib;ABC.STDZ.Device.STAMP.RZCamera.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;ABC.STDZ.Device.STAMP.USBF60API.lib;ABC.STDZ.Device.STAMP.RZCamera.lib;ABC.STDZ.Device.STAMP.SealLog.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\common\common_definitions.cpp" />
+    <ClCompile Include="..\common\log.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_notify_thread.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -219,6 +220,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\log.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="parse.h" />
     <ClInclude Include="GeneratedFiles\ui_qtdemo.h" />
