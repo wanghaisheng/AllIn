@@ -5,7 +5,6 @@
 #include <windows.h>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
-#include <boost/thread/condition_variable.hpp>
 
 namespace MC { // MC for Master Controller
 
@@ -30,14 +29,8 @@ public:
     int WaitForRead(unsigned long milliseconds) {
         boost::unique_lock<boost::mutex> lk(mutex_);
 
-#ifdef _XP
         if (WAIT_TIMEOUT == WaitForSingleObject(cv_, milliseconds))
             return -1;
-#else
-        if (boost::cv_status::timeout == 
-            cv_.wait_for(lk, boost::chrono::milliseconds(milliseconds)))
-            return -1;
-#endif
 
         if (queue_list_.empty())
             return 1;
@@ -48,11 +41,7 @@ public:
     bool Push(const T& val) {
         boost::lock_guard<boost::mutex> lk(mutex_);
         queue_list_.push_back(val);
-#ifdef _XP
         SetEvent(cv_);
-#else
-        cv_.notify_all();
-#endif
         return true;
     }
 
@@ -76,12 +65,7 @@ private:
     boost::mutex mutex_;
 
     bool vista_better_;
-
-#ifdef _XP
     HANDLE cv_;
-#else
-    boost::condition_variable cv_;
-#endif
 };
 
 } //namespace MC
