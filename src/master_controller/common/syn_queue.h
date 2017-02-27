@@ -15,9 +15,7 @@ class SynQueue {
 
 public:
     SynQueue() : vista_better_(false) {
-// #if (!vista_better_)
-// #define _XP
-// #endif
+
     }
 
     ~SynQueue() {
@@ -31,8 +29,6 @@ public:
     //      -1 --- ³¬Ê±
     int WaitForRead(unsigned long milliseconds) {
         boost::unique_lock<boost::mutex> lk(mutex_);
-//         if (!queue_list_.empty())
-//             return 0;
 
 #ifdef _XP
         if (WAIT_TIMEOUT == WaitForSingleObject(cv_, milliseconds))

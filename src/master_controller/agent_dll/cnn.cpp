@@ -196,6 +196,9 @@ void MC::Cnn::ReceiveFunc()
             continue;
 
         char cmd_type = GetCmdHeader(chBuf);
+        if (cmd_type >= (char)CT_INIT_MACHINE && cmd_type <= (char)CT_STOP_RECORD)
+            Log::WriteLog(LL_ERROR, "Cnn::ReceiveFunc->收到: %s", cmd_des[cmd_type].c_str());
+
         switch (cmd_type) {
         case CT_QUERY_MACHINE:
             asyn_api_->HandleQueryMachine(chBuf);
@@ -419,21 +422,19 @@ int MC::Cnn::WriteMQ(BaseCmd* cmd)
     LPTSTR lpvMessage = TEXT(cmd->xs_.GetBuf());
     int msg_size = (lstrlen(lpvMessage) + 1) * sizeof(TCHAR);
     try {
-        if (ProcessExisted(MC::SERVER_NAME)) {
-            heart_mtx_.lock();
-            bool succ = send_mq_->try_send(lpvMessage, msg_size, 0);
-            heart_mtx_.unlock();
-
-            // 过滤心跳消息
-            if (cmd->ct_ != CT_HEART_BEAT)
-                Log::WriteLog(LL_DEBUG, "Cnn::WriteMQ->Cmd: %s, 消息大小: %d, 发送结果: %s",
-                    cmd_des[cmd->ct_].c_str(),
-                    msg_size,
-                    succ ? "成功" : "失败");
-        } else {
+        if (!ProcessExisted(MC::SERVER_NAME)) {
             Log::WriteLog(LL_ERROR, "Cnn::WriteMQ->连接通道断开");
             return MC::EC_CON_DISCONN;
         }
+
+        heart_mtx_.lock();
+        bool succ = send_mq_->try_send(lpvMessage, msg_size, 0);
+        if (!succ)
+            Log::WriteLog(LL_ERROR, "Cnn::WriteMQ->发送:\"%s\" 失败, 总大小:%d, 当前大小:%d",
+                cmd_des[cmd->ct_].c_str(),
+                send_mq_->get_max_msg_size(),
+                send_mq_->get_num_msg());
+        heart_mtx_.unlock();
     } catch (boost::interprocess::interprocess_exception &ex) {
         std::cout << "AsynAPISet::WriteMQ->msg size: " << msg_size << ", exception: "
             << ex.what() << std::endl;
@@ -461,6 +462,7 @@ void MC::Cnn::SendFunc()
         if (0 == send_cmd_queue_.WaitForRead(SEND_QUEUE_WAIT)) {
             send_cmd_queue_.Pop(cmd);
             WriteCnn(cmd);
+            Log::WriteLog(LL_DEBUG, "Cnn::SendFunc->发送: %s", cmd_des[cmd->ct_].c_str());
             delete cmd;
         }
     }
