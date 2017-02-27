@@ -190,6 +190,9 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     RecvMsg msg;
     msg.pipe_inst = NULL;
     strncpy(msg.msg, buf, size);
+    if (cmd >= (char)CT_INIT_MACHINE && cmd <= (char)CT_STOP_RECORD)
+        Log::WriteLog(LL_DEBUG, "Recver::OnRecvMQMsg->收到: %s", cmd_des[cmd].c_str());
+
     switch (cmd) {
     case CT_QUERY_MACHINE:
         HandleQueryMachine(&msg);
@@ -380,10 +383,8 @@ public:
 
         strcpy_s(cmd_->sn_, data1.c_str());
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -426,12 +427,9 @@ public:
         std::cout << "SetMachNT::Notify->ec: " << ec <<
             ", 待设置印控仪编号: " << data1.c_str() << std::endl;
 
-/*        strcpy_s(cmd_->sn_, data1.c_str());*/
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -474,10 +472,8 @@ public:
             ", 认证码: " << data1.c_str() << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -520,12 +516,9 @@ public:
         std::cout << "BindMACNT::Notify->ec: " << ec <<
             ", MAC地址: " << data1.c_str() << std::endl;
 
-        //回复结果
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -569,10 +562,8 @@ public:
             ", 解绑MAC地址: " << data1.c_str() << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -617,10 +608,8 @@ public:
 
         cmd_->ret_ = ec;
         strcpy_s(cmd_->task_id_, ctx1.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -666,10 +655,8 @@ public:
 
         cmd_->ret_ = ec;
         cmd_->status_ = atoi(data1.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -716,10 +703,8 @@ public:
         cmd_->ret_ = ec;
         strcpy_s(cmd_->original_path_, ctx1.c_str());
         strcpy_s(cmd_->cut_path_, ctx2.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -771,10 +756,8 @@ public:
 
         cmd_->ret_ = ec;
         strcpy_s(cmd_->merged_, ctx1.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -821,10 +804,8 @@ public:
         cmd_->ret_ = ec;
         strcpy_s(cmd_->template_id_, ctx1.c_str());
         strcpy_s(cmd_->trace_num_, ctx2.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -870,10 +851,8 @@ public:
         cmd_->out_x_ = atoi(data1.c_str());
         cmd_->out_y_ = atoi(data2.c_str());
         cmd_->out_angle_ = atof(ctx1.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -923,10 +902,8 @@ public:
 
         cmd_->ret_ = ec;
         strcpy_s(cmd_->content_str_, data2.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -980,10 +957,8 @@ public:
         cmd_->angle_ = atof(data2.c_str());
         cmd_->x_ = atoi(ctx1.c_str());
         cmd_->y_ = atoi(ctx2.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1029,10 +1004,8 @@ public:
             ", 任务号: " << data1.c_str() << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1087,10 +1060,8 @@ public:
             ", 任务号: " << data1.c_str() << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1140,10 +1111,8 @@ public:
             ", 任务号: " << data1.c_str() << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1187,10 +1156,8 @@ public:
             ", 印控机编号: " << data1.c_str() << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1238,10 +1205,8 @@ public:
         cmd_->ret_ = ec;
         strcpy_s(cmd_->err_msg_, data1.c_str());
         strcpy_s(cmd_->err_resolver_, data2.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1284,10 +1249,8 @@ public:
 
         cmd_->ret_ = ec;
         cmd_->slot_ = atoi(data1.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1336,10 +1299,8 @@ public:
             }
             cmd_->stamper_status_[MAX_STAMPER_NUM] = 0x0;
         }
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1384,10 +1345,8 @@ public:
 
         cmd_->ret_ = ec;
         cmd_->status_ = atoi(data1.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1433,10 +1392,8 @@ public:
         cmd_->ret_ = ec;
         cmd_->ctrl_ = atoi(data1.c_str());
         cmd_->timeout_ = atoi(data2.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1483,10 +1440,8 @@ public:
 
         cmd_->ret_ = ec;
         cmd_->ctrl_ = atoi(data1.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1535,10 +1490,8 @@ public:
 
         cmd_->ret_ = ec;
         cmd_->num_ = atoi(data1.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1585,10 +1538,8 @@ public:
         cmd_->ret_ = ec;
         cmd_->alarm_ = atoi(data1.c_str());
         cmd_->ctrl_ = atoi(data2.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1632,10 +1583,8 @@ public:
         cmd_->ret_ = ec;
         cmd_->door_ = atoi(data1.c_str());
         cmd_->vibration_ = atoi(data2.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1682,10 +1631,8 @@ public:
         cmd_->ret_ = ec;
         strcpy_s(cmd_->mac1_, data1.c_str());
         strcpy_s(cmd_->mac2_, data2.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1727,10 +1674,8 @@ public:
         std::cout << "LockNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1773,10 +1718,8 @@ public:
         std::cout << "UnlockNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1828,10 +1771,8 @@ public:
             cmd_->status_ = 0;
         else
             cmd_->status_ = -1;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1874,10 +1815,8 @@ public:
         std::cout << "QueryLockNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1920,10 +1859,8 @@ public:
         std::cout << "QueryLockNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -1973,10 +1910,8 @@ public:
         } else {
             cmd_->ret_ = ec;
         }
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2019,10 +1954,8 @@ public:
         std::cout << "SetSideDoorNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2068,10 +2001,8 @@ public:
 
         cmd_->ret_ = ec;
         strcpy(cmd_->model_, data1.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2114,10 +2045,8 @@ public:
         std::cout << "OpenPaperNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2161,10 +2090,8 @@ public:
         std::cout << "CtrlLedNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2211,10 +2138,8 @@ public:
         std::cout << "CheckParaNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2261,10 +2186,8 @@ public:
         std::cout << "OpenCameraNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2312,10 +2235,8 @@ public:
         std::cout << "CloseCameraNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2360,10 +2281,8 @@ public:
 
         cmd_->ret_ = ec;
         cmd_->status_ = atoi(data1.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2408,10 +2327,8 @@ public:
         std::cout << "SetResolutionNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2457,10 +2374,8 @@ public:
         std::cout << "SetDPINT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2507,10 +2422,8 @@ public:
         std::cout << "SetPropertyNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2554,10 +2467,8 @@ public:
         std::cout << "RecordVideoNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2602,10 +2513,8 @@ public:
         std::cout << "StopRecordVideoNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2651,10 +2560,8 @@ public:
 
         cmd_->ret_ = ec;
         cmd_->rfid_ = atoi(data1.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2699,10 +2606,8 @@ public:
 
         cmd_->ret_ = ec;
         cmd_->status_code_ = atoi(data1.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2746,10 +2651,8 @@ public:
         cmd_->ret_ = ec;
         cmd_->x_dev_ = atoi(data1.c_str());
         cmd_->y_dev_ = atoi(data2.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2802,10 +2705,8 @@ public:
         std::cout << "WriteRatioNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2849,10 +2750,8 @@ public:
         cmd_->ret_ = ec;
         cmd_->x_ = (float)atof(data1.c_str());
         cmd_->y_ = (float)atof(data2.c_str());
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2894,10 +2793,8 @@ public:
         std::cout << "WriteCaliNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:
@@ -2948,10 +2845,8 @@ public:
                     sizeof(unsigned short));
             }
         }
-        cmd_->Ser();
 
-        bool suc = recver_->WriteResp(pipe_inst_, cmd_->xs_.GetBuf());
-        delete cmd_;
+        recver_->PushCmd(cmd_);
     }
 
 private:

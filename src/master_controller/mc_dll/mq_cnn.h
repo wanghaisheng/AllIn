@@ -5,6 +5,8 @@
 #include <windows.h>
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/thread/thread.hpp>
+#include "agent_cmd.h"
+#include "syn_queue.h"
 
 class MQCnn {
 public:
@@ -15,6 +17,7 @@ public:
         std::string send_name,
         bool create_only_mode = true);
     void Stop();
+    bool PushCmd(BaseCmd* cmd);
     bool SendMsg(const char* buf, int size);
     
 protected:
@@ -23,10 +26,14 @@ protected:
 
 private:
     void ReceiveFunc();
+    void SendFunc();
 
 private:
     volatile bool                       running_;
     boost::thread*                      recver_thread_;
+
+    MC::SynQueue<BaseCmd*>              cmd_queue_;
+    boost::thread*                      send_thread_;
 
     std::string                         recv_mq_name_;
     std::string                         send_mq_name_;

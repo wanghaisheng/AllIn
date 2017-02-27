@@ -54,6 +54,9 @@ bool MQCnn::Start(std::string recv_name, std::string send_name, bool create_only
     running_ = true;
     recver_thread_ =
         new (std::nothrow) boost::thread(boost::bind(&MQCnn::ReceiveFunc, this));
+    send_thread_ =
+        new (std::nothrow) boost::thread(boost::bind(&MQCnn::SendFunc, this));
+
     return true;
 }
 
@@ -64,6 +67,7 @@ void MQCnn::Stop()
 
     running_ = false;
     recver_thread_->join();
+    send_thread_->join();
 
     boost::interprocess::message_queue::remove(recv_mq_name_.c_str());
     boost::interprocess::message_queue::remove(send_mq_name_.c_str());
@@ -76,7 +80,6 @@ bool MQCnn::SendMsg(const char* buf, int size)
     try {
         LPTSTR lpvMessage = TEXT((char*)buf);
         send_mq_->send(lpvMessage, (lstrlen(lpvMessage) + 1) * sizeof(TCHAR), 0);
-        Log::WriteLog(LL_DEBUG, "MQCnn::SendMsg->消息队列发送%d大小的消息", size);
         return true;
     } catch (boost::interprocess::interprocess_exception &ex) {
         Log::WriteLog(LL_ERROR, "MQCnn::SendMsg->消息队列方式写消息失败, er: %s",
@@ -103,4 +106,25 @@ void MQCnn::ReceiveFunc()
             continue;
         }
     }
+}
+
+void MQCnn::SendFunc()
+{
+    BaseCmd* cmd = NULL;
+    while (running_) {
+        if (0 == cmd_queue_.WaitForRead(INFINITE)) {
+            if (!cmd_queue_.Pop(cmd))
+                continue;
+
+            cmd->Ser();
+            SendMsg(cmd->xs_.GetBuf(), CMD_BUF_SIZE);
+            Log::WriteLog(LL_DEBUG, "MQCnn::SendFunc->回复:%s", cmd_des[cmd->ct_].c_str());
+            delete cmd;
+        }
+    }
+}
+
+bool MQCnn::PushCmd(BaseCmd* cmd)
+{
+    return cmd_queue_.Push(cmd);
 }
