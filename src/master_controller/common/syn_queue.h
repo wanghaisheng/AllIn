@@ -1,4 +1,4 @@
-#ifndef CONTROLLER_SYN_QUEUE_H_
+ï»¿#ifndef CONTROLLER_SYN_QUEUE_H_
 #define CONTROLLER_SYN_QUEUE_H_
 
 #include <list>
@@ -8,27 +8,26 @@
 
 namespace MC { // MC for Master Controller
 
-//Í¬²½Ïß³Ì°²È«¶ÓÁĞ
+//åŒæ­¥çº¿ç¨‹å®‰å…¨é˜Ÿåˆ—
 template <typename T>
 class SynQueue {
 
 public:
-    SynQueue() : vista_better_(false) {
-
+    SynQueue() {
+        cv_ = CreateEvent(NULL, FALSE, FALSE, NULL);
     }
 
     ~SynQueue() {
+        CloseHandle(cv_);
         queue_list_.clear();
     }
 
-    // ×èÈûµÈ´ıÓĞÊı¾İ¶Á³ö.
-    // ·µ»ØÖµ:
-    //      0 --- ÓĞÊı¾İ
-    //      1 --- ÎŞÊı¾İ
-    //      -1 --- ³¬Ê±
+    // é˜»å¡ç­‰å¾…æœ‰æ•°æ®è¯»å‡º.
+    // è¿”å›å€¼:
+    //      0 --- æœ‰æ•°æ®
+    //      1 --- æ— æ•°æ®
+    //      -1 --- è¶…æ—¶
     int WaitForRead(unsigned long milliseconds) {
-        boost::unique_lock<boost::mutex> lk(mutex_);
-
         if (WAIT_TIMEOUT == WaitForSingleObject(cv_, milliseconds))
             return -1;
 
