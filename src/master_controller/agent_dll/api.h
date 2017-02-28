@@ -167,6 +167,14 @@ MASTERCTRL_AGENT_API int ST_QuerySafe(
 MASTERCTRL_AGENT_API int ST_ControlSafe(
     int ctrl);
 
+// 顶盖门状态查询
+// status        --- 0-关, 1-开
+MASTERCTRL_AGENT_API int ST_QueryTop(
+    int& status);
+
+// 退出维护模式
+MASTERCTRL_AGENT_API int ST_ExitMaintain();
+
 // 蜂鸣器开关
 // ctrl     --- 0 - 关, 1 - 开
 // type     --- 0 - 长鸣，1 - 间隔响

@@ -362,6 +362,12 @@ void MC::Cnn::ReceiveFunc()
         case CT_READ_CALIBRATION:
             asyn_api_->HandleReadCali(chBuf);
             break;
+        case CT_QUERY_TOP:
+            asyn_api_->HandleQueryTop(chBuf);
+            break;
+        case CT_EXIT_MAIN:
+            asyn_api_->HandleExitMain(chBuf);
+            break;
         default:
             printf("AsynAPISet::ReceiverFunc->Unknown cmd: %d", cmd_type);
             break;

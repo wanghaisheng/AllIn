@@ -353,6 +353,12 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_READ_CALIBRATION:
         HandleReadCali(&msg);
         break;
+    case CT_QUERY_TOP:
+        HandleQueryTop(&msg);
+        break;
+    case CT_EXIT_MAIN:
+        HandleExitMain(&msg);
+        break;
     default:
         printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
         break;
@@ -2864,4 +2870,90 @@ void Recver::HandleReadCali(const RecvMsg* msg)
 
     MC::NotifyResult* notify = new (std::nothrow) ReadCaliNT(msg->pipe_inst, cmd, this);
     MC::STSealAPI::GetInst()->ReadCalibration(notify);
+}
+
+////////////////// 顶盖门状态 /////////////
+
+class ReadTopNT : public MC::NotifyResult {
+public:
+    ReadTopNT(LPPIPEINST inst, QueryTopCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "ReadTopNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+        if (MC::EC_SUCC == ec)
+            cmd_->status_ = atoi(data1.c_str());
+
+        recver_->PushCmd(cmd_);
+    }
+
+private:
+    QueryTopCmd*        cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleQueryTop(const RecvMsg* msg)
+{
+    QueryTopCmd* cmd = new (std::nothrow) QueryTopCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+
+    MC::NotifyResult* notify = new (std::nothrow) ReadTopNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->QueryTop(notify);
+}
+
+////////////////// 退出维护模式 /////////////
+
+class ExitMainNT : public MC::NotifyResult {
+public:
+    ExitMainNT(LPPIPEINST inst, ExitMaintainCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "ExitMainNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+
+        recver_->PushCmd(cmd_);
+    }
+
+private:
+    ExitMaintainCmd*    cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleExitMain(const RecvMsg* msg)
+{
+    ExitMaintainCmd* cmd = new (std::nothrow) ExitMaintainCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+
+    MC::NotifyResult* notify = new (std::nothrow) ExitMainNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->ExitMaintain(notify);
 }

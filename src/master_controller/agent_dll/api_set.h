@@ -298,6 +298,16 @@ public:
     virtual void Notify(unsigned short* pts, unsigned char len, int ec) = 0;
 };
 
+class QueryTopNT {
+public:
+    virtual void Notify(int status, int ec) = 0;
+};
+
+class ExitMaintainNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
 class AsynAPISet {
 public:
     void DeleteNotify(void* nt);
@@ -448,6 +458,10 @@ public:
 
     int AsynReadCali(ReadCaliNT* nt);
 
+    int AsynQueryTop(QueryTopNT* nt);
+
+    int AsynExitMain(ExitMaintainNT* nt);
+
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);
     
@@ -563,6 +577,10 @@ public:
     void HandleWriteCali(char* chBuf);
 
     void HandleReadCali(char* chBuf);
+
+    void HandleQueryTop(char* chBuf);
+
+    void HandleExitMain(char* chBuf);
 
 private:
     std::map<std::string, void*> api_maps_;

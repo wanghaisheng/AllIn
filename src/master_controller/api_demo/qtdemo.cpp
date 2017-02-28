@@ -163,6 +163,9 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_open_safe_led_, &QPushButton::clicked, this, &QtDemo::HandleOpenSafeLED);
     connect(ui.pb_close_safe_led_, &QPushButton::clicked, this, &QtDemo::HandleCloseSafeLED);
 
+    connect(ui.pb_exit_main_, &QPushButton::clicked, this, &QtDemo::HandleExitMain);
+    connect(ui.pb_top_status_, &QPushButton::clicked, this, &QtDemo::HandleQueryTop);
+
     connect(ui.pb_set_resolution_, &QPushButton::clicked, this, &QtDemo::HandleSetResolution);
     connect(ui.pb_set_dpi_, &QPushButton::clicked, this, &QtDemo::HandleSetDPI);
     connect(ui.pb_start_record_, &QPushButton::clicked, this, &QtDemo::HandleStartRecord);
@@ -533,6 +536,32 @@ void QtDemo::HandleCloseSafeLED()
             QString::number(ret));
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("关安全门补光灯成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleExitMain()
+{
+    int ret = ST_ExitMaintain();
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("退出维护模式失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("退出维护模式成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleQueryTop()
+{
+    int status;
+    int ret = ST_QueryTop(status);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("获取顶盖门状态失败, er: ") +
+            QString::number(ret));
+
+    if (0 == status)
+        Info(QString::fromLocal8Bit("顶盖关闭"));
+    else if (1 == status)
+        Info(QString::fromLocal8Bit("顶盖门打开"));
+    else
+        Info(QString::fromLocal8Bit("顶盖门处于未知状态"));
 }
 
 void QtDemo::HandleSetResolution()

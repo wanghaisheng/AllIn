@@ -241,6 +241,10 @@ public:
 
     void ReadCalibration(NotifyResult* notify);
 
+    void QueryTop(NotifyResult* notify);
+
+    void ExitMaintain(NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC

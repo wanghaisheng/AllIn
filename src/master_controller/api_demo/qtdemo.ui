@@ -42,7 +42,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <property name="movable">
      <bool>false</bool>
@@ -997,6 +997,32 @@
       </property>
       <property name="text">
        <string>关安全门LED</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_exit_main_">
+      <property name="geometry">
+       <rect>
+        <x>670</x>
+        <y>530</y>
+        <width>150</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>退出维护模式</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_top_status_">
+      <property name="geometry">
+       <rect>
+        <x>830</x>
+        <y>530</y>
+        <width>150</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>顶盖门状态</string>
       </property>
      </widget>
     </widget>

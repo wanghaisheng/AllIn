@@ -726,3 +726,29 @@ void ReadCaliPtsCmd::Unser()
         xs_ >> pts_[i++];
     xs_ >> ret_;
 }
+
+void QueryTopCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << status_ << ret_;
+    xs_.Trim();
+}
+
+void QueryTopCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> status_ >> ret_;
+}
+
+void ExitMaintainCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << ret_;
+    xs_.Trim();
+}
+
+void ExitMaintainCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> ret_;
+}

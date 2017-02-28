@@ -3187,3 +3187,119 @@ int ST_ReadCalibrationPoint(unsigned short* points, unsigned char len /*= 10*/)
     delete nt;
     return ret;
 }
+
+/////////////////////////////// 顶盖门状态 /////////////////////////////
+
+class QueryTopDoorNt : public QueryTopNT {
+public:
+#ifdef _XP
+    QueryTopDoorNt() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~QueryTopDoorNt() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int status, int ec) {
+        status_ = status;
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int status_;
+    int er_;
+};
+
+int ST_QueryTop(int& status)
+{
+    QueryTopNT* nt = new QueryTopDoorNt;
+    api_agent.AsynQueryTop(nt);
+
+    QueryTopDoorNt* derive_nt = (QueryTopDoorNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    if (0 == ret)
+        status = derive_nt->status_;
+
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}
+
+/////////////////////////////// 退出维护模式 /////////////////////////////
+
+class ExitMainNt : public ExitMaintainNT {
+public:
+#ifdef _XP
+    ExitMainNt() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~ExitMainNt() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_ExitMaintain()
+{
+    ExitMaintainNT* nt = new ExitMainNt;
+    api_agent.AsynExitMain(nt);
+
+    ExitMainNt* derive_nt = (ExitMainNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}

@@ -107,6 +107,9 @@ private:
     void HandleOpenSafeLED();
     void HandleCloseSafeLED();
 
+    void HandleExitMain();
+    void HandleQueryTop();
+
     void HandleSetResolution();
     void HandleSetDPI();
 

@@ -95,6 +95,8 @@ public:
     QPushButton *pb_set_dpi_;
     QPushButton *pb_open_safe_led_;
     QPushButton *pb_close_safe_led_;
+    QPushButton *pb_exit_main_;
+    QPushButton *pb_top_status_;
     QWidget *tab_stamper;
     QPushButton *pb_capture_;
     QPushButton *pb_select_picture_;
@@ -448,6 +450,12 @@ public:
         pb_close_safe_led_ = new QPushButton(tab_control_dev);
         pb_close_safe_led_->setObjectName(QStringLiteral("pb_close_safe_led_"));
         pb_close_safe_led_->setGeometry(QRect(500, 530, 150, 46));
+        pb_exit_main_ = new QPushButton(tab_control_dev);
+        pb_exit_main_->setObjectName(QStringLiteral("pb_exit_main_"));
+        pb_exit_main_->setGeometry(QRect(670, 530, 150, 46));
+        pb_top_status_ = new QPushButton(tab_control_dev);
+        pb_top_status_->setObjectName(QStringLiteral("pb_top_status_"));
+        pb_top_status_->setGeometry(QRect(830, 530, 150, 46));
         tabWidget->addTab(tab_control_dev, QString());
         tab_stamper = new QWidget();
         tab_stamper->setObjectName(QStringLiteral("tab_stamper"));
@@ -779,7 +787,7 @@ public:
 
         retranslateUi(QtDemoClass);
 
-        tabWidget->setCurrentIndex(3);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(QtDemoClass);
@@ -834,6 +842,8 @@ public:
         pb_set_dpi_->setText(QApplication::translate("QtDemoClass", "\350\256\276\347\275\256DPI", 0));
         pb_open_safe_led_->setText(QApplication::translate("QtDemoClass", "\345\274\200\345\256\211\345\205\250\351\227\250LED", 0));
         pb_close_safe_led_->setText(QApplication::translate("QtDemoClass", "\345\205\263\345\256\211\345\205\250\351\227\250LED", 0));
+        pb_exit_main_->setText(QApplication::translate("QtDemoClass", "\351\200\200\345\207\272\347\273\264\346\212\244\346\250\241\345\274\217", 0));
+        pb_top_status_->setText(QApplication::translate("QtDemoClass", "\351\241\266\347\233\226\351\227\250\347\212\266\346\200\201", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_control_dev), QApplication::translate("QtDemoClass", "\350\256\276\345\244\207\346\216\247\345\210\266", 0));
         pb_capture_->setText(QApplication::translate("QtDemoClass", "\346\213\215\347\205\247", 0));
         pb_select_picture_->setText(QApplication::translate("QtDemoClass", "\351\200\211\345\217\226\345\233\276\347\211\207", 0));

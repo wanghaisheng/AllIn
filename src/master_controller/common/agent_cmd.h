@@ -65,6 +65,8 @@ enum CmdType {
     CT_READ_CVT_RATIO,      // 读图像转换倍率
     CT_WRITE_CALIBRATION,   // 写较准点
     CT_READ_CALIBRATION,    // 读较准点
+    CT_QUERY_TOP,           // 顶盖门状态查询
+    CT_EXIT_MAIN,           // 退出维护模式
 
     // 摄像头接口
     CT_OPEN_CAMERA,         // 打开摄像头
@@ -124,7 +126,9 @@ static std::string cmd_des[] =
     "写图像转换倍率",
     "读图像转换倍率",
     "写较准点",
-    "读较准点"
+    "读较准点",
+    "顶盖门状态查询",
+    "退出维护模式",
 
     "打开摄像头",
     "关闭摄像头",
@@ -1041,6 +1045,33 @@ public:
     unsigned short pts_[10];
     unsigned short len_;
 
+    MC::ErrorCode ret_;
+};
+
+class QueryTopCmd : public BaseCmd {
+public:
+    QueryTopCmd() : ret_(MC::EC_SUCC), status_(-1) {
+        ct_ = CT_QUERY_TOP;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int             status_;            //顶盖门状态, 0-开, 1-关, -1--未成功获取到门状态
+    MC::ErrorCode   ret_;
+};
+
+class ExitMaintainCmd : public BaseCmd {
+public:
+    ExitMaintainCmd(): ret_(MC::EC_SUCC) {
+        ct_ = CT_EXIT_MAIN;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
     MC::ErrorCode ret_;
 };
 

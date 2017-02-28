@@ -3763,3 +3763,96 @@ void MC::STSealAPI::ReadCalibration(NotifyResult* notify)
 
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
+
+///////////////////////////// 顶盖门状态查询 /////////////////////////////////
+
+class QueryTopEv : public MC::BaseEvent {
+public:
+    QueryTopEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        char top_str[11] = { 0 };
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        char doors[4] = { 0 };
+        int ret = FGetDoorsPresent(doors, sizeof(doors));
+        if (0 != ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        sprintf_s(top_str, "%d", (int)doors[3]);
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec, top_str);
+        Log::WriteLog(LL_DEBUG, "MC::QueryTopEv->顶盖门状态, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::QueryTop(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) QueryTopEv(
+        "顶盖门状态",
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+///////////////////////////// 退出维护模式 /////////////////////////////////
+
+class ExitMaintainEv : public MC::BaseEvent {
+public:
+    ExitMaintainEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = FQuitMaintainMode();
+        if (0 != ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::ExitMaintainEv->退出维护模式, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::ExitMaintain(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) ExitMaintainEv(
+        "退出维护模式",
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}

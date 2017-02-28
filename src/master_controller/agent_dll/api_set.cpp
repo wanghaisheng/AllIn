@@ -1470,3 +1470,45 @@ void AsynAPISet::HandleReadCali(char* chBuf)
     if (NULL != nt)
         nt->Notify(cmd.pts_, cmd.len_, cmd.ret_);
 }
+
+int AsynAPISet::AsynQueryTop(QueryTopNT* nt)
+{
+    QueryTopCmd* cmd = new QueryTopCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleQueryTop(char* chBuf)
+{
+    QueryTopCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleQueryTop->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    QueryTopNT* nt = (QueryTopNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.status_, cmd.ret_);
+}
+
+int AsynAPISet::AsynExitMain(ExitMaintainNT* nt)
+{
+    ExitMaintainCmd* cmd = new ExitMaintainCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleExitMain(char* chBuf)
+{
+    ExitMaintainCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleExitMain->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    ExitMaintainNT* nt = (ExitMaintainNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
