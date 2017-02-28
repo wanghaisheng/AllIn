@@ -2849,7 +2849,7 @@ public:
 
         cmd_->ret_ = ec;
         if (0 == ec) {
-            int pts_addr = atoi(data1.c_str());
+            long pts_addr = atol(data1.c_str());
             for (int i = 0; i < 10; ++i) {
                 memcpy(
                     &cmd_->pts_[i],

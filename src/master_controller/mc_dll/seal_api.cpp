@@ -3732,7 +3732,7 @@ public:
             goto NT;
         }
 
-        sprintf(pts_addr, "%p", pts);
+        sprintf(pts_addr, "%d", (int)pts);
         ec = MC::EC_SUCC;
 
     NT:
