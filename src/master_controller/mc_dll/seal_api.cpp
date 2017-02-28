@@ -3963,3 +3963,65 @@ void MC::STSealAPI::StopPreview(int which, NotifyResult* notify)
 
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
+
+///////////////////////////// 工厂模式控制 /////////////////////////////////
+
+class CtrlFactoryEv : public MC::BaseEvent {
+public:
+    CtrlFactoryEv(std::string des, int ctrl, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        ctrl_(ctrl),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        int ret;
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        //0x51, 工厂测试模式, 开启后不需要电脑也可循环盖章测试
+        //enable    --- 1(开启工厂模式), 0(关闭工厂模式)
+        //USBCONTROLF60_API int EnableFactoryMode(unsigned char enable);
+        if (0 == ctrl_) { // enable
+            ret = EnableFactoryMode(1);
+        } else if (1 == ctrl_) {
+            ret = EnableFactoryMode(0);
+        } else {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::CtrlFactoryEv->工厂模式控制失败, er: %d", ret);
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::CtrlFactoryEv->工厂模式, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    int ctrl_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::CtrlFactory(int ctrl, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) CtrlFactoryEv(
+        "工厂模式控制",
+        ctrl,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}

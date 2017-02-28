@@ -249,6 +249,8 @@ public:
 
     void StopPreview(int which, NotifyResult* notify);
 
+    void CtrlFactory(int ctrl, NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC

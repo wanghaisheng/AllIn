@@ -318,6 +318,11 @@ public:
     virtual void Notify(int ec) = 0;
 };
 
+class CtrlFactoryNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
 class AsynAPISet {
 public:
     void DeleteNotify(void* nt);
@@ -483,6 +488,10 @@ public:
         int which,
         StopPreviewNT* nt);
 
+    int AsynCtrlFactory(
+        int ctrl,
+        CtrlFactoryNT* nt);
+
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);
     
@@ -606,6 +615,8 @@ public:
     void HandleStartPreview(char* chBuf);
 
     void HandleStopPreview(char* chBuf);
+
+    void HandleFactoryCtrl(char* chBuf);
 
 private:
     std::map<std::string, void*> api_maps_;

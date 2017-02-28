@@ -158,6 +158,8 @@ private:
 
     void HandleStopPreview(const RecvMsg* msg);
 
+    void HandleFactoryCtrl(const RecvMsg* msg);
+
 private:
     static MC::SynQueue<const RecvMsg*> recver_queue_;
     static HANDLE                       recv_msg_ev_;

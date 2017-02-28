@@ -64,7 +64,7 @@ int QtDemo::ConnectCallBack(const char* path, unsigned int msg)
 int QtDemo::DevMsgCallBack(unsigned int uMsg, unsigned int wParam, long lParam, 
                             unsigned char* data, unsigned char len)
 {
-    Log::WriteLog(LL_DEBUG, "QtDemo::DevMsgCallBack->msg: %d", uMsg);
+    Log::WriteLog(LL_DEBUG, "QtDemo::DevMsgCallBack->msg: %x", uMsg);
 
     if (STAMPER_COMPLETE == uMsg) {
     }
@@ -238,6 +238,9 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_read_alarm_, &QPushButton::clicked, this, &QtDemo::HandleReadAlarm);
 
     connect(ui.pb_read_rfid_, &QPushButton::clicked, this, &QtDemo::HandleReadRFID);
+
+    connect(ui.pb_factory_enable_, &QPushButton::clicked, this, &QtDemo::HandleEnableFactory);
+    connect(ui.pb_factory_disable_, &QPushButton::clicked, this, &QtDemo::HandleDisableFactory);
     
     ui.cb_cam_list_->addItem(QString::fromLocal8Bit("凭证摄像头"));
     ui.cb_cam_list_->addItem(QString::fromLocal8Bit("环境摄像头"));
@@ -1191,25 +1194,21 @@ void QtDemo::InitStamp()
 //开启工厂测试模式
 void QtDemo::HandleEnableFactory()
 {
-    if (!IsOpened())
-        return;
+    int ret = ST_EnableFactory();
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("开启工厂模式失败, er: ") 
+            + QString::number(ret));
 
-    int ret = EnableFactoryMode(1);
-    if (STF_SUCCESS != ret)
-        return Info(QString::fromLocal8Bit("开启工厂模式失败"));
-
-    ui.statusBar->showMessage(QString::fromLocal8Bit("成功开始工厂模式"), STATUS_TEXT);
+    ui.statusBar->showMessage(QString::fromLocal8Bit("成功开启工厂模式"), STATUS_TEXT);
 }
 
 //关闭工厂测试模式
 void QtDemo::HandleDisableFactory()
 {
-    if (!IsOpened())
-        return;
-
-    int ret = EnableFactoryMode(0);
-    if (STF_SUCCESS != ret)
-        return Info(QString::fromLocal8Bit("关闭工厂模式失败"));
+    int ret = ST_DisableFactory();
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("关闭工厂模式失败, er: ") +
+            QString::number(ret));
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("成功关闭工厂模式"), STATUS_TEXT);
 }

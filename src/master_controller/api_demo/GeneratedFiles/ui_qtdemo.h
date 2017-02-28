@@ -201,6 +201,8 @@ public:
     QPushButton *pb_read_ratio_;
     QPushButton *pb_write_cal_pts_;
     QPushButton *pb_read_cal_pts_;
+    QPushButton *pb_factory_enable_;
+    QPushButton *pb_factory_disable_;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -786,6 +788,12 @@ public:
         pb_read_cal_pts_ = new QPushButton(tab_3);
         pb_read_cal_pts_->setObjectName(QStringLiteral("pb_read_cal_pts_"));
         pb_read_cal_pts_->setGeometry(QRect(300, 480, 111, 31));
+        pb_factory_enable_ = new QPushButton(tab_3);
+        pb_factory_enable_->setObjectName(QStringLiteral("pb_factory_enable_"));
+        pb_factory_enable_->setGeometry(QRect(450, 450, 91, 46));
+        pb_factory_disable_ = new QPushButton(tab_3);
+        pb_factory_disable_->setObjectName(QStringLiteral("pb_factory_disable_"));
+        pb_factory_disable_->setGeometry(QRect(560, 450, 91, 46));
         tabWidget->addTab(tab_3, QString());
         QtDemoClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(QtDemoClass);
@@ -801,7 +809,7 @@ public:
 
         retranslateUi(QtDemoClass);
 
-        tabWidget->setCurrentIndex(2);
+        tabWidget->setCurrentIndex(3);
 
 
         QMetaObject::connectSlotsByName(QtDemoClass);
@@ -941,6 +949,8 @@ public:
         pb_read_ratio_->setText(QApplication::translate("QtDemoClass", "\350\257\273\345\200\215\347\216\207", 0));
         pb_write_cal_pts_->setText(QApplication::translate("QtDemoClass", "\345\206\231\346\240\241\345\207\206\347\202\271", 0));
         pb_read_cal_pts_->setText(QApplication::translate("QtDemoClass", "\350\257\273\346\240\241\345\207\206\347\202\271", 0));
+        pb_factory_enable_->setText(QApplication::translate("QtDemoClass", "\345\274\200\345\220\257\345\267\245\345\216\202", 0));
+        pb_factory_disable_->setText(QApplication::translate("QtDemoClass", "\345\205\263\351\227\255\345\267\245\345\216\202", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("QtDemoClass", "\345\205\266\344\273\226\346\216\245\345\217\243", 0));
     } // retranslateUi
 

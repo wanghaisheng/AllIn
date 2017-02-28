@@ -1559,3 +1559,25 @@ void AsynAPISet::HandleStopPreview(char* chBuf)
     if (NULL != nt)
         nt->Notify(cmd.ret_);
 }
+
+int AsynAPISet::AsynCtrlFactory(int ctrl, CtrlFactoryNT* nt)
+{
+    CtrlFactoryCmd* cmd = new CtrlFactoryCmd;
+    cmd->ctrl_ = ctrl;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleFactoryCtrl(char* chBuf)
+{
+    CtrlFactoryCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleFactoryCtrl->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    CtrlFactoryNT* nt = (CtrlFactoryNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}

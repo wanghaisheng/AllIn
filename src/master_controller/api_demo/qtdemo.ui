@@ -42,7 +42,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>3</number>
     </property>
     <property name="movable">
      <bool>false</bool>
@@ -2331,6 +2331,32 @@
       </property>
       <property name="text">
        <string>读校准点</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_factory_enable_">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>450</y>
+        <width>91</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开启工厂</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_factory_disable_">
+      <property name="geometry">
+       <rect>
+        <x>560</x>
+        <y>450</y>
+        <width>91</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>关闭工厂</string>
       </property>
      </widget>
     </widget>

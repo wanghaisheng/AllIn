@@ -778,3 +778,16 @@ void StopPreviewCmd::Unser()
     BaseCmd::Unser();
     xs_ >> which_ >> ret_;
 }
+
+void CtrlFactoryCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << ctrl_ << ret_;
+    xs_.Trim();
+}
+
+void CtrlFactoryCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> ctrl_ >> ret_;
+}

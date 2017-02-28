@@ -47,7 +47,7 @@ MASTERCTRL_AGENT_API int RegisterEventCallBack(EventCallback func);
 // 1. 印控机接口;
 // 2. 图像处理接口;
 // 3. 摄像头接口;
-// 4. 查询错误信息接口；
+// 4. 查询错误信息接口;
 
 /////////////////////// 1. 印控机API //////////////////////////////
 
@@ -273,6 +273,12 @@ MASTERCTRL_AGENT_API int ST_WriteCalibrationPoint(
 MASTERCTRL_AGENT_API int ST_ReadCalibrationPoint(
     unsigned short* points, 
     unsigned char len = 10);
+
+// 开启工厂模式
+MASTERCTRL_AGENT_API int ST_EnableFactory();
+
+// 关闭工厂模式
+MASTERCTRL_AGENT_API int ST_DisableFactory();
 
 /////////////////////// 2. 图像处理API //////////////////////////////
 

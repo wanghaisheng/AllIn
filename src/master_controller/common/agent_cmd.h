@@ -67,6 +67,7 @@ enum CmdType {
     CT_READ_CALIBRATION,    // 读较准点
     CT_QUERY_TOP,           // 顶盖门状态查询
     CT_EXIT_MAIN,           // 退出维护模式
+    CT_FACTORY_CTRL,        // 工厂模式控制
 
     // 摄像头接口
     CT_START_PREVIEW,       // 开始预览
@@ -131,6 +132,7 @@ static std::string cmd_des[] =
     "读较准点",
     "顶盖门状态查询",
     "退出维护模式",
+    "工厂模式控制",
 
     "打开摄像头",
     "关闭摄像头",
@@ -1106,6 +1108,21 @@ public:
 
 public:
     int which_;
+
+    MC::ErrorCode ret_;
+};
+
+class CtrlFactoryCmd : public BaseCmd {
+public:
+    CtrlFactoryCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_FACTORY_CTRL;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int ctrl_;  // 0 --- enable, 1 --- disable
 
     MC::ErrorCode ret_;
 };
