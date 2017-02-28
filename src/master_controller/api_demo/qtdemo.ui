@@ -42,7 +42,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <property name="movable">
      <bool>false</bool>
@@ -1565,7 +1565,7 @@
         <x>10</x>
         <y>20</y>
         <width>1121</width>
-        <height>711</height>
+        <height>761</height>
        </rect>
       </property>
       <property name="title">
@@ -1840,6 +1840,51 @@
          <string>结束用印</string>
         </property>
        </widget>
+      </widget>
+      <widget class="QLabel" name="camera_preview_">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>350</y>
+         <width>351</width>
+         <height>331</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::WinPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_start_preview_">
+       <property name="geometry">
+        <rect>
+         <x>420</x>
+         <y>440</y>
+         <width>111</width>
+         <height>46</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>开始预览</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pb_stop_preview_">
+       <property name="geometry">
+        <rect>
+         <x>420</x>
+         <y>520</y>
+         <width>111</width>
+         <height>46</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>停止预览</string>
+       </property>
       </widget>
      </widget>
     </widget>

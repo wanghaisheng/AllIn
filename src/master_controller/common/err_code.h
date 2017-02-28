@@ -49,6 +49,7 @@ enum ErrorCode {
     EC_CLOSE_CAM_FAIL,          // 关闭摄像头失败
     EC_OPEN_FAIL,               // 打开设备失败
     EC_START_PREVIEW_FAIL,      // 打开预览失败
+    EC_STOP_PREVIEW_FAIL,       // 关闭预览失败
     EC_START_RECORD_FAIL,       // 开启录像失败
     EC_STOP_RECORD_FAIL,        // 停止录像失败
     EC_INVALID_X_PARAM,         // x坐标非法
@@ -113,6 +114,7 @@ static std::string ErrorMsg[] = {
     "关闭摄像头失败",
     "打开设备失败",
     "打开预览失败",
+    "关闭预览失败",
     "开启录像失败",
     "停止录像失败",
     "x坐标非法",

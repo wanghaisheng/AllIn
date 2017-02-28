@@ -1512,3 +1512,50 @@ void AsynAPISet::HandleExitMain(char* chBuf)
     if (NULL != nt)
         nt->Notify(cmd.ret_);
 }
+
+int AsynAPISet::AsynStartPreview(int which, int width, int height, int hwnd, StartPreviewNT* nt)
+{
+    StartPreviewCmd* cmd = new StartPreviewCmd;
+    cmd->which_ = which;
+    cmd->width_ = width;
+    cmd->height_ = height;
+    cmd->hwnd_ = hwnd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleStartPreview(char* chBuf)
+{
+    StartPreviewCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleStartPreview->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    StartPreviewNT* nt = (StartPreviewNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+int AsynAPISet::AsynStopPreview(int which, StopPreviewNT* nt)
+{
+    StopPreviewCmd* cmd = new StopPreviewCmd;
+    cmd->which_ = which;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleStopPreview(char* chBuf)
+{
+    StopPreviewCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleStopPreview->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    StopPreviewNT* nt = (StopPreviewNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}

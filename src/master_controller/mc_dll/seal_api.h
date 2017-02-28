@@ -245,6 +245,10 @@ public:
 
     void ExitMaintain(NotifyResult* notify);
 
+    void StartPreview(int which, int width, int height, int hwnd, NotifyResult* notify);
+
+    void StopPreview(int which, NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC

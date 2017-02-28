@@ -69,6 +69,8 @@ enum CmdType {
     CT_EXIT_MAIN,           // 退出维护模式
 
     // 摄像头接口
+    CT_START_PREVIEW,       // 开始预览
+    CT_STOP_PREVIEW,        // 停止预览
     CT_OPEN_CAMERA,         // 打开摄像头
     CT_CLOSE_CAMERA,        // 关闭摄像头
     CT_CAMERA_STATUS,       // 摄像头状态
@@ -1072,6 +1074,39 @@ public:
     virtual void Unser();
 
 public:
+    MC::ErrorCode ret_;
+};
+
+class StartPreviewCmd : public BaseCmd {
+public:
+    StartPreviewCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_START_PREVIEW;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int which_;
+    int width_;
+    int height_;
+    int hwnd_;
+
+    MC::ErrorCode ret_;
+};
+
+class StopPreviewCmd : public BaseCmd {
+public:
+    StopPreviewCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_STOP_PREVIEW;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int which_;
+
     MC::ErrorCode ret_;
 };
 

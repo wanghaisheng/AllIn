@@ -368,6 +368,12 @@ void MC::Cnn::ReceiveFunc()
         case CT_EXIT_MAIN:
             asyn_api_->HandleExitMain(chBuf);
             break;
+        case CT_START_PREVIEW:
+            asyn_api_->HandleStartPreview(chBuf);
+            break;
+        case CT_STOP_PREVIEW:
+            asyn_api_->HandleStopPreview(chBuf);
+            break;
         default:
             printf("AsynAPISet::ReceiverFunc->Unknown cmd: %d", cmd_type);
             break;

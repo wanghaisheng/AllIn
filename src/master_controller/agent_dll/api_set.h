@@ -308,6 +308,16 @@ public:
     virtual void Notify(int ec) = 0;
 };
 
+class StartPreviewNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class StopPreviewNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
 class AsynAPISet {
 public:
     void DeleteNotify(void* nt);
@@ -462,6 +472,17 @@ public:
 
     int AsynExitMain(ExitMaintainNT* nt);
 
+    int AsynStartPreview(
+        int which,
+        int width,
+        int height,
+        int hwnd,
+        StartPreviewNT* nt);
+
+    int AsynStopPreview(
+        int which,
+        StopPreviewNT* nt);
+
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);
     
@@ -581,6 +602,10 @@ public:
     void HandleQueryTop(char* chBuf);
 
     void HandleExitMain(char* chBuf);
+
+    void HandleStartPreview(char* chBuf);
+
+    void HandleStopPreview(char* chBuf);
 
 private:
     std::map<std::string, void*> api_maps_;

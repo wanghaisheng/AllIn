@@ -3856,3 +3856,117 @@ void MC::STSealAPI::ExitMaintain(NotifyResult* notify)
 
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
+
+///////////////////////////// 开始预览 /////////////////////////////////
+
+class StartPreviewEv : public MC::BaseEvent {
+public:
+    StartPreviewEv(std::string des, int which, int width, int height, int hwnd, 
+        MC::NotifyResult* notify) :
+        BaseEvent(des),
+        which_(which),
+        width_(width),
+        height_(height),
+        hwnd_(hwnd),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = StartPreview(
+            (CAMERAINDEX)which_,
+            width_,
+            height_, 
+            (HWND)hwnd_);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::StartPreviewEv->开始预览失败, er: %d", ret);
+            ec = MC::EC_START_PREVIEW_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::StartPreviewEv->开始预览, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    int which_;
+    int width_;
+    int height_;
+    int hwnd_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::StartPreview(int which, int width, int height, int hwnd, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) StartPreviewEv(
+        "开始预览",
+        which,
+        width,
+        height,
+        hwnd,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+///////////////////////////// 停止预览 /////////////////////////////////
+
+class StopPreviewEv : public MC::BaseEvent {
+public:
+    StopPreviewEv(std::string des, int which, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        which_(which),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = StopPreview((CAMERAINDEX)which_);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::StopPreviewEv->停止预览失败, er: %d", ret);
+            ec = MC::EC_STOP_PREVIEW_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::StopPreviewEv->停止预览, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    int which_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::StopPreview(int which, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) StopPreviewEv(
+        "停止预览",
+        which,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}

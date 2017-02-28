@@ -752,3 +752,29 @@ void ExitMaintainCmd::Unser()
     BaseCmd::Unser();
     xs_ >> ret_;
 }
+
+void StartPreviewCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << which_ << width_ << height_ << hwnd_ << ret_;
+    xs_.Trim();
+}
+
+void StartPreviewCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> which_ >> width_ >> height_ >> hwnd_ >> ret_;
+}
+
+void StopPreviewCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << which_ << ret_;
+    xs_.Trim();
+}
+
+void StopPreviewCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> which_ >> ret_;
+}

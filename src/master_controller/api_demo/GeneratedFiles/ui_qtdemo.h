@@ -161,6 +161,9 @@ public:
     QGroupBox *groupBox_25;
     QPushButton *pb_release_machine_;
     QPushButton *pb_finish_stamp_;
+    QLabel *camera_preview_;
+    QPushButton *pb_start_preview_;
+    QPushButton *pb_stop_preview_;
     QWidget *tab_3;
     QPushButton *pb_lock_;
     QPushButton *pb_unlock_;
@@ -596,7 +599,7 @@ public:
         tab->setObjectName(QStringLiteral("tab"));
         groupBox_5 = new QGroupBox(tab);
         groupBox_5->setObjectName(QStringLiteral("groupBox_5"));
-        groupBox_5->setGeometry(QRect(10, 20, 1121, 711));
+        groupBox_5->setGeometry(QRect(10, 20, 1121, 761));
         groupBox_3 = new QGroupBox(groupBox_5);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
         groupBox_3->setGeometry(QRect(270, 100, 301, 151));
@@ -661,6 +664,17 @@ public:
         pb_finish_stamp_ = new QPushButton(groupBox_25);
         pb_finish_stamp_->setObjectName(QStringLiteral("pb_finish_stamp_"));
         pb_finish_stamp_->setGeometry(QRect(60, 40, 93, 28));
+        camera_preview_ = new QLabel(groupBox_5);
+        camera_preview_->setObjectName(QStringLiteral("camera_preview_"));
+        camera_preview_->setGeometry(QRect(30, 350, 351, 331));
+        camera_preview_->setFrameShape(QFrame::WinPanel);
+        camera_preview_->setFrameShadow(QFrame::Sunken);
+        pb_start_preview_ = new QPushButton(groupBox_5);
+        pb_start_preview_->setObjectName(QStringLiteral("pb_start_preview_"));
+        pb_start_preview_->setGeometry(QRect(420, 440, 111, 46));
+        pb_stop_preview_ = new QPushButton(groupBox_5);
+        pb_stop_preview_->setObjectName(QStringLiteral("pb_stop_preview_"));
+        pb_stop_preview_->setGeometry(QRect(420, 520, 111, 46));
         tabWidget->addTab(tab, QString());
         tab_3 = new QWidget();
         tab_3->setObjectName(QStringLiteral("tab_3"));
@@ -787,7 +801,7 @@ public:
 
         retranslateUi(QtDemoClass);
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(2);
 
 
         QMetaObject::connectSlotsByName(QtDemoClass);
@@ -896,6 +910,9 @@ public:
         groupBox_25->setTitle(QApplication::translate("QtDemoClass", "\347\224\250\345\215\260\347\273\223\346\235\237", 0));
         pb_release_machine_->setText(QApplication::translate("QtDemoClass", "\351\207\212\346\224\276\345\215\260\346\216\247\346\234\272", 0));
         pb_finish_stamp_->setText(QApplication::translate("QtDemoClass", "\347\273\223\346\235\237\347\224\250\345\215\260", 0));
+        camera_preview_->setText(QString());
+        pb_start_preview_->setText(QApplication::translate("QtDemoClass", "\345\274\200\345\247\213\351\242\204\350\247\210", 0));
+        pb_stop_preview_->setText(QApplication::translate("QtDemoClass", "\345\201\234\346\255\242\351\242\204\350\247\210", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("QtDemoClass", "\347\233\226\347\253\240", 0));
         pb_lock_->setText(QApplication::translate("QtDemoClass", "\351\224\201\345\256\232\345\215\260\346\216\247\344\273\252", 0));
         pb_unlock_->setText(QApplication::translate("QtDemoClass", "\350\247\243\351\224\201\345\215\260\346\216\247\344\273\252", 0));

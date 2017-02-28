@@ -258,6 +258,9 @@ private:
     void HandleFinishStamp();       // 结束用印
     void HandleReleaseMachine();    // 释放印控机
 
+    void HandleStartPreview();
+    void HandleStopPreview();
+
 private:
     unsigned int serial_;
     StampPara para_; //盖章参数

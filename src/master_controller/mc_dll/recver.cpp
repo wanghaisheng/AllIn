@@ -359,6 +359,12 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_EXIT_MAIN:
         HandleExitMain(&msg);
         break;
+    case CT_START_PREVIEW:
+        HandleStartPreview(&msg);
+        break;
+    case CT_STOP_PREVIEW:
+        HandleStopPreview(&msg);
+        break;
     default:
         printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
         break;
@@ -2956,4 +2962,95 @@ void Recver::HandleExitMain(const RecvMsg* msg)
 
     MC::NotifyResult* notify = new (std::nothrow) ExitMainNT(msg->pipe_inst, cmd, this);
     MC::STSealAPI::GetInst()->ExitMaintain(notify);
+}
+
+////////////////// 开始预览 /////////////
+
+class StartPreNT : public MC::NotifyResult {
+public:
+    StartPreNT(LPPIPEINST inst, StartPreviewCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "StartPreNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+
+        recver_->PushCmd(cmd_);
+    }
+
+private:
+    StartPreviewCmd*    cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleStartPreview(const RecvMsg* msg)
+{
+    StartPreviewCmd* cmd = new (std::nothrow) StartPreviewCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+
+    MC::NotifyResult* notify = new (std::nothrow) StartPreNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->StartPreview(
+        cmd->which_,
+        cmd->width_,
+        cmd->height_,
+        cmd->hwnd_,
+        notify);
+}
+
+////////////////// 停止预览 /////////////
+
+class StopPreNT : public MC::NotifyResult {
+public:
+    StopPreNT(LPPIPEINST inst, StopPreviewCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "StopPreNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+
+        recver_->PushCmd(cmd_);
+    }
+
+private:
+    StopPreviewCmd*     cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleStopPreview(const RecvMsg* msg)
+{
+    StopPreviewCmd* cmd = new (std::nothrow) StopPreviewCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+
+    MC::NotifyResult* notify = new (std::nothrow) StopPreNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->StopPreview(
+        cmd->which_,
+        notify);
 }

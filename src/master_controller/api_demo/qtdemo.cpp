@@ -223,6 +223,9 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_release_machine_, &QPushButton::clicked, this, &QtDemo::HandleReleaseMachine);
     ui.pb_release_machine_->hide();
 
+    connect(ui.pb_start_preview_, &QPushButton::clicked, this, &QtDemo::HandleStartPreview);
+    connect(ui.pb_stop_preview_, &QPushButton::clicked, this, &QtDemo::HandleStopPreview);
+
     // 其他接口
     connect(ui.pb_lock_, &QPushButton::clicked, this, &QtDemo::HandleLock);
     connect(ui.pb_unlock_, &QPushButton::clicked, this, &QtDemo::HandleUnlock);
@@ -1325,6 +1328,30 @@ void QtDemo::HandleReleaseMachine()
 //         return Info(QString::fromLocal8Bit("释放印控机失败, er: ") + QString::number(ret));
 // 
 //     ui.statusBar->showMessage(QString::fromLocal8Bit("释放印控机成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleStartPreview()
+{
+    int ret = ST_StartPreview(
+        which_cam_,
+        ui.camera_preview_->width(),
+        ui.camera_preview_->height(),
+        (int)((HWND)ui.camera_preview_->winId()));
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("打开预览失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("打开预览成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleStopPreview()
+{
+    int ret = ST_StopPreview(which_cam_);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("停止预览失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("停止预览成功"), STATUS_TEXT);
 }
 
 //////////////////////////// 其他接口 ///////////////////////////////

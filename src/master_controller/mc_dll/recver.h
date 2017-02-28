@@ -154,6 +154,10 @@ private:
 
     void HandleExitMain(const RecvMsg* msg);
 
+    void HandleStartPreview(const RecvMsg* msg);
+
+    void HandleStopPreview(const RecvMsg* msg);
+
 private:
     static MC::SynQueue<const RecvMsg*> recver_queue_;
     static HANDLE                       recv_msg_ev_;

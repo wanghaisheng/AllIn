@@ -389,6 +389,15 @@ MASTERCTRL_AGENT_API int ST_SetDPIValue(
     int dpi_x, 
     int dpi_y);
 
+MASTERCTRL_AGENT_API int ST_StartPreview(
+    int which,
+    int width,
+    int height,
+    int hwnd);
+
+MASTERCTRL_AGENT_API int ST_StopPreview(
+    int which);
+
 // 开始录制视频
 // which    --- 0：凭证摄像头
 //              1：环境摄像头
