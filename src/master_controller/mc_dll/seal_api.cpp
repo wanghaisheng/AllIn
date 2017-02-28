@@ -1273,14 +1273,7 @@ public:
 
             // 成功发起盖章, 标记当前任务号used
             MC::TaskMgr::GetInst()->MarkUsed(task_);
-
-            // waits stamping completion
-            if (0 != StampingMgr::GetInst()->Wait(STAMPING_WAIT_TIME)) {
-                ec = MC::EC_STAMPING_TIMEOUT;
-                goto NT;
-            }
-
-            ec = StampingMgr::GetInst()->QueryStampingResult();
+            ec = MC::EC_SUCC;
             goto NT;
         } else if (ts == MC::TS_USED) {
             ec = MC::EC_TASK_CONSUMED;
