@@ -1573,7 +1573,7 @@ void QtDemo::HandleReadConvRatio()
 
     ui.le_ratio_x_->setText(QString::number(x));
     ui.le_ratio_y_->setText(QString::number(y));
-    Info(QString::fromLocal8Bit("读倍率成功: "));
+    Info(QString::fromLocal8Bit("读倍率成功"));
 }
 
 void QtDemo::HandldeWriteCalPoints()

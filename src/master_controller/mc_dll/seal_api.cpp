@@ -3609,9 +3609,9 @@ public:
     virtual void SpecificExecute() {
         float x = 0.f;
         float y = 0.f;
-        char x_str[24] = { 0 };
-        char y_str[24] = { 0 };
-        std::stringstream stream;
+        std::string x_str;
+        std::string y_str;
+        std::stringstream stream(std::stringstream::in | std::stringstream::out);
         MC::ErrorCode ec = exception_;
         if (MC::EC_SUCC != ec)
             goto NT;
@@ -3623,11 +3623,11 @@ public:
         }
 
         stream << std::fixed << std::setprecision(2) << x;
-        sprintf(x_str, "%s", stream.str());
-        
-        stream.clear();
+        x_str = stream.str();
+
+        stream.str(std::string());
         stream << std::fixed << std::setprecision(2) << y;
-        sprintf(y_str, "%s", stream.str());
+        y_str = stream.str();
 
         ec = MC::EC_SUCC;
 
