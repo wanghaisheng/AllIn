@@ -7,7 +7,6 @@
 #include "RZCamera.h"
 #include "log.h"
 #include "api.h"
-#include "USBControlF60.h"
 #include "common.h"
 #include "event.h"
 #include "parse.h"
@@ -39,14 +38,14 @@ int QtDemo::ConnectCallBack(const char* path, unsigned int msg)
     switch (msg) {
     case 0:
     {
-        ::FCloseDev();
+        ST_Open();
         char buf[1024] = { 0 };
         sprintf(buf, "QtDemo::DevConnCallBack->断开, 关闭设备");
     }
         break;//设备断开连接，处理在回调函数
     case 1:
     {//设备连接	
-        ::FOpenDev(path);
+        ST_Close();
         char buf[1024] = { 0 };
         sprintf(buf, "QtDemo::DevConnCallBack->连接, 打开设备");
     }
@@ -65,20 +64,6 @@ int QtDemo::DevMsgCallBack(unsigned int uMsg, unsigned int wParam, long lParam,
                             unsigned char* data, unsigned char len)
 {
     Log::WriteLog(LL_DEBUG, "QtDemo::DevMsgCallBack->msg: %x", uMsg);
-
-    if (STAMPER_COMPLETE == uMsg) {
-    }
-
-    if (STAMPER_PAPERDOORCLOSE == uMsg) {
-        std::string str = wParam == 0 ? "关闭" : "打开";
-    }
-
-    if (STAMPER_ELEC_LOCK == uMsg) {
-    }
-
-    if (STAMPER_SIDEDOOR_CLOSE == uMsg) {
-        std::string str = wParam == 0 ? "关闭" : "打开";
-    }
 
     return 0;
 }
@@ -396,6 +381,8 @@ void QtDemo::HandleQueryMAC()
     ui.le_mac1_->setText(QString::fromStdString(mac1));
     ui.le_mac2_->setText(QString::fromStdString(mac2));
 }
+
+#define STF_SUCCESS 0
 
 void QtDemo::HandleOpenSafeDoorAlarm()
 {
@@ -733,30 +720,6 @@ void QtDemo::HandleABCCheck()
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("校准印章成功"), STATUS_TEXT);
     return;
-
-    //////////////////////////////////////////////////////////////////////////
-
-    unsigned int rfid = 0;
-    int ret = GetStamperID(atoi(str.c_str()) - 1, rfid);
-    if (STF_SUCCESS != ret)
-        return Info(QString::fromLocal8Bit("获取印章ID失败"));
-
-    char stamper_id[4] = { 0 };
-    memcpy(stamper_id, &rfid, sizeof(rfid));
-    short pts[] =
-    {
-        12, 34,
-        54, 104,
-        209, 45,
-        232, 13,
-        101, 110
-    };
-
-    ret = CalibrationEx(stamper_id, (char*)pts, 10);
-    if (STF_SUCCESS != ret)
-        return Info(QString::fromLocal8Bit("农行校准失败"));
-
-    ui.statusBar->showMessage(QString::fromLocal8Bit("农行校准成功"), STATUS_TEXT);
 }
 
 void QtDemo::HandleErrCodeChange(const QString & txt)
@@ -980,37 +943,7 @@ void QtDemo::HandleIllusrate()
 
 void QtDemo::HandleCheckStamp()
 {
-    if (0 == para_.stamp_idx) {
-        Info(QString::fromLocal8Bit("请在\"盖章页\"先选章, 再盖章"));
-        return;
-    }
-
-    FOpenDev(NULL);
-    unsigned int rfid;
-    int ret = GetStamperID(para_.stamp_idx - 1, rfid);
-
-    STAMPERPARAM pa;
-    memcpy(&pa.seal, &rfid, sizeof(rfid));
-    pa.serial_number = GetTickCount();
-    pa.isPadInk = 1;
-    pa.x_point = atoi(ui.le_x_in_dev_->text().toStdString().c_str());
-    pa.y_point = atoi(ui.le_y_in_dev_->text().toStdString().c_str());
-    pa.w_time = 2;
-    pa.angle = 0;
-    pa.type = 0;
-
-    ret = FStartStamperstrc(&pa);
-    if (0 != ret)
-        return Info(QString::fromLocal8Bit("盖章失败, er: ") + QString::number(ret));
-
-    if (ui.le_x_in_dev_->text().toStdString() == "3" &&
-        ui.le_y_in_dev_->text().toStdString() == "60") {
-        ui.le_x_in_dev_->setText(QString::number(270));
-        ui.le_y_in_dev_->setText(QString::number(250));
-    } else {
-        ui.le_x_in_dev_->setText(QString::number(3));
-        ui.le_y_in_dev_->setText(QString::number(60));
-    }
+    
 }
 
 void QtDemo::HandleSelectImg(int index)
@@ -1222,37 +1155,7 @@ void QtDemo::HandleDisableFactory()
 
 void QtDemo::HandleStampReadStampers()
 {
-    if (!IsOpened())
-        return;
-
-    FOpenDev(NULL);
-    QRadioButton* btns[] =
-    {
-        ui.radio_stamper1_,
-        ui.radio_stamper2_,
-        ui.radio_stamper3_,
-        ui.radio_stamper4_,
-        ui.radio_stamper5_,
-        ui.radio_stamper6_
-    };
-
-    for (int i = 0; i < 6; ++i) {
-        btns[i]->setText("");
-        unsigned int rfid = 0;
-        int ret = GetStamperID(i, rfid);
-        if (STF_SUCCESS != ret)
-            continue;
-
-        char str[1024] = { 0 };
-        if (rfid == 0) {
-            sprintf(str, "<%d>号章无章", i + 1);
-        } else {
-            base::Number2HexStr<unsigned int> rfid_hex(rfid);
-            sprintf(str, "<%d>号章:0x%s", i + 1, rfid_hex.UpperHexStr().c_str());
-        }
-        btns[i]->setText(QString::fromLocal8Bit(str));
-        btns[i]->adjustSize();
-    }
+   
 }
 
 void QtDemo::HandleCheckStampInk(int checked)

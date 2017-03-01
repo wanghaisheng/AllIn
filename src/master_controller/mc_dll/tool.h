@@ -42,7 +42,7 @@ public:
 
 private:
     SharedMem() {
-
+        syn_ev_ = CreateEvent(NULL, TRUE, FALSE, "Local\\MySynEvent");
     }
 
 private:
@@ -50,6 +50,8 @@ private:
 
     PVOID pView_;
     HANDLE hMapFile_;
+
+    HANDLE syn_ev_;
 };
 
 int PrepareCamera();

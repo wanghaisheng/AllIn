@@ -248,6 +248,7 @@ void SharedMem::WriteSharedMem(int to_write)
 
     // Write the message to the view.  
     memcpy_s(pView_, MAP_SIZE, &to_write, cbMessage);
+    SetEvent(syn_ev_);
 
     Log::WriteLog(LL_DEBUG, "WriteSharedMem->This value is written to the view:\"%d\"", 
         to_write);

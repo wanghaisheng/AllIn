@@ -52,7 +52,10 @@ LRESULT CALLBACK WinProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 		{
 			pCCtrlUSB->Init(hWnd);
 			pCCtrlUSB->FindDevPath();
-            CLog::sharedLog()->WriteNormalLog("WinProc->确定设备路径");
+            if (!pCCtrlUSB->GetDevPath().empty())
+                CLog::sharedLog()->WriteNormalLog("WinProc->成功确定设备路径");
+            else
+                CLog::sharedLog()->WriteNormalLog("WinProc->未能确定设备路径");
 		}		
 		break;
 	case WM_DEVICECHANGE:

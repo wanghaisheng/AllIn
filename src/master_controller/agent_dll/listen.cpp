@@ -14,6 +14,9 @@ Listen* Listen::listen_inst_ = NULL;
 
 bool Listen::Start()
 {
+    if (running_)
+        return true;
+
     // Try to open the named file mapping identified by the map name.  
     map_file_ = OpenFileMapping(
         FILE_MAP_ALL_ACCESS,    // Read access  
@@ -37,7 +40,9 @@ bool Listen::Start()
 void Listen::ListenFunc()
 {
     while (running_) {
-        Sleep(3000);
+        WaitForSingleObject(syn_ev_, INFINITE);
+        ResetEvent(syn_ev_);
+
         map_view_ = MapViewOfFile(
             map_file_,               // Handle of the map object  
             FILE_MAP_ALL_ACCESS,     // Read access  
@@ -60,8 +65,9 @@ void Listen::ListenFunc()
 
         // 断开、重连callback
         if (0 == msg || 1 == msg) {
-            Log::WriteLog(LL_DEBUG, "Listen::ListenFunc->Read from the file mapping:\"%0x\"",
-                msg);
+            Log::WriteLog(LL_DEBUG, "Listen::ListenFunc->Read from the file mapping:\"%0x\", callback size: %d",
+                msg,
+                connect_callback_vec_.size());
 
             for (int i = 0; i < connect_callback_vec_.size(); ++i) {
                 ConnectCallback cb = (ConnectCallback)(connect_callback_vec_.at(i));

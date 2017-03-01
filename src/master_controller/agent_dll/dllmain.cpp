@@ -3,7 +3,6 @@
 #include "cnn.h"
 #include "common_definitions.h"
 #include "api_set.h"
-#include "listen.h"
 
 extern AsynAPISet api_agent;
 
@@ -14,8 +13,6 @@ void Start()
     MC::AgentConfig::GetInst()->Parse();
     MC::Cnn::GetInst()->SetAgent(&api_agent);
     MC::Cnn::GetInst()->Start();
-
-    Listen::GetInst()->Start();
 }
 
 void Stop()

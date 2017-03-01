@@ -43,13 +43,16 @@ public:
 
 private:
     Listen():map_file_(NULL), map_view_(NULL) {
-
+        running_ = false;
+        syn_ev_ = OpenEvent(EVENT_ALL_ACCESS, FALSE, "Local\\MySynEvent");
     }
 
     void ListenFunc();
 
 private:
     static Listen* listen_inst_;
+
+    HANDLE syn_ev_;
 
     HANDLE map_file_;
     PVOID map_view_;

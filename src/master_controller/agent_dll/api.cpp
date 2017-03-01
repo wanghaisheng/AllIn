@@ -2951,12 +2951,14 @@ int ST_GetSealCoord(int x_img, int y_img, int& x_dev, int& y_dev)
 int RegisterEventCallBack(EventCallback func)
 {
     Listen::GetInst()->RegisterMsgCallback((PVOID)func);
+    Listen::GetInst()->Start();
     return 0;
 }
 
 int RegisterConnCallBack(ConnectCallback func)
 {
     Listen::GetInst()->RegisterConnCallback((PVOID)func);
+    Listen::GetInst()->Start();
     return 0;
 }
 
