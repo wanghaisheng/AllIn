@@ -118,7 +118,7 @@ public:
     int er_;
 };
 
-int ST_SetMachine(const std::string& sn)
+int ST_SetMachine(const char* sn)
 {
     SetMachineNT* nt = new (std::nothrow) SetMachNT;
     api_agent.AsynSetMachine(sn, nt);
@@ -235,7 +235,7 @@ public:
     int er_;
 };
 
-int ST_BindMAC(const std::string& mac)
+int ST_BindMAC(const char* mac)
 {
     BindMACNT* nt = new BindNT;
     api_agent.AsynBindMAC(mac, nt);
@@ -293,7 +293,7 @@ public:
     int er_;
 };
 
-int ST_UnbindMAC(const std::string& mac)
+int ST_UnbindMAC(const char* mac)
 {
     UnbindMACNT* nt = new UnbindNT;
     api_agent.AsynUnbindMAC(mac, nt);
@@ -357,20 +357,21 @@ public:
     int er_;
 };
 
-int ST_PrepareStamp(char stamp_num, int timeout, std::string& task_id)
+int ST_PrepareStamp(char stamp_num, int timeout, char* task_id, int size)
 {
     PrepareStampNT* nt = new PrepareNT;
     api_agent.AsynPrepareStamp(stamp_num, timeout, nt);
 
+    PrepareNT* derive_nt = (PrepareNT*)nt;
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((PrepareNT*)nt)->cv_, timeout * 1000))
 #else
     if (!((PrepareNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(timeout * 1000)))
 #endif
-        ((PrepareNT*)nt)->er_ = MC::EC_TIMEOUT;
+        derive_nt->er_ = MC::EC_TIMEOUT;
 
-    task_id = ((PrepareNT*)nt)->task_id_;
-    int ret = ((PrepareNT*)nt)->er_;
+    strncpy(task_id, derive_nt->task_id_.c_str(), min(size, derive_nt->task_id_.size()));
+    int ret = derive_nt->er_;
     api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
@@ -486,8 +487,8 @@ public:
 
 int ST_Snapshot(
     int which,
-    const std::string& ori_path, 
-    const std::string& cut_path)
+    const char* ori_path,
+    const char* cut_path)
 {
     SnapshotNT* nt = new SnapNT;
     int ori_dpi = 0;
@@ -552,9 +553,9 @@ public:
 };
 
 int ST_MergePhoto(
-    const std::string& p1, 
-    const std::string& p2, 
-    const std::string& merged)
+    const char* p1, 
+    const char* p2, 
+    const char* merged)
 {
     MergePhotoNT* nt = new MergeNT;
     api_agent.AsynMergePhoto(p1, p2, merged, nt);
@@ -700,7 +701,8 @@ public:
 
 int ST_RecoModelTypeAndAngleAndModelPointByImg(
     const char*     src_img,
-    std::string&    model_type,
+    char*    model_type,
+    int      model_type_size,
     double&         outangle,
     int&            x,
     int&            y) {
@@ -718,7 +720,7 @@ int ST_RecoModelTypeAndAngleAndModelPointByImg(
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    model_type = derive_nt->model_;
+    strncpy(model_type, derive_nt->model_.c_str(), min(model_type_size, derive_nt->model_.size()));
     x = derive_nt->x_;
     y = derive_nt->y_;
     outangle = derive_nt->angle_;
@@ -772,22 +774,25 @@ public:
     int er_;
 };
 
-int ST_RecognizeImage(const std::string& path,
-    std::string& template_id, std::string& trace_num)
+int ST_RecognizeImage(const char* path,
+    char* template_id, char* trace_num, int max_size)
 {
     RecognizeNT* nt = new RecogNT;
     api_agent.AsynRecognizeImage(path, nt);
 
+    RecogNT* derive_nt = (RecogNT*)nt;
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((RecogNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
     if (!((RecogNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
-        ((RecogNT*)nt)->er_ = MC::EC_TIMEOUT;
+        derive_nt->er_ = MC::EC_TIMEOUT;
 
-    template_id = ((RecogNT*)nt)->template_id_;
-    trace_num = ((RecogNT*)nt)->trace_num_;
-    int ret = ((RecogNT*)nt)->er_;
+    strncpy(template_id, derive_nt->template_id_.c_str(),
+        min(max_size, derive_nt->template_id_.size()));
+    strncpy(trace_num, derive_nt->trace_num_.c_str(),
+        min(max_size, derive_nt->trace_num_.size()));
+    int ret = derive_nt->er_;
     api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
@@ -837,25 +842,27 @@ public:
 };
 
 int ST_IdentifyElement(
-    const std::string& path,
+    const char* path,
     int x,
     int y,
     int width,
     int height,
     int angle,
-    std::string& result)
+    char* result,
+    int size)
 {
     IdentifyNT* nt = new IdentiNT;
     api_agent.AsynIdentifyElement(path, x, y, width, height, angle, nt);
 
+    IdentiNT* derive_nt = (IdentiNT*)nt;
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((IdentiNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
     if (!((IdentiNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
-        ((IdentiNT*)nt)->er_ = MC::EC_TIMEOUT;
+        derive_nt->er_ = MC::EC_TIMEOUT;
 
-    result = ((IdentiNT*)nt)->re_;
+    strncpy(result, derive_nt->re_.c_str(), min(size, derive_nt->re_.size()));
     int ret = ((IdentiNT*)nt)->er_;
     api_agent.DeleteNotify((void*)nt);
     delete nt;
@@ -904,7 +911,7 @@ public:
 };
 
 int ST_OrdinaryStamp(
-    const std::string& task,
+    const char* task,
     int num, 
     int ink,
     int x, 
@@ -1030,7 +1037,7 @@ public:
     int er_;
 };
 
-int ST_FinishStamp(const std::string& task)
+int ST_FinishStamp(const char* task)
 {
     FinishStampNT* nt = new FinishNT;
     api_agent.AsynFinishStamp(task, nt);
@@ -1151,20 +1158,21 @@ public:
     int er_;
 };
 
-int ST_GetError(int err_code, std::string& err_msg, std::string& err_resolver)
+int ST_GetError(int err_code, char* err_msg, char* err_resolver, int size)
 {
     GetErrorNT* nt = new GetErrNT;
     api_agent.AsynGetError(err_code, nt);
 
+    GetErrNT* derive_nt = (GetErrNT*)nt;
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((GetErrNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
     if (!((GetErrNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
-        ((GetErrNT*)nt)->er_ = MC::EC_TIMEOUT;
+        derive_nt->er_ = MC::EC_TIMEOUT;
 
-    err_msg = ((GetErrNT*)nt)->msg_;
-    err_resolver = ((GetErrNT*)nt)->resolver_;
+    strncpy(err_msg, derive_nt->msg_.c_str(), min(size, derive_nt->msg_.size()));
+    strncpy(err_resolver, derive_nt->resolver_.c_str(), min(size, derive_nt->resolver_.size()));
     int ret = ((GetErrNT*)nt)->er_;
     api_agent.DeleteNotify((void*)nt);
     delete nt;
@@ -1680,21 +1688,23 @@ public:
     int er_;
 };
 
-int ST_QueryMAC(std::string& mac1, std::string& mac2)
+int ST_QueryMAC(char* mac1, char* mac2, int max_size)
 {
     QueryMACNT* nt = new QryMACNT;
     api_agent.AsynQueryMAC(nt);
 
+    QryMACNT* derive_nt = (QryMACNT*)nt;
 #ifdef _XP
     if (WAIT_TIMEOUT == WaitForSingleObject(((QryMACNT*)nt)->cv_, SYNC_WAIT_TIME))
 #else
     if (!((QryMACNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
-        ((QryMACNT*)nt)->er_ = MC::EC_TIMEOUT;
+        derive_nt->er_ = MC::EC_TIMEOUT;
 
-    mac1 = ((QryMACNT*)nt)->mac1_;
-    mac2 = ((QryMACNT*)nt)->mac2_;
-    int ret = ((QryMACNT*)nt)->er_;
+    strncpy(mac1, derive_nt->mac1_.c_str(), min(max_size, derive_nt->mac1_.size()));
+    strncpy(mac2, derive_nt->mac2_.c_str(), min(max_size, derive_nt->mac2_.size()));
+
+    int ret = derive_nt->er_;
     api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
@@ -2131,7 +2141,7 @@ public:
     int er_;
 };
 
-int ST_GetDevModel(std::string& model)
+int ST_GetDevModel(char* model, int size)
 {
     DevModelNT* nt = new GetModelNT;
     api_agent.AsynQueryModel(nt);
@@ -2144,7 +2154,7 @@ int ST_GetDevModel(std::string& model)
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
-    model = derive_nt->model_;
+    strncpy(model, derive_nt->model_.c_str(), min(size, derive_nt->model_.size()));
     int ret = derive_nt->er_;
     api_agent.DeleteNotify((void*)nt);
     delete nt;
@@ -2687,7 +2697,7 @@ public:
     int er_;
 };
 
-int ST_StartRecordVideo(int which, const std::string& path)
+int ST_StartRecordVideo(int which, const char* path)
 {
     RecordVideoNT* nt = new RecordNT;
     api_agent.AsynStartRecordVideo(which, path, nt);
@@ -2742,7 +2752,7 @@ public:
     int er_;
 };
 
-int ST_StopRecordVideo(int which, const std::string& path)
+int ST_StopRecordVideo(int which, const char* path)
 {
     StopRecordVideoNT* nt = new StopRecordNT;
     api_agent.AsynStopRecordVideo(which, path, nt);

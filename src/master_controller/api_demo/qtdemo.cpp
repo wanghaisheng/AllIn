@@ -368,7 +368,7 @@ void QtDemo::HandleBinding()
     if (mac.empty())
         return Info(QString::fromLocal8Bit("待绑定MAC地址为空"));
 
-    int ret = ST_BindMAC(mac);
+    int ret = ST_BindMAC(mac.c_str());
     return Info(QString::fromLocal8Bit("绑定MAC地址, er: ") + QString::number(ret));
 }
 
@@ -378,15 +378,15 @@ void QtDemo::HandleUnbinding()
     if (mac.empty())
         return Info(QString::fromLocal8Bit("待解绑MAC地址为空"));
 
-    int ret = ST_UnbindMAC(mac);
+    int ret = ST_UnbindMAC(mac.c_str());
     return Info(QString::fromLocal8Bit("解绑MAC地址, er: ") + QString::number(ret));
 }
 
 void QtDemo::HandleQueryMAC()
 {
-    std::string mac1;
-    std::string mac2;
-    int ret = ST_QueryMAC(mac1, mac2);
+    char mac1[32] = { 0 };
+    char mac2[32] = { 0 };
+    int ret = ST_QueryMAC(mac1, mac2, sizeof(mac1));
     if (0 != ret)
         return Info(QString::fromLocal8Bit("查询MAC地址失败, er: ") + QString::number(ret));
 
@@ -450,7 +450,7 @@ void QtDemo::HandleSetSN()
     if (sn.empty())
         return Info(QString::fromLocal8Bit("设备编号为空"));
 
-    int ret = ST_SetMachine(sn);
+    int ret = ST_SetMachine(sn.c_str());
     if (0 != ret)
         return Info(QString::fromLocal8Bit("设置设备编号失败, er: ") + QString::number(ret));
 
@@ -601,7 +601,7 @@ void QtDemo::HandleSetDPI()
 void QtDemo::HandleStartRecord()
 {
     std::string path = ui.le_video_path_->text().toStdString();
-    int ret = ST_StartRecordVideo(which_cam_, path);
+    int ret = ST_StartRecordVideo(which_cam_, path.c_str());
     if (0 != ret)
         return Info(QString::fromLocal8Bit("开始录制视频失败, er: ") +
             QString::number(ret));
@@ -612,7 +612,7 @@ void QtDemo::HandleStartRecord()
 void QtDemo::HandleStopRecord()
 {
     std::string path = ui.le_video_path_->text().toStdString();
-    int ret = ST_StopRecordVideo(which_cam_, path);
+    int ret = ST_StopRecordVideo(which_cam_, path.c_str());
     if (0 != ret)
         return Info(QString::fromLocal8Bit("停止录制视频失败, er: ") +
             QString::number(ret));
@@ -622,8 +622,8 @@ void QtDemo::HandleStopRecord()
 
 void QtDemo::HandleGetModelType()
 {
-    std::string type;
-    int ret = ST_GetDevModel(type);
+    char type[32] = { 0 };
+    int ret = ST_GetDevModel(type, sizeof(type));
     if (0 != ret)
         return Info(QString::fromLocal8Bit("获取设备型号失败, er: ") +
             QString::number(ret));
@@ -768,16 +768,17 @@ void QtDemo::HandleErrCodeChange(const QString & txt)
     }
 
     int err = atoi(err_str.c_str());
-    std::string msg, resolver;
+    char msg[260] = { 0 };
+    char resolver[260] = {0};
     int ret = ST_GetError(err, msg, resolver);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("查询错误码失败"));
 
     ui.le_show_err_msg_->setText(QString::fromLocal8Bit("错误信息: ") + 
-        QString::fromLocal8Bit(msg.c_str()));
+        QString::fromLocal8Bit(msg));
 
     ui.le_show_err_resolver_->setText(QString::fromLocal8Bit("解决方案: ") +
-        QString::fromLocal8Bit(resolver.c_str()));
+        QString::fromLocal8Bit(resolver));
 }
 
 /////////////////////////////// 盖章 /////////////////////////////////////
@@ -888,8 +889,8 @@ void QtDemo::HandleCapture()
         which_cam_,
 //         200,
 //         200,
-        ori_path,
-        cut_path);
+        ori_path.c_str(),
+        cut_path.c_str());
     if (0 != ret)
         return Info(QString::fromLocal8Bit("拍照失败, err: ") + QString::number(ret));
 
@@ -1028,14 +1029,20 @@ void QtDemo::HandleRecogCode()
     // 清空之前结果
     ui.la_code_result_->clear();
 
-    std::string template_id;
-    std::string trace_num;
+    char template_id[256] = { 0 };
+    char trace_num[256] = { 0 };
     int ret;
     if (0 == img_type_) {
-        ret = ST_RecognizeImage(ClientConfig::GetInst()->ori_path_, template_id, trace_num);
+        ret = ST_RecognizeImage(
+            ClientConfig::GetInst()->ori_path_.c_str(), 
+            template_id, 
+            trace_num);
     }
     else if (1 == img_type_) {
-        ret = ST_RecognizeImage(ClientConfig::GetInst()->cut_path_, template_id, trace_num);
+        ret = ST_RecognizeImage(
+            ClientConfig::GetInst()->cut_path_.c_str(), 
+            template_id, 
+            trace_num);
     }
 
     if (0 != ret)
@@ -1056,9 +1063,9 @@ void QtDemo::HandleRecogEle()
     else
         img_path = ClientConfig::GetInst()->cut_path_;
 
-    std::string result;
+    char result[256] = { 0 };
     int ret = ST_IdentifyElement(
-        img_path,
+        img_path.c_str(),
         atoi(ui.le_x_in_img_->text().toStdString().c_str()),
         atoi(ui.le_y_in_img_->text().toStdString().c_str()),
         atoi(ui.le_input_width_->text().toStdString().c_str()),
@@ -1257,7 +1264,7 @@ void QtDemo::HandleCheckStampInk(int checked)
 void QtDemo::HandleOridinary()
 {
     int ret = ST_OrdinaryStamp(
-        ui.le_task_id_->text().toStdString(),
+        ui.le_task_id_->text().toStdString().c_str(),
         para_.stamp_idx,
         para_.ink,
         atoi(ui.le_x_in_dev_->text().toStdString().c_str()),    // 盖章位置x坐标
@@ -1282,7 +1289,7 @@ void QtDemo::HandlePrepare()
         return;
     }
 
-    std::string task_id;
+    char task_id[65] = { 0 };
     int time = atoi(ui.le_paper_door_timeout_->text().toStdString().c_str());
     char stamp_num = 1;
     int ret = ST_PrepareStamp(
@@ -1309,7 +1316,7 @@ void QtDemo::HandleFinishStamp()
         return Info(QString::fromLocal8Bit("任务号为空, 请先准备用印获取任务号"));
     }
 
-    int ret = ST_FinishStamp(task_id);
+    int ret = ST_FinishStamp(task_id.c_str());
     if (0 != ret)
         return Info(QString::fromLocal8Bit("结束用印失败, er: ") + QString::number(ret));
 

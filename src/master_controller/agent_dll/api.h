@@ -84,24 +84,25 @@ MASTERCTRL_AGENT_API int ST_QueryMachine(
 
 // 设置印控机编号, 最多支持20个字节
 MASTERCTRL_AGENT_API int ST_SetMachine(
-    const std::string& sn);
+    const char* sn);
 
 // 查询MAC地址, 一台印控机最多支持绑定2个MAC地址
 // mac1         --- mac地址1
 // mac2         --- mac地址2
 MASTERCTRL_AGENT_API int ST_QueryMAC(
-    std::string& mac1, 
-    std::string& mac2);
+    char* mac1, 
+    char* mac2,
+    int max_size = 18);
 
 // 绑定MAC地址
 // mac     --- 待绑定MAC地址
 MASTERCTRL_AGENT_API int ST_BindMAC(
-    const std::string& mac);
+    const char* mac);
 
 // 解绑MAC地址
 // mac     --- 待解绑MAC地址
 MASTERCTRL_AGENT_API int ST_UnbindMAC(
-    const std::string& mac);
+    const char* mac);
 
 // 根据卡槽号获取对应的RFID
 // slot         --- 卡槽号，从1开始
@@ -118,11 +119,12 @@ MASTERCTRL_AGENT_API int ST_GetRFID(
 MASTERCTRL_AGENT_API int ST_PrepareStamp(
     char            slot,
     int             timeout, 
-    std::string&    task_id);
+    char*           task_id,
+    int             size = 64);
 
 // 普通用印
 MASTERCTRL_AGENT_API int ST_OrdinaryStamp(
-    const std::string&  task,       // 任务号
+    const char*         task,       // 任务号
     int                 slot,       // 印章卡槽号(1-6)
     int                 ink,        // 0 - 不蘸印油， 1 - 蘸印油
     int                 x,          // 盖章位置x坐标, 相对于印控机坐标系
@@ -137,7 +139,7 @@ MASTERCTRL_AGENT_API int ST_OrdinaryStamp(
 // 
 // task         --- 准备用印时获得的用印任务号
 MASTERCTRL_AGENT_API int ST_FinishStamp(
-    const std::string& task);
+    const char* task);
 
 // 查询印章状态
 // status   --- 对应章槽上是否有章
@@ -226,7 +228,8 @@ MASTERCTRL_AGENT_API int ST_SetSideDoor(
 
 //  获取设备型号
 MASTERCTRL_AGENT_API int ST_GetDevModel(
-    std::string& model);
+    char* model,
+    int size = 22);
 
 // 补光灯控制
 // which    --- 补光灯类型
@@ -287,29 +290,31 @@ MASTERCTRL_AGENT_API int ST_DisableFactory();
 // p2       --- 图片2路径
 // merged   --- 合成图片路径
 MASTERCTRL_AGENT_API int ST_MergePhoto(
-    const std::string& p1, 
-    const std::string& p2,
-    const std::string& merged);
+    const char* p1, 
+    const char* p2,
+    const char* merged);
 
 // 版面、验证码识别
 // path         --- 切图路径
 // template_id  --- 模板ID
 // trace_num    --- 追溯码
 MASTERCTRL_AGENT_API int ST_RecognizeImage(
-    const std::string&  path, 
-    std::string&        template_id, 
-    std::string&        trace_num);
+    const char*  path, 
+    char*        template_id, 
+    char*        trace_num,
+    int          max_size = 256);
 
 // 要素识别
 // path         --- 切图路径
 MASTERCTRL_AGENT_API int ST_IdentifyElement(
-    const           std::string& path, 
+    const           char* path, 
     int             x, 
     int             y, 
     int             width, 
     int             height,
     int             angle, 
-    std::string&    result);
+    char*           result,
+    int             size = 256);
 
 // 原图用印位置、用印角度查找
 MASTERCTRL_AGENT_API int ST_SearchSrcImageStampPoint(
@@ -324,7 +329,8 @@ MASTERCTRL_AGENT_API int ST_SearchSrcImageStampPoint(
 // 文件名中查找模板类型、用印角度、用印坐标
 MASTERCTRL_AGENT_API int ST_RecoModelTypeAndAngleAndModelPointByImg(
     const char*     src_img,
-    std::string&    model_type,
+    char*           model_type,
+    int             model_type_size,
     double&         outangle,
     int&            x,
     int&            y);
@@ -370,8 +376,8 @@ MASTERCTRL_AGENT_API int ST_QueryCamera(
 // cut_path     --- 存放切图路径
 MASTERCTRL_AGENT_API int ST_Snapshot(
     int                 which, 
-    const std::string&  ori_path, 
-    const std::string&  cut_path);
+    const char*         ori_path, 
+    const char*         cut_path);
 
 // 设置摄像头分辨率
 // which    --- 0：凭证摄像头
@@ -411,7 +417,7 @@ MASTERCTRL_AGENT_API int ST_StopPreview(
 // path     --- 视频存放路径, 包含扩展名的全路径(.avi格式)
 MASTERCTRL_AGENT_API int ST_StartRecordVideo(
     int which, 
-    const std::string& path);
+    const char* path);
 
 // 停止录制视频
 // which    --- 0：凭证摄像头
@@ -420,15 +426,16 @@ MASTERCTRL_AGENT_API int ST_StartRecordVideo(
 // path     --- 视频存放路径, 包含扩展名的全路径(.avi格式)
 MASTERCTRL_AGENT_API int ST_StopRecordVideo(
     int which,
-    const std::string& path);
+    const char* path);
 
 /////////////////////// 4. 查询错误信息 API //////////////////////////////
 
 // 根据错误码获取错误信息
 MASTERCTRL_AGENT_API int ST_GetError(
     int             err_code,
-    std::string&    err_msg,
-    std::string&    err_resolver);
+    char*           err_msg,
+    char*           err_resolver,
+    int             size = MAX_PATH);
 
 #ifdef __cplusplus
 }

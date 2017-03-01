@@ -92,11 +92,6 @@ private:
             TRUE,       // 手动reset
             FALSE,      // 初始状态 non-signaled 
             NULL);      // 未命名
-
-        if (0 == FOpenDev(NULL))
-            SharedMem::GetInst()->WriteSharedMem(1);
-        else
-            SharedMem::GetInst()->WriteSharedMem(0);
     }
 
 private:

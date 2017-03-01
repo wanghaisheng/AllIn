@@ -5,6 +5,7 @@
 #include "parse.h"
 #include "recver.h"
 #include "tool.h"
+#include "seal_api.h"
 #include "USBControlF60.h"
 
 BOOL APIENTRY DllMain(
@@ -21,7 +22,7 @@ BOOL APIENTRY DllMain(
         MC::EventCPUCore::GetInstance()->Start();
 
         SharedMem::GetInst()->CreateSharedMem();
-        MC::Tool::GetInst();
+        MC::STSealAPI::GetInst();
     }
         break;
     case DLL_THREAD_ATTACH:

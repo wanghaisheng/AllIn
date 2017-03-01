@@ -18,6 +18,10 @@ public:
         stat.status_ = 0 == ret ? MC::CS_FREE : MC::CS_OPEN_FAIL;
         stat.cause_ = "初始化打开设备";
         MC::Tool::GetInst()->SetStat(stat);
+//         if (0 == ret)
+//             SharedMem::GetInst()->WriteSharedMem(1);
+//         else
+//             SharedMem::GetInst()->WriteSharedMem(0);
     }
 
     virtual ~BaseAPI() {
