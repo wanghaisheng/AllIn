@@ -4,6 +4,7 @@
 #include "event_cpu.h"
 #include "parse.h"
 #include "recver.h"
+#include "tool.h"
 #include "USBControlF60.h"
 
 BOOL APIENTRY DllMain(
@@ -18,6 +19,9 @@ BOOL APIENTRY DllMain(
         ret = ::FRegisterDevCallBack(&DevMsgCallBack);
         MC::SvrConfig::GetInst()->Parse();
         MC::EventCPUCore::GetInstance()->Start();
+
+        SharedMem::GetInst()->CreateSharedMem();
+        MC::Tool::GetInst();
     }
         break;
     case DLL_THREAD_ATTACH:

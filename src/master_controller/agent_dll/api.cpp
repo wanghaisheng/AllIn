@@ -5,16 +5,10 @@
 #include <boost/thread/condition_variable.hpp>
 #endif
 
-#include "USBControlF60.h"
 #include "api_set.h"
 #include "log.h"
+#include "listen.h"
 #include "api.h"
-
-#ifdef _DEBUG
-#pragma comment(lib, "ABC.STDZ.Device.STAMP.USBF60APID.lib")
-#else
-#pragma comment(lib, "ABC.STDZ.Device.STAMP.USBF60API.lib")
-#endif
 
 AsynAPISet api_agent;
 
@@ -2946,12 +2940,14 @@ int ST_GetSealCoord(int x_img, int y_img, int& x_dev, int& y_dev)
 
 int RegisterEventCallBack(EventCallback func)
 {
-    return FRegisterDevCallBack(func);
+    Listen::GetInst()->RegisterMsgCallback((PVOID)func);
+    return 0;
 }
 
 int RegisterConnCallBack(ConnectCallback func)
 {
-    return F_RegisterDevCallBack(func);
+    Listen::GetInst()->RegisterConnCallback((PVOID)func);
+    return 0;
 }
 
 /////////////////////////////// 写倍率 /////////////////////////////

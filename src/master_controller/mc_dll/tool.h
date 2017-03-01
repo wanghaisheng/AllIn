@@ -9,6 +9,7 @@
 #include "RZCamera.h"
 #include "log.h"
 #include "parse.h"
+#include "USBControlF60.h"
 #include "common_definitions.h"
 
 int _stdcall ConnectCallBack(const char* dev_path, unsigned int msg);
@@ -20,8 +21,38 @@ int _stdcall DevMsgCallBack(
     unsigned char*      data, 
     unsigned char       len);
 
-int PrepareCamera();
 
+class SharedMem {
+public:
+    static SharedMem* GetInst() {
+        if (mem_inst_ == NULL)
+            mem_inst_ = new SharedMem;
+
+        return mem_inst_;
+    }
+
+    ~SharedMem() {
+        ReleaseSharedMem();
+    }
+
+    bool CreateSharedMem();
+    void WriteSharedMem(int to_write);
+    void ReleaseSharedMem();
+    void ClearMem();
+
+private:
+    SharedMem() {
+
+    }
+
+private:
+    static SharedMem* mem_inst_;
+
+    PVOID pView_;
+    HANDLE hMapFile_;
+};
+
+int PrepareCamera();
 void DisableCamera();
 
 namespace MC {
@@ -61,6 +92,11 @@ private:
             TRUE,       // 手动reset
             FALSE,      // 初始状态 non-signaled 
             NULL);      // 未命名
+
+        if (0 == FOpenDev(NULL))
+            SharedMem::GetInst()->WriteSharedMem(1);
+        else
+            SharedMem::GetInst()->WriteSharedMem(0);
     }
 
 private:

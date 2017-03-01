@@ -3,6 +3,8 @@
 #include "stamping_mgr.h"
 #include "tool.h"
 
+SharedMem* SharedMem::mem_inst_ = NULL;
+
 MC::Tool* MC::Tool::g_inst = NULL;
 
 MC::Tool* MC::Tool::GetInst()
@@ -157,6 +159,8 @@ void DisableCamera()
 // 连接与打开设备是两个不同的动作。
 int _stdcall ConnectCallBack(const char* dev_path, unsigned int msg)
 {
+    SharedMem::GetInst()->WriteSharedMem(msg);
+
     switch (msg) {
     case 0: { // 断开
         MC::DeviceStat stat;
@@ -185,6 +189,85 @@ int _stdcall ConnectCallBack(const char* dev_path, unsigned int msg)
     return 0;
 }
 
+#define FULL_MAP_NAME       "Local\\MyFileMappingObject"
+
+// Max size of the file mapping object.  
+#define MAP_SIZE            4
+
+bool SharedMem::CreateSharedMem()
+{
+    // Create the file mapping object.  
+    hMapFile_ = CreateFileMapping(
+        INVALID_HANDLE_VALUE,   // Use paging file - shared memory  
+        NULL,                   // Default security attributes  
+        PAGE_READWRITE,         // Allow read and write access  
+        0,                      // High-order DWORD of file mapping max size  
+        MAP_SIZE,               // Low-order DWORD of file mapping max size  
+        FULL_MAP_NAME           // Name of the file mapping object  
+        );
+    if (hMapFile_ == NULL) {
+        Log::WriteLog(LL_ERROR, "CreateSharedMem->CreateFileMapping failed w/err 0x%08lx", 
+            GetLastError());
+        return false;
+    }
+
+    Log::WriteLog(LL_DEBUG, "CreateSharedMem->The file mapping (%s) is created", 
+        FULL_MAP_NAME);
+
+    // Map a view of the file mapping into the address space of the current   
+    // process.  
+    pView_ = MapViewOfFile(
+        hMapFile_,               // Handle of the map object  
+        FILE_MAP_ALL_ACCESS,    // Read and write access  
+        0,                      // High-order DWORD of the file offset   
+        0,                      // Low-order DWORD of the file offset   
+        MAP_SIZE               // The number of bytes to map to view  
+        );
+    if (pView_ == NULL) {
+        Log::WriteLog(LL_ERROR, "CreateSharedMem->MapViewOfFile failed w/err 0x%08lx",
+            GetLastError());
+        CloseHandle(hMapFile_);
+        return false;
+    }
+
+    ClearMem();
+    Log::WriteLog(LL_DEBUG, "CreateSharedMem->The file view is mapped");
+    return true;
+}
+
+void SharedMem::ClearMem()
+{
+    int buf = -1;
+    // clear the view.
+    memcpy_s(pView_, MAP_SIZE, &buf, sizeof(buf));
+}
+
+void SharedMem::WriteSharedMem(int to_write)
+{
+    DWORD cbMessage = sizeof(to_write);
+
+    // Write the message to the view.  
+    memcpy_s(pView_, MAP_SIZE, &to_write, cbMessage);
+
+    Log::WriteLog(LL_DEBUG, "WriteSharedMem->This value is written to the view:\"%d\"", 
+        to_write);
+}
+
+void SharedMem::ReleaseSharedMem()
+{
+    if (hMapFile_) {
+        if (pView_)
+        {
+            // Unmap the file view.  
+            UnmapViewOfFile(pView_);
+            pView_ = NULL;
+        }
+        // Close the file mapping object.  
+        CloseHandle(hMapFile_);
+        hMapFile_ = NULL;
+    }
+}
+
 // 状态回调
 int _stdcall DevMsgCallBack(
     unsigned int uMsg,
@@ -193,6 +276,8 @@ int _stdcall DevMsgCallBack(
     unsigned char* data,
     unsigned char len)
 {
+    SharedMem::GetInst()->WriteSharedMem(uMsg);
+
     switch (uMsg) {
     case 0xA2: {
         StampingMgr::GetInst()->SetStampingResult(0 == wParam ? MC::EC_SUCC: MC::EC_FAIL);

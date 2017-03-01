@@ -97,6 +97,7 @@
     <ClCompile Include="api_set.cpp" />
     <ClCompile Include="cnn.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="listen.cpp" />
     <ClCompile Include="parse.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +107,7 @@
     <ClInclude Include="api.h" />
     <ClInclude Include="api_set.h" />
     <ClInclude Include="cnn.h" />
+    <ClInclude Include="listen.h" />
     <ClInclude Include="parse.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
