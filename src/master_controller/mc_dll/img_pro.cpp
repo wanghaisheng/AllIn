@@ -178,14 +178,14 @@ namespace MC {
 
     int ImgPro::GetModelTypeAnglePoint(
             const std::string&  img_path,
-            std::string&        model_type,
+            char*               model_type,
             double&             outangle,
             int&                x,
             int&                y)
     {
         return RecoModelTypeAndAngleAndModelPointByImg(
                 img_path.c_str(),
-                (char*)model_type.c_str(),
+                model_type,
                 outangle,
                 x,
                 y);

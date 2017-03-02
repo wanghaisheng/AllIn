@@ -6,6 +6,7 @@
 #include <vector>
 #include <boost/thread/thread.hpp>
 
+// responsible for handling event callback.
 class Listen {
 public:
     ~Listen() {
@@ -13,8 +14,7 @@ public:
         work_thread_->join();
 
         if (map_file_) {
-            if (map_view_)
-            {
+            if (map_view_) {
                 UnmapViewOfFile(map_view_);
                 map_view_ = NULL;
             }
@@ -54,9 +54,9 @@ private:
 private:
     static Listen* listen_inst_;
 
-    HANDLE syn_ev_;
+    HANDLE syn_ev_; // named-event, signaled when server receives callback
 
-    HANDLE map_file_;
+    HANDLE map_file_;   // shared memeory to read value indicating callback type
     PVOID map_view_;
 
     bool running_;

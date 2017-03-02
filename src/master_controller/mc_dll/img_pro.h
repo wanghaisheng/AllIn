@@ -118,7 +118,7 @@ namespace MC {
         // @y           --- 用印点的 y 坐标(模板上的)
         int GetModelTypeAnglePoint(
                 const std::string&  img_path,       // 原图片路径
-                std::string&        model_type,     // 模板类型
+                char*               model_type,     // 模板类型
                 double&             outangle,       // 旋转角度
                 int&                x,
                 int&                y);

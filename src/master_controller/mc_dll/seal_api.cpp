@@ -835,7 +835,7 @@ public:
         double angle = 0;
         int x = 0;
         int y = 0;
-        std::string model_type;
+        char model_type[256] = { 0 };
         std::string out_model_type;
         MC::ErrorCode ec = exception_;
         if (ec != MC::EC_SUCC)
@@ -919,7 +919,7 @@ public:
     }
 
     virtual void SpecificExecute() {
-        std::string model;
+        char model[256] = { 0 };
         double angle = 0.f;
         int x = 0;
         int y = 0;
