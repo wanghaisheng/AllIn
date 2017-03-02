@@ -108,7 +108,6 @@ public:
         int y,
         int width,
         int height,
-        int angle_,
         NotifyResult* notify);
 
     void RecoModelEtc(

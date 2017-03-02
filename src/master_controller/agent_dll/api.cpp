@@ -817,7 +817,7 @@ public:
     }
 #endif
 
-    virtual void Notify(std::string path, int x, int y, int width, int height, int angle,
+    virtual void Notify(std::string path, int x, int y, int width, int height,
         std::string result, int ec) {
         Log::WriteLog(LL_DEBUG, "IdentiNT::Notify->要素识别, ec: %d, 识别结果: %s",
             ec,
@@ -848,12 +848,11 @@ int ST_IdentifyElement(
     int y,
     int width,
     int height,
-    int angle,
     char* result,
     int size)
 {
     IdentifyNT* nt = new IdentiNT;
-    api_agent.AsynIdentifyElement(path, x, y, width, height, angle, nt);
+    api_agent.AsynIdentifyElement(path, x, y, width, height, nt);
 
     IdentiNT* derive_nt = (IdentiNT*)nt;
 #ifdef _XP

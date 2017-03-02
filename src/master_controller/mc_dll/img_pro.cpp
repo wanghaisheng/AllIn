@@ -217,8 +217,7 @@ namespace MC {
             int y,
             int width,
             int height,
-            int angle,
-            std::string& result) {
+            char* result) {
         return RecoImgRectArea(
             img.c_str(),
             x,
@@ -226,7 +225,7 @@ namespace MC {
             x + width,
             y + height,
             0.f,
-            (char*)result.c_str(),
+            result,
             image);
     }
 

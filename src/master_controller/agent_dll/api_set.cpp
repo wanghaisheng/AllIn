@@ -249,7 +249,7 @@ void AsynAPISet::HandleIdentify(char* chBuf)
 
     IdentifyNT* nt = (IdentifyNT*)LookupSendTime(cmd.send_time_);
     if (NULL != nt)
-        nt->Notify(cmd.path_, cmd.x_, cmd.y_, cmd.width_, cmd.height_, cmd.angle_,
+        nt->Notify(cmd.path_, cmd.x_, cmd.y_, cmd.width_, cmd.height_,
         cmd.content_str_, cmd.ret_);
 }
 
@@ -801,7 +801,6 @@ void AsynAPISet::AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec)
             ((IdentifyElementCmd*)cmd)->y_, 
             ((IdentifyElementCmd*)cmd)->width_, 
             ((IdentifyElementCmd*)cmd)->height_,
-            ((IdentifyElementCmd*)cmd)->angle_,
             "", 
             ec);
     }
@@ -986,7 +985,7 @@ int AsynAPISet::AsynRecognizeImage(const std::string& path, RecognizeNT* nt)
 }
 
 int AsynAPISet::AsynIdentifyElement(const std::string& path, int x, int y, int width, int height,
-    int angle, IdentifyNT* nt)
+    IdentifyNT* nt)
 {
     IdentifyElementCmd* cmd = new IdentifyElementCmd;
     strcpy_s(cmd->path_, path.c_str());
@@ -994,7 +993,6 @@ int AsynAPISet::AsynIdentifyElement(const std::string& path, int x, int y, int w
     cmd->y_ = y;
     cmd->width_ = width;
     cmd->height_ = height;
-    cmd->angle_ = angle;
     InsertNotify(cmd->send_time_, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);

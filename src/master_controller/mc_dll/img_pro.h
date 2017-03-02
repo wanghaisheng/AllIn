@@ -158,8 +158,7 @@ namespace MC {
                 int                 y,
                 int                 width,
                 int                 height,
-                int                 angle,
-                std::string&        result);
+                char*               result);
 
         int SearchSrcImgStampPoint(
             const std::string& img,

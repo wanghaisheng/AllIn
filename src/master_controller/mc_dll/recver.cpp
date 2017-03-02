@@ -951,7 +951,6 @@ void Recver::HandleElementIdenti(const RecvMsg* msg)
         identi_cmd->y_,
         identi_cmd->width_,
         identi_cmd->height_,
-        identi_cmd->angle_,
         notify);
 }
 

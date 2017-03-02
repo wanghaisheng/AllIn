@@ -142,14 +142,14 @@ void SearchStampPointCmd::Unser()
 void IdentifyElementCmd::Ser()
 {
     BaseCmd::Ser();
-    xs_ << path_ << x_ << y_ << width_ << height_ << angle_ << content_str_ << ret_;
+    xs_ << path_ << x_ << y_ << width_ << height_ << content_str_ << ret_;
     xs_.Trim();
 }
 
 void IdentifyElementCmd::Unser()
 {
     BaseCmd::Unser();
-    xs_ >> path_ >> x_ >> y_ >> width_ >> height_ >> angle_ >> content_str_ >> ret_;
+    xs_ >> path_ >> x_ >> y_ >> width_ >> height_ >> content_str_ >> ret_;
 }
 
 void OridinaryStampCmd::Ser()

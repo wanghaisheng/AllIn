@@ -342,7 +342,6 @@ public:
     int             y_;                     // 识别区域坐标y(像素)
     int             width_;                 // 识别区域宽度(像素)
     int             height_;                // 识别区域高度(像素)
-    int             angle_;                 // 旋转角度(0, 90, 180, 270)
 
     char            content_str_[64];       // 识别结果
 

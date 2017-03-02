@@ -1090,8 +1090,7 @@ public:
         int x, 
         int y, 
         int width,
-        int height, 
-        int angle, 
+        int height,
         MC::NotifyResult* notify)
         : BaseEvent(des),
         path_(path),
@@ -1099,13 +1098,12 @@ public:
         y_(y),
         width_(width),
         height_(height),
-        angle_(angle),
         notify_(notify) {
 
     }
 
     virtual void SpecificExecute() {
-        std::string result;
+        char result[64] = { 0 };
         MC::ErrorCode ec = exception_;
         if (ec != MC::EC_SUCC)
             goto NT;
@@ -1122,8 +1120,7 @@ public:
             x_, 
             y_, 
             width_, 
-            height_, 
-            angle_, 
+            height_,
             result);
         if (0 != ret) {
             ec = MC::EC_ELEMENT_FAIL;
@@ -1139,7 +1136,7 @@ public:
             result);
         Log::WriteLog(LL_DEBUG, "MC::IdentifyEleEv::SpecificExecute->要素识别, ec: %s, 结果: %s",
             MC::ErrorMsg[ec].c_str(),
-            result.c_str());
+            result);
         delete this;
     }
 
@@ -1149,7 +1146,6 @@ private:
     int y_;
     int width_;
     int height_;
-    int angle_;
 
     MC::NotifyResult* notify_;
 };
@@ -1160,7 +1156,6 @@ void MC::STSealAPI::IdentifyElement(
     int y,
     int width,
     int height,
-    int angle_,
     NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) IdentifyEleEv(
@@ -1170,7 +1165,6 @@ void MC::STSealAPI::IdentifyElement(
         y,
         width,
         height,
-        angle_,
         notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);

@@ -319,7 +319,6 @@ MASTERCTRL_AGENT_API int ST_IdentifyElement(
     int             y, 
     int             width, 
     int             height,
-    int             angle, 
     char*           result,
     int             size = 256);
 

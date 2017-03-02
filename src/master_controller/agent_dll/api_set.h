@@ -78,7 +78,7 @@ public:
 // 要素识别
 class IdentifyNT {
 public:
-    virtual void Notify(std::string path, int x, int y, int width, int height, int angle,
+    virtual void Notify(std::string path, int x, int y, int width, int height,
         std::string result, int ec) = 0;
 };
 
@@ -387,7 +387,6 @@ public:
         int y, 
         int width, 
         int height,
-        int angle,
         IdentifyNT* nt);
 
     int AsynGetSealCoord(
