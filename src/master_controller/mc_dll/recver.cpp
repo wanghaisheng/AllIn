@@ -368,6 +368,9 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_FACTORY_CTRL:
         HandleFactoryCtrl(&msg);
         break;
+    case CT_RECOG_MODEL:
+        HandleRegcoEtc(&msg);
+        break;
     default:
         printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
         break;

@@ -113,7 +113,7 @@ MASTERCTRL_AGENT_API int ST_GetRFID(
     int&    rfid);
 
 // 准备用印
-// stamp_num        --- 章槽号, 从1开始
+// stamp_num        --- 章槽号, 从1开始(deprecated)
 // timeout          --- 进纸门超时未关闭时间, 单位秒
 //                      建议设置30秒以上, 当传入0时使用默认值
 // task_id          --- 任务号, 仅能使用一次

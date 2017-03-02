@@ -159,7 +159,7 @@ namespace MC {
             const std::string&  ori,
             std::string&        cut)
     {
-        return CutImgEdge(
+        return CutImgEdgeEx(
                 ori.c_str(),
                 (char*)cut.c_str());
     }

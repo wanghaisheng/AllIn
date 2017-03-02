@@ -447,7 +447,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        if (num_ < 1 || num_ > 6 || timeout_ < 0) {
+        if (timeout_ < 0) {
             ec = MC::EC_INVALID_PARAMETER;
             goto NT;
         }
@@ -502,10 +502,9 @@ public:
 
     NT:
         notify_->Notify(ec, _itoa(num_, num_str, 10), _itoa(timeout_, timeout_str, 10));
-        Log::WriteLog(LL_DEBUG, "MC::PrepareStampEv::SpecificExecute->准备用印, ec: %s, 章槽号: %d, "
+        Log::WriteLog(LL_DEBUG, "MC::PrepareStampEv::SpecificExecute->准备用印, ec: %s, "
             "超时: %d",
             MC::ErrorMsg[ec].c_str(),
-            num_,
             timeout_);
     }
 
@@ -1180,6 +1179,48 @@ void MC::STSealAPI::IdentifyElement(
 
 /////////////////////// 普通用印 ////////////////////////////////////////
 
+int StartStamp(
+    int num,
+    int ink,
+    int x,
+    int y,
+    int angle,
+    int type)
+{
+    MC::ErrorCode ec;
+    unsigned int rfid;
+    int ret = GetStamperID(num - 1, rfid);
+    if (0 != ret) {
+        ec = MC::EC_DRIVER_FAIL;
+        Log::WriteLog(LL_ERROR, "MC::OridinaryEv->获取章槽号%d的RFID失败, er: %d",
+            num, ret);
+        return -1;
+    }
+
+    STAMPERPARAM pa;
+    memcpy(&pa.seal, &rfid, sizeof(rfid));
+    pa.serial_number = GetTickCount();
+    pa.isPadInk = ink;
+    pa.x_point = x;
+    pa.y_point = y;
+    pa.w_time = MC::SvrConfig::GetInst()->wait_time_;
+    pa.angle = angle;
+    pa.type = type;
+
+    Log::WriteLog(LL_MSG, "MC::OridinaryEv->普通用印, 物理用印点(%d, %d)",
+        x,
+        y);
+    ret = FStartStamperstrc(&pa);
+    if (0 != ret) {
+        ec = MC::EC_DRIVER_FAIL;
+        Log::WriteLog(LL_ERROR, "MC::OridinaryEv->发起盖章失败, er: %d",
+            ret);
+        return -1;
+    }
+
+    return ret;
+}
+
 class OridinaryEv : public MC::BaseEvent {
 
 public:
@@ -1202,7 +1243,7 @@ public:
         if (ec != MC::EC_SUCC)
             goto NT;
 
-        if (num_ < 1 || num_ > 6 || task_.empty() || (type_ != 0 && type_ != 1)
+        if (num_ < 1 || num_ > 6 || (type_ != 0 && type_ != 1)
             || x_ <= 0 || y_ <= 0) {
             ec = MC::EC_INVALID_PARAMETER;
             goto NT;
@@ -1237,44 +1278,28 @@ public:
             goto NT;
         }
         if (dev_status[1] != 3) {
-            Log::WriteLog(LL_ERROR, "OridinaryEv::Execute->设备不处于空闲状态,不能盖章, status: %d",
+            Log::WriteLog(LL_ERROR, "OridinaryEv::Execute->设备不处于空闲状态(%d),不能盖章",
                 (int)dev_status[1]);
             ec = MC::EC_NOT_FREE;
             goto NT;
         }
 
-        // 普通用印
+        // especially task empty, no checking task state.
+        if (task_.empty()) {
+            Log::WriteLog(LL_DEBUG, "MC::OridinaryEv->特别地, 任务号:%s",task_.c_str());
+            if (0 == StartStamp(num_, ink_, x_, y_, angle_, type_))
+                ec = MC::EC_SUCC;
+            else
+                ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        // check task
         MC::TaskState ts = MC::TaskMgr::GetInst()->QueryTaskState(task_);
-        // check task_id state
         if (ts ==  MC::TS_ALIVE) {
-            unsigned int rfid;
-            int ret = GetStamperID(num_ - 1, rfid);
-            if (0 != ret) {
+            if (0 != StartStamp(num_, ink_, x_, y_, angle_, type_)) {
                 ec = MC::EC_DRIVER_FAIL;
-                Log::WriteLog(LL_ERROR, "MC::OridinaryEv->获取章槽号%d的RFID失败, er: %d",
-                    num_, ret);
                 goto NT;
-            }
-
-            STAMPERPARAM pa;
-            memcpy(&pa.seal, &rfid, sizeof(rfid));
-            pa.serial_number = atoi(task_.c_str());
-            pa.isPadInk = ink_;
-            pa.x_point = x_;
-            pa.y_point = y_;
-            pa.w_time = MC::SvrConfig::GetInst()->wait_time_;
-            pa.angle = angle_;
-            pa.type = type_;
-
-            Log::WriteLog(LL_DEBUG, "MC::OridinaryEv->普通用印, 物理用印点(%d, %d)",
-                x_,
-                y_);
-            ret = FStartStamperstrc(&pa);
-            if (0 != ret) {
-                ec = MC::EC_DRIVER_FAIL;
-                Log::WriteLog(LL_ERROR, "MC::OridinaryEv->发起盖章失败, er: %d",
-                    ret);
-                goto NT;  
             }
 
             // 成功发起盖章, 标记当前任务号used
