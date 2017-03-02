@@ -310,6 +310,8 @@ class RecognitionCmd : public BaseCmd {
 public:
     RecognitionCmd() : ret_(MC::EC_SUCC) {
         ct_ = CT_RECOGNITION;
+        memset(template_id_, 0x0, sizeof(template_id_));
+        memset(trace_num_, 0x0, sizeof(trace_num_));
     }
 
     virtual void Ser();
@@ -318,8 +320,8 @@ public:
 public:
     char            path_[MAX_PATH];       // 待识别图片路径
 
-    char            template_id_[4];       // 模板ID
-    char            trace_num_[20];        // 识别出的验证码
+    char            template_id_[32];       // 模板ID
+    char            trace_num_[32];        // 识别出的验证码
 
     MC::ErrorCode   ret_;
 };
@@ -328,6 +330,7 @@ class IdentifyElementCmd : public BaseCmd {
 public:
     IdentifyElementCmd() : ret_(MC::EC_SUCC) {
         ct_ = CT_ELEMENT_IDENTI;
+        memset(content_str_, 0x0, sizeof(content_str_));
     }
 
     virtual void Ser();
@@ -350,6 +353,7 @@ class RecoModelTypeEtcCmd: public BaseCmd {
 public:
     RecoModelTypeEtcCmd() : ret_(MC::EC_SUCC) {
         ct_ = CT_RECOG_MODEL;
+        memset(model_result_, 0x0, sizeof(model_result_));
     }
 
     virtual void Ser();
@@ -358,7 +362,7 @@ public:
 public:
     char            path_[MAX_PATH];
 
-    char            model_result_[64];
+    char            model_result_[128];
     double          angle_;
     int             x_;
     int             y_;

@@ -960,9 +960,10 @@ public:
             angle_str,
             x_str,
             y_str);
-        Log::WriteLog(LL_DEBUG, "MC::RecogEtcEv->模板及用印点, ec: %s, "
+        Log::WriteLog(LL_DEBUG, "MC::RecogEtcEv->模板及用印点, ec: %s, 模板: %s"
             "角度: %f, x: %d, y: %d", 
             MC::ErrorMsg[ec].c_str(),
+            model,
             angle,
             x,
             y);
