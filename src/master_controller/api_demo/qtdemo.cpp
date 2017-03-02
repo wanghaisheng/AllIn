@@ -31,7 +31,7 @@ bool GetMoudulePath(std::string& path)
     return true;
 }
 
-int QtDemo::ConnectCallBack(const char* path, unsigned int msg)
+int QtDemo::ConnectCallBack(unsigned int msg)
 {
     Log::WriteLog(LL_DEBUG, "QtDemo::ConnectCallBack->msg: %d", msg);
 
@@ -60,10 +60,11 @@ int QtDemo::ConnectCallBack(const char* path, unsigned int msg)
     return 0;
 }
 
-int QtDemo::DevMsgCallBack(unsigned int uMsg, unsigned int wParam, long lParam, 
-                            unsigned char* data, unsigned char len)
+int QtDemo::DevMsgCallBack(unsigned int uMsg, unsigned int wParam)
 {
-    Log::WriteLog(LL_DEBUG, "QtDemo::DevMsgCallBack->msg: %x", uMsg);
+    Log::WriteLog(LL_DEBUG, "QtDemo::DevMsgCallBack->msg: %x, param: %d",
+        uMsg,
+        wParam);
 
     return 0;
 }
@@ -92,8 +93,6 @@ QtDemo::QtDemo(QWidget *parent)
     ui.setupUi(this);
     setWindowTitle(DIALOG_HEADER);
 
-//     register_conn_cb_ = F_RegisterDevCallBack(QtDemo::ConnectCallBack);
-//     register_msg_cb_ = FRegisterDevCallBack(QtDemo::DevMsgCallBack);
     RegisterConnCallBack(QtDemo::ConnectCallBack);
     RegisterEventCallBack(QtDemo::DevMsgCallBack);
 
@@ -196,7 +195,8 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.radio_stamper5_, SIGNAL(pressed()), this, SLOT(Stamper5()));
     connect(ui.radio_stamper6_, SIGNAL(pressed()), this, SLOT(Stamper6()));
 
-    connect(ui.pb_stamp_read_stampers_, &QPushButton::clicked, this, &QtDemo::HandleStampReadStampers);
+    ui.pb_stamp_read_stampers_->hide();
+/*    connect(ui.pb_stamp_read_stampers_, &QPushButton::clicked, this, &QtDemo::HandleStampReadStampers);*/
     connect(ui.cb_stamp_stamp_ink_, SIGNAL(stateChanged(int)), this, SLOT(HandleCheckStampInk(int)));
 
     connect(ui.pb_prepare_, &QPushButton::clicked, this, &QtDemo::HandlePrepare);
@@ -422,8 +422,8 @@ void QtDemo::HandleCloseVibrationAlarm()
 
 void QtDemo::HandleQuerySN()
 {
-    std::string sn;
-    int ret = ST_QueryMachine(sn);
+    char sn[24] = { 0 };
+    int ret = ST_QueryMachine(sn, sizeof(sn));
     if (0 != ret)
         return Info(QString::fromLocal8Bit("获取设备编号失败, er: ") + QString::number(ret));
 

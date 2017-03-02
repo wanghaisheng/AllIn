@@ -22,7 +22,6 @@ BOOL APIENTRY DllMain(
         MC::EventCPUCore::GetInstance()->Start();
 
         SharedMem::GetInst()->CreateSharedMem();
-        MC::STSealAPI::GetInst();
     }
         break;
     case DLL_THREAD_ATTACH:

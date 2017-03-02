@@ -67,6 +67,7 @@ enum ErrorCode {
     EC_IN_STAMPING,             // 盖章模式
     EC_IN_MAINTAIN,             // 维护模式
     EC_NOT_FREE,                // 设备不处于空闲状态
+    EC_DIRECTORY_NOT_EXIST,     // 目录不存在
     EC_MAX
 };
 
@@ -131,7 +132,8 @@ static std::string ErrorMsg[] = {
     "故障模式",
     "盖章模式",
     "维护模式",
-    "设备不处于空闲状态"
+    "设备不处于空闲状态",
+    "目录不存在"
 };
 
 static std::string GetErrMsg(enum ErrorCode err)
@@ -182,6 +184,8 @@ static std::string ErrorResolver[] = {
     "打开摄像头失败",
     "关闭摄像头失败",
     "打开设备失败",
+    "打开预览失败",
+    "关闭预览失败",
     "开启录像失败",
     "停止录像失败",
     "x坐标非法",
@@ -198,7 +202,8 @@ static std::string ErrorResolver[] = {
     "故障模式",
     "盖章模式",
     "维护模式",
-    "设备不处于空闲状态"
+    "设备不处于空闲状态",
+    "指定新路径"
 };
 
 static std::string GetErrResolver(enum ErrorCode err)

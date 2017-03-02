@@ -37,48 +37,55 @@ bool Listen::Start()
     return true;
 }
 
+int Listen::GetNotifyValue()
+{
+    map_view_ = MapViewOfFile(
+        map_file_,               // Handle of the map object  
+        FILE_MAP_ALL_ACCESS,     // Read access  
+        0,                      // High-order DWORD of the file offset   
+        0,                      // Low-order DWORD of the file offset  
+        VIEW_SIZE               // The number of bytes to map to view  
+        );
+    if (map_view_ == NULL) {
+        Log::WriteLog(LL_ERROR, "Listen::GetNotifyValue->MapViewOfFile failed w/err 0x%08lx",
+            GetLastError());
+        return -1;
+    }
+
+    // Read and display the content in view.  
+    int msg = *((int*)map_view_);
+
+    // reset the view.
+    int buf = -1;
+    memcpy_s(map_view_, VIEW_SIZE, &buf, sizeof(buf));	return msg;
+
+    return msg;
+}
+
 void Listen::ListenFunc()
 {
     while (running_) {
         WaitForSingleObject(syn_ev_, INFINITE);
         ResetEvent(syn_ev_);
 
-        map_view_ = MapViewOfFile(
-            map_file_,               // Handle of the map object  
-            FILE_MAP_ALL_ACCESS,     // Read access  
-            0,                      // High-order DWORD of the file offset   
-            0,                      // Low-order DWORD of the file offset  
-            VIEW_SIZE               // The number of bytes to map to view  
-            );
-        if (map_view_ == NULL) {
-            Log::WriteLog(LL_ERROR, "Listen::ListenFunc->MapViewOfFile failed w/err 0x%08lx", 
-                GetLastError());
-            continue;
-        }
-
-        // Read and display the content in view.  
-        int msg = *((int*)map_view_);
-
-        // clear the view.
-        int buf = -1;
-        memcpy_s(map_view_, VIEW_SIZE, &buf, sizeof(buf));
-
+        int msg = GetNotifyValue();
         // 断开、重连callback
         if (0 == msg || 1 == msg) {
-            Log::WriteLog(LL_DEBUG, "Listen::ListenFunc->Read from the file mapping:\"%0x\", callback size: %d",
+            Log::WriteLog(LL_DEBUG, "Listen::ListenFunc->Read from the file mapping:\"%0x\"",
+                "callback size: %d",
                 msg,
                 connect_callback_vec_.size());
 
             for (int i = 0; i < connect_callback_vec_.size(); ++i) {
                 ConnectCallback cb = (ConnectCallback)(connect_callback_vec_.at(i));
-                cb(NULL, msg);
+                cb(msg);
             }
 
             continue;
         }
 
         // not within pre-defined values
-        if (msg < 0xA0 || msg > 0xA8)
+        if (msg < 0xA0 || msg > 0xAB)
             continue;
 
         Log::WriteLog(LL_DEBUG, "Listen::ListenFunc->Read from the file mapping:\"%0x\"",
@@ -87,8 +94,49 @@ void Listen::ListenFunc()
         // 其他消息回掉
         for (int i = 0; i < msg_callback_vec_.size(); ++i) {
             EventCallback cb = (EventCallback)(msg_callback_vec_.at(i));
-            if (NULL != cb)
-                cb(msg, 0, 0, NULL, 0);
+            if (NULL == cb)
+                continue;
+            
+            switch (msg) {
+            case 0xA0:
+                cb(0xA0, 0);
+                break;
+            case 0xA1:
+                cb(0xA1, 0);
+                break;
+            case 0xA2:
+                cb(0xA2, 0);
+                break;
+            case 0xA3:
+                cb(0xA2, 1);
+                break;
+            case 0xA4:
+                cb(0xA3, 0);
+                break;
+            case 0xA5:
+                cb(0xA4, 0);
+                break;
+            case 0xA6:
+                cb(0xA5, 0);
+                break;
+            case 0xA7:
+                cb(0xA6, 0);
+                break;
+            case 0xA8:
+                cb(0xA6, 1);
+                break;
+            case 0xA9:
+                cb(0xA7, 0);
+                break;
+            case 0xAA:
+                cb(0xA8, 0);
+                break;
+            case 0xAB:
+                cb(0xA8, 1);
+                break;
+            default:
+                break;
+            }
         }
     }
 }

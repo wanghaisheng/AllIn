@@ -95,6 +95,11 @@ public:
         if (MC::EC_SUCC != ec)
             goto NT;
 
+        if (sn_.size() > 20) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
         // 设置印控机编号
         int ret = WriteStamperIdentifier((unsigned char*)sn_.c_str(), sn_.size());
         if (0 != ret) {
@@ -475,7 +480,7 @@ public:
         // 设置推纸门开启后超时提示时间, 默认30秒
         if (0 != timeout_) {
             ret = SetPaperDoor(timeout_);
-            if (0  != ret) {
+            if (0 != ret) {
                 Log::WriteLog(LL_ERROR, "MC::PrepareStampEv->设置纸门超时失败, er: %d", ret);
                 ec = MC::EC_DRIVER_FAIL;
                 goto NT;
@@ -549,6 +554,7 @@ void PrepareStampEv::ThreadFunc()
         case WAIT_TIMEOUT: {
             boost::this_thread::interruption_point();
 
+            Unlock(); // auto unlock machine
             MC::ErrorCode ec = MC::EC_PAPER_TIMEOUT;
             std::string task_id;
             notify_->Notify(
@@ -812,7 +818,7 @@ void MC::STSealAPI::MergePhoto(
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
 
-/////////////////////////// 版面验证码识别 ////////////////////////////////
+/////////////////////////// 版面、验证码识别 ////////////////////////////////
 
 class RecognitionEv : public MC::BaseEvent {
 
@@ -846,8 +852,8 @@ public:
         // 模板类型、角度、用印点识别
         int ret = MC::ImgPro::GetInst()->GetModelTypeAnglePoint(img_, model_type, angle, x, y);
         if (0 != ret) {
-            Log::WriteLog(LL_ERROR, "MC::RecognitionEv::SpecificExecute->模版类型角度识别失败, er: %d",
-                          ret);
+            Log::WriteLog(LL_ERROR, "MC::RecognitionEv->模版类型角度识别失败, er: %d",
+                ret);
             ec = MC::EC_MODEL_TYPE_FAIL;
             goto NT;
         }
@@ -2371,8 +2377,8 @@ public:
 
     virtual void SpecificExecute() {
         MC::ErrorCode ec = exception_;
-        if (MC::EC_SUCC != ec)
-            goto NT;
+//         if (MC::EC_SUCC != ec)
+//             goto NT;
 
         int ret = FOpenDev(NULL);
         if (0 != ret) {
@@ -3198,12 +3204,27 @@ public:
     }
 
     virtual void SpecificExecute() {
+        std::string parent_path;
         MC::ErrorCode ec = exception_;
         if (MC::EC_SUCC != ec)
             goto NT;
 
+        // check parameter
         if (which_ != 0 && which_ != 1 && which_ != 2) {
             ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
+        std::size_t last_slash = path_.find_last_of("\\");
+        if (last_slash == path_.length() - 1) {
+            ec = MC::EC_INVALID_PARAMETER;
+            goto NT;
+        }
+
+        parent_path = path_.substr(0, last_slash + 1);
+        if (FILE_ATTRIBUTE_DIRECTORY != GetFileAttributes(parent_path.c_str())) {
+            Log::WriteLog(LL_ERROR, "MC::RecordVideoEv->不存在目录: \"%s\"", parent_path.c_str());
+            ec = MC::EC_DIRECTORY_NOT_EXIST;
             goto NT;
         }
 
@@ -3217,7 +3238,6 @@ public:
             PREVIEW_WIDTH,
             PREVIEW_HEIGHT,
             NULL, NULL, NULL, NULL);
-/*        ::SetWindowTextA(preview_hwnd, "Record Window!");*/
 
         int ret = StartPreview(
             (CAMERAINDEX)which_,

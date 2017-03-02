@@ -49,6 +49,8 @@ private:
 
     void ListenFunc();
 
+    int GetNotifyValue();
+
 private:
     static Listen* listen_inst_;
 

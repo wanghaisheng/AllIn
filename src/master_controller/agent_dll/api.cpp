@@ -59,20 +59,21 @@ public:
     int er_;
 };
 
-int ST_QueryMachine(std::string& sn)
+int ST_QueryMachine(char* sn, int size)
 {
     QueryMachineNT* nt = new (std::nothrow) QueryMachNT;
     api_agent.AsynQueryMachine(nt);
 
+    QueryMachNT* derive_nt = (QueryMachNT*)nt;
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((QueryMachNT*)nt)->cv_, SYNC_WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
     if (!((QueryMachNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
-        ((QueryMachNT*)nt)->er_ = MC::EC_TIMEOUT;
+        derive_nt->er_ = MC::EC_TIMEOUT;
 
-    sn = ((QueryMachNT*)nt)->sn_;
-    int ret = ((QueryMachNT*)nt)->er_;
+    strncpy(sn, derive_nt->sn_.c_str(), min(size, derive_nt->sn_.size()));
+    int ret = derive_nt->er_;
     api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;

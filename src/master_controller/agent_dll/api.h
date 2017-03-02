@@ -1,8 +1,6 @@
 ﻿#ifndef MC_AGENT_API_H_
 #define MC_AGENT_API_H_
 
-#include <string>
-
 #ifdef MASTERCTRL_AGENT_EXPORTS
 #define MASTERCTRL_AGENT_API _declspec(dllexport)
 #else
@@ -19,24 +17,26 @@ extern "C"{
 #endif
 
 // 设备连接状态回调函数
-// path     设备路径
-// msg	    1 连接, 0 断开
-typedef int (_stdcall *ConnectCallback)(const char* path, unsigned int msg);
+// msg:	    1 --- 连接
+//          0 --- 断开
+typedef int (_stdcall *ConnectCallback)(
+    unsigned int msg);
 
 // USB通信回调函数
 // msg:
-// 0xA0:    盖章过程中下压通知
-// 0xA1:    盖章过程中机械手臂回到印油线，提示可以拍照
-// 0xA2:    盖章完成通知，w_param 0 成功， 1 失败
-// 0xA3:    盖章过程中 印章掉落通知
-// 0xA4:    纸门关闭通知, (w_param为0表示门关闭通知)
-// 0xA5:    盖章过程错误通知
-// 0xA6:    侧门关闭通知, (w_param为0表示侧门关闭通知; 1表示侧门打开通知)
-// 0xA7:    顶盖门关闭通知, (w_param为0表示顶盖关闭通知; 1表示顶盖打开通知)
-// 0xA8:    电子锁上锁通知
+//      0xA0:    盖章过程中下压通知
+//      0xA1:    盖章过程中机械手臂回到印油线, 提示可以拍照
+//      0xA2:    盖章完成通知, param = 0 成功; 1 失败
+//      0xA3:    盖章过程中, 印章掉落通知
+//      0xA4:    纸门关闭通知, (param为0表示门关闭通知)
+//      0xA5:    盖章过程错误通知
+//      0xA6:    侧门关闭通知, (param为0表示侧门关闭通知; 1表示侧门打开通知)
+//      0xA7:    顶盖门关闭通知, (param为0 表示顶盖关闭通知; 1 表示顶盖打开通知)
+//      0xA8:    电子锁上锁通知
 // 
-typedef int (_stdcall *EventCallback)(unsigned int msg, unsigned int w_param, long l_param,
-    unsigned char* data, unsigned char len);
+typedef int (_stdcall *EventCallback)(
+    unsigned int msg,
+    unsigned int param);
 
 MASTERCTRL_AGENT_API int RegisterConnCallBack(ConnectCallback func);
 
@@ -80,7 +80,8 @@ MASTERCTRL_AGENT_API int ST_GetDevStatus(
 
 // 获取印控仪编号
 MASTERCTRL_AGENT_API int ST_QueryMachine(
-    std::string& sn);
+    char* sn,
+    int size = 24);
 
 // 设置印控机编号, 最多支持20个字节
 MASTERCTRL_AGENT_API int ST_SetMachine(

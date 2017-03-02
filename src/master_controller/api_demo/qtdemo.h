@@ -31,9 +31,8 @@ signals:
 private:
     static boost::mutex mtx;
     static int connected;
-    static int _stdcall ConnectCallBack(const char* path, unsigned int msg);
-    static int _stdcall DevMsgCallBack(unsigned int uMsg, unsigned int wParam, long lParam,
-                            unsigned char* data, unsigned char len);
+    static int _stdcall ConnectCallBack(unsigned int msg);
+    static int _stdcall DevMsgCallBack(unsigned int uMsg, unsigned int wParam);
     void ShowTimeElapsed(unsigned long begin);
 
     int register_conn_cb_;

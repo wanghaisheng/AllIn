@@ -277,15 +277,27 @@ int _stdcall DevMsgCallBack(
     unsigned char* data,
     unsigned char len)
 {
-    SharedMem::GetInst()->WriteSharedMem(uMsg);
-
     switch (uMsg) {
-    case 0xA2: {
-        StampingMgr::GetInst()->SetStampingResult(0 == wParam ? MC::EC_SUCC: MC::EC_FAIL);
+    case 0xA0: // 盖章过程中下压
+        SharedMem::GetInst()->WriteSharedMem(uMsg);
+        break;
+    case 0xA1: // 盖章过程中机械手臂回到印油线
+        SharedMem::GetInst()->WriteSharedMem(uMsg);
+        break;
+    case 0xA2: { // 盖章完成通知
+        if (0 == wParam) { // success
+            SharedMem::GetInst()->WriteSharedMem(0xA2);
+            StampingMgr::GetInst()->SetStampingResult(MC::EC_SUCC);
+        } else {   // failure
+            SharedMem::GetInst()->WriteSharedMem(0xA3);
+            StampingMgr::GetInst()->SetStampingResult(MC::EC_FAIL);
+        }
         StampingMgr::GetInst()->Signal();
     }
         break;
-    case 0xA3:  {
+    case 0xA3:  { // 盖章过程中印章掉落
+        SharedMem::GetInst()->WriteSharedMem(0xA4);
+
         StampingMgr::GetInst()->SetStampingResult(MC::EC_STAMPER_DROP);
         StampingMgr::GetInst()->Signal();
 
@@ -298,17 +310,37 @@ int _stdcall DevMsgCallBack(
     }
         break;
     case 0xA4: // 纸门信号
+        SharedMem::GetInst()->WriteSharedMem(0xA5);
+
         MC::Tool::GetInst()->SetPaper(wParam);
         break;
-    case 0xA5:
+    case 0xA5: // 盖章错误
+        SharedMem::GetInst()->WriteSharedMem(0xA6);
+
         StampingMgr::GetInst()->SetStampingResult(MC::EC_FAIL);
         StampingMgr::GetInst()->Signal();
         break;
-    case 0xA6: // 侧门信号
+    case 0xA6: // 侧门关闭通知
+        if (0 == wParam) { // closed
+            SharedMem::GetInst()->WriteSharedMem(0xA7);
+        } else { // open
+            SharedMem::GetInst()->WriteSharedMem(0xA8);
+        }
+
         MC::Tool::GetInst()->SeteSafe(wParam);
         break;
-    case 0xA7: // 顶盖门信号
+    case 0xA7: // 顶盖门关闭
+        SharedMem::GetInst()->WriteSharedMem(0xA9);
+
         MC::Tool::GetInst()->SetTop(wParam);
+        break;
+    case 0xA8: // 电子锁上锁通知
+    {
+        if (0 == wParam)
+            SharedMem::GetInst()->WriteSharedMem(0xAA);
+        else
+            SharedMem::GetInst()->WriteSharedMem(0xAB);
+    }
         break;
     default:
         break;
