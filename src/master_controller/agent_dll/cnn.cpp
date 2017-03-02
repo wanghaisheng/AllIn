@@ -377,6 +377,12 @@ void MC::Cnn::ReceiveFunc()
         case CT_FACTORY_CTRL:
             asyn_api_->HandleFactoryCtrl(chBuf);
             break;
+        case CT_RESET:
+            asyn_api_->HandleReset(chBuf);
+            break;
+        case CT_RESTART:
+            asyn_api_->HandleRestart(chBuf);
+            break;
         default:
             printf("AsynAPISet::ReceiverFunc->Unknown cmd: %d", cmd_type);
             break;

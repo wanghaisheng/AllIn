@@ -68,6 +68,8 @@ enum CmdType {
     CT_QUERY_TOP,           // 顶盖门状态查询
     CT_EXIT_MAIN,           // 退出维护模式
     CT_FACTORY_CTRL,        // 工厂模式控制
+    CT_RESET,               // 复位
+    CT_RESTART,             // 重启主板
 
     // 摄像头接口
     CT_START_PREVIEW,       // 开始预览
@@ -133,6 +135,8 @@ static std::string cmd_des[] =
     "顶盖门状态查询",
     "退出维护模式",
     "工厂模式控制",
+    "复位",
+    "重启主板",
 
     "打开摄像头",
     "关闭摄像头",
@@ -1124,6 +1128,32 @@ public:
 public:
     int ctrl_;  // 0 --- enable, 1 --- disable
 
+    MC::ErrorCode ret_;
+};
+
+class ResetCmd : public BaseCmd {
+public:
+    ResetCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_RESET;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    MC::ErrorCode ret_;
+};
+
+class RestartCmd : public BaseCmd {
+public:
+    RestartCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_RESTART;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
     MC::ErrorCode ret_;
 };
 

@@ -371,6 +371,12 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_RECOG_MODEL:
         HandleRegcoEtc(&msg);
         break;
+    case CT_RESET:
+        HandleReset(&msg);
+        break;
+    case CT_RESTART:
+        HandleRestart(&msg);
+        break;
     default:
         printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
         break;
@@ -3103,4 +3109,84 @@ void Recver::HandleFactoryCtrl(const RecvMsg* msg)
     MC::STSealAPI::GetInst()->CtrlFactory(
         cmd->ctrl_,
         notify);
+}
+
+////////////////// 复位 /////////////
+
+class ResetNT : public MC::NotifyResult {
+public:
+    ResetNT(LPPIPEINST inst, ResetCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        cmd_->ret_ = ec;
+
+        recver_->PushCmd(cmd_);
+    }
+
+private:
+    ResetCmd*           cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleReset(const RecvMsg* msg)
+{
+    ResetCmd* cmd = new (std::nothrow) ResetCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+
+    MC::NotifyResult* notify = new (std::nothrow) ResetNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->Reset(notify);
+}
+
+////////////////// 重启 /////////////
+
+class RestartNT : public MC::NotifyResult {
+public:
+    RestartNT(LPPIPEINST inst, RestartCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        cmd_->ret_ = ec;
+
+        recver_->PushCmd(cmd_);
+    }
+
+private:
+    RestartCmd*         cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleRestart(const RecvMsg* msg)
+{
+    RestartCmd* cmd = new (std::nothrow) RestartCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+
+    MC::NotifyResult* notify = new (std::nothrow) RestartNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->Restart(notify);
 }

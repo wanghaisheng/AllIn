@@ -109,6 +109,9 @@ private:
     void HandleExitMain();
     void HandleQueryTop();
 
+    void HandleReset();
+    void HandleRestart();
+
     void HandleSetResolution();
     void HandleSetDPI();
 

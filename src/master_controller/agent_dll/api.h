@@ -284,6 +284,12 @@ MASTERCTRL_AGENT_API int ST_EnableFactory();
 // 关闭工厂模式
 MASTERCTRL_AGENT_API int ST_DisableFactory();
 
+// 复位印控机, 不会断开连接
+MASTERCTRL_AGENT_API int ST_Reset();
+
+// 重启主板
+MASTERCTRL_AGENT_API int ST_Restart();
+
 /////////////////////// 2. 图像处理API //////////////////////////////
 
 // 合成照片

@@ -251,6 +251,10 @@ public:
 
     void CtrlFactory(int ctrl, NotifyResult* notify);
 
+    void Reset(NotifyResult* notify);
+
+    void Restart(NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC

@@ -164,6 +164,9 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_write_cal_pts_, &QPushButton::clicked, this, &QtDemo::HandldeWriteCalPoints);
     connect(ui.pb_read_cal_pts_, &QPushButton::clicked, this, &QtDemo::HandleReadPCalPoints);
 
+    connect(ui.pb_reset_, &QPushButton::clicked, this, &QtDemo::HandleReset);
+    connect(ui.pb_restart_, &QPushButton::clicked, this, &QtDemo::HandleRestart);
+
     //拍照/识别
     ui.pb_ori_img_->setStyleSheet("background-color: transparent;");
     ui.pb_cut_img_->setStyleSheet("background-color: transparent;");
@@ -1520,4 +1523,22 @@ void QtDemo::HandleReadPCalPoints()
 
     Info(str);
     ui.statusBar->showMessage(QString::fromLocal8Bit("读校准点成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleReset()
+{
+    int ret = ST_Reset();
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("复位失败, er: ") + QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("复位成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleRestart()
+{
+    int ret = ST_Restart();
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("重启主板失败, er: ") + QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("重启主板成功"), STATUS_TEXT);
 }

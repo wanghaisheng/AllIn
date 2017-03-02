@@ -4070,3 +4070,95 @@ void MC::STSealAPI::CtrlFactory(int ctrl, NotifyResult* notify)
 
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
+
+///////////////////////////// 复位 /////////////////////////////////
+
+class ResetEv : public MC::BaseEvent {
+public:
+    ResetEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = Reset();
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::ResetEv->复位失败, er: %d", ret);
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::ResetEv->复位, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::Reset(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) ResetEv(
+        "复位",
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+///////////////////////////// 重启 /////////////////////////////////
+
+class RestartEv : public MC::BaseEvent {
+public:
+    RestartEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = FRestart();
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::RestartEv->重启主板失败, er: %d", ret);
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::RestartEv->重启, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::Restart(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) RestartEv(
+        "重启主板",
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}

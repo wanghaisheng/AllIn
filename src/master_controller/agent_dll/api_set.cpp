@@ -1581,3 +1581,45 @@ void AsynAPISet::HandleFactoryCtrl(char* chBuf)
     if (NULL != nt)
         nt->Notify(cmd.ret_);
 }
+
+int AsynAPISet::AsynReset(ResetNT* nt)
+{
+    ResetCmd* cmd = new ResetCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleReset(char* chBuf)
+{
+    ResetCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleReset->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    ResetNT* nt = (ResetNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}
+
+int AsynAPISet::AsynRestart(RestartNT* nt)
+{
+    RestartCmd* cmd = new RestartCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleRestart(char* chBuf)
+{
+    RestartCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleRestart->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    RestartNT* nt = (RestartNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}

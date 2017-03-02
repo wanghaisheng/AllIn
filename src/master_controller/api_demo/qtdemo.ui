@@ -42,7 +42,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <property name="movable">
      <bool>false</bool>
@@ -1023,6 +1023,32 @@
       </property>
       <property name="text">
        <string>顶盖门状态</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_reset_">
+      <property name="geometry">
+       <rect>
+        <x>990</x>
+        <y>530</y>
+        <width>61</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>复位</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pb_restart_">
+      <property name="geometry">
+       <rect>
+        <x>1060</x>
+        <y>530</y>
+        <width>61</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>重启</string>
       </property>
      </widget>
     </widget>

@@ -791,3 +791,29 @@ void CtrlFactoryCmd::Unser()
     BaseCmd::Unser();
     xs_ >> ctrl_ >> ret_;
 }
+
+void ResetCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << ret_;
+    xs_.Trim();
+}
+
+void ResetCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> ret_;
+}
+
+void RestartCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << ret_;
+    xs_.Trim();
+}
+
+void RestartCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> ret_;
+}

@@ -323,6 +323,16 @@ public:
     virtual void Notify(int ec) = 0;
 };
 
+class ResetNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
+class RestartNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
 class AsynAPISet {
 public:
     void DeleteNotify(void* nt);
@@ -492,6 +502,10 @@ public:
         int ctrl,
         CtrlFactoryNT* nt);
 
+    int AsynReset(ResetNT* nt);
+
+    int AsynRestart(RestartNT* nt);
+
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);
     
@@ -617,6 +631,10 @@ public:
     void HandleStopPreview(char* chBuf);
 
     void HandleFactoryCtrl(char* chBuf);
+
+    void HandleReset(char* chBuf);
+
+    void HandleRestart(char* chBuf);
 
 private:
     std::map<std::string, void*> api_maps_;
