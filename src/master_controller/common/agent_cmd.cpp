@@ -740,6 +740,19 @@ void QueryTopCmd::Unser()
     xs_ >> status_ >> ret_;
 }
 
+void EnterMaintainCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << ret_;
+    xs_.Trim();
+}
+
+void EnterMaintainCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> ret_;
+}
+
 void ExitMaintainCmd::Ser()
 {
     BaseCmd::Ser();

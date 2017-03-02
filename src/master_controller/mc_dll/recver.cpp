@@ -356,6 +356,9 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_QUERY_TOP:
         HandleQueryTop(&msg);
         break;
+    case CT_ENTER_MAIN:
+        HandleEnterMain(&msg);
+        break;
     case CT_EXIT_MAIN:
         HandleExitMain(&msg);
         break;
@@ -922,7 +925,8 @@ public:
         std::string ctx2 = "")
     {
         std::cout << "IdentifyElementNT::Notify->ec: " << ec <<
-            ", 识别图片路径: " << data1.c_str() << ", 识别结果: " << data2.c_str() << std::endl;
+            ", 识别图片路径: " << data1.c_str() << 
+            ", 识别结果: " << data2.c_str() << std::endl;
 
         cmd_->ret_ = ec;
         strcpy_s(cmd_->content_str_, data2.c_str());
@@ -2931,6 +2935,48 @@ void Recver::HandleQueryTop(const RecvMsg* msg)
 
     MC::NotifyResult* notify = new (std::nothrow) ReadTopNT(msg->pipe_inst, cmd, this);
     MC::STSealAPI::GetInst()->QueryTop(notify);
+}
+
+////////////////// 进入维护模式 /////////////
+
+class EnterMainNT : public MC::NotifyResult {
+public:
+    EnterMainNT(LPPIPEINST inst, EnterMaintainCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        std::cout << "EnterMainNT::Notify->ec: " << ec << std::endl;
+
+        cmd_->ret_ = ec;
+
+        recver_->PushCmd(cmd_);
+    }
+
+private:
+    EnterMaintainCmd*   cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleEnterMain(const RecvMsg* msg)
+{
+    EnterMaintainCmd* cmd = new (std::nothrow) EnterMaintainCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+
+    MC::NotifyResult* notify = new (std::nothrow) EnterMainNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->EnterMaintain(notify);
 }
 
 ////////////////// 退出维护模式 /////////////

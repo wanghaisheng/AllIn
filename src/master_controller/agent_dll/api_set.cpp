@@ -1621,3 +1621,24 @@ void AsynAPISet::HandleRestart(char* chBuf)
     if (NULL != nt)
         nt->Notify(cmd.ret_);
 }
+
+int AsynAPISet::AsynEnterMain(EnterMaintainNT* nt)
+{
+    EnterMaintainCmd* cmd = new EnterMaintainCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleEnterMain(char* chBuf)
+{
+    EnterMaintainCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleEnterMain->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    EnterMaintainNT* nt = (EnterMaintainNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}

@@ -106,6 +106,7 @@ private:
     void HandleOpenSafeLED();
     void HandleCloseSafeLED();
 
+    void HandleEnterMain();
     void HandleExitMain();
     void HandleQueryTop();
 

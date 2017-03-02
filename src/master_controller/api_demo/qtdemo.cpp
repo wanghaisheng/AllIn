@@ -147,6 +147,7 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_open_safe_led_, &QPushButton::clicked, this, &QtDemo::HandleOpenSafeLED);
     connect(ui.pb_close_safe_led_, &QPushButton::clicked, this, &QtDemo::HandleCloseSafeLED);
 
+    connect(ui.pb_enter_main_, &QPushButton::clicked, this, &QtDemo::HandleEnterMain);
     connect(ui.pb_exit_main_, &QPushButton::clicked, this, &QtDemo::HandleExitMain);
     connect(ui.pb_top_status_, &QPushButton::clicked, this, &QtDemo::HandleQueryTop);
 
@@ -532,6 +533,16 @@ void QtDemo::HandleCloseSafeLED()
             QString::number(ret));
 
     ui.statusBar->showMessage(QString::fromLocal8Bit("关安全门补光灯成功"), STATUS_TEXT);
+}
+
+void QtDemo::HandleEnterMain()
+{
+    int ret = ST_EnterMaintain();
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("进入维护模式失败, er: ") +
+            QString::number(ret));
+
+    ui.statusBar->showMessage(QString::fromLocal8Bit("进入维护模式成功"), STATUS_TEXT);
 }
 
 void QtDemo::HandleExitMain()
@@ -1006,7 +1017,6 @@ void QtDemo::HandleRecogEle()
         atoi(ui.le_y_in_img_->text().toStdString().c_str()),
         atoi(ui.le_input_width_->text().toStdString().c_str()),
         atoi(ui.le_input_height_->text().toStdString().c_str()),
-        0,
         result);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("要素识别失败, er: ") + QString::number(ret));

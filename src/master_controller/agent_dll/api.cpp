@@ -3256,6 +3256,61 @@ int ST_QueryTop(int& status)
     return ret;
 }
 
+/////////////////////////////// 进入维护模式 /////////////////////////////
+
+class EnterMainNt : public EnterMaintainNT {
+public:
+#ifdef _XP
+    EnterMainNt() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~EnterMainNt() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int ec) {
+        er_ = ec;
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int er_;
+};
+
+int ST_EnterMaintain()
+{
+    EnterMaintainNT* nt = new EnterMainNt;
+    api_agent.AsynEnterMain(nt);
+
+    EnterMainNt* derive_nt = (EnterMainNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}
+
 /////////////////////////////// 退出维护模式 /////////////////////////////
 
 class ExitMainNt : public ExitMaintainNT {

@@ -1051,6 +1051,19 @@
        <string>重启</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="pb_enter_main_">
+      <property name="geometry">
+       <rect>
+        <x>670</x>
+        <y>480</y>
+        <width>150</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>进入维护模式</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_stamper">
      <attribute name="title">

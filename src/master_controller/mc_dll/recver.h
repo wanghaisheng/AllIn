@@ -152,6 +152,8 @@ private:
 
     void HandleQueryTop(const RecvMsg* msg);
 
+    void HandleEnterMain(const RecvMsg* msg);
+
     void HandleExitMain(const RecvMsg* msg);
 
     void HandleStartPreview(const RecvMsg* msg);

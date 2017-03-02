@@ -303,6 +303,11 @@ public:
     virtual void Notify(int status, int ec) = 0;
 };
 
+class EnterMaintainNT {
+public:
+    virtual void Notify(int ec) = 0;
+};
+
 class ExitMaintainNT {
 public:
     virtual void Notify(int ec) = 0;
@@ -484,6 +489,8 @@ public:
 
     int AsynQueryTop(QueryTopNT* nt);
 
+    int AsynEnterMain(EnterMaintainNT* nt);
+
     int AsynExitMain(ExitMaintainNT* nt);
 
     int AsynStartPreview(
@@ -622,6 +629,8 @@ public:
     void HandleReadCali(char* chBuf);
 
     void HandleQueryTop(char* chBuf);
+
+    void HandleEnterMain(char* chBuf);
 
     void HandleExitMain(char* chBuf);
 

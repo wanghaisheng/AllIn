@@ -365,6 +365,9 @@ void MC::Cnn::ReceiveFunc()
         case CT_QUERY_TOP:
             asyn_api_->HandleQueryTop(chBuf);
             break;
+        case CT_ENTER_MAIN:
+            asyn_api_->HandleEnterMain(chBuf);
+            break;
         case CT_EXIT_MAIN:
             asyn_api_->HandleExitMain(chBuf);
             break;

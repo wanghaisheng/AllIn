@@ -66,6 +66,7 @@ enum CmdType {
     CT_WRITE_CALIBRATION,   // 写较准点
     CT_READ_CALIBRATION,    // 读较准点
     CT_QUERY_TOP,           // 顶盖门状态查询
+    CT_ENTER_MAIN,          // 进入维护模式
     CT_EXIT_MAIN,           // 退出维护模式
     CT_FACTORY_CTRL,        // 工厂模式控制
     CT_RESET,               // 复位
@@ -133,6 +134,7 @@ static std::string cmd_des[] =
     "写较准点",
     "读较准点",
     "顶盖门状态查询",
+    "进入维护模式",
     "退出维护模式",
     "工厂模式控制",
     "复位",
@@ -1071,6 +1073,19 @@ public:
 public:
     int             status_;            //顶盖门状态, 0-开, 1-关, -1--未成功获取到门状态
     MC::ErrorCode   ret_;
+};
+
+class EnterMaintainCmd : public BaseCmd {
+public:
+    EnterMaintainCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_ENTER_MAIN;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    MC::ErrorCode ret_;
 };
 
 class ExitMaintainCmd : public BaseCmd {

@@ -175,6 +175,9 @@ MASTERCTRL_AGENT_API int ST_ControlSafe(
 MASTERCTRL_AGENT_API int ST_QueryTop(
     int& status);
 
+// 进入维护模式
+MASTERCTRL_AGENT_API int ST_EnterMaintain();
+
 // 退出维护模式
 MASTERCTRL_AGENT_API int ST_ExitMaintain();
 

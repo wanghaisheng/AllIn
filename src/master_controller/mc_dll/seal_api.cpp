@@ -1123,6 +1123,8 @@ public:
             height_,
             result);
         if (0 != ret) {
+            Log::WriteLog(LL_DEBUG, "MC::IdentifyEleEv->要素识别失败, er: %d",
+                ret);
             ec = MC::EC_ELEMENT_FAIL;
             goto NT;
         }
@@ -3838,6 +3840,51 @@ void MC::STSealAPI::QueryTop(NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) QueryTopEv(
         "顶盖门状态",
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+///////////////////////////// 进入维护模式 /////////////////////////////////
+
+class EnterMaintainEv : public MC::BaseEvent {
+public:
+    EnterMaintainEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = FMaintenanceMode();
+        if (0 != ret) {
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::EnterMaintainEv->进入维护模式, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::EnterMaintain(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) EnterMaintainEv(
+        "进入维护模式",
         notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);

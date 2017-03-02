@@ -242,6 +242,8 @@ public:
 
     void QueryTop(NotifyResult* notify);
 
+    void EnterMaintain(NotifyResult* notify);
+
     void ExitMaintain(NotifyResult* notify);
 
     void StartPreview(int which, int width, int height, int hwnd, NotifyResult* notify);
