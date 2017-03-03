@@ -4,6 +4,7 @@
 #include <iostream>
 #include "recver.h"
 #include "log.h"
+#include "dumper_api.h"
 
 #pragma comment(lib, "advapi32.lib")
 
@@ -27,6 +28,8 @@ VOID SvcReportEvent(LPTSTR);
 
 int main(int argc, TCHAR *argv[])
 {
+    InstallMiniDumper();
+
     if (1 == argc)
         printf("参数非法, 带命令参数（exe or install)启动\n");
 

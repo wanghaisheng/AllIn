@@ -74,6 +74,7 @@ private:
     void HandleBeepOff();       //¹Ø±Õ·äÃùÆ÷
 
     void HandleQuerySlots();
+    void HandleGetSystem();
 
     void HandleQueryStampers();
 

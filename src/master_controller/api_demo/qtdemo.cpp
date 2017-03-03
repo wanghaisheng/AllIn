@@ -127,6 +127,7 @@ QtDemo::QtDemo(QWidget *parent)
    
     connect(ui.pb_query_slots_, &QPushButton::clicked, this, &QtDemo::HandleQuerySlots);
     connect(ui.pb_query_stamper_, &QPushButton::clicked, this, &QtDemo::HandleQueryStampers);
+    connect(ui.pb_system_, &QPushButton::clicked, this, &QtDemo::HandleGetSystem);
     
     connect(ui.pb_cali_stamp_, &QPushButton::clicked, this, &QtDemo::HandleABCCheck);
     ui.groupBox_8->hide();
@@ -711,6 +712,24 @@ void QtDemo::HandleQueryStampers()
             QString::number(ret));
 
     Info(QString::fromLocal8Bit("章状态: ") + QString::fromStdString(stampers));
+}
+
+void QtDemo::HandleGetSystem()
+{
+    std::string system_info[] = {
+        "主系统",
+        "备用系统",
+        "主系统升级模式",
+        "备用系统升级模式"
+    };
+
+    int status;
+    int ret = ST_GetSystemInfo(status);
+    if (0 != ret)
+        return Info(QString::fromLocal8Bit("获取系统信息失败, err: ") +
+            QString::number(ret));
+
+    Info(QString::fromLocal8Bit("系统信息: ") + QString::fromLocal8Bit(system_info[status].c_str()));
 }
 
 void QtDemo::HandleQuerySlots()

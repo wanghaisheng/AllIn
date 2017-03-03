@@ -166,6 +166,8 @@ private:
 
     void HandleRestart(const RecvMsg* msg);
 
+    void HandleGetSystem(const RecvMsg* msg);
+
 private:
     static MC::SynQueue<const RecvMsg*> recver_queue_;
     static HANDLE                       recv_msg_ev_;

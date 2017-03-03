@@ -1064,6 +1064,19 @@
        <string>进入维护模式</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="pb_system_">
+      <property name="geometry">
+       <rect>
+        <x>1200</x>
+        <y>90</y>
+        <width>111</width>
+        <height>46</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>系统信息</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_stamper">
      <attribute name="title">

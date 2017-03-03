@@ -380,6 +380,9 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_RESTART:
         HandleRestart(&msg);
         break;
+    case CT_GET_SYSTEM:
+        HandleGetSystem(&msg);
+        break;
     default:
         printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
         break;
@@ -829,7 +832,7 @@ public:
             ", 模板ID: " << ctx1.c_str() << ", 追溯码: " << ctx2.c_str() << std::endl;
 
         cmd_->ret_ = ec;
-        strcpy_s(cmd_->template_id_, ctx1.c_str());
+        strcpy_s(cmd_->model_type_, ctx1.c_str());
         strcpy_s(cmd_->trace_num_, ctx2.c_str());
 
         recver_->PushCmd(cmd_);
@@ -3234,4 +3237,45 @@ void Recver::HandleRestart(const RecvMsg* msg)
 
     MC::NotifyResult* notify = new (std::nothrow) RestartNT(msg->pipe_inst, cmd, this);
     MC::STSealAPI::GetInst()->Restart(notify);
+}
+
+////////////////// 获取系统信息 /////////////
+
+class GetSystemNT : public MC::NotifyResult {
+public:
+    GetSystemNT(LPPIPEINST inst, GetSystemCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        cmd_->ret_ = ec;
+        cmd_->status_ = atoi(data1.c_str());
+
+        recver_->PushCmd(cmd_);
+    }
+
+private:
+    GetSystemCmd*       cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleGetSystem(const RecvMsg* msg)
+{
+    GetSystemCmd* cmd = new (std::nothrow) GetSystemCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+
+    MC::NotifyResult* notify = new (std::nothrow) GetSystemNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->GetSystem(notify);
 }

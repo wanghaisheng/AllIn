@@ -13,6 +13,7 @@
 AsynAPISet api_agent;
 
 const int SYNC_WAIT_TIME = 10000; // 等待异步通知回调超时时间(毫秒)
+const int SYNC_IMAGE_WAIT = 20000;
 
 // 同步接口, 异步改同步接口, 同步阻塞等异步通知
 
@@ -562,7 +563,7 @@ int ST_MergePhoto(
     api_agent.AsynMergePhoto(p1, p2, merged, nt);
 
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((MergeNT*)nt)->cv_, SYNC_WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((MergeNT*)nt)->cv_, SYNC_IMAGE_WAIT))
 #else
     if (!((MergeNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
@@ -638,7 +639,7 @@ int ST_SearchSrcImageStampPoint(
 
     SearchStampNT* derive_nt = (SearchStampNT*)nt;
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_IMAGE_WAIT))
 #else
     if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
@@ -714,7 +715,7 @@ int ST_RecoModelTypeAndAngleAndModelPointByImg(
 
     RecogModelPtNT* derive_nt = (RecogModelPtNT*)nt;
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_IMAGE_WAIT))
 #else
     if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
@@ -783,7 +784,7 @@ int ST_RecognizeImage(const char* path,
 
     RecogNT* derive_nt = (RecogNT*)nt;
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((RecogNT*)nt)->cv_, SYNC_WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_IMAGE_WAIT))
 #else
     if (!((RecogNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
@@ -856,7 +857,7 @@ int ST_IdentifyElement(
 
     IdentiNT* derive_nt = (IdentiNT*)nt;
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((IdentiNT*)nt)->cv_, SYNC_WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(((IdentiNT*)nt)->cv_, SYNC_IMAGE_WAIT))
 #else
     if (!((IdentiNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
@@ -1132,14 +1133,10 @@ public:
 #endif
 
     virtual void Notify(int er_code, std::string err_msg, std::string err_resolver, int ec) {
-        Log::WriteLog(LL_DEBUG, "GetErrNT::Notify->获取错误信息, 错误码: %d, 错误信息: %s, 解决方案: %s",
-            er_code,
-            err_msg.c_str(),
-            err_resolver.c_str());
-
         er_ = ec;
         msg_ = err_msg;
         resolver_ = err_resolver;
+
 #ifdef _XP
         SetEvent(cv_);
 #else
@@ -1165,7 +1162,7 @@ int ST_GetError(int err_code, char* err_msg, char* err_resolver, int size)
 
     GetErrNT* derive_nt = (GetErrNT*)nt;
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(((GetErrNT*)nt)->cv_, SYNC_WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
 #else
     if (!((GetErrNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
 #endif
@@ -1173,7 +1170,7 @@ int ST_GetError(int err_code, char* err_msg, char* err_resolver, int size)
 
     strncpy(err_msg, derive_nt->msg_.c_str(), min(size, derive_nt->msg_.size()));
     strncpy(err_resolver, derive_nt->resolver_.c_str(), min(size, derive_nt->resolver_.size()));
-    int ret = ((GetErrNT*)nt)->er_;
+    int ret = derive_nt->er_;
     api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
@@ -3661,6 +3658,66 @@ int ST_Restart()
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}
+
+/////////////////////////////// get system info /////////////////////////////
+
+class GetSysInfoNt : public GetSystemNT {
+public:
+#ifdef _XP
+    GetSysInfoNt() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~GetSysInfoNt() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int status, int ec) {
+        er_ = ec;
+        status_ = status;
+
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int status_;
+    int er_;
+};
+
+int ST_GetSystemInfo(int& status)
+{
+    GetSystemNT* nt = new GetSysInfoNt;
+    api_agent.AsynGetSystem(nt);
+
+    GetSysInfoNt* derive_nt = (GetSysInfoNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    if (0 == ret)
+        status = derive_nt->status_;
     api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;

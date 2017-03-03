@@ -105,14 +105,14 @@ void SynthesizePhotoCmd::Unser()
 void RecognitionCmd::Ser()
 {
     BaseCmd::Ser();
-    xs_ << path_ << template_id_ << trace_num_ << ret_;
+    xs_ << path_ << model_type_ << trace_num_ << ret_;
     xs_.Trim();
 }
 
 void RecognitionCmd::Unser()
 {
     BaseCmd::Unser();
-    xs_ >> path_ >> template_id_ >> trace_num_ >> ret_;
+    xs_ >> path_ >> model_type_ >> trace_num_ >> ret_;
 }
 
 void RecoModelTypeEtcCmd::Ser() {
@@ -829,4 +829,17 @@ void RestartCmd::Unser()
 {
     BaseCmd::Unser();
     xs_ >> ret_;
+}
+
+void GetSystemCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << status_ << ret_;
+    xs_.Trim();
+}
+
+void GetSystemCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> status_ >> ret_;
 }

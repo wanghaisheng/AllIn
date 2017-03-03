@@ -338,6 +338,11 @@ public:
     virtual void Notify(int ec) = 0;
 };
 
+class GetSystemNT {
+public:
+    virtual void Notify(int status, int ec) = 0;
+};
+
 class AsynAPISet {
 public:
     void DeleteNotify(void* nt);
@@ -512,6 +517,8 @@ public:
 
     int AsynRestart(RestartNT* nt);
 
+    int AsynGetSystem(GetSystemNT* nt);
+
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);
     
@@ -643,6 +650,8 @@ public:
     void HandleReset(char* chBuf);
 
     void HandleRestart(char* chBuf);
+
+    void HandleGetSystem(char* chBuf);
 
 private:
     std::map<std::string, void*> api_maps_;

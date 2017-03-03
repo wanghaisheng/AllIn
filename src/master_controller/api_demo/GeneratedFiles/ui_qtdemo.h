@@ -100,6 +100,7 @@ public:
     QPushButton *pb_reset_;
     QPushButton *pb_restart_;
     QPushButton *pb_enter_main_;
+    QPushButton *pb_system_;
     QWidget *tab_stamper;
     QPushButton *pb_capture_;
     QPushButton *pb_select_picture_;
@@ -473,6 +474,9 @@ public:
         pb_enter_main_ = new QPushButton(tab_control_dev);
         pb_enter_main_->setObjectName(QStringLiteral("pb_enter_main_"));
         pb_enter_main_->setGeometry(QRect(670, 480, 150, 46));
+        pb_system_ = new QPushButton(tab_control_dev);
+        pb_system_->setObjectName(QStringLiteral("pb_system_"));
+        pb_system_->setGeometry(QRect(1200, 90, 111, 46));
         tabWidget->addTab(tab_control_dev, QString());
         tab_stamper = new QWidget();
         tab_stamper->setObjectName(QStringLiteral("tab_stamper"));
@@ -881,6 +885,7 @@ public:
         pb_reset_->setText(QApplication::translate("QtDemoClass", "\345\244\215\344\275\215", 0));
         pb_restart_->setText(QApplication::translate("QtDemoClass", "\351\207\215\345\220\257", 0));
         pb_enter_main_->setText(QApplication::translate("QtDemoClass", "\350\277\233\345\205\245\347\273\264\346\212\244\346\250\241\345\274\217", 0));
+        pb_system_->setText(QApplication::translate("QtDemoClass", "\347\263\273\347\273\237\344\277\241\346\201\257", 0));
         tabWidget->setTabText(tabWidget->indexOf(tab_control_dev), QApplication::translate("QtDemoClass", "\350\256\276\345\244\207\346\216\247\345\210\266", 0));
         pb_capture_->setText(QApplication::translate("QtDemoClass", "\346\213\215\347\205\247", 0));
         pb_select_picture_->setText(QApplication::translate("QtDemoClass", "\351\200\211\345\217\226\345\233\276\347\211\207", 0));

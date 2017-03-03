@@ -756,9 +756,7 @@ public:
     }
 
     virtual void SpecificExecute() {
-        MC::ErrorCode ec = exception_;
-        if (ec != MC::EC_SUCC)
-            goto NT;
+        MC::ErrorCode ec = MC::EC_SUCC;
 
         FILE* file = fopen(photo1_.c_str(), "r");
         if (NULL == file) {
@@ -830,16 +828,14 @@ public:
     }
 
     virtual void SpecificExecute() {
-        std::string voucher_no; // 凭证编号
-        std::string trace_no;   // 追溯码
+        char voucher_no[256] = { 0 }; // 凭证编号
+        char trace_no[256] = { 0 };   // 追溯码
         double angle = 0;
         int x = 0;
         int y = 0;
         char model_type[256] = { 0 };
-        std::string out_model_type;
-        MC::ErrorCode ec = exception_;
-        if (ec != MC::EC_SUCC)
-            goto NT;
+        char out_model_type[256] = { 0 };
+        MC::ErrorCode ec = MC::EC_SUCC;
 
         FILE* file = fopen(img_.c_str(), "r");
         if (NULL == file) {
@@ -857,6 +853,9 @@ public:
             goto NT;
         }
 
+        Log::WriteLog(LL_DEBUG, "MC::RecognitionEv->模版类型角度识别, model: %s, angle: %f,"
+            " x: %d, y: %d", model_type, angle, x, y);
+
         int out_angle = 0;
         ret = MC::ImgPro::GetInst()->IdentifyImage(
             img_,
@@ -869,7 +868,7 @@ public:
             out_angle);
         if (0 != ret) {
             Log::WriteLog(LL_ERROR, "MC::RecognitionEv::SpecificExecute->版面识别失败, er: %d",
-                          ret);
+                ret);
             ec = MC::EC_RECOG_FAIL;
             goto NT;
         }
@@ -881,13 +880,13 @@ public:
             ec,
             img_,
             "",
-            voucher_no,
+            model_type,
             trace_no);
         Log::WriteLog(LL_DEBUG, "MC::RecognitionEv::SpecificExecute->版面验证码识别, ec: %s, "
-            "模板ID: %s, 追溯码: %s", 
+            "模板名称: %s, 追溯码: %s", 
             MC::ErrorMsg[ec].c_str(),
-            voucher_no.c_str(),
-            trace_no.c_str());
+            model_type,
+            trace_no);
         delete this;
     }
 
@@ -1104,9 +1103,7 @@ public:
 
     virtual void SpecificExecute() {
         char result[64] = { 0 };
-        MC::ErrorCode ec = exception_;
-        if (ec != MC::EC_SUCC)
-            goto NT;
+        MC::ErrorCode ec = MC::EC_SUCC;
 
         FILE* file = fopen(path_.c_str(), "r");
         if (NULL == file) {
@@ -1115,6 +1112,12 @@ public:
         }
 
         // 要素识别
+        Log::WriteLog(LL_DEBUG, "MC::IdentifyEleEv->begin to 要素识别, file: %s, x: %d, y: %d, width: %d, height: %d...",
+            path_.c_str(),
+            x_,
+            y_,
+            width_,
+            height_);
         int ret = MC::ImgPro::GetInst()->IdentifyArea(
             path_, 
             x_, 
@@ -1588,7 +1591,7 @@ public:
 
     NT:
         notify_->Notify(ec, msg, resolver, _itoa(err_, err_code_str, 10));
-        Log::WriteLog(LL_DEBUG, "MC::GetErrEv::SpecificExecute->获取错误信息: ec: %s, 错误码: %d, "
+        Log::WriteLog(LL_DEBUG, "MC::GetErrEv->获取错误信息: ec: %s, 错误码: %d, "
             "错误描述: %s, 解决方案: %s", 
             MC::ErrorMsg[ec].c_str(),
             err_, 
@@ -1722,8 +1725,9 @@ public:
 
     NT:
         notify_->Notify(ec, stampers_sta);
-        Log::WriteLog(LL_DEBUG, "QueryStampersEv::SpecificExecute->印章状态查询, ec: %s", 
-            MC::ErrorMsg[ec].c_str());
+        Log::WriteLog(LL_DEBUG, "QueryStampersEv::SpecificExecute->印章状态查询, ec: %s, 状态: %s", 
+            MC::ErrorMsg[ec].c_str(),
+            stampers_sta);
         delete this;
     }
 
@@ -4198,6 +4202,56 @@ void MC::STSealAPI::Restart(NotifyResult* notify)
 {
     BaseEvent* ev = new (std::nothrow) RestartEv(
         "重启主板",
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+///////////////////////////// 获取系统信息 /////////////////////////////////
+
+class GetSystemEv : public MC::BaseEvent {
+public:
+    GetSystemEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        char msg[3] = { 0 };
+        char info_str[3] = { 0 };
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = FGetSystemMsg(msg, sizeof(msg));
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::GetSystemEv->获取系统信息失败, er: %d", ret);
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        sprintf(info_str, "%c", msg[0]);
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec, info_str);
+        Log::WriteLog(LL_DEBUG, "MC::GetSystemEv->获取系统信息, ec: %s, 系统信息: %s",
+            MC::ErrorMsg[ec].c_str(),
+            info_str);
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::GetSystem(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) GetSystemEv(
+        "获取系统信息",
         notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);

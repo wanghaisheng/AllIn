@@ -256,6 +256,8 @@ public:
 
     void Restart(NotifyResult* notify);
 
+    void GetSystem(NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC

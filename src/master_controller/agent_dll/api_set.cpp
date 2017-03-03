@@ -227,13 +227,13 @@ void AsynAPISet::HandleRecognition(char* chBuf)
         "模版ID: %s, 追溯码: %s, ret: %d",
         cmd_des[cmd.ct_].c_str(),
         cmd.path_,
-        cmd.template_id_,
+        cmd.model_type_,
         cmd.trace_num_,
         cmd.ret_);
 
     RecognizeNT* nt = (RecognizeNT*)LookupSendTime(cmd.send_time_);
     if (NULL != nt)
-        nt->Notify(cmd.path_, cmd.template_id_, cmd.trace_num_, cmd.ret_);
+        nt->Notify(cmd.path_, cmd.model_type_, cmd.trace_num_, cmd.ret_);
 }
 
 void AsynAPISet::HandleIdentify(char* chBuf)
@@ -250,7 +250,7 @@ void AsynAPISet::HandleIdentify(char* chBuf)
     IdentifyNT* nt = (IdentifyNT*)LookupSendTime(cmd.send_time_);
     if (NULL != nt)
         nt->Notify(cmd.path_, cmd.x_, cmd.y_, cmd.width_, cmd.height_,
-        cmd.content_str_, cmd.ret_);
+            cmd.content_str_, cmd.ret_);
 }
 
 void AsynAPISet::HandleOrdinary(char* chBuf)
@@ -1641,4 +1641,25 @@ void AsynAPISet::HandleEnterMain(char* chBuf)
     EnterMaintainNT* nt = (EnterMaintainNT*)LookupSendTime(cmd.send_time_);
     if (NULL != nt)
         nt->Notify(cmd.ret_);
+}
+
+int AsynAPISet::AsynGetSystem(GetSystemNT* nt)
+{
+    GetSystemCmd* cmd = new GetSystemCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleGetSystem(char* chBuf)
+{
+    GetSystemCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleGetSystem->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    GetSystemNT* nt = (GetSystemNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.status_, cmd.ret_);
 }

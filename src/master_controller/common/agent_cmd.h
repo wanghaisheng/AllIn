@@ -71,6 +71,7 @@ enum CmdType {
     CT_FACTORY_CTRL,        // 工厂模式控制
     CT_RESET,               // 复位
     CT_RESTART,             // 重启主板
+    CT_GET_SYSTEM,          // 获取系统信息
 
     // 摄像头接口
     CT_START_PREVIEW,       // 开始预览
@@ -139,6 +140,7 @@ static std::string cmd_des[] =
     "工厂模式控制",
     "复位",
     "重启主板",
+    "获取系统信息",
 
     "打开摄像头",
     "关闭摄像头",
@@ -312,7 +314,7 @@ class RecognitionCmd : public BaseCmd {
 public:
     RecognitionCmd() : ret_(MC::EC_SUCC) {
         ct_ = CT_RECOGNITION;
-        memset(template_id_, 0x0, sizeof(template_id_));
+        memset(model_type_, 0x0, sizeof(model_type_));
         memset(trace_num_, 0x0, sizeof(trace_num_));
     }
 
@@ -322,7 +324,7 @@ public:
 public:
     char            path_[MAX_PATH];       // 待识别图片路径
 
-    char            template_id_[32];       // 模板ID
+    char            model_type_[32];       // 模板名称,　如“银行承兑汇票”
     char            trace_num_[32];        // 识别出的验证码
 
     MC::ErrorCode   ret_;
@@ -1172,6 +1174,21 @@ public:
     virtual void Unser();
 
 public:
+    MC::ErrorCode ret_;
+};
+
+class GetSystemCmd : public BaseCmd {
+public:
+    GetSystemCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_GET_SYSTEM;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    int status_;
+
     MC::ErrorCode ret_;
 };
 

@@ -386,6 +386,9 @@ void MC::Cnn::ReceiveFunc()
         case CT_RESTART:
             asyn_api_->HandleRestart(chBuf);
             break;
+        case CT_GET_SYSTEM:
+            asyn_api_->HandleGetSystem(chBuf);
+            break;
         default:
             printf("AsynAPISet::ReceiverFunc->Unknown cmd: %d", cmd_type);
             break;

@@ -51,6 +51,15 @@ MASTERCTRL_AGENT_API int RegisterEventCallBack(EventCallback func);
 
 /////////////////////// 1. 印控机API //////////////////////////////
 
+// 获取系统信息
+// status:
+//      0 主系统
+//      1 备用系统
+//      2 主系统升级模式
+//      3 备用系统升级模式
+MASTERCTRL_AGENT_API int ST_GetSystemInfo(
+    int& status);
+
 // 获取印控机与PC连接状态
 // cnn      --- 0: 断开连接
 //          --- 1: 已连接
@@ -306,11 +315,11 @@ MASTERCTRL_AGENT_API int ST_MergePhoto(
 
 // 版面、验证码识别
 // path         --- 切图路径
-// template_id  --- 模板ID
+// model_type   --- 模板名称
 // trace_num    --- 追溯码
 MASTERCTRL_AGENT_API int ST_RecognizeImage(
     const char*  path, 
-    char*        template_id, 
+    char*        model_type, 
     char*        trace_num,
     int          max_size = 256);
 

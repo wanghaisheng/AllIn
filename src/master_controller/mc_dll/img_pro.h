@@ -135,14 +135,14 @@ namespace MC {
         // @y               --- 相对于裁剪后图片的用印y坐标
         // @angle           --- 旋转角度
         int IdentifyImage(
-                const std::string&  cut_img,
-                const std::string&  model_type,
-                std::string&        out_model_type,
-                std::string&        voucher_no,
-                std::string&        trace_no,
-                int&                x,
-                int&                y,
-                int&                angle);
+            const        std::string&  cut_img,
+            char*        model_type,
+            char*        out_model_type,
+            char*        voucher_no,
+            char*        trace_no,
+            int&         x,
+            int&         y,
+            int&         angle);
 
         // 要素区域识别
         // img      --- 原图路径

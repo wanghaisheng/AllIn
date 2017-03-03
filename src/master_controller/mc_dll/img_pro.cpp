@@ -193,19 +193,19 @@ namespace MC {
 
     int ImgPro::IdentifyImage(
             const std::string&  cut_img,
-            const std::string&  model_type,
-            std::string&        out_model_type,
-            std::string&        voucher_no,
-            std::string&        trace_no,
+            char*        model_type,
+            char*        out_model_type,
+            char*        voucher_no,
+            char*        trace_no,
             int&                x,
             int&                y,
             int&                angle) {
         return RecoModelTypeAndCodeAndAngleAndPointByImg(
             cut_img.c_str(),
-            (char*)model_type.c_str(),
-            (char*)out_model_type.c_str(),
-            (char*)voucher_no.c_str(),
-            (char*)trace_no.c_str(),
+            model_type,
+            out_model_type,
+            voucher_no,
+            trace_no,
             x,
             y,
             angle);
@@ -225,8 +225,7 @@ namespace MC {
             x + width,
             y + height,
             0.f,
-            result,
-            image);
+            result);
     }
 
     int ImgPro::SearchSrcImgStampPoint(
