@@ -73,7 +73,7 @@ int ST_QueryMachine(char* sn, int size)
 #endif
         derive_nt->er_ = MC::EC_TIMEOUT;
 
-    strncpy(sn, derive_nt->sn_.c_str(), min(size, derive_nt->sn_.size()));
+    strncpy(sn, derive_nt->sn_.c_str(), 1 + min(size, derive_nt->sn_.size()));
     int ret = derive_nt->er_;
     api_agent.DeleteNotify((void*)nt);
     delete nt;
@@ -372,7 +372,7 @@ int ST_PrepareStamp(char stamp_num, int timeout, char* task_id, int size)
 #endif
         derive_nt->er_ = MC::EC_TIMEOUT;
 
-    strncpy(task_id, derive_nt->task_id_.c_str(), min(size, derive_nt->task_id_.size()));
+    strncpy(task_id, derive_nt->task_id_.c_str(), 1 + min(size, derive_nt->task_id_.size()));
     int ret = derive_nt->er_;
     api_agent.DeleteNotify((void*)nt);
     delete nt;
@@ -722,7 +722,7 @@ int ST_RecoModelTypeAndAngleAndModelPointByImg(
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    strncpy(model_type, derive_nt->model_.c_str(), min(model_type_size, derive_nt->model_.size()));
+    strncpy(model_type, derive_nt->model_.c_str(), 1 + min(model_type_size, derive_nt->model_.size()));
     x = derive_nt->x_;
     y = derive_nt->y_;
     outangle = derive_nt->angle_;
@@ -791,9 +791,9 @@ int ST_RecognizeImage(const char* path,
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     strncpy(template_id, derive_nt->template_id_.c_str(),
-        min(max_size, derive_nt->template_id_.size()));
+        1 + min(max_size, derive_nt->template_id_.size()));
     strncpy(trace_num, derive_nt->trace_num_.c_str(),
-        min(max_size, derive_nt->trace_num_.size()));
+        1 + min(max_size, derive_nt->trace_num_.size()));
     int ret = derive_nt->er_;
     api_agent.DeleteNotify((void*)nt);
     delete nt;
@@ -1168,8 +1168,8 @@ int ST_GetError(int err_code, char* err_msg, char* err_resolver, int size)
 #endif
         derive_nt->er_ = MC::EC_TIMEOUT;
 
-    strncpy(err_msg, derive_nt->msg_.c_str(), min(size, derive_nt->msg_.size()));
-    strncpy(err_resolver, derive_nt->resolver_.c_str(), min(size, derive_nt->resolver_.size()));
+    strncpy(err_msg, derive_nt->msg_.c_str(), 1 + min(size, derive_nt->msg_.size()));
+    strncpy(err_resolver, derive_nt->resolver_.c_str(), 1 + min(size, derive_nt->resolver_.size()));
     int ret = derive_nt->er_;
     api_agent.DeleteNotify((void*)nt);
     delete nt;
@@ -1698,8 +1698,8 @@ int ST_QueryMAC(char* mac1, char* mac2, int max_size)
 #endif
         derive_nt->er_ = MC::EC_TIMEOUT;
 
-    strncpy(mac1, derive_nt->mac1_.c_str(), min(max_size, derive_nt->mac1_.size()));
-    strncpy(mac2, derive_nt->mac2_.c_str(), min(max_size, derive_nt->mac2_.size()));
+    strncpy(mac1, derive_nt->mac1_.c_str(), 1 + min(max_size, derive_nt->mac1_.size()));
+    strncpy(mac2, derive_nt->mac2_.c_str(), 1 + min(max_size, derive_nt->mac2_.size()));
 
     int ret = derive_nt->er_;
     api_agent.DeleteNotify((void*)nt);
@@ -2151,7 +2151,7 @@ int ST_GetDevModel(char* model, int size)
 #endif
             derive_nt->er_ = MC::EC_TIMEOUT;
 
-    strncpy(model, derive_nt->model_.c_str(), min(size, derive_nt->model_.size()));
+    strncpy(model, derive_nt->model_.c_str(), 1 + min(size, derive_nt->model_.size()));
     int ret = derive_nt->er_;
     api_agent.DeleteNotify((void*)nt);
     delete nt;
