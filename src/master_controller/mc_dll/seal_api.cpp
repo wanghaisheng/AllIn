@@ -4258,3 +4258,102 @@ void MC::STSealAPI::GetSystem(NotifyResult* notify)
 
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
+
+///////////////////////////// read main/spare sn /////////////////////////////////
+
+class ReadMainSpareEv : public MC::BaseEvent {
+public:
+    ReadMainSpareEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        char sn[64] = { 0 };
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = ReadBackupSN((unsigned char*)sn, 48);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::ReadMainSpareEv->读主板/备板序列号失败, er: %d", ret);
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec, sn);
+        Log::WriteLog(LL_DEBUG, "MC::ReadMainSpareEv->读主板/备板序列号, ec: %s, 序列号: %s",
+            MC::ErrorMsg[ec].c_str(),
+            sn);
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::ReadMainSpareSN(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) ReadMainSpareEv(
+        "读主板/备板序列号",
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+///////////////////////////// write main/spare sn /////////////////////////////////
+
+class WriteMainSpareEv : public MC::BaseEvent {
+public:
+    WriteMainSpareEv(std::string des, char* sn, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        sn_(sn),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = WriteBackupSN((unsigned char*)sn_, strlen(sn_));
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::WriteMainSpareEv->写主板/备板序列号失败, er: %d", ret);
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::WriteMainSpareEv->写主板/备板序列号, ec: %s, 序列号: %s",
+            MC::ErrorMsg[ec].c_str(),
+            sn_);
+        delete this;
+    }
+
+private:
+    char* sn_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::WriteMainSpareSN(const char* sn, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) WriteMainSpareEv(
+        "写主板/备板序列号",
+        (char*)sn,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}

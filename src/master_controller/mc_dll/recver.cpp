@@ -383,6 +383,12 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_GET_SYSTEM:
         HandleGetSystem(&msg);
         break;
+    case CT_READ_MAIN_SPARE:
+        HandleReadMainSpare(&msg);
+        break;
+    case CT_WRITE_MAIN_SPARE:
+        HandleWriteMainSpare(&msg);
+        break;
     default:
         printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
         break;
@@ -3278,4 +3284,85 @@ void Recver::HandleGetSystem(const RecvMsg* msg)
 
     MC::NotifyResult* notify = new (std::nothrow) GetSystemNT(msg->pipe_inst, cmd, this);
     MC::STSealAPI::GetInst()->GetSystem(notify);
+}
+
+////////////////// read main/spare sn /////////////
+
+class ReadMainSpareNT : public MC::NotifyResult {
+public:
+    ReadMainSpareNT(LPPIPEINST inst, ReadMainSpareCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        cmd_->ret_ = ec;
+        strcpy(cmd_->sn_, data1.c_str());
+
+        recver_->PushCmd(cmd_);
+    }
+
+private:
+    ReadMainSpareCmd*   cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleReadMainSpare(const RecvMsg* msg)
+{
+    ReadMainSpareCmd* cmd = new (std::nothrow) ReadMainSpareCmd();
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+
+    MC::NotifyResult* notify = new (std::nothrow) ReadMainSpareNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->ReadMainSpareSN(notify);
+}
+
+////////////////// write main/spare sn /////////////
+
+class WriteMainSpareNT : public MC::NotifyResult {
+public:
+    WriteMainSpareNT(LPPIPEINST inst, WriteMainSpareCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        cmd_->ret_ = ec;
+
+        recver_->PushCmd(cmd_);
+    }
+
+private:
+    WriteMainSpareCmd*  cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleWriteMainSpare(const RecvMsg* msg)
+{
+    WriteMainSpareCmd* cmd = new (std::nothrow) WriteMainSpareCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+
+    MC::NotifyResult* notify = new (std::nothrow) WriteMainSpareNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->WriteMainSpareSN(cmd->sn_, notify);
 }

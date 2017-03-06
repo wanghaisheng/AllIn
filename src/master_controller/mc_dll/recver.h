@@ -168,6 +168,10 @@ private:
 
     void HandleGetSystem(const RecvMsg* msg);
 
+    void HandleReadMainSpare(const RecvMsg* msg);
+
+    void HandleWriteMainSpare(const RecvMsg* msg);
+
 private:
     static MC::SynQueue<const RecvMsg*> recver_queue_;
     static HANDLE                       recv_msg_ev_;

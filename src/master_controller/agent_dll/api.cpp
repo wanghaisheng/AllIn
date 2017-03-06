@@ -3722,3 +3722,121 @@ int ST_GetSystemInfo(int& status)
     delete nt;
     return ret;
 }
+
+/////////////////////////////// read main/spare sn /////////////////////////////
+
+class ReadMainSpareBoardNt : public ReadMainSpareNT {
+public:
+#ifdef _XP
+    ReadMainSpareBoardNt() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~ReadMainSpareBoardNt() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(std::string sn, int ec) {
+        er_ = ec;
+        sn_ = sn;
+
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    std::string sn_;
+    int er_;
+};
+
+int ST_ReadMainStandbySN(char* sn, int len)
+{
+    ReadMainSpareNT* nt = new ReadMainSpareBoardNt;
+    api_agent.AsynReadMainSpare(nt);
+
+    ReadMainSpareBoardNt* derive_nt = (ReadMainSpareBoardNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    if (0 == ret) 
+        strncpy(sn, derive_nt->sn_.c_str(), 1 + min(len, derive_nt->sn_.size()));
+
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}
+
+/////////////////////////////// write main/spare sn /////////////////////////////
+
+class WriteMainSpareBoardNt : public WriteMainSpareNT {
+public:
+#ifdef _XP
+    WriteMainSpareBoardNt() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~WriteMainSpareBoardNt() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(std::string sn, int ec) {
+        er_ = ec;
+
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+
+    int er_;
+};
+
+int ST_WriteMainStandbySN(const char* sn, int len)
+{
+    WriteMainSpareNT* nt = new WriteMainSpareBoardNt;
+    api_agent.AsynWriteMainSpare(sn, nt);
+
+    WriteMainSpareBoardNt* derive_nt = (WriteMainSpareBoardNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}

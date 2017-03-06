@@ -843,3 +843,29 @@ void GetSystemCmd::Unser()
     BaseCmd::Unser();
     xs_ >> status_ >> ret_;
 }
+
+void ReadMainSpareCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << sn_ << ret_;
+    xs_.Trim();
+}
+
+void ReadMainSpareCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> sn_ >> ret_;
+}
+
+void WriteMainSpareCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << sn_ << ret_;
+    xs_.Trim();
+}
+
+void WriteMainSpareCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> sn_ >> ret_;
+}

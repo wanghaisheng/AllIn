@@ -1663,3 +1663,46 @@ void AsynAPISet::HandleGetSystem(char* chBuf)
     if (NULL != nt)
         nt->Notify(cmd.status_, cmd.ret_);
 }
+
+int AsynAPISet::AsynReadMainSpare(ReadMainSpareNT* nt)
+{
+    ReadMainSpareCmd* cmd = new ReadMainSpareCmd;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleReadMainSpare(char* chBuf)
+{
+    ReadMainSpareCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleReadMainSpare->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    ReadMainSpareNT* nt = (ReadMainSpareNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.sn_, cmd.ret_);
+}
+
+int AsynAPISet::AsynWriteMainSpare(const std::string& sn, WriteMainSpareNT* nt)
+{
+    WriteMainSpareCmd* cmd = new WriteMainSpareCmd;
+    strcpy(cmd->sn_, sn.c_str());
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleWriteMainSpare(char* chBuf)
+{
+    WriteMainSpareCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleWriteMainSpare->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    WriteMainSpareNT* nt = (WriteMainSpareNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.sn_, cmd.ret_);
+}

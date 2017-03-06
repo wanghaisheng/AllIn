@@ -17,6 +17,7 @@
 #define ERROR_SIZE          64
 #define SEND_TIME_SIZE      37  // null terminated.
 #define SN_SIZE             30
+#define MAIN_SPARE_SN_SIZE  48
 #define MAX_STAMPER_NUM     6
 
 enum CmdType {
@@ -72,6 +73,8 @@ enum CmdType {
     CT_RESET,               // 复位
     CT_RESTART,             // 重启主板
     CT_GET_SYSTEM,          // 获取系统信息
+    CT_READ_MAIN_SPARE,     // 读主板/备板序列号
+    CT_WRITE_MAIN_SPARE,    // 写主板/备板序列号
 
     // 摄像头接口
     CT_START_PREVIEW,       // 开始预览
@@ -141,6 +144,8 @@ static std::string cmd_des[] =
     "复位",
     "重启主板",
     "获取系统信息",
+    "读主板/备板序列号",
+    "写主板/备板序列号"
 
     "打开摄像头",
     "关闭摄像头",
@@ -1190,6 +1195,35 @@ public:
     int status_;
 
     MC::ErrorCode ret_;
+};
+
+class ReadMainSpareCmd : public BaseCmd {
+public:
+    ReadMainSpareCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_READ_MAIN_SPARE;
+        memset(sn_, 0x0, MAIN_SPARE_SN_SIZE);
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    char            sn_[MAIN_SPARE_SN_SIZE];
+    MC::ErrorCode   ret_;
+};
+
+class WriteMainSpareCmd : public BaseCmd {
+public:
+    WriteMainSpareCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_WRITE_MAIN_SPARE;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    char            sn_[MAIN_SPARE_SN_SIZE];
+    MC::ErrorCode   ret_;
 };
 
 #endif // AGENT_CMD_H_

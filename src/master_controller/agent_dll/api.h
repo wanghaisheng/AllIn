@@ -87,12 +87,12 @@ MASTERCTRL_AGENT_API int ST_Close();
 MASTERCTRL_AGENT_API int ST_GetDevStatus(
     int& code);
 
-// 获取印控仪编号
+// 获取印控仪编号(只针对主板)
 MASTERCTRL_AGENT_API int ST_QueryMachine(
     char* sn,
     int size = 24);
 
-// 设置印控机编号, 最多支持20个字节
+// 设置印控机编号(只针对主板), 最多支持20个字节
 MASTERCTRL_AGENT_API int ST_SetMachine(
     const char* sn);
 
@@ -301,6 +301,16 @@ MASTERCTRL_AGENT_API int ST_Reset();
 
 // 重启主板
 MASTERCTRL_AGENT_API int ST_Restart();
+
+// 读主板/备板序列号
+MASTERCTRL_AGENT_API int ST_ReadMainStandbySN(
+    char*       sn, 
+    int         len = 48);
+
+// 写主板/备板序列号
+MASTERCTRL_AGENT_API int ST_WriteMainStandbySN(
+    const char*     sn, 
+    int             len = 48);
 
 /////////////////////// 2. 图像处理API //////////////////////////////
 

@@ -343,6 +343,16 @@ public:
     virtual void Notify(int status, int ec) = 0;
 };
 
+class WriteMainSpareNT {
+public:
+    virtual void Notify(std::string sn, int ec) = 0;
+};
+
+class ReadMainSpareNT {
+public:
+    virtual void Notify(std::string sn, int ec) = 0;
+};
+
 class AsynAPISet {
 public:
     void DeleteNotify(void* nt);
@@ -519,6 +529,13 @@ public:
 
     int AsynGetSystem(GetSystemNT* nt);
 
+    int AsynReadMainSpare(
+        ReadMainSpareNT* nt);
+
+    int AsynWriteMainSpare(
+        const std::string& sn,
+        WriteMainSpareNT* nt);
+
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);
     
@@ -652,6 +669,10 @@ public:
     void HandleRestart(char* chBuf);
 
     void HandleGetSystem(char* chBuf);
+
+    void HandleReadMainSpare(char* chBuf);
+
+    void HandleWriteMainSpare(char* chBuf);
 
 private:
     std::map<std::string, void*> api_maps_;

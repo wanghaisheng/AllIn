@@ -258,6 +258,10 @@ public:
 
     void GetSystem(NotifyResult* notify);
 
+    void ReadMainSpareSN(NotifyResult* notify);
+
+    void WriteMainSpareSN(const char* sn, NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC
