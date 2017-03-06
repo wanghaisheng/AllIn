@@ -176,7 +176,8 @@ QtDemo::QtDemo(QWidget *parent)
     connect(ui.pb_cut_img_, &QPushButton::clicked, this, &QtDemo::HandleCutImgClick);
 
     connect(ui.pb_capture_, &QPushButton::clicked, this, &QtDemo::HandleCapture);
-    connect(ui.pb_cvt_coord_, &QPushButton::clicked, this, &QtDemo::HandleCvtCoord);
+/*    connect(ui.pb_cvt_coord_, &QPushButton::clicked, this, &QtDemo::HandleCvtCoord);*/
+    ui.pb_cvt_coord_->hide();
     connect(ui.pb_select_picture_, &QPushButton::clicked, this, &QtDemo::HandleSelectPic);
 
     connect(ui.pb_illustrate_, &QPushButton::clicked, this, &QtDemo::HandleIllusrate);
@@ -861,20 +862,20 @@ void QtDemo::mouseMoveEvent(QMouseEvent *)
 
 void QtDemo::HandleCvtCoord()
 {
-    int x_img = atoi(ui.le_x_in_img_->text().toStdString().c_str());
-    int y_img = atoi(ui.le_y_in_img_->text().toStdString().c_str());
-
-    int x_dev = 0;
-    int y_dev = 0;
-    int ret = ST_GetSealCoord(x_img, y_img, x_dev, y_dev);
-    if (0 != ret) {
-        return Info(QString::fromLocal8Bit("坐标转换失败, er: ") + 
-            QString::number(ret));
-    }
-
-    Info(QString::fromLocal8Bit("坐标转换成功"));
-    ui.le_x_in_dev_->setText(QString::number(x_dev));
-    ui.le_y_in_dev_->setText(QString::number(y_dev));
+//     int x_img = atoi(ui.le_x_in_img_->text().toStdString().c_str());
+//     int y_img = atoi(ui.le_y_in_img_->text().toStdString().c_str());
+// 
+//     int x_dev = 0;
+//     int y_dev = 0;
+//     int ret = ST_GetSealCoord(x_img, y_img, x_dev, y_dev);
+//     if (0 != ret) {
+//         return Info(QString::fromLocal8Bit("坐标转换失败, er: ") + 
+//             QString::number(ret));
+//     }
+// 
+//     Info(QString::fromLocal8Bit("坐标转换成功"));
+//     ui.le_x_in_dev_->setText(QString::number(x_dev));
+//     ui.le_y_in_dev_->setText(QString::number(y_dev));
 }
 
 void QtDemo::HandleCapture()
