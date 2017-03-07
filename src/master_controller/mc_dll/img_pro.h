@@ -16,52 +16,6 @@ enum FontLib {
 
 namespace MC {
     class ImgPro {
-
-        // function pointer
-        typedef DWORD (*my_SearchImgStampPointEx)(
-                const char* in_src_img_name,
-                int in_x,
-                int in_y,
-                double in_angle,
-                int &out_x,
-                int &out_y,
-                double &out_angle);
-
-        typedef DWORD (*my_CutImgEdge)(const char* in_src_img_name, char *out_dest_img_name);
-
-        typedef DWORD (*my_Merge2Imgs)(
-                const char* src_file_name1,
-                const char* src_file_name2,
-                const char* dst_file_name);
-
-        typedef DWORD (*my_RecoModelTypeAndAngleAndModelPointByImg)(
-                const char* in_src_img_name,
-                char *out_model_type,
-                double &outangle,
-                int &x,
-                int &y);
-
-
-        typedef DWORD (*my_RecoModelTypeAndCodeAndAngleAndPointByImg)(
-                const char* in_cut_img_name,
-                char *in_model_type,
-                char *out_model_type,
-                char* out_Vocher_Number,
-                char* out_trace_code,
-                int &x,
-                int &y,
-                int &outangle);
-
-        typedef DWORD (*my_RecoImgRectArea)(
-                const char* in_dest_img_name,
-                int left,
-                int top,
-                int right,
-                int bottom,
-                double threshold,
-                char *ocrresult,
-                FontLib lib);
-
     public:
         static ImgPro* GetInst() {
             if (g_inst_ == NULL)
@@ -71,7 +25,6 @@ namespace MC {
         }
 
         ~ImgPro() {
-/*            FreeLibrary(dllinst_);*/
         }
 
         // 根据切图用印点像素坐标获取盖章点基于切图中心点位置, 像素坐标
@@ -169,55 +122,22 @@ namespace MC {
             int& out_y,
             double& out_angle);
 
-    private:
-        ImgPro(): search_img_ptr_(NULL), cut_img_ptr_(NULL), merge_ptr_(NULL),
-                    recog_model_ptr_(NULL), model_code_ptr_(NULL), recog_area_ptr_(NULL) {
-//             std::string path;
-//             GetMoudulePath(path);
-//             path = path.append("ImageProcess.dll");
-//             dllinst_ = LoadLibrary(path.c_str());
-//             if (dllinst_ != NULL) {
-//                 // dynamically loads dll, gets entry point address
-//                 search_img_ptr_ = (my_SearchImgStampPointEx) GetProcAddress(
-//                         dllinst_,
-//                         "SearchImgStampPointEx");
-// 
-//                 cut_img_ptr_ = (my_CutImgEdge) GetProcAddress(
-//                         dllinst_,
-//                         "CutImgEdge");
-// 
-//                 merge_ptr_ = (my_Merge2Imgs) GetProcAddress(
-//                         dllinst_,
-//                         "Merge2Imgs");
-// 
-//                 recog_model_ptr_ =
-//                         (my_RecoModelTypeAndAngleAndModelPointByImg) GetProcAddress(
-//                                 dllinst_,
-//                                 "RecoModelTypeAndAngleAndModelPointByImg");
-// 
-//                 model_code_ptr_ =
-//                         (my_RecoModelTypeAndCodeAndAngleAndPointByImg) GetProcAddress(
-//                                 dllinst_,
-//                                 "RecoModelTypeAndCodeAndAngleAndPointByImg");
-// 
-//                 recog_area_ptr_ =
-//                         (my_RecoImgRectArea) GetProcAddress(
-//                                 dllinst_,
-//                                 "RecoImgRectArea");
-//             }
-        }
+        int ReadCodebar(
+            const std::string& filename,
+            char* text);
+
+        int ReadCodebarByRect(
+            const std::string& filename,
+            int left,
+            int top,
+            int right,
+            int bottom,
+            char* text);
 
     private:
         static ImgPro* g_inst_;
 
         HINSTANCE dllinst_;
-
-        my_SearchImgStampPointEx    search_img_ptr_;
-        my_CutImgEdge               cut_img_ptr_;
-        my_Merge2Imgs               merge_ptr_;
-        my_RecoModelTypeAndAngleAndModelPointByImg      recog_model_ptr_;
-        my_RecoModelTypeAndCodeAndAngleAndPointByImg    model_code_ptr_;
-        my_RecoImgRectArea                              recog_area_ptr_;
     };
 }
 

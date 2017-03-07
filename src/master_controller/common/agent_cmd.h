@@ -18,6 +18,7 @@
 #define SEND_TIME_SIZE      37  // null terminated.
 #define SN_SIZE             30
 #define MAIN_SPARE_SN_SIZE  48
+#define QR_CODE_SIZE        32
 #define MAX_STAMPER_NUM     6
 
 enum CmdType {
@@ -75,6 +76,7 @@ enum CmdType {
     CT_GET_SYSTEM,          // 获取系统信息
     CT_READ_MAIN_SPARE,     // 读主板/备板序列号
     CT_WRITE_MAIN_SPARE,    // 写主板/备板序列号
+    CT_RECOG_QR,            // 二维码识别
 
     // 摄像头接口
     CT_START_PREVIEW,       // 开始预览
@@ -133,6 +135,7 @@ static std::string cmd_des[] =
     "根据卡槽号获取RFID",
     "模板及用印点查找",
     "获取设备状态",
+    "原图转设备坐标",
     "写图像转换倍率",
     "读图像转换倍率",
     "写较准点",
@@ -145,8 +148,11 @@ static std::string cmd_des[] =
     "重启主板",
     "获取系统信息",
     "读主板/备板序列号",
-    "写主板/备板序列号"
+    "写主板/备板序列号",
+    "二维码识别",
 
+    "开始预览",
+    "停止预览",
     "打开摄像头",
     "关闭摄像头",
     "摄像头状态",
@@ -1224,6 +1230,28 @@ public:
 public:
     char            sn_[MAIN_SPARE_SN_SIZE];
     MC::ErrorCode   ret_;
+};
+
+class RecogQRCmd : public BaseCmd {
+public:
+    RecogQRCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_RECOG_QR;
+        memset(qr_code_, 0x0, QR_CODE_SIZE);
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    char file_[MAX_PATH];
+    int left_;
+    int top_;
+    int right_;
+    int bottom_;
+
+    char qr_code_[QR_CODE_SIZE];
+
+    MC::ErrorCode ret_;
 };
 
 #endif // AGENT_CMD_H_

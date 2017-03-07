@@ -1466,7 +1466,13 @@ void AsynAPISet::HandleReadCali(char* chBuf)
 
     ReadCaliNT* nt = (ReadCaliNT*)LookupSendTime(cmd.send_time_);
     if (NULL != nt)
-        nt->Notify(cmd.pts_, cmd.len_, cmd.ret_);
+        nt->Notify(
+            cmd.pts_[0], cmd.pts_[1],
+            cmd.pts_[2], cmd.pts_[3],
+            cmd.pts_[4], cmd.pts_[5],
+            cmd.pts_[6], cmd.pts_[7],
+            cmd.pts_[8], cmd.pts_[9],
+            cmd.ret_);
 }
 
 int AsynAPISet::AsynQueryTop(QueryTopNT* nt)
@@ -1705,4 +1711,36 @@ void AsynAPISet::HandleWriteMainSpare(char* chBuf)
     WriteMainSpareNT* nt = (WriteMainSpareNT*)LookupSendTime(cmd.send_time_);
     if (NULL != nt)
         nt->Notify(cmd.sn_, cmd.ret_);
+}
+
+int AsynAPISet::AsynRecogQR(
+    const std::string& file, 
+    int left, 
+    int top, 
+    int right, 
+    int bottom, 
+    RecogQRNT* nt)
+{
+    RecogQRCmd* cmd = new RecogQRCmd;
+    strcpy(cmd->file_, file.c_str());
+    cmd->left_ = left;
+    cmd->top_ = top;
+    cmd->right_ = right;
+    cmd->bottom_ = bottom;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleRecogQR(char* chBuf)
+{
+    RecogQRCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleRecogQR->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    RecogQRNT* nt = (RecogQRNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.qr_code_, cmd.ret_);
 }

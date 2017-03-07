@@ -8,6 +8,7 @@
 #include "event_cpu.h"
 #include "tool.h"
 #include "task_mgr.h"
+#include "agent_cmd.h"
 #include "stamping_mgr.h"
 #include "seal_api.h"
 
@@ -4351,6 +4352,87 @@ void MC::STSealAPI::WriteMainSpareSN(const char* sn, NotifyResult* notify)
     BaseEvent* ev = new (std::nothrow) WriteMainSpareEv(
         "写主板/备板序列号",
         (char*)sn,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+///////////////////////////// recognize qr code /////////////////////////////////
+
+class RecogQREv : public MC::BaseEvent {
+public:
+    RecogQREv(
+        std::string des,
+        std::string file, 
+        int left, 
+        int top, 
+        int right, 
+        int bottom,
+        MC::NotifyResult* notify) :
+        BaseEvent(des),
+        file_(file),
+        left_(left),
+        top_(top),
+        right_(right),
+        bottom_(bottom),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        int ret;
+        char qr[QR_CODE_SIZE] = { 0 };
+        MC::ErrorCode ec = MC::EC_SUCC;
+        if (left_ == 0 && top_ == 0 && 0 == right_ && 0 == bottom_) {
+            ret = MC::ImgPro::GetInst()->ReadCodebar(file_.c_str(), qr);
+        } else {
+            ret = MC::ImgPro::GetInst()->ReadCodebarByRect(
+                file_.c_str(), left_, top_, right_, bottom_, qr);
+        }
+
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::RecogQREv->识别二维码失败, er: %d", ret);
+            ec = MC::EC_RECOG_QR_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec, qr);
+        Log::WriteLog(LL_DEBUG, "MC::RecogQREv->识别二维码, ec: %s, 二维码: %s",
+            MC::ErrorMsg[ec].c_str(),
+            qr);
+        delete this;
+    }
+
+private:
+    std::string file_;
+    int left_;
+    int top_;
+    int right_;
+    int bottom_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::RecogQRCode(
+    const std::string file, 
+    const int left, 
+    const int top, 
+    const int right, 
+    const int bottom, 
+    NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) RecogQREv(
+        "识别二维码",
+        file,
+        left,
+        top,
+        right,
+        bottom,
         notify);
     if (NULL == ev)
         notify->Notify(MC::EC_ALLOCATE_FAILURE);

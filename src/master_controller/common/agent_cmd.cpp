@@ -869,3 +869,16 @@ void WriteMainSpareCmd::Unser()
     BaseCmd::Unser();
     xs_ >> sn_ >> ret_;
 }
+
+void RecogQRCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << file_ << left_ << top_ << right_ << bottom_ << qr_code_ << ret_;
+    xs_.Trim();
+}
+
+void RecogQRCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> file_ >> left_ >> top_ >> right_ >> bottom_ >> qr_code_ >> ret_;
+}

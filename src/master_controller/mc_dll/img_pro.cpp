@@ -246,4 +246,26 @@ namespace MC {
             out_angle);
     }
 
+    int ImgPro::ReadCodebar(const std::string& filename, char* text)
+    {
+        return ZBar_ReadCodebar(filename.c_str(), text);
+    }
+
+    int ImgPro::ReadCodebarByRect(
+        const std::string& filename, 
+        int left,
+        int top, 
+        int right,
+        int bottom, 
+        char* text)
+    {
+        return ZBar_ReadCodebarByRect(
+            filename.c_str(), 
+            left,
+            top,
+            right,
+            bottom,
+            text);
+    }
+
 } // namespace MC

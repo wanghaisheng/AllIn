@@ -172,6 +172,8 @@ private:
 
     void HandleWriteMainSpare(const RecvMsg* msg);
 
+    void HandleRecogQR(const RecvMsg* msg);
+
 private:
     static MC::SynQueue<const RecvMsg*> recver_queue_;
     static HANDLE                       recv_msg_ev_;

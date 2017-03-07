@@ -389,6 +389,9 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_WRITE_MAIN_SPARE:
         HandleWriteMainSpare(&msg);
         break;
+    case CT_RECOG_QR:
+        HandleRecogQR(&msg);
+        break;
     default:
         printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
         break;
@@ -2879,6 +2882,8 @@ public:
                     &cmd_->pts_[i],
                     (void*)(pts_addr + i * sizeof(unsigned short)),
                     sizeof(unsigned short));
+
+                Log::WriteLog(LL_DEBUG, "校准点: %u", cmd_->pts_[i]);
             }
         }
 
@@ -3365,4 +3370,51 @@ void Recver::HandleWriteMainSpare(const RecvMsg* msg)
 
     MC::NotifyResult* notify = new (std::nothrow) WriteMainSpareNT(msg->pipe_inst, cmd, this);
     MC::STSealAPI::GetInst()->WriteMainSpareSN(cmd->sn_, notify);
+}
+
+////////////////// recognize qr code /////////////
+
+class RecogQRCodeNT : public MC::NotifyResult {
+public:
+    RecogQRCodeNT(LPPIPEINST inst, RecogQRCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        cmd_->ret_ = ec;
+        strcpy(cmd_->qr_code_, data1.c_str());
+
+        recver_->PushCmd(cmd_);
+    }
+
+private:
+    RecogQRCmd*         cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleRecogQR(const RecvMsg* msg)
+{
+    RecogQRCmd* cmd = new (std::nothrow) RecogQRCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+
+    MC::NotifyResult* notify = new (std::nothrow) RecogQRCodeNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->RecogQRCode(
+        cmd->file_,
+        cmd->left_,
+        cmd->top_,
+        cmd->right_,
+        cmd->bottom_,
+        notify);
 }

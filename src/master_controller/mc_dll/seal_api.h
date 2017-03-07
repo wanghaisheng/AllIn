@@ -262,6 +262,14 @@ public:
 
     void WriteMainSpareSN(const char* sn, NotifyResult* notify);
 
+    void RecogQRCode(
+        const std::string file,
+        const int left,
+        const int top,
+        const int right,
+        const int bottom,
+        NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC

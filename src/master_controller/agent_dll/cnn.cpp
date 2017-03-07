@@ -395,6 +395,9 @@ void MC::Cnn::ReceiveFunc()
         case CT_WRITE_MAIN_SPARE:
             asyn_api_->HandleWriteMainSpare(chBuf);
             break;
+        case CT_RECOG_QR:
+            asyn_api_->HandleRecogQR(chBuf);
+            break;
         default:
             printf("AsynAPISet::ReceiverFunc->Unknown cmd: %d", cmd_type);
             break;

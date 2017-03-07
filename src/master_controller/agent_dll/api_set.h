@@ -295,7 +295,13 @@ public:
 
 class ReadCaliNT {
 public:
-    virtual void Notify(unsigned short* pts, unsigned char len, int ec) = 0;
+    virtual void Notify(
+        unsigned short pts0, unsigned short pts1,
+        unsigned short pts2, unsigned short pts3,
+        unsigned short pts4, unsigned short pts5,
+        unsigned short pts6, unsigned short pts7,
+        unsigned short pts8, unsigned short pts9,
+        int ec) = 0;
 };
 
 class QueryTopNT {
@@ -351,6 +357,11 @@ public:
 class ReadMainSpareNT {
 public:
     virtual void Notify(std::string sn, int ec) = 0;
+};
+
+class RecogQRNT {
+public:
+    virtual void Notify(std::string qr, int ec) = 0;
 };
 
 class AsynAPISet {
@@ -536,6 +547,14 @@ public:
         const std::string& sn,
         WriteMainSpareNT* nt);
 
+    int AsynRecogQR(
+        const std::string& file,
+        int left, 
+        int top,
+        int right,
+        int bottom,
+        RecogQRNT* nt);
+
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);
     
@@ -673,6 +692,8 @@ public:
     void HandleReadMainSpare(char* chBuf);
 
     void HandleWriteMainSpare(char* chBuf);
+
+    void HandleRecogQR(char* chBuf);
 
 private:
     std::map<std::string, void*> api_maps_;

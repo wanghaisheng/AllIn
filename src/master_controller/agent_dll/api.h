@@ -363,6 +363,26 @@ MASTERCTRL_AGENT_API int ST_RecoModelTypeAndAngleAndModelPointByImg(
     int&            x,
     int&            y);
 
+// 二维码识别
+// file         --- 待识别二维码图片, JPG格式
+// qr           --- 识别结果
+MASTERCTRL_AGENT_API int ST_RecognizeQRCode(
+    const char* file,
+    char* qr,
+    const int qr_size = 32);
+
+// 根据图片框选区域进行二维码识别
+// file         --- 待识别二维码图片, JPG格式
+// qr           --- 识别结果
+MASTERCTRL_AGENT_API int ST_RecognizeQRCodeByRect(
+    const char* file,
+    const int left,
+    const int top,
+    const int right,
+    const int bottom,
+    char* qr,
+    const int qr_size = 32);
+
 /////////////////////// 3. 摄像头API //////////////////////////////
 
 // 打开摄像头

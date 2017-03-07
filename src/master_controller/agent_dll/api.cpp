@@ -3150,9 +3150,25 @@ public:
     }
 #endif
 
-    virtual void Notify(unsigned short* pts, unsigned char len, int ec) {
-        pts_ = pts;
-        len_ = len;
+    virtual void Notify(
+        unsigned short pts0, unsigned short pts1,
+        unsigned short pts2, unsigned short pts3,
+        unsigned short pts4, unsigned short pts5,
+        unsigned short pts6, unsigned short pts7,
+        unsigned short pts8, unsigned short pts9,
+        int ec) {
+        pts_.push_back(pts0);
+        pts_.push_back(pts1);
+        pts_.push_back(pts2);
+        pts_.push_back(pts3);
+        pts_.push_back(pts4);
+
+        pts_.push_back(pts5);
+        pts_.push_back(pts6);
+        pts_.push_back(pts7);
+        pts_.push_back(pts8);
+        pts_.push_back(pts9);
+
         er_ = ec;
 #ifdef _XP
         SetEvent(cv_);
@@ -3167,12 +3183,12 @@ public:
 #else
     boost::condition_variable cv_;
 #endif
-    unsigned short* pts_;
-    unsigned char len_;
+
+    std::vector<unsigned short> pts_;
     int er_;
 };
 
-int ST_ReadCalibrationPoint(unsigned short* points, unsigned char len /*= 10*/)
+int ST_ReadCalibrationPoint(unsigned short* points, unsigned char len)
 {
     ReadCaliNT* nt = new ReadCalibrationNt;
     api_agent.AsynReadCali(nt);
@@ -3187,7 +3203,10 @@ int ST_ReadCalibrationPoint(unsigned short* points, unsigned char len /*= 10*/)
 
     int ret = derive_nt->er_;
     if (0 == ret)
-        memcpy(points, derive_nt->pts_, derive_nt->len_ * sizeof(unsigned short));
+        memcpy(
+        points, 
+        derive_nt->pts_.data(),
+        derive_nt->pts_.size() * sizeof(unsigned short));
     api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;
@@ -3836,6 +3855,91 @@ int ST_WriteMainStandbySN(const char* sn, int len)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}
+
+/////////////////////////////// recognize qr code /////////////////////////////
+
+class RecogQRCodeNt : public RecogQRNT {
+public:
+#ifdef _XP
+    RecogQRCodeNt() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~RecogQRCodeNt() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(std::string qr, int ec) {
+        er_ = ec;
+        qr_ = qr;
+
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    std::string qr_;
+    int er_;
+};
+
+int ST_RecognizeQRCode(const char* file, char* qr, const int qr_size)
+{
+    RecogQRNT* nt = new RecogQRCodeNt;
+    api_agent.AsynRecogQR(file, 0, 0, 0, 0, nt);
+
+    RecogQRCodeNt* derive_nt = (RecogQRCodeNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    strncpy(qr, derive_nt->qr_.c_str(), 1 + min(qr_size, derive_nt->qr_.size()));
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}
+
+int ST_RecognizeQRCodeByRect(
+    const char* file, 
+    const int left,
+    const int top, 
+    const int right, 
+    const int bottom, 
+    char* qr, const int qr_size)
+{
+    RecogQRNT* nt = new RecogQRCodeNt;
+    api_agent.AsynRecogQR(file, left, top, right, bottom, nt);
+
+    RecogQRCodeNt* derive_nt = (RecogQRCodeNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    strncpy(qr, derive_nt->qr_.c_str(), 1 + min(qr_size, derive_nt->qr_.size()));
     api_agent.DeleteNotify((void*)nt);
     delete nt;
     return ret;

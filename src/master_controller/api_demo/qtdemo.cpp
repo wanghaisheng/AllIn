@@ -1522,8 +1522,8 @@ void QtDemo::HandldeWriteCalPoints()
 {
     unsigned short pts[] =
     {
-        12, 34,
-        54, 104,
+        102, 34,
+        514, 104,
         209, 45,
         232, 13,
         101, 110

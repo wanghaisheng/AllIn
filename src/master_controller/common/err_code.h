@@ -68,6 +68,7 @@ enum ErrorCode {
     EC_IN_MAINTAIN,             // 维护模式
     EC_NOT_FREE,                // 设备不处于空闲状态
     EC_DIRECTORY_NOT_EXIST,     // 目录不存在
+    EC_RECOG_QR_FAIL,           // 识别二维码失败
     EC_MAX
 };
 
@@ -133,7 +134,8 @@ static std::string ErrorMsg[] = {
     "盖章模式",
     "维护模式",
     "设备不处于空闲状态",
-    "目录不存在"
+    "目录不存在",
+    "识别二维码失败"
 };
 
 static std::string GetErrMsg(enum ErrorCode err)
@@ -203,7 +205,8 @@ static std::string ErrorResolver[] = {
     "盖章模式",
     "维护模式",
     "设备不处于空闲状态",
-    "指定新路径"
+    "指定新路径",
+    "识别二维码失败"
 };
 
 static std::string GetErrResolver(enum ErrorCode err)
