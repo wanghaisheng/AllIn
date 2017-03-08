@@ -63,7 +63,6 @@ private:
     std::list<T> queue_list_;
     boost::mutex mutex_;
 
-    bool vista_better_;
     HANDLE cv_;
 };
 
