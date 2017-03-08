@@ -282,4 +282,9 @@ namespace MC {
         return Find2Circles(file.c_str(), buf);
     }
 
+    int ImgPro::Find4Circles2(const std::string& file, char* buf)
+    {
+        return Find4Circles(file.c_str(), buf);
+    }
+
 } // namespace MC

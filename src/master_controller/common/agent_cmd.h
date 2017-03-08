@@ -79,6 +79,7 @@ enum CmdType {
     CT_RECOG_QR,            // 二维码识别
     CT_CALCULATE_RATIO,     // 计算图像倍率
     CT_FIND_2CIRCLES,       // 查找2个圆心点坐标
+    CT_FIND_4CIRCLES,       // 查找4个圆心点坐标
 
     // 摄像头接口
     CT_START_PREVIEW,       // 开始预览
@@ -154,6 +155,7 @@ static std::string cmd_des[] =
     "二维码识别",
     "计算图像倍率",
     "查找2个圆心点坐标",
+    "查找4个圆心点坐标",
 
     "开始预览",
     "停止预览",
@@ -1295,6 +1297,37 @@ public:
     int x2_;
     int y2_;
     int radius2_;
+
+    MC::ErrorCode ret_;
+};
+
+class Find4CirclesCmd : public BaseCmd {
+public:
+    Find4CirclesCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_FIND_4CIRCLES;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    char file_[MAX_PATH];
+
+    int x1_;
+    int y1_;
+    int radius1_;
+
+    int x2_;
+    int y2_;
+    int radius2_;
+
+    int x3_;
+    int y3_;
+    int radius3_;
+
+    int x4_;
+    int y4_;
+    int radius4_;
 
     MC::ErrorCode ret_;
 };

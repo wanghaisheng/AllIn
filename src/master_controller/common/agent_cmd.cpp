@@ -908,3 +908,18 @@ void Find2CirclesCmd::Unser()
     BaseCmd::Unser();
     xs_ >> file_ >> x1_ >> y1_ >> radius1_ >> x2_ >> y2_ >> radius2_ >> ret_;
 }
+
+void Find4CirclesCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << file_ << x1_ << y1_ << radius1_ << x2_ << y2_ << radius2_
+        << x3_ << y3_ << radius3_ << x4_ << y4_ << radius4_ << ret_;
+    xs_.Trim();
+}
+
+void Find4CirclesCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> file_ >> x1_ >> y1_ >> radius1_ >> x2_ >> y2_ >> radius2_ 
+        >> x3_ >> y3_ >> radius3_ >> x4_ >> y4_ >> radius4_ >> ret_;
+}

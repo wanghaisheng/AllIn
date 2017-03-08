@@ -4090,3 +4090,123 @@ int ST_Find2Circles(
     delete nt;
     return ret;
 }
+
+/////////////////////////////// find 4 circles /////////////////////////////
+
+class Find4CirNt : public Find4CirclesNT {
+public:
+#ifdef _XP
+    Find4CirNt() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~Find4CirNt() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(
+        int x1, int y1, int r1, int x2, int y2, int r2, 
+        int x3, int y3, int r3, int x4, int y4, int r4,
+        int ec) {
+        er_ = ec;
+        x1_ = x1;
+        y1_ = y1;
+        r1_ = r1;
+
+        x2_ = x2;
+        y2_ = y2;
+        r2_ = r2;
+
+        x3_ = x3;
+        y3_ = y3;
+        r3_ = r3;
+
+        x4_ = x4;
+        y4_ = y4;
+        r4_ = r4;
+
+
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int x1_;
+    int y1_;
+    int r1_;
+
+    int x2_;
+    int y2_;
+    int r2_;
+
+    int x3_;
+    int y3_;
+    int r3_;
+
+    int x4_;
+    int y4_;
+    int r4_;
+
+    int er_;
+};
+
+int ST_Find4Circles(
+    const char* file,
+    int&        x1,
+    int&        y1,
+    int&        radius1,
+    int&        x2,
+    int&        y2,
+    int&        radius2,
+    int&        x3,
+    int&        y3,
+    int&        radius3,
+    int&        x4,
+    int&        y4,
+    int&        radius4)
+{
+    Find4CirclesNT* nt = new Find4CirNt;
+    api_agent.AsynFind4Circles(file, nt);
+
+    Find4CirNt* derive_nt = (Find4CirNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    x1 = derive_nt->x1_;
+    y1 = derive_nt->y1_;
+    radius1 = derive_nt->r1_;
+
+    x2 = derive_nt->x2_;
+    y2 = derive_nt->y2_;
+    radius2 = derive_nt->r2_;
+
+    x3 = derive_nt->x3_;
+    y3 = derive_nt->y3_;
+    radius3 = derive_nt->r3_;
+
+    x4 = derive_nt->x4_;
+    y4 = derive_nt->y4_;
+    radius4 = derive_nt->r4_;
+
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}

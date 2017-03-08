@@ -1792,3 +1792,30 @@ void AsynAPISet::HandleFind2Circles(char* chBuf)
         cmd.x2_, cmd.y2_, cmd.radius2_,
         cmd.ret_);
 }
+
+int AsynAPISet::AsynFind4Circles(const std::string& file, Find4CirclesNT* nt)
+{
+    Find4CirclesCmd* cmd = new Find4CirclesCmd;
+    strcpy(cmd->file_, file.c_str());
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleFind4Circles(char* chBuf)
+{
+    Find4CirclesCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleFind4Circles->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    Find4CirclesNT* nt = (Find4CirclesNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(
+        cmd.x1_, cmd.y1_, cmd.radius1_,
+        cmd.x2_, cmd.y2_, cmd.radius2_,
+        cmd.x3_, cmd.y3_, cmd.radius3_,
+        cmd.x4_, cmd.y4_, cmd.radius4_,
+        cmd.ret_);
+}

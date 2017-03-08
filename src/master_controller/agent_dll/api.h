@@ -399,6 +399,22 @@ MASTERCTRL_AGENT_API int ST_Find2Circles(
     int&        y2,
     int&        radius2);
 
+// 查找校准坐标(4个圆心点坐标)
+MASTERCTRL_AGENT_API int ST_Find4Circles(
+    const char* file,
+    int&        x1,
+    int&        y1,
+    int&        radius1,
+    int&        x2,
+    int&        y2,
+    int&        radius2,
+    int&        x3,
+    int&        y3,
+    int&        radius3,
+    int&        x4,
+    int&        y4,
+    int&        radius4);
+
 /////////////////////// 3. 摄像头API //////////////////////////////
 
 // 打开摄像头

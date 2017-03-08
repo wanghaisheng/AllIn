@@ -374,6 +374,14 @@ public:
     virtual void Notify(int x1, int y1, int r1, int x2, int y2, int r2, int ec) = 0;
 };
 
+class Find4CirclesNT {
+public:
+    virtual void Notify(
+        int x1, int y1, int r1, int x2, int y2, int r2, 
+        int x3, int y3, int r3, int x4, int y4, int r4,
+        int ec) = 0;
+};
+
 class AsynAPISet {
 public:
     void DeleteNotify(void* nt);
@@ -574,6 +582,10 @@ public:
         const std::string& file,
         Find2CirclesNT* nt);
 
+    int AsynFind4Circles(
+        const std::string& file,
+        Find4CirclesNT* nt);
+
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);
     
@@ -717,6 +729,8 @@ public:
     void HandleCalcRatio(char* chBuf);
 
     void HandleFind2Circles(char* chBuf);
+
+    void HandleFind4Circles(char* chBuf);
 
 private:
     std::map<std::string, void*> api_maps_;

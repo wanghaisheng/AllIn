@@ -144,6 +144,10 @@ namespace MC {
             const std::string& file,
             char* buf);
 
+        int Find4Circles2(
+            const std::string& file,
+            char* buf);
+
     private:
         static ImgPro* g_inst_;
 

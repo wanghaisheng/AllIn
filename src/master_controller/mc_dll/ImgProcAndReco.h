@@ -59,12 +59,13 @@ MYLIBDLL DWORD RotateImg(const char* src_file_name,double in_angle,const char* o
 MYLIBDLL DWORD Merge2Imgs(const char* src_file_name1,const char* src_file_name2,const char* dst_file_name);
 MYLIBDLL DWORD CalcImgRate(const char* src_file_name,int dpi,double &rate_x,double &rate_y);
 MYLIBDLL DWORD Find2Circles(const char* src_file_name,char* outbuf);
+MYLIBDLL DWORD Find4Circles(const char* src_file_name,char* outbuf);
 MYLIBDLL DWORD ZBar_ReadCodebar(const char* filename,char* text);
 MYLIBDLL DWORD ZBar_ReadCodebarByRect(const char* filename,int left,int top,int right,int bottom,char* text);
 MYLIBDLL DWORD GetImgSize(const char* in_src_img_name,int &width,int &height);
 MYLIBDLL DWORD ReduceImgQuality(const char* src_file_name,int i_quality,const char* dst_file_name);
 MYLIBDLL DWORD FaceDetect(const char* src_file_name,char* chbuf);
-
+MYLIBDLL DWORD RecogniseBarCode(int type,const char* inpath , char* chvalue);
 //******************************C#*************************
 MYLIBDLL int CS_RecoModelTypeByImg(const char* in_src_img_name,char *out_model_type);
 MYLIBDLL int CS_RecoModelTypeAndAngleByImg(const char* in_src_img_name,char *out_model_type,char *outangle);
@@ -106,8 +107,10 @@ MYLIBDLL int CS_Merge2Imgs(const char* src_file_name1,const char* src_file_name2
 MYLIBDLL int CS_IsExistsPaper(const char* src_file_name);
 MYLIBDLL int CS_CalcImgRate(const char* src_file_name,char* dpi,char* rate_x,char* rate_y);
 MYLIBDLL int CS_Find2Circles(const char* src_file_name,char* outbuf);
+MYLIBDLL int CS_Find4Circles(const char* src_file_name,char* outbuf);
 MYLIBDLL int CS_ZBar_ReadCodebar(const char* filename,char* text);
 MYLIBDLL int CS_ZBar_ReadCodebarByRect(const char* filename,char* left,char* top,char* right,char* bottom,char* text);
 MYLIBDLL int CS_GetImgSize(const char* in_src_img_name,char* width,char* height);
 MYLIBDLL int CS_ReduceImgQuality(const char* src_file_name,char* c_quality,const char* dst_file_name);
 MYLIBDLL int CS_FaceDetect(const char* src_file_name,char* chbuf);
+MYLIBDLL int CS_RecogniseBarCode(int type,const char* inpath , char* chvalue);

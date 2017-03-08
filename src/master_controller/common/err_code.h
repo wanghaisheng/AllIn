@@ -71,6 +71,7 @@ enum ErrorCode {
     EC_RECOG_QR_FAIL,           // 识别二维码失败
     EC_CALC_RATIO_FAIL,         // 计算图像倍率失败
     EC_FIND_2CIRCLES_FAIL,      // 查找2个圆心点坐标失败
+    EC_FIND_4CIRCLES_FAIL,      // 查找4个圆心点坐标失败
     EC_MAX
 };
 
@@ -139,7 +140,8 @@ static std::string ErrorMsg[] = {
     "目录不存在",
     "识别二维码失败",
     "计算图像倍率失败",
-    "查找2个圆心点坐标失败"
+    "查找2个圆心点坐标失败",
+    "查找4个圆心点坐标失败"
 };
 
 static std::string GetErrMsg(enum ErrorCode err)
@@ -212,7 +214,8 @@ static std::string ErrorResolver[] = {
     "指定新路径",
     "识别二维码失败",
     "计算图像倍率失败",
-    "查找2个圆心点坐标失败"
+    "查找2个圆心点坐标失败",
+    "查找4个圆心点坐标失败"
 };
 
 static std::string GetErrResolver(enum ErrorCode err)

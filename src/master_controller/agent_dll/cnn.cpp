@@ -404,6 +404,9 @@ void MC::Cnn::ReceiveFunc()
         case CT_FIND_2CIRCLES:
             asyn_api_->HandleFind2Circles(chBuf);
             break;
+        case CT_FIND_4CIRCLES:
+            asyn_api_->HandleFind4Circles(chBuf);
+            break;
         default:
             printf("AsynAPISet::ReceiverFunc->Unknown cmd: %d", cmd_type);
             break;

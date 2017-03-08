@@ -279,6 +279,10 @@ public:
         const std::string& file,
         NotifyResult* notify);
 
+    void Find4Circles(
+        const std::string& file,
+        NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC

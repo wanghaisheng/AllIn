@@ -4553,5 +4553,87 @@ private:
 
 void MC::STSealAPI::Find2Circles(const std::string& file, NotifyResult* notify)
 {
+    BaseEvent* ev = new (std::nothrow) Find2CirclesEv(
+        "查找2个圆心点坐标",
+        file,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
 
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+///////////////////////////// find 4 circles /////////////////////////////////
+
+class Find4CirclesEv : public MC::BaseEvent {
+public:
+    Find4CirclesEv(std::string des, std::string file, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        file_(file),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        std::string circle1_str;
+        std::string circle2_str;
+        std::string circle3_str;
+        std::string circle4_str;
+
+        std::string buf_str;
+        char buf[1024] = { 0 };
+        MC::ErrorCode ec = MC::EC_SUCC;
+
+        int ret = MC::ImgPro::GetInst()->Find4Circles2(file_, buf);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::Find4CirclesEv->查找4个圆心点坐标失败, er: %d", ret);
+            ec = MC::EC_FIND_4CIRCLES_FAIL;
+            goto NT;
+        }
+
+        buf_str = std::string(buf);
+        std::string::size_type at_pos = buf_str.find_first_of("@");
+        circle1_str = buf_str.substr(0, at_pos);
+
+        buf_str = buf_str.substr(at_pos + 1, std::string::npos);
+        at_pos = buf_str.find_first_of("@");
+        circle2_str = buf_str.substr(0, at_pos);
+
+        buf_str = buf_str.substr(at_pos + 1, std::string::npos);
+        at_pos = buf_str.find_first_of("@");
+        circle3_str = buf_str.substr(0, at_pos);
+
+        buf_str = buf_str.substr(at_pos + 1, std::string::npos);
+        circle4_str = buf_str;
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec, circle1_str, circle2_str, circle3_str, circle4_str);
+        Log::WriteLog(LL_DEBUG, "MC::Find4CirclesEv->查找4个圆心点坐标,ec: %s, circle1: %s,circle2: %s"
+            "circle3: %s, circle4: %s",
+            MC::ErrorMsg[ec].c_str(),
+            circle1_str.c_str(),
+            circle2_str.c_str(),
+            circle3_str.c_str(),
+            circle4_str.c_str());
+        delete this;
+    }
+
+private:
+    std::string file_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::Find4Circles(const std::string& file, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) Find4CirclesEv(
+        "查找4个圆心点坐标",
+        file,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
 }
