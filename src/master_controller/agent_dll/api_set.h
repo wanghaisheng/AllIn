@@ -364,6 +364,16 @@ public:
     virtual void Notify(std::string qr, int ec) = 0;
 };
 
+class CalcRatioNT {
+public:
+    virtual void Notify(double ratio_x, double ratio_y, int ec) = 0;
+};
+
+class Find2CirclesNT {
+public:
+    virtual void Notify(int x1, int y1, int r1, int x2, int y2, int r2, int ec) = 0;
+};
+
 class AsynAPISet {
 public:
     void DeleteNotify(void* nt);
@@ -555,6 +565,15 @@ public:
         int bottom,
         RecogQRNT* nt);
 
+    int AsynCalcRatio(
+        const std::string& file,
+        const int dpi,
+        CalcRatioNT* nt);
+
+    int AsynFind2Circles(
+        const std::string& file,
+        Find2CirclesNT* nt);
+
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);
     
@@ -694,6 +713,10 @@ public:
     void HandleWriteMainSpare(char* chBuf);
 
     void HandleRecogQR(char* chBuf);
+
+    void HandleCalcRatio(char* chBuf);
+
+    void HandleFind2Circles(char* chBuf);
 
 private:
     std::map<std::string, void*> api_maps_;

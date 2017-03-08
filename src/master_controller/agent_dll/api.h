@@ -383,6 +383,22 @@ MASTERCTRL_AGENT_API int ST_RecognizeQRCodeByRect(
     char* qr,
     const int qr_size = 32);
 
+MASTERCTRL_AGENT_API int ST_CalcImageRatio(
+    const char* file,
+    const int   dpi,
+    double&     ratio_x,
+    double&     ratio_y);
+
+// 查找校准坐标(两个圆心点坐标)
+MASTERCTRL_AGENT_API int ST_Find2Circles(
+    const char* file,
+    int&        x1,
+    int&        y1,
+    int&        radius1,
+    int&        x2,
+    int&        y2,
+    int&        radius2);
+
 /////////////////////// 3. 摄像头API //////////////////////////////
 
 // 打开摄像头

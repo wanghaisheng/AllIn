@@ -270,6 +270,15 @@ public:
         const int bottom,
         NotifyResult* notify);
 
+    void CalculateRatio(
+        const std::string& file,
+        const int dpi,
+        NotifyResult* notify);
+
+    void Find2Circles(
+        const std::string& file,
+        NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC

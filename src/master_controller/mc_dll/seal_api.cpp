@@ -4439,3 +4439,119 @@ void MC::STSealAPI::RecogQRCode(
 
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
+
+///////////////////////////// calculate image ratio /////////////////////////////////
+
+class CalcRatioEv : public MC::BaseEvent {
+public:
+    CalcRatioEv(std::string des, std::string file, int dpi, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        file_(file),
+        dpi_(dpi),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        double ratio_x;
+        double ratio_y;
+        std::string x_str;
+        std::string y_str;
+        std::stringstream stream(std::stringstream::in | std::stringstream::out);
+        MC::ErrorCode ec = MC::EC_SUCC;
+        int ret = MC::ImgPro::GetInst()->CalculateRatio(file_.c_str(), dpi_, ratio_x, ratio_y);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::CalcRatioEv->计算图像倍率失败, er: %d", ret);
+            ec = MC::EC_CALC_RATIO_FAIL;
+            goto NT;
+        }
+
+        stream << std::fixed << std::setprecision(2) << ratio_x;
+        x_str = stream.str();
+
+        stream.str(std::string());
+        stream << std::fixed << std::setprecision(2) << ratio_y;
+        y_str = stream.str();
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec, x_str, y_str);
+        Log::WriteLog(LL_DEBUG, "MC::CalcRatioEv->计算图像倍率, ec: %s, x倍率: %s, y倍率: %s",
+            MC::ErrorMsg[ec].c_str(),
+            x_str.c_str(),
+            y_str.c_str());
+        delete this;
+    }
+
+private:
+    std::string file_;
+    int dpi_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::CalculateRatio(const std::string& file, const int dpi, NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) CalcRatioEv(
+        "计算图像倍率",
+        file,
+        dpi,
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}
+
+///////////////////////////// find 2 circles /////////////////////////////////
+
+class Find2CirclesEv : public MC::BaseEvent {
+public:
+    Find2CirclesEv(std::string des, std::string file, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        file_(file),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        std::string circle1_str;
+        std::string circle2_str;
+        std::string buf_str;
+        char buf[1024] = { 0 };
+        MC::ErrorCode ec = MC::EC_SUCC;
+
+        int ret = MC::ImgPro::GetInst()->Find2Circles2(file_, buf);
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "MC::Find2CirclesEv->查找2个圆心点坐标失败, er: %d", ret);
+            ec = MC::EC_FIND_2CIRCLES_FAIL;
+            goto NT;
+        }
+
+        buf_str = std::string(buf);
+        std::string::size_type at_pos = buf_str.find_first_of("@");
+        circle1_str = buf_str.substr(0, at_pos);
+        circle2_str = buf_str.substr(at_pos + 1, std::string::npos);
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec, circle1_str, circle2_str);
+        Log::WriteLog(LL_DEBUG, "MC::Find2CirclesEv->查找2个圆心点坐标,ec: %s, circle1: %s,circle2: %s",
+            MC::ErrorMsg[ec].c_str(),
+            circle1_str.c_str(),
+            circle2_str.c_str());
+        delete this;
+    }
+
+private:
+    std::string file_;
+
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::Find2Circles(const std::string& file, NotifyResult* notify)
+{
+
+}

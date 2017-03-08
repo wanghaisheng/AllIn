@@ -174,6 +174,10 @@ private:
 
     void HandleRecogQR(const RecvMsg* msg);
 
+    void HandleCalcRatio(const RecvMsg* msg);
+
+    void HandleFind2Circles(const RecvMsg* msg);
+
 private:
     static MC::SynQueue<const RecvMsg*> recver_queue_;
     static HANDLE                       recv_msg_ev_;

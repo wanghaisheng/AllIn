@@ -9,7 +9,7 @@ extern AsynAPISet api_agent;
 
 void Start()
 {
-    InstallMiniDumper();
+/*    InstallMiniDumper();*/
 /*    MC::KillProcessByName(MC::SERVER_NAME.c_str());*/
 
     MC::AgentConfig::GetInst()->Parse();

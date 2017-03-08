@@ -134,6 +134,16 @@ namespace MC {
             int bottom,
             char* text);
 
+        int CalculateRatio(
+            const char* src_file_name, 
+            int dpi, 
+            double &rate_x, 
+            double &rate_y);
+
+        int Find2Circles2(
+            const std::string& file,
+            char* buf);
+
     private:
         static ImgPro* g_inst_;
 

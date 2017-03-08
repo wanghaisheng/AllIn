@@ -268,4 +268,18 @@ namespace MC {
             text);
     }
 
+    int ImgPro::CalculateRatio(
+        const char* src_file_name, 
+        int dpi, 
+        double &rate_x,
+        double &rate_y)
+    {
+        return CalcImgRate(src_file_name, dpi, rate_x, rate_y);
+    }
+
+    int ImgPro::Find2Circles2(const std::string& file, char* buf)
+    {
+        return Find2Circles(file.c_str(), buf);
+    }
+
 } // namespace MC

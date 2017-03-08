@@ -882,3 +882,29 @@ void RecogQRCmd::Unser()
     BaseCmd::Unser();
     xs_ >> file_ >> left_ >> top_ >> right_ >> bottom_ >> qr_code_ >> ret_;
 }
+
+void CalculateRatioCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << file_ << dpi_ << ratio_x_ << ratio_y_ << ret_;
+    xs_.Trim();
+}
+
+void CalculateRatioCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> file_ >> dpi_ >> ratio_x_ >> ratio_y_ >> ret_;
+}
+
+void Find2CirclesCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << file_ << x1_ << y1_ << radius1_ << x2_ << y2_ << radius2_ << ret_;
+    xs_.Trim();
+}
+
+void Find2CirclesCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> file_ >> x1_ >> y1_ >> radius1_ >> x2_ >> y2_ >> radius2_ >> ret_;
+}

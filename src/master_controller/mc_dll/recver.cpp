@@ -392,6 +392,12 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_RECOG_QR:
         HandleRecogQR(&msg);
         break;
+    case CT_CALCULATE_RATIO:
+        HandleCalcRatio(&msg);
+        break;
+    case CT_FIND_2CIRCLES:
+        HandleFind2Circles(&msg);
+        break;
     default:
         printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
         break;
@@ -3416,5 +3422,119 @@ void Recver::HandleRecogQR(const RecvMsg* msg)
         cmd->top_,
         cmd->right_,
         cmd->bottom_,
+        notify);
+}
+
+////////////////// calc image ratio /////////////
+
+class CalcRatioNT : public MC::NotifyResult {
+public:
+    CalcRatioNT(LPPIPEINST inst, CalculateRatioCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        cmd_->ret_ = ec;
+        cmd_->ratio_x_ = atof(data1.c_str());
+        cmd_->ratio_y_ = atof(data2.c_str());
+
+        recver_->PushCmd(cmd_);
+    }
+
+private:
+    CalculateRatioCmd*  cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleCalcRatio(const RecvMsg* msg)
+{
+    CalculateRatioCmd* cmd = new (std::nothrow) CalculateRatioCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+
+    MC::NotifyResult* notify = new (std::nothrow) CalcRatioNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->CalculateRatio(
+        cmd->file_,
+        cmd->dpi_,
+        notify);
+}
+
+////////////////// find 2 circles /////////////
+
+class Find2CirclesNT : public MC::NotifyResult {
+public:
+    Find2CirclesNT(LPPIPEINST inst, Find2CirclesCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        cmd_->ret_ = ec;
+
+        std::vector<std::string> data_set;
+        char* str = (char*)data1.c_str();
+        char* pch;
+
+        pch = strtok(str, ",");
+        while (pch != NULL) {
+            //printf("%s\n", pch);
+            data_set.push_back(pch);
+            pch = strtok(NULL, ",");
+        }
+        cmd_->x1_ = atoi(data_set.at(0).c_str());
+        cmd_->y1_ = atoi(data_set.at(1).c_str());
+        cmd_->radius1_ = atoi(data_set.at(2).c_str());
+
+        // circle2
+        data_set.clear();
+
+        str = (char*)data2.c_str();
+        pch = strtok(str, ",");
+        while (pch != NULL) {
+            data_set.push_back(pch);
+            pch = strtok(NULL, ",");
+        }
+        cmd_->x2_ = atoi(data_set.at(0).c_str());
+        cmd_->y2_ = atoi(data_set.at(1).c_str());
+        cmd_->radius2_ = atoi(data_set.at(2).c_str());
+
+        recver_->PushCmd(cmd_);
+    }
+
+private:
+    Find2CirclesCmd*    cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleFind2Circles(const RecvMsg* msg)
+{
+    Find2CirclesCmd* cmd = new (std::nothrow) Find2CirclesCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+
+    MC::NotifyResult* notify = new (std::nothrow) Find2CirclesNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->Find2Circles(
+        cmd->file_,
         notify);
 }

@@ -28,7 +28,7 @@ VOID SvcReportEvent(LPTSTR);
 
 int main(int argc, TCHAR *argv[])
 {
-    InstallMiniDumper();
+/*    InstallMiniDumper();*/
 
     if (1 == argc)
         printf("参数非法, 带命令参数（exe or install)启动\n");

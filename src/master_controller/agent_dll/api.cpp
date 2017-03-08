@@ -3944,3 +3944,149 @@ int ST_RecognizeQRCodeByRect(
     delete nt;
     return ret;
 }
+
+/////////////////////////////// calc image ratio /////////////////////////////
+
+class CalcImageRatioNt : public CalcRatioNT {
+public:
+#ifdef _XP
+    CalcImageRatioNt() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~CalcImageRatioNt() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(double x, double y, int ec) {
+        er_ = ec;
+        ratio_x_ = x;
+        ratio_y_ = y;
+
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+
+    double ratio_x_;
+    double ratio_y_;
+    int er_;
+};
+
+int ST_CalcImageRatio(const char* file, const int dpi, double& ratio_x, double& ratio_y)
+{
+    CalcRatioNT* nt = new CalcImageRatioNt;
+    api_agent.AsynCalcRatio(file, dpi, nt);
+
+    CalcImageRatioNt* derive_nt = (CalcImageRatioNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    ratio_x = derive_nt->ratio_x_;
+    ratio_y = derive_nt->ratio_y_;
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}
+
+/////////////////////////////// find 2 circles /////////////////////////////
+
+class Find2CirNt : public Find2CirclesNT {
+public:
+#ifdef _XP
+    Find2CirNt() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~Find2CirNt() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(int x1, int y1, int r1, int x2, int y2, int r2, int ec) {
+        er_ = ec;
+        x1_ = x1;
+        y1_ = y1;
+        r1_ = r1;
+
+        x2_ = x2;
+        y2_ = y2;
+        r2_ = r2;
+        
+
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+    int x1_;
+    int y1_;
+    int r1_;
+
+    int x2_;
+    int y2_;
+    int r2_;
+
+    int er_;
+};
+
+int ST_Find2Circles(
+    const char* file, 
+    int& x1, int& y1, int& radius1, 
+    int& x2, int& y2, int& radius2)
+{
+    Find2CirclesNT* nt = new Find2CirNt;
+    api_agent.AsynFind2Circles(file, nt);
+
+    Find2CirNt* derive_nt = (Find2CirNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    x1 = derive_nt->x1_;
+    y1 = derive_nt->y1_;
+    radius1 = derive_nt->r1_;
+
+    x2 = derive_nt->x2_;
+    y2 = derive_nt->y2_;
+    radius2 = derive_nt->r2_;
+
+    api_agent.DeleteNotify((void*)nt);
+    delete nt;
+    return ret;
+}

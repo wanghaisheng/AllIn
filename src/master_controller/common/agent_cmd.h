@@ -77,6 +77,8 @@ enum CmdType {
     CT_READ_MAIN_SPARE,     // 读主板/备板序列号
     CT_WRITE_MAIN_SPARE,    // 写主板/备板序列号
     CT_RECOG_QR,            // 二维码识别
+    CT_CALCULATE_RATIO,     // 计算图像倍率
+    CT_FIND_2CIRCLES,       // 查找2个圆心点坐标
 
     // 摄像头接口
     CT_START_PREVIEW,       // 开始预览
@@ -150,6 +152,8 @@ static std::string cmd_des[] =
     "读主板/备板序列号",
     "写主板/备板序列号",
     "二维码识别",
+    "计算图像倍率",
+    "查找2个圆心点坐标",
 
     "开始预览",
     "停止预览",
@@ -1250,6 +1254,47 @@ public:
     int bottom_;
 
     char qr_code_[QR_CODE_SIZE];
+
+    MC::ErrorCode ret_;
+};
+
+class CalculateRatioCmd : public BaseCmd {
+public:
+    CalculateRatioCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_CALCULATE_RATIO;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    char file_[MAX_PATH];
+    int dpi_;
+
+    double ratio_x_;
+    double ratio_y_;
+
+    MC::ErrorCode ret_;
+};
+
+class Find2CirclesCmd : public BaseCmd {
+public:
+    Find2CirclesCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_FIND_2CIRCLES;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    char file_[MAX_PATH];
+
+    int x1_;
+    int y1_;
+    int radius1_;
+    int x2_;
+    int y2_;
+    int radius2_;
 
     MC::ErrorCode ret_;
 };

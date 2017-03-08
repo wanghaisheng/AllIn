@@ -1744,3 +1744,51 @@ void AsynAPISet::HandleRecogQR(char* chBuf)
     if (NULL != nt)
         nt->Notify(cmd.qr_code_, cmd.ret_);
 }
+
+int AsynAPISet::AsynCalcRatio(const std::string& file, const int dpi, CalcRatioNT* nt)
+{
+    CalculateRatioCmd* cmd = new CalculateRatioCmd;
+    strcpy(cmd->file_, file.c_str());
+    cmd->dpi_ = dpi;
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleCalcRatio(char* chBuf)
+{
+    CalculateRatioCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleCalcRatio->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    CalcRatioNT* nt = (CalcRatioNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ratio_x_, cmd.ratio_y_, cmd.ret_);
+}
+
+int AsynAPISet::AsynFind2Circles(const std::string& file, Find2CirclesNT* nt)
+{
+    Find2CirclesCmd* cmd = new Find2CirclesCmd;
+    strcpy(cmd->file_, file.c_str());
+    InsertNotify(cmd->send_time_, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleFind2Circles(char* chBuf)
+{
+    Find2CirclesCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleFind2Circles->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    Find2CirclesNT* nt = (Find2CirclesNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(
+        cmd.x1_, cmd.y1_, cmd.radius1_,
+        cmd.x2_, cmd.y2_, cmd.radius2_,
+        cmd.ret_);
+}
