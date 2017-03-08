@@ -1,10 +1,10 @@
-#include <windows.h>
+﻿#include <windows.h>
 #include <tchar.h>
 #include <strsafe.h>
 #include <iostream>
 #include "recver.h"
 #include "log.h"
-#include "dumper_api.h"
+#include "mini_dump.h"
 
 #pragma comment(lib, "advapi32.lib")
 
@@ -28,7 +28,7 @@ VOID SvcReportEvent(LPTSTR);
 
 int main(int argc, TCHAR *argv[])
 {
-/*    InstallMiniDumper();*/
+    InstallCrashReport();
 
     if (1 == argc)
         printf("参数非法, 带命令参数（exe or install)启动\n");

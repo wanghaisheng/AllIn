@@ -27,7 +27,7 @@
     <ClInclude Include="dumper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dumper_api.h">
+    <ClInclude Include="mini_dump.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,7 +38,7 @@
     <ClCompile Include="dumper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dumper_api.cpp">
+    <ClCompile Include="mini_dump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

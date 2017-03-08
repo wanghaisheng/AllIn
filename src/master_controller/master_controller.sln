@@ -24,6 +24,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "minidumper", "minidumper\minidumper.vcxproj", "{BFBC4461-E153-42DE-9F9C-8BC3C8736F1C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_dumper", "test_dumper\test_dumper.vcxproj", "{247AAB47-E240-4858-B3B5-CAB4D11A901E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BFBC4461-E153-42DE-9F9C-8BC3C8736F1C} = {BFBC4461-E153-42DE-9F9C-8BC3C8736F1C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

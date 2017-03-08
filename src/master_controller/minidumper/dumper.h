@@ -26,4 +26,6 @@ private:
     TCHAR	m_szAppPath[MAX_PATH];
 };
 
+void start();
+
 #endif

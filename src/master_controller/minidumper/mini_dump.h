@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-int InstallMiniDumper();
+int InstallCrashReport();
 
 #ifdef __cplusplus
 }

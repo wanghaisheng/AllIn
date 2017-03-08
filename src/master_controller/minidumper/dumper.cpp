@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <time.h>
 #include <tchar.h>
+#include <iostream>
 #include <windows.h> // must located before dbghelp.h
 #include <dbghelp.h>
 #include "dumper.h"
@@ -87,31 +88,7 @@ LONG WINAPI UnhandledExceptionHandler(_EXCEPTION_POINTERS *pExceptionInfo)
     return gs_pMiniDumper->WriteMiniDump(pExceptionInfo);
 }
 
-// 此函数一旦成功调用，之后对 SetUnhandledExceptionFilter 的调用将无效  
-void DisableSetUnhandledExceptionFilter()
-{
-    HMODULE     hModule = LoadLibrary("kernel32.dll");
-    void* pAddr = (void*)GetProcAddress(hModule, "SetUnhandledExceptionFilter");
-    if (pAddr)
-    {
-        unsigned char code[16] = { 0 };
-        int			  size = 0;
 
-        code[size++] = 0x33;
-        code[size++] = 0xC0;
-        code[size++] = 0xC2;
-        code[size++] = 0x04;
-        code[size++] = 0x00;
-
-        DWORD dwOldFlag = 0;
-        DWORD dwTempFlag = 0;
-
-        VirtualProtect(pAddr, size, PAGE_READWRITE, &dwOldFlag);
-        WriteProcessMemory(GetCurrentProcess(), pAddr, code, size, NULL);
-        VirtualProtect(pAddr, size, dwOldFlag, &dwTempFlag);
-    }
-    FreeLibrary(hModule);
-}
 
 HRESULT MiniDumper::CreateInstance()
 {
@@ -156,7 +133,7 @@ MiniDumper::MiniDumper()
 {
     // 使应用程序能够取代每个进程和线程的顶级异常处理程序	
     ::SetUnhandledExceptionFilter(UnhandledExceptionHandler);
-    DisableSetUnhandledExceptionFilter();
+/*    DisableSetUnhandledExceptionFilter();*/
 }
 
 //-----------------------------------------------------------------------------
@@ -347,4 +324,121 @@ LONG MiniDumper::WriteMiniDump(_EXCEPTION_POINTERS *pExceptionInfo)
     }
 
     return retval;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+// generate dump file.
+int GenerateMiniDump(HANDLE hFile, PEXCEPTION_POINTERS pExceptionPointers, PWCHAR pwAppName)
+{
+    BOOL bOwnDumpFile = FALSE;
+    HANDLE hDumpFile = hFile;
+    MINIDUMP_EXCEPTION_INFORMATION ExpParam;
+
+    typedef BOOL(WINAPI * MiniDumpWriteDumpT)(
+        HANDLE,
+        DWORD,
+        HANDLE,
+        MINIDUMP_TYPE,
+        PMINIDUMP_EXCEPTION_INFORMATION,
+        PMINIDUMP_USER_STREAM_INFORMATION,
+        PMINIDUMP_CALLBACK_INFORMATION
+        );
+
+    MiniDumpWriteDumpT pfnMiniDumpWriteDump = NULL;
+    HMODULE hDbgHelp = LoadLibrary("DbgHelp.dll");
+    if (hDbgHelp)
+        pfnMiniDumpWriteDump = (MiniDumpWriteDumpT)GetProcAddress(hDbgHelp, "MiniDumpWriteDump");
+
+    if (pfnMiniDumpWriteDump) {
+        if (hDumpFile == NULL || hDumpFile == INVALID_HANDLE_VALUE) {
+            char szFileName[MAX_PATH] = { 0 };
+
+            char app_path[MAX_PATH] = { 0 };
+            GetModuleFileName(NULL, app_path, MAX_PATH);
+
+            SYSTEMTIME stLocalTime;
+            GetLocalTime(&stLocalTime);
+
+            wsprintf(szFileName, "%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld.dmp",
+                app_path,
+                stLocalTime.wYear, stLocalTime.wMonth, stLocalTime.wDay,
+                stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond,
+                GetCurrentProcessId(), 
+                GetCurrentThreadId());
+
+            hDumpFile = CreateFile(szFileName, GENERIC_READ | GENERIC_WRITE,
+                FILE_SHARE_WRITE | FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
+
+            std::cout << "The dump file is located: " << szFileName << std::endl;
+
+            bOwnDumpFile = TRUE;
+            OutputDebugString(szFileName);
+        }
+
+        if (hDumpFile != INVALID_HANDLE_VALUE) {
+            const DWORD Flags = MiniDumpWithFullMemory |
+                MiniDumpWithFullMemoryInfo |
+                MiniDumpWithHandleData |
+                MiniDumpWithUnloadedModules |
+                MiniDumpWithThreadInfo;
+
+            ExpParam.ThreadId = GetCurrentThreadId();
+            ExpParam.ExceptionPointers = pExceptionPointers;
+            ExpParam.ClientPointers = FALSE;
+
+            pfnMiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(),
+                hDumpFile,
+                MINIDUMP_TYPE(Flags), (pExceptionPointers ? &ExpParam : NULL), NULL, NULL);
+
+            if (bOwnDumpFile)
+                CloseHandle(hDumpFile);
+        }
+    }
+
+    if (hDbgHelp != NULL)
+        FreeLibrary(hDbgHelp);
+
+    return EXCEPTION_EXECUTE_HANDLER;
+}
+
+LONG WINAPI ExceptionFilter(LPEXCEPTION_POINTERS lpExceptionInfo)
+{
+    if (IsDebuggerPresent()) {
+        return EXCEPTION_CONTINUE_SEARCH;
+    }
+
+    return GenerateMiniDump(NULL, lpExceptionInfo, L"test");
+}
+
+// once called, the next call of SetUnhandledExceptionFilter will not work on.
+void DisableSetUnhandledExceptionFilter()
+{
+    HMODULE hModule = LoadLibrary("kernel32.dll");
+    void* pAddr = (void*)GetProcAddress(hModule, "SetUnhandledExceptionFilter");
+    if (pAddr) {
+        unsigned char code[16] = { 0 };
+        int			  size = 0;
+
+        code[size++] = 0x33;
+        code[size++] = 0xC0;
+        code[size++] = 0xC2;
+        code[size++] = 0x04;
+        code[size++] = 0x00;
+
+        DWORD dwOldFlag = 0;
+        DWORD dwTempFlag = 0;
+
+        VirtualProtect(pAddr, size, PAGE_READWRITE, &dwOldFlag);
+        WriteProcessMemory(GetCurrentProcess(), pAddr, code, size, NULL);
+        VirtualProtect(pAddr, size, dwOldFlag, &dwTempFlag);
+    }
+
+    FreeLibrary(hModule);
+}
+
+void start()
+{
+    SetUnhandledExceptionFilter(ExceptionFilter);
+    DisableSetUnhandledExceptionFilter();
 }
