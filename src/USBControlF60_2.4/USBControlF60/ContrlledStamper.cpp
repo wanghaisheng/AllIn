@@ -42,7 +42,8 @@ const unsigned short MAX_STAMPER_MEM = 512;
 	memcpy(points,szPoint,sizeof(szPoint));\
 	points +=sizeof(szPoint);
 
-CCommunicateToUSB* CContrlledStamper::m_USB=NULL;
+CCommunicateToUSB* CContrlledStamper::m_USB = NULL;
+
 CContrlledStamper::CContrlledStamper(void)
 {
 	m_USB = new CCommunicateToUSB;
@@ -63,8 +64,6 @@ CContrlledStamper::~CContrlledStamper(void)
 {
 	if (m_USB)
 	{
-		/*m_USB->CloseDev();*/
-		
 		delete m_USB;
 		m_USB = NULL;
 	}
@@ -180,6 +179,7 @@ int CContrlledStamper::CloseDev(void)
 	{
 		m_USB->CloseDev();
 	}
+
 	return 0;
 }
 
