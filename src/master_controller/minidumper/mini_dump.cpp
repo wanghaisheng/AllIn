@@ -2,7 +2,6 @@
 #include "dumper.h"
 #include "mini_dump.h"
 
-
 int InstallCrashReport()
 {
     start();

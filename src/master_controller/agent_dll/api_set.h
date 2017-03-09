@@ -3,273 +3,373 @@
 
 #include <string>
 #include <map>
+#include <boost/thread/thread.hpp>
 #include "agent_cmd.h"
+
+#define CLEAN_FUNC_WAIT 30000   // ms, every 'CLEAN_FUNC_WAIT', the clean thread will free heap
+#define LIFE_DURATION   25000   // ms, should be bigger than 'SYNC_IMAGE_WAIT'
 
 class QueryMachineNT {
 public:
-    virtual void Notify(std::string sn, int ec) = 0;
+    virtual ~QueryMachineNT() {}
+
+    virtual void Notify(std::string sn, int ec) {}
 };
 
 class SetMachineNT {
 public:
-    virtual void Notify(std::string sn, int ec) = 0;
+    virtual ~SetMachineNT() {}
+
+    virtual void Notify(std::string sn, int ec) {}
 };
 
 class InitMachineNT {
 public:
-    virtual void Notify(std::string key, int ec) = 0;
+    virtual ~InitMachineNT() {}
+
+    virtual void Notify(std::string key, int ec) {}
 };
 
 class BindMACNT {
 public:
-    virtual void Notify(std::string mac, int ec) = 0;
+    virtual ~BindMACNT() {}
+
+    virtual void Notify(std::string mac, int ec) {}
 };
 
 class UnbindMACNT {
 public:
-    virtual void Notify(std::string mac, int ec) = 0;
+    virtual ~UnbindMACNT() {}
+
+    virtual void Notify(std::string mac, int ec) {}
 };
 
 class PrepareStampNT {
 public:
-    virtual void Notify(int num, int timeout, std::string task_id, int ec) = 0;
+    virtual ~PrepareStampNT() {}
+
+    virtual void Notify(int num, int timeout, std::string task_id, int ec) {}
 };
 
 class QueryPaperNT {
 public:
-    virtual void Notify(int status, int ec) = 0;
+    virtual ~QueryPaperNT() {}
+
+    virtual void Notify(int status, int ec) {}
 };
 
 class SnapshotNT {
 public:
-    virtual void Notify(int ori_dpi, int cut_dpi, 
-        std::string ori_path, std::string cut_path, int ec) = 0;
+    virtual ~SnapshotNT() {}
+
+    virtual void Notify(int ori_dpi, int cut_dpi,
+        std::string ori_path, std::string cut_path, int ec) {}
 };
 
 // 合成照片
 class MergePhotoNT {
 public:
-    virtual void Notify(std::string p1, std::string p2, std::string merged, int ec) = 0;
+    virtual ~MergePhotoNT() {}
+
+    virtual void Notify(std::string p1, std::string p2, std::string merged, int ec) {}
 };
 
 // 原图用印点查找
 class SearchStampPointNT {
 public:
-    virtual void Notify(int x, int y, double angle, int ec) = 0;
+    virtual ~SearchStampPointNT() {}
+
+    virtual void Notify(int x, int y, double angle, int ec) {}
 };
 
 // 坐标转换
 class CvtCoordNT {
 public:
-    virtual void Notify(int x_dev, int y_dev, int ec) = 0;
+    virtual ~CvtCoordNT() {}
+
+    virtual void Notify(int x_dev, int y_dev, int ec) {}
 };
 
 class RecogModelPointNT {
 public:
-    virtual void Notify(std::string model, double angle, int x, int y, int ec) = 0;
+    virtual ~RecogModelPointNT() {}
+
+    virtual void Notify(std::string model, double angle, int x, int y, int ec) {}
 };
 
 // 版面、验证码识别
 class RecognizeNT {
 public:
-    virtual void Notify(std::string path, std::string template_id, std::string trace, int ec) = 0;
+    virtual ~RecognizeNT() {}
+
+    virtual void Notify(std::string path, std::string template_id, std::string trace, int ec) {}
 };
 
 // 要素识别
 class IdentifyNT {
 public:
+    virtual ~IdentifyNT() {}
     virtual void Notify(std::string path, int x, int y, int width, int height,
-        std::string result, int ec) = 0;
+        std::string result, int ec) {}
 };
 
 // 普通用印
 class OrdinaryStampNT {
 public:
-    virtual void Notify(std::string task, std::string voucher_type, int stamp_num, 
-        int x, int y, int angle, int ec) = 0;
+    virtual ~OrdinaryStampNT() {}
+    virtual void Notify(std::string task, std::string voucher_type, int stamp_num,
+        int x, int y, int angle, int ec) {}
 };
 
 // 自动用印
 class AutoStampNT {
 public:
-    virtual void Notify(std::string task, std::string voucher_type, int stamp_num, int ec) = 0;
+    virtual ~AutoStampNT() {}
+
+    virtual void Notify(std::string task, std::string voucher_type, int stamp_num, int ec) {}
 };
 
 // 结束用印
 class FinishStampNT {
 public:
-    virtual void Notify(std::string task, int ec) = 0;
+    virtual ~FinishStampNT() {}
+
+    virtual void Notify(std::string task, int ec) {}
 };
 
 // 释放印控机
 class ReleaseStampNT {
 public:
-    virtual void Notify(std::string machine, int ec) = 0;
+    virtual ~ReleaseStampNT() {}
+
+    virtual void Notify(std::string machine, int ec) {}
 };
 
 // 获取错误信息
 class GetErrorNT {
 public:
-    virtual void Notify(int er_code, std::string err_msg, std::string err_resolver, int ec) = 0;
+    virtual ~GetErrorNT() {}
+
+    virtual void Notify(int er_code, std::string err_msg, std::string err_resolver, int ec) {}
 };
 
 // 校准印章
 class CalibrationNT {
 public:
-    virtual void Notify(int slot, int ec) = 0;
+    virtual ~CalibrationNT() {}
+
+    virtual void Notify(int slot, int ec) {}
 };
 
 // 查询印章信息
 class QueryStampersNT {
 public:
-    virtual void Notify(char* status, int ec) = 0;
+    virtual ~QueryStampersNT() {}
+
+    virtual void Notify(char* status, int ec) {}
 };
 
 // 安全门状态
 class QuerySafeNT {
 public:
-    virtual void Notify(int status, int ec) = 0;
+    virtual ~QuerySafeNT() {}
+
+    virtual void Notify(int status, int ec) {}
 };
 
 // 开关安全门
 class CtrlSafeNT {
 public:
-    virtual void Notify(int ctrl, int ec) = 0;
+    virtual ~CtrlSafeNT() {}
+
+    virtual void Notify(int ctrl, int ec) {}
 };
 
 // 开关蜂鸣器
 class CtrlBeepNT {
 public:
-    virtual void Notify(int ctrl, int ec) = 0;
+    virtual ~CtrlBeepNT() {}
+
+    virtual void Notify(int ctrl, int ec) {}
 };
 
 class QuerySlotNT {
 public:
-    virtual void Notify(int num, int ec) = 0;
+    virtual ~QuerySlotNT() {}
+
+    virtual void Notify(int num, int ec) {}
 };
 
 // 报警器状态查询
 class QueryAlarmNT {
 public:
-    virtual void Notify(int door, int vibration, int ec) = 0;
+    virtual ~QueryAlarmNT() {}
+
+    virtual void Notify(int door, int vibration, int ec) {}
 };
 
 // 开关报警器
 class CtrlAlarmNT {
 public:
-    virtual void Notify(int alarm, int ctrl, int ec) = 0;
+    virtual ~CtrlAlarmNT() {}
+
+    virtual void Notify(int alarm, int ctrl, int ec) {}
 };
 
 // 查询mac信息
 class QueryMACNT {
 public:
-    virtual void Notify(std::string mac1, std::string mac2, int ec) = 0;
+    virtual ~QueryMACNT() {}
+
+    virtual void Notify(std::string mac1, std::string mac2, int ec) {}
 };
 
 // 锁定
 class LockNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~LockNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class UnlockNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~UnlockNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class QueryLockNT {
 public:
-    virtual void Notify(int lock, int ec) = 0;
+    virtual ~QueryLockNT() {}
+
+    virtual void Notify(int lock, int ec) {}
 };
 
 class OpenCnnNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~OpenCnnNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class CloseCnnNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~CloseCnnNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class QueryCnnNT {
 public:
-    virtual void Notify(int cnn, int ec)  = 0;
+    virtual ~QueryCnnNT() {}
+
+    virtual void Notify(int cnn, int ec) {}
 };
 
 class SideDoorAlarmNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~SideDoorAlarmNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class DevModelNT {
 public:
-    virtual void Notify(std::string model, int ec) = 0;
+    virtual ~DevModelNT() {}
+
+    virtual void Notify(std::string model, int ec) {}
 };
 
 class OpenPaperNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~OpenPaperNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class CtrlLedNT {
 public:
-    virtual void Notify(int ec)  = 0;
+    virtual ~CtrlLedNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class CheckParamNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~CheckParamNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class OpenCameraNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~OpenCameraNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class CloseCameraNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~CloseCameraNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class QueryCameraNT {
 public:
-    virtual void Notify(int which, int status, int ec) = 0;
+    virtual ~QueryCameraNT() {}
+
+    virtual void Notify(int which, int status, int ec) {}
 };
 
 class SetResolutionNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~SetResolutionNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class SetDPIValueNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~SetDPIValueNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class SetPropertyNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~SetPropertyNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class RecordVideoNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~RecordVideoNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class StopRecordVideoNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~StopRecordVideoNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class GetRFIDNT {
 public:
-    virtual void Notify(int rfid, int ec) = 0;
+    virtual ~GetRFIDNT() {}
+
+    virtual void Notify(int rfid, int ec) {}
 };
 
 class GetStatusNT {
 public:
-    virtual void Notify(int code, int ec) = 0;
+    virtual ~GetStatusNT() {}
+
+    virtual void Notify(int code, int ec) {}
 };
 
 // 心跳
@@ -280,111 +380,158 @@ public:
 
 class WriteRatioNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~WriteRatioNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class ReadRatioNT {
 public:
-    virtual void Notify(float x, float y, int ec) = 0;
+    virtual ~ReadRatioNT() {}
+
+    virtual void Notify(float x, float y, int ec) {}
 };
 
 class WriteCaliNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~WriteCaliNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class ReadCaliNT {
 public:
+    virtual ~ReadCaliNT() {}
+
     virtual void Notify(
         unsigned short pts0, unsigned short pts1,
         unsigned short pts2, unsigned short pts3,
         unsigned short pts4, unsigned short pts5,
         unsigned short pts6, unsigned short pts7,
         unsigned short pts8, unsigned short pts9,
-        int ec) = 0;
+        int ec) {}
 };
 
 class QueryTopNT {
 public:
-    virtual void Notify(int status, int ec) = 0;
+    virtual ~QueryTopNT() {}
+
+    virtual void Notify(int status, int ec) {}
 };
 
 class EnterMaintainNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~EnterMaintainNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class ExitMaintainNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~ExitMaintainNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class StartPreviewNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~StartPreviewNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class StopPreviewNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~StopPreviewNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class CtrlFactoryNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~CtrlFactoryNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class ResetNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~ResetNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class RestartNT {
 public:
-    virtual void Notify(int ec) = 0;
+    virtual ~RestartNT() {}
+
+    virtual void Notify(int ec) {}
 };
 
 class GetSystemNT {
 public:
-    virtual void Notify(int status, int ec) = 0;
+    virtual ~GetSystemNT() {}
+
+    virtual void Notify(int status, int ec) {}
 };
 
 class WriteMainSpareNT {
 public:
-    virtual void Notify(std::string sn, int ec) = 0;
+    virtual ~WriteMainSpareNT() {}
+
+    virtual void Notify(std::string sn, int ec) {}
 };
 
 class ReadMainSpareNT {
 public:
-    virtual void Notify(std::string sn, int ec) = 0;
+    virtual ~ReadMainSpareNT() {}
+
+    virtual void Notify(std::string sn, int ec) {}
 };
 
 class RecogQRNT {
 public:
-    virtual void Notify(std::string qr, int ec) = 0;
+    virtual ~RecogQRNT() {}
+
+    virtual void Notify(std::string qr, int ec) {}
 };
 
 class CalcRatioNT {
 public:
-    virtual void Notify(double ratio_x, double ratio_y, int ec) = 0;
+    virtual ~CalcRatioNT() {}
+
+    virtual void Notify(double ratio_x, double ratio_y, int ec) {}
 };
 
 class Find2CirclesNT {
 public:
-    virtual void Notify(int x1, int y1, int r1, int x2, int y2, int r2, int ec) = 0;
+    virtual ~Find2CirclesNT() {}
+
+    virtual void Notify(int x1, int y1, int r1, int x2, int y2, int r2, int ec) {}
 };
 
 class Find4CirclesNT {
 public:
+    virtual ~Find4CirclesNT() {}
+
     virtual void Notify(
-        int x1, int y1, int r1, int x2, int y2, int r2, 
+        int x1, int y1, int r1, int x2, int y2, int r2,
         int x3, int y3, int r3, int x4, int y4, int r4,
         int ec) = 0;
 };
 
 class AsynAPISet {
 public:
-    void DeleteNotify(void* nt);
+    AsynAPISet() {
+        running_ = true;
+        clean_thread_ =
+            new (std::nothrow) boost::thread(boost::bind(&AsynAPISet::CleanFunc, this));
+    }
+
+    ~AsynAPISet() {
+//         running_ = false;
+//         clean_thread_->join();
+    }
 
 public:
     int AsynQueryMachine(const QueryMachineNT* const nt);
@@ -593,7 +740,7 @@ private:
 
     void* LookupSendTime(const std::string& send_time);
 
-    void InsertNotify(const std::string& st, const void* const nt);
+    void InsertNotify(const BaseCmd* cmd, const void* const nt);
 
 public:
     void HandleQueryMachine(char* chBuf);
@@ -732,9 +879,29 @@ public:
 
     void HandleFind4Circles(char* chBuf);
 
+public:
+    struct NotifySet {
+        NotifySet() : nt(NULL), used(false) {
+
+        }
+
+        NotifySet(void* n, long begin) : nt(n), life_start(begin), used(false) {
+
+        }
+
+        void* nt;
+        long life_start;
+
+        bool used;
+    };
+
+    void CleanFunc();
+
 private:
-    std::map<std::string, void*> api_maps_;
-    std::map<void*, std::string> nt_maps_;
+    std::map<std::string, NotifySet*> api_maps_;
+
+    bool running_;
+    boost::thread*          clean_thread_;
 };
 
 #endif

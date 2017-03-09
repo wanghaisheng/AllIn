@@ -176,14 +176,16 @@ public:
         boost::uuids::uuid uuid = boost::uuids::random_generator()();
         std::string uuid_str = boost::lexical_cast<std::string>(uuid);
         strcpy(send_time_, uuid_str.c_str());
+        life_begin_ = GetTickCount();
     }
 
     virtual void Ser();
     virtual void Unser();
 
 public:
-    enum        CmdType ct_;               //新增数据成员放在ct_后, 序列化时也最先序列号ct_
+    enum        CmdType ct_;               // 新增数据成员放在ct_后, 序列化时也最先序列号ct_
     char        send_time_[SEND_TIME_SIZE];
+    long        life_begin_;
     XSpace      xs_;
 };
 

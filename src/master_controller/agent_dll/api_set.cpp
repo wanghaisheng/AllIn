@@ -18,35 +18,16 @@ void AsynAPISet::ParseCmd(BaseCmd* cmd, char* chBuf)
     cmd->Unser();
 }
 
-void AsynAPISet::DeleteNotify(void* nt)
-{
-    boost::lock_guard<boost::mutex> lk(api_map_mtx);
-    std::map<void*, std::string>::iterator nt_it = nt_maps_.find(nt);
-    if (nt_it != nt_maps_.end()) {
-        std::map<std::string, void*>::iterator it = api_maps_.begin();
-        for (; it != api_maps_.end(); ++it) {
-            if (it->first == nt_it->second) {
-                Log::WriteLog(LL_DEBUG, "AsynAPISet::DeleteNotify->发送时间: %s, 通知对象值: %d",
-                    nt_it->second.c_str(),
-                    it->second);
-
-                api_maps_.erase(it);
-                break;
-            }
-        }
-    }
-}
-
 void* AsynAPISet::LookupSendTime(const std::string& send_time)
 {
     void* ptr = NULL;
     boost::lock_guard<boost::mutex> lk(api_map_mtx);
-    std::map<std::string, void*>::iterator it = api_maps_.begin();
+    std::map<std::string, NotifySet*>::iterator it = api_maps_.begin();
     for (; it != api_maps_.end(); ++it) {
         if (it->first == send_time) {
-            ptr = it->second;
+            ptr = it->second->nt;
             
-            Log::WriteLog(LL_DEBUG, "AsynAPISet::LookupSendTime->发送时间: %s, 通知对象值: %d",
+            Log::WriteLog(LL_DEBUG, "AsynAPISet::LookupSendTime->发送时间: %s, 通知对象值: %p",
                 send_time.c_str(),
                 ptr);
             break;
@@ -738,125 +719,12 @@ void AsynAPISet::HandleGetRFID(char *chBuf) {
         nt->Notify(cmd.rfid_, cmd.ret_);
 }
 
-void AsynAPISet::AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec)
-{
-    switch (cmd->ct_) {
-    case CT_INIT_MACHINE: {
-        InitMachineNT* nt = (InitMachineNT*)LookupSendTime(cmd->send_time_);
-        nt->Notify(((InitMachineCmd*)cmd)->key_, ec);
-    }
-        break;
-    case CT_BIND_MAC: {
-        BindMACNT* nt = (BindMACNT*)LookupSendTime(cmd->send_time_);
-        nt->Notify(((BindMACCmd*)cmd)->mac_, ec);
-    }
-        break;
-    case CT_UNBIND_MAC: {
-        UnbindMACNT* nt = (UnbindMACNT*)LookupSendTime(cmd->send_time_);
-        nt->Notify(((UnbindCmd*)cmd)->mac_, ec);
-    }
-        break;
-    case CT_PREPARE_STAMP: {
-        PrepareStampNT* nt = (PrepareStampNT*)LookupSendTime(cmd->send_time_);
-        nt->Notify(
-            ((PrepareStampCmd*)cmd)->stamper_id_, 
-            ((PrepareStampCmd*)cmd)->timeout_, 
-            "", 
-            ec);
-    }
-        break;
-    case CT_SNAPSHOT: {
-        SnapshotNT* nt = (SnapshotNT*)LookupSendTime(cmd->send_time_);
-        nt->Notify(
-            ((SnapshotCmd*)cmd)->original_dpi_,
-            ((SnapshotCmd*)cmd)->cut_dpi_,
-            ((SnapshotCmd*)cmd)->original_path_,
-            ((SnapshotCmd*)cmd)->cut_path_,
-            ec);
-    }
-        break;
-    case CT_PHOTO_SYNTHESIS: {
-        MergePhotoNT* nt = (MergePhotoNT*)LookupSendTime(cmd->send_time_);
-        nt->Notify(
-            ((SynthesizePhotoCmd*)cmd)->photo1_, 
-            ((SynthesizePhotoCmd*)cmd)->photo2_,
-            "",
-            ec);
-    }
-        break;
-    case CT_RECOGNITION: {
-        RecognizeNT* nt = (RecognizeNT*)LookupSendTime(cmd->send_time_);
-        nt->Notify(
-            ((RecognitionCmd*)cmd)->path_,
-            "",
-            "",
-            ec);
-    }
-        break;
-    case CT_ELEMENT_IDENTI: {
-        IdentifyNT* nt = (IdentifyNT*)LookupSendTime(cmd->send_time_);
-        nt->Notify(
-            ((IdentifyElementCmd*)cmd)->path_,
-            ((IdentifyElementCmd*)cmd)->x_, 
-            ((IdentifyElementCmd*)cmd)->y_, 
-            ((IdentifyElementCmd*)cmd)->width_, 
-            ((IdentifyElementCmd*)cmd)->height_,
-            "", 
-            ec);
-    }
-        break;
-    case CT_ORDINARY_STAMP: {
-        OrdinaryStampNT* nt = (OrdinaryStampNT*)LookupSendTime(cmd->send_time_);
-        nt->Notify(
-            ((OridinaryStampCmd*)cmd)->task_id_, 
-            ((OridinaryStampCmd*)cmd)->type_, 
-            ((OridinaryStampCmd*)cmd)->stamper_num_,
-            ((OridinaryStampCmd*)cmd)->x_, 
-            ((OridinaryStampCmd*)cmd)->y_, 
-            ((OridinaryStampCmd*)cmd)->angle_, 
-            ec);
-    }
-        break;
-    case CT_AUTO_STAMP: {
-        AutoStampNT* nt = (AutoStampNT*)LookupSendTime(cmd->send_time_);
-        nt->Notify(
-            ((AutoStampCmd*)cmd)->task_id_, 
-            ((AutoStampCmd*)cmd)->type_, 
-            ((AutoStampCmd*)cmd)->stamper_num_,
-            ec);
-    }
-        break;
-    case CT_FINISH_STAMP: {
-        FinishStampNT* nt = (FinishStampNT*)LookupSendTime(cmd->send_time_);
-        nt->Notify(((FinishStampCmd*)cmd)->task_id_, ec);
-    }
-        break;
-    case CT_RELEASE_STAMPER: {
-        ReleaseStampNT* nt = (ReleaseStampNT*)LookupSendTime(cmd->send_time_);
-        nt->Notify(((ReleaseStamperCmd*)cmd)->stamp_id_, ec);
-    }
-        break;
-    case CT_GET_ERROR: {
-        GetErrorNT* nt = (GetErrorNT*)LookupSendTime(cmd->send_time_);
-        nt->Notify(
-            ((GetErrorCmd*)cmd)->err_,
-            "",
-            "", 
-            ec);
-    }
-        break;
-    default:
-        break;
-    }
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 
 int AsynAPISet::AsynQueryMachine(const QueryMachineNT* const nt)
 {
     QueryMachineCmd* cmd = new QueryMachineCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -865,7 +733,7 @@ int AsynAPISet::AsynSetMachine(const std::string& sn, SetMachineNT* nt)
 {
     SetMachineCmd* cmd = new SetMachineCmd;
     strcpy_s(cmd->sn_, sn.c_str());
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -874,7 +742,7 @@ int AsynAPISet::AsynInitMachine(const std::string& key, InitMachineNT* nt)
 {
     InitMachineCmd* cmd = new InitMachineCmd;
     strcpy(cmd->key_, key.c_str());
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -883,7 +751,7 @@ int AsynAPISet::AsynBindMAC(const std::string& mac, BindMACNT* nt)
 {
     BindMACCmd* cmd = new BindMACCmd;
     strcpy(cmd->mac_, mac.c_str());
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
     
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -892,7 +760,7 @@ int AsynAPISet::AsynUnbindMAC(const std::string& mac, UnbindMACNT* nt)
 {
     UnbindCmd* cmd = new UnbindCmd;
     strcpy(cmd->mac_, mac.c_str());
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -902,7 +770,7 @@ int AsynAPISet::AsynPrepareStamp(int num, int timeout, PrepareStampNT* nt)
     PrepareStampCmd* cmd = new PrepareStampCmd;
     cmd->stamper_id_ = num;
     cmd->timeout_ = timeout;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -910,7 +778,7 @@ int AsynAPISet::AsynPrepareStamp(int num, int timeout, PrepareStampNT* nt)
 int AsynAPISet::AsynQueryPaper(QueryPaperNT* nt)
 {
     ViewPaperCmd* cmd = new ViewPaperCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -929,7 +797,7 @@ int AsynAPISet::AsynSnapshot(
     cmd->cut_dpi_ = cut_dpi;
     strcpy_s(cmd->original_path_, ori_path.c_str());
     strcpy_s(cmd->cut_path_, cut_path.c_str());
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -944,7 +812,7 @@ int AsynAPISet::AsynMergePhoto(
     strcpy_s(cmd->photo1_, p1.c_str());
     strcpy_s(cmd->photo2_, p2.c_str());
     strcpy_s(cmd->merged_, merged.c_str());
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -954,7 +822,7 @@ int AsynAPISet::AsynRecogModelPoint(
     RecogModelPointNT* nt) {
     RecoModelTypeEtcCmd* cmd = new RecoModelTypeEtcCmd;
     strcpy_s(cmd->path_, path.c_str());
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -970,7 +838,7 @@ int AsynAPISet::AsynSearchStampPoint(
     cmd->in_x_ = x;
     cmd->in_y_ = y;
     cmd->in_angle_ = angle;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -979,7 +847,7 @@ int AsynAPISet::AsynRecognizeImage(const std::string& path, RecognizeNT* nt)
 {
     RecognitionCmd* cmd = new RecognitionCmd;
     strcpy_s(cmd->path_, path.c_str());
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -993,19 +861,21 @@ int AsynAPISet::AsynIdentifyElement(const std::string& path, int x, int y, int w
     cmd->y_ = y;
     cmd->width_ = width;
     cmd->height_ = height;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
 
-void AsynAPISet::InsertNotify(const std::string& st, const void* const nt)
+void AsynAPISet::InsertNotify(const BaseCmd* cmd, const void* const nt)
 {
     api_map_mtx.lock();
-    api_maps_.insert(std::make_pair(st, (void*)nt));
-    nt_maps_.insert(std::make_pair((void*)nt, st));
-    Log::WriteLog(LL_DEBUG, "AsynAPISet::InsertNotify->通知对象值: %d, 发送时间: %s",
+    AsynAPISet::NotifySet* n = new (std::nothrow) AsynAPISet::NotifySet(
+        (void*)nt,
+        cmd->life_begin_);
+    api_maps_.insert(std::make_pair(cmd->send_time_, n));
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::InsertNotify->通知对象值: %p, 发送时间: %s",
         nt,
-        st.c_str());
+        cmd->send_time_);
     api_map_mtx.unlock();
 }
 
@@ -1029,7 +899,7 @@ int AsynAPISet::AsynOrdinaryStamp(
     cmd->y_ = y;
     cmd->angle_ = angle;
     cmd->seal_type_ = type;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1041,7 +911,7 @@ int AsynAPISet::AsynAutoStamp(const std::string& task,
     strcpy_s(cmd->task_id_, task.c_str());
     strcpy_s(cmd->type_, voucher.c_str());
     cmd->stamper_num_ = num;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1050,7 +920,7 @@ int AsynAPISet::AsynFinishStamp(const std::string& task, FinishStampNT* nt)
 {
     FinishStampCmd* cmd = new FinishStampCmd;
     strcpy_s(cmd->task_id_, task.c_str());
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1059,7 +929,7 @@ int AsynAPISet::AsynReleaseStamp(const std::string& machine, ReleaseStampNT* nt)
 {
     ReleaseStamperCmd* cmd = new ReleaseStamperCmd;
     strcpy_s(cmd->stamp_id_, machine.c_str());
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1068,7 +938,7 @@ int AsynAPISet::AsynGetError(int err_code, GetErrorNT* nt)
 {
     GetErrorCmd* cmd = new GetErrorCmd;
     cmd->err_ = err_code;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1078,7 +948,7 @@ int AsynAPISet::AsynCalibrate(int slot, CalibrationNT* nt)
     CalibrateCmd* cmd = new CalibrateCmd;
 
     cmd->slot_ = slot;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1086,7 +956,7 @@ int AsynAPISet::AsynCalibrate(int slot, CalibrationNT* nt)
 int AsynAPISet::AsynQueryStampers(QueryStampersNT* nt)
 {
     QueryStampersCmd* cmd = new QueryStampersCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1094,7 +964,7 @@ int AsynAPISet::AsynQueryStampers(QueryStampersNT* nt)
 int AsynAPISet::AsynQuerySafe(QuerySafeNT* nt)
 {
     QuerySafeCmd* cmd = new QuerySafeCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1103,7 +973,7 @@ int AsynAPISet::AsynSafeControl(int ctrl, CtrlSafeNT* nt)
 {
     SafeCtrlCmd* cmd = new SafeCtrlCmd;
     cmd->ctrl_ = ctrl;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1114,7 +984,7 @@ int AsynAPISet::AsynBeepControl(int ctrl, int type, int interval, CtrlBeepNT* nt
     cmd->ctrl_ = ctrl;
     cmd->type_ = type;
     cmd->interval_ = interval;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1122,7 +992,7 @@ int AsynAPISet::AsynBeepControl(int ctrl, int type, int interval, CtrlBeepNT* nt
 int AsynAPISet::AsynQuerySlot(QuerySlotNT* nt)
 {
     QuerySlotCmd* cmd = new QuerySlotCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1130,7 +1000,7 @@ int AsynAPISet::AsynQuerySlot(QuerySlotNT* nt)
 int AsynAPISet::AsynQueryAlarm(QueryAlarmNT* nt)
 {
     QueryAlarmCmd* cmd = new QueryAlarmCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1140,7 +1010,7 @@ int AsynAPISet::AsynAlarmControl(int alarm, int ctrl, CtrlAlarmNT* nt)
     AlarmCtrlCmd* cmd = new AlarmCtrlCmd;
     cmd->alarm_ = alarm;
     cmd->ctrl_ = ctrl;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1148,7 +1018,7 @@ int AsynAPISet::AsynAlarmControl(int alarm, int ctrl, CtrlAlarmNT* nt)
 int AsynAPISet::AsynQueryMAC(QueryMACNT* nt)
 {
     QueryMACCmd* cmd = new QueryMACCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1156,7 +1026,7 @@ int AsynAPISet::AsynQueryMAC(QueryMACNT* nt)
 int AsynAPISet::AsynLock(LockNT* nt)
 {
     LockCmd* cmd = new LockCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1164,7 +1034,7 @@ int AsynAPISet::AsynLock(LockNT* nt)
 int AsynAPISet::AsynUnlock(UnlockNT* nt)
 {
     UnlockCmd* cmd = new UnlockCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1172,7 +1042,7 @@ int AsynAPISet::AsynUnlock(UnlockNT* nt)
 int AsynAPISet::AsynQueryLock(QueryLockNT* nt)
 {
     QueryLockCmd* cmd = new QueryLockCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1180,7 +1050,7 @@ int AsynAPISet::AsynQueryLock(QueryLockNT* nt)
 int AsynAPISet::AsynOpen(OpenCnnNT* nt)
 {
     OpenCnnCmd* cmd = new OpenCnnCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1188,7 +1058,7 @@ int AsynAPISet::AsynOpen(OpenCnnNT* nt)
 int AsynAPISet::AsynClose(CloseCnnNT* nt)
 {
     CloseCnnCmd* cmd = new CloseCnnCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1196,7 +1066,7 @@ int AsynAPISet::AsynClose(CloseCnnNT* nt)
 int AsynAPISet::AsynQueryCnn(QueryCnnNT* nt)
 {
     QueryCnnCmd* cmd = new QueryCnnCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1206,7 +1076,7 @@ int AsynAPISet::AsynSetSideAlarm(int keep, int timeout, SideDoorAlarmNT* nt)
     SideDoorAlarmCmd* cmd = new SideDoorAlarmCmd;
     cmd->keep_open_ = keep;
     cmd->timeout_ = timeout;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1214,7 +1084,7 @@ int AsynAPISet::AsynSetSideAlarm(int keep, int timeout, SideDoorAlarmNT* nt)
 int AsynAPISet::AsynQueryModel(DevModelNT* nt)
 {
     GetDevModelCmd* cmd = new GetDevModelCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1223,7 +1093,7 @@ int AsynAPISet::AsynOpenPaper(int timeout, OpenPaperNT* nt)
 {
     OpenPaperCmd* cmd = new OpenPaperCmd;
     cmd->timeout_ = timeout;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1234,7 +1104,7 @@ int AsynAPISet::AsynCtrlLed(int which, int ctrl, int value, CtrlLedNT* nt)
     cmd->which_ = which;
     cmd->switch_ = ctrl;
     cmd->value_ = value;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1245,7 +1115,7 @@ int AsynAPISet::AsynCheckParam(int x, int y, int angle, CheckParamNT* nt)
     cmd->x_ = x;
     cmd->y_ = y;
     cmd->angle_ = angle;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1254,7 +1124,7 @@ int AsynAPISet::AsynOpenCamera(int which, OpenCameraNT* nt)
 {
     OpenCameraCmd* cmd = new OpenCameraCmd;
     cmd->which_ = which;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1263,7 +1133,7 @@ int AsynAPISet::AsynCloseCamera(int which, CloseCameraNT* nt)
 {
     CloseCameraCmd* cmd = new CloseCameraCmd;
     cmd->which_ = which;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1272,7 +1142,7 @@ int AsynAPISet::AsynQueryCamera(int which, QueryCameraNT* nt)
 {
     QueryCameraStatusCmd* cmd = new QueryCameraStatusCmd;
     cmd->which_ = which;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1283,7 +1153,7 @@ int AsynAPISet::AsynSetResolution(int which, int x, int y, SetResolutionNT* nt)
     cmd->which_ = which;
     cmd->x_ = x;
     cmd->y_ = y;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1294,7 +1164,7 @@ int AsynAPISet::AsynSetDPI(int which, int x, int y, SetDPIValueNT* nt)
     cmd->which_ = which;
     cmd->dpi_x_ = x;
     cmd->dpi_y_ = y;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);   
 }
@@ -1303,7 +1173,7 @@ int AsynAPISet::AsynSetProperty(int which, SetPropertyNT* nt)
 {
     SetPropertyCmd* cmd = new SetPropertyCmd;
     cmd->which_ = which;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1313,7 +1183,7 @@ int AsynAPISet::AsynStartRecordVideo(int which, const std::string& path, RecordV
     RecordVideoCmd* cmd = new RecordVideoCmd;
     cmd->which_ = which;
     strcpy(cmd->path_, path.c_str());
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1323,7 +1193,7 @@ int AsynAPISet::AsynStopRecordVideo(int which, const std::string& path, StopReco
     StopRecordVideoCmd* cmd = new StopRecordVideoCmd;
     cmd->which_ = which;
     strcpy(cmd->path_, path.c_str());
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1331,7 +1201,7 @@ int AsynAPISet::AsynStopRecordVideo(int which, const std::string& path, StopReco
 int AsynAPISet::AsynGetRFID(int slot, GetRFIDNT *nt) {
     GetRFIDCmd* cmd = new GetRFIDCmd;
     cmd->slot_ = slot;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1339,7 +1209,7 @@ int AsynAPISet::AsynGetRFID(int slot, GetRFIDNT *nt) {
 int AsynAPISet::AsynGetStatus(GetStatusNT* nt)
 {
     GetDevStatusCmd* cmd = new GetDevStatusCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1363,7 +1233,7 @@ int AsynAPISet::AsynGetSealCoord(int x_img, int y_img, CvtCoordNT* nt)
     CoordCvtCmd* cmd = new CoordCvtCmd;
     cmd->x_img_ = x_img;
     cmd->y_img_ = y_img;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1386,7 +1256,7 @@ int AsynAPISet::AsynWriteRatio(float x, float y, WriteRatioNT* nt)
     WriteRatioCmd* cmd = new WriteRatioCmd;
     cmd->x_ = x;
     cmd->y_ = y;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1407,7 +1277,7 @@ void AsynAPISet::HandleWriteRatio(char* chBuf)
 int AsynAPISet::AsynReadRatio(ReadRatioNT* nt)
 {
     ReadRatioCmd* cmd = new ReadRatioCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1430,7 +1300,7 @@ int AsynAPISet::AsynWriteCali(unsigned short* pts, unsigned short len, WriteCali
     WriteCaliPtsCmd* cmd = new WriteCaliPtsCmd;
     cmd->len_ = len;
     memcpy(cmd->pts_, pts, len * sizeof(unsigned short));
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1451,7 +1321,7 @@ void AsynAPISet::HandleWriteCali(char* chBuf)
 int AsynAPISet::AsynReadCali(ReadCaliNT* nt)
 {
     ReadCaliPtsCmd* cmd = new ReadCaliPtsCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1478,7 +1348,7 @@ void AsynAPISet::HandleReadCali(char* chBuf)
 int AsynAPISet::AsynQueryTop(QueryTopNT* nt)
 {
     QueryTopCmd* cmd = new QueryTopCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1499,7 +1369,7 @@ void AsynAPISet::HandleQueryTop(char* chBuf)
 int AsynAPISet::AsynExitMain(ExitMaintainNT* nt)
 {
     ExitMaintainCmd* cmd = new ExitMaintainCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1524,7 +1394,7 @@ int AsynAPISet::AsynStartPreview(int which, int width, int height, int hwnd, Sta
     cmd->width_ = width;
     cmd->height_ = height;
     cmd->hwnd_ = hwnd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1546,7 +1416,7 @@ int AsynAPISet::AsynStopPreview(int which, StopPreviewNT* nt)
 {
     StopPreviewCmd* cmd = new StopPreviewCmd;
     cmd->which_ = which;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1568,7 +1438,7 @@ int AsynAPISet::AsynCtrlFactory(int ctrl, CtrlFactoryNT* nt)
 {
     CtrlFactoryCmd* cmd = new CtrlFactoryCmd;
     cmd->ctrl_ = ctrl;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1589,7 +1459,7 @@ void AsynAPISet::HandleFactoryCtrl(char* chBuf)
 int AsynAPISet::AsynReset(ResetNT* nt)
 {
     ResetCmd* cmd = new ResetCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1610,7 +1480,7 @@ void AsynAPISet::HandleReset(char* chBuf)
 int AsynAPISet::AsynRestart(RestartNT* nt)
 {
     RestartCmd* cmd = new RestartCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1631,7 +1501,7 @@ void AsynAPISet::HandleRestart(char* chBuf)
 int AsynAPISet::AsynEnterMain(EnterMaintainNT* nt)
 {
     EnterMaintainCmd* cmd = new EnterMaintainCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1652,7 +1522,7 @@ void AsynAPISet::HandleEnterMain(char* chBuf)
 int AsynAPISet::AsynGetSystem(GetSystemNT* nt)
 {
     GetSystemCmd* cmd = new GetSystemCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1673,7 +1543,7 @@ void AsynAPISet::HandleGetSystem(char* chBuf)
 int AsynAPISet::AsynReadMainSpare(ReadMainSpareNT* nt)
 {
     ReadMainSpareCmd* cmd = new ReadMainSpareCmd;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1695,7 +1565,7 @@ int AsynAPISet::AsynWriteMainSpare(const std::string& sn, WriteMainSpareNT* nt)
 {
     WriteMainSpareCmd* cmd = new WriteMainSpareCmd;
     strcpy(cmd->sn_, sn.c_str());
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1727,7 +1597,7 @@ int AsynAPISet::AsynRecogQR(
     cmd->top_ = top;
     cmd->right_ = right;
     cmd->bottom_ = bottom;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1750,7 +1620,7 @@ int AsynAPISet::AsynCalcRatio(const std::string& file, const int dpi, CalcRatioN
     CalculateRatioCmd* cmd = new CalculateRatioCmd;
     strcpy(cmd->file_, file.c_str());
     cmd->dpi_ = dpi;
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1772,7 +1642,7 @@ int AsynAPISet::AsynFind2Circles(const std::string& file, Find2CirclesNT* nt)
 {
     Find2CirclesCmd* cmd = new Find2CirclesCmd;
     strcpy(cmd->file_, file.c_str());
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1797,7 +1667,7 @@ int AsynAPISet::AsynFind4Circles(const std::string& file, Find4CirclesNT* nt)
 {
     Find4CirclesCmd* cmd = new Find4CirclesCmd;
     strcpy(cmd->file_, file.c_str());
-    InsertNotify(cmd->send_time_, nt);
+    InsertNotify(cmd, nt);
 
     return MC::Cnn::GetInst()->PushCmd(cmd);
 }
@@ -1818,4 +1688,29 @@ void AsynAPISet::HandleFind4Circles(char* chBuf)
         cmd.x3_, cmd.y3_, cmd.radius3_,
         cmd.x4_, cmd.y4_, cmd.radius4_,
         cmd.ret_);
+}
+
+void AsynAPISet::CleanFunc()
+{
+    while (running_) {
+        Sleep(CLEAN_FUNC_WAIT);
+
+        boost::lock_guard<boost::mutex> lk(api_map_mtx);
+        long life_end = GetTickCount();
+        std::map<std::string, NotifySet*>::iterator it = api_maps_.begin();
+        for (; it != api_maps_.end(); ) {
+            if (life_end - it->second->life_start > LIFE_DURATION) {
+                Log::WriteLog(LL_DEBUG, "AsynAPISet::CleanFunc->发送时间: %s, be cleaned",
+                    it->first.c_str());
+
+                delete it->second->nt;
+                api_maps_.erase(it++);
+            } else {
+                ++it;
+            }
+        }
+
+        Log::WriteLog(LL_DEBUG, "AsynAPISet::CleanFunc->Elapsed time one clean: %d(ms)",
+            GetTickCount() - life_end);
+    }
 }
