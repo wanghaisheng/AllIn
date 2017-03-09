@@ -12,16 +12,19 @@
 
 AsynAPISet api_agent;
 
-boost::mutex server_mtx;
-bool    server_to_kill = false;
+HANDLE server_to_kill_ev = CreateEvent(
+    NULL,
+    FALSE,
+    FALSE,
+    NULL);
 
 const int SYNC_WAIT_TIME = 10000; // 等待异步通知回调超时时间(毫秒)
 const int SYNC_IMAGE_WAIT = 20000;
 
+// when flag is euqal to 2, set server_to_kill_ev to signaled.
 void setKillServer(int flag) {
     if (2 == flag) {
-        boost::lock_guard<boost::mutex> lk(server_mtx);
-        server_to_kill = true;
+        SetEvent(server_to_kill_ev);
     }
 }
 

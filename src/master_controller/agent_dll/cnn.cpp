@@ -7,8 +7,7 @@
 #include "parse.h"
 #include "cnn.h"
 
-extern boost::mutex server_mtx;
-extern bool server_to_kill;
+extern HANDLE server_to_kill_ev;
 
 MC::Cnn* MC::Cnn::cnn_inst = NULL;
 
@@ -190,8 +189,6 @@ void MC::Cnn::ReceiveFunc()
     DWORD cbRead;
     while (true) {
         DWORD suc = WaitForSingleObject(send_ev_, INFINITE);
-        if (suc == WAIT_TIMEOUT)
-            continue;
 
         RecvBuf(chBuf, sizeof(chBuf), &cbRead);
         // 如实际读字节为0, 结束本次循环
@@ -415,6 +412,7 @@ void MC::Cnn::ReceiveFunc()
             printf("AsynAPISet::ReceiverFunc->Unknown cmd: %d", cmd_type);
             break;
         }
+
         if (0 != cmd_type)
             ResetEvent(send_ev_);
 
@@ -563,24 +561,12 @@ void MC::Cnn::HandleServerDeath()
 
 void MC::Cnn::HeartBeatingFunc()
 {
-    while (running_) { 
-        Sleep(HEART_BEATING_WAIT);
-
-        bool kill_server;
-        server_mtx.lock();
-        kill_server = server_to_kill;
-        server_mtx.unlock();
-
-        bool is_alive = LookupProcessByName(MC::SERVER_NAME.c_str());
-        if (!is_alive || kill_server) {
-            Log::WriteLog(LL_DEBUG, "AsynAPISet::HeartBeatingFunc->server dead, kill_server: %d",
-                (int)kill_server);
+    while (running_) {
+        DWORD ret = WaitForSingleObject(server_to_kill_ev, INFINITE);
+        if (WAIT_OBJECT_0 == ret) {
+            Log::WriteLog(LL_DEBUG, "AsynAPISet::HeartBeatingFunc->restart server");
             MC::KillProcessByName(MC::SERVER_NAME.c_str());
             HandleServerDeath();
-
-            server_mtx.lock();
-            server_to_kill = false;
-            server_mtx.unlock();
         }
     }
 }

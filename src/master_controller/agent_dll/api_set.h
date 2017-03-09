@@ -524,8 +524,6 @@ class AsynAPISet {
 public:
     AsynAPISet() {
         running_ = false;
-        clean_thread_ =
-            new (std::nothrow) boost::thread(boost::bind(&AsynAPISet::CleanFunc, this));
     }
 
 public:
