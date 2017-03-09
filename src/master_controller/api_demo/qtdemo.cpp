@@ -1401,12 +1401,13 @@ void QtDemo::HandleReadAlarm()
 void QtDemo::HandleReadRFID()
 {
     int slot = atoi(ui.le_rfid_slot_->text().toStdString().c_str());
-    int rfid;
+    char rfid[16] = { 0 };
     int ret = ST_GetRFID(slot, rfid);
     if (0 != ret)
         return Info(QString::fromLocal8Bit("获取rfid失败, err:") + QString::number(ret));
+
     Info(QString::number(slot) + QString::fromLocal8Bit("卡槽的RFID: ") +
-        QString::number(rfid));
+        QString::fromStdString(rfid));
 }
 
 //////////////////////////////////////////////////////////////////////////

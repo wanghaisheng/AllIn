@@ -7,6 +7,9 @@
 #include "parse.h"
 #include "cnn.h"
 
+extern boost::mutex server_mtx;
+extern bool server_to_kill;
+
 MC::Cnn* MC::Cnn::cnn_inst = NULL;
 
 bool MC::Cnn::StartPipe(const char* cnn_name)
@@ -123,7 +126,7 @@ bool MC::Cnn::Start()
 
     heart_ev_ = CreateEvent(
         NULL,
-        FALSE,
+        FALSE,     // auto-reset
         TRUE,      // default signaled 
         NULL);
     // 心跳线程
@@ -196,7 +199,8 @@ void MC::Cnn::ReceiveFunc()
             continue;
 
         char cmd_type = GetCmdHeader(chBuf);
-        if (cmd_type >= (char)CT_INIT_MACHINE && cmd_type <= (char)CT_STOP_RECORD)
+        if (cmd_type >= (char)CT_INIT_MACHINE && cmd_type <= (char)CT_STOP_RECORD 
+            && cmd_type != (char)CT_HEART_BEAT)
             Log::WriteLog(LL_ERROR, "Cnn::ReceiveFunc->收到: %s", cmd_des[cmd_type].c_str());
 
         switch (cmd_type) {
@@ -550,10 +554,6 @@ void MC::Cnn::HandleServerDeath()
                 ex.what());
         }
         heart_mtx_.unlock();
-
-        // 启动成功后需要发送一次心跳
-//         HeartCmd heart_cmd;
-//         WriteCnn(&heart_cmd);
     } else {
         Log::WriteLog(LL_ERROR, "MC::Cnn::HandleServerDeath->启动%s失败",
             MC::SERVER_NAME.c_str());
@@ -565,29 +565,22 @@ void MC::Cnn::HeartBeatingFunc()
 {
     while (running_) { 
         Sleep(HEART_BEATING_WAIT);
-        bool is_alive = LookupProcessByName(MC::SERVER_NAME.c_str());
-        if (!is_alive) {
-            Log::WriteLog(LL_DEBUG, "AsynAPISet::HeartBeatingFunc->timeout");
-            MC::KillProcessByName(MC::SERVER_NAME.c_str());
-            HandleServerDeath();
-        }
-        continue;
 
-        DWORD ret = WaitForSingleObject(heart_ev_, HEART_BEATING_WAIT);
-        switch (ret) {
-        case WAIT_OBJECT_0: {
-            HeartCmd heart_cmd;
-            WriteCnn(&heart_cmd);
-        }
-            break;
-        case WAIT_TIMEOUT: {    // 超时未收到心跳响应
-            Log::WriteLog(LL_DEBUG, "AsynAPISet::HeartBeatingFunc->timeout");
+        bool kill_server;
+        server_mtx.lock();
+        kill_server = server_to_kill;
+        server_mtx.unlock();
+
+        bool is_alive = LookupProcessByName(MC::SERVER_NAME.c_str());
+        if (!is_alive || kill_server) {
+            Log::WriteLog(LL_DEBUG, "AsynAPISet::HeartBeatingFunc->server dead, kill_server: %d",
+                (int)kill_server);
             MC::KillProcessByName(MC::SERVER_NAME.c_str());
             HandleServerDeath();
-        }
-            break;
-        default:
-            break;
+
+            server_mtx.lock();
+            server_to_kill = false;
+            server_mtx.unlock();
         }
     }
 }

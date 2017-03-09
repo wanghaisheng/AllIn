@@ -362,7 +362,7 @@ class GetRFIDNT {
 public:
     virtual ~GetRFIDNT() {}
 
-    virtual void Notify(int rfid, int ec) {}
+    virtual void Notify(std::string rfid, int ec) {}
 };
 
 class GetStatusNT {
@@ -523,14 +523,9 @@ public:
 class AsynAPISet {
 public:
     AsynAPISet() {
-        running_ = true;
+        running_ = false;
         clean_thread_ =
             new (std::nothrow) boost::thread(boost::bind(&AsynAPISet::CleanFunc, this));
-    }
-
-    ~AsynAPISet() {
-//         running_ = false;
-//         clean_thread_->join();
     }
 
 public:
@@ -898,10 +893,10 @@ public:
     void CleanFunc();
 
 private:
-    std::map<std::string, NotifySet*> api_maps_;
+    std::map<std::string, NotifySet*>   api_maps_;
 
-    bool running_;
-    boost::thread*          clean_thread_;
+    bool                                running_;
+    boost::thread*                      clean_thread_;
 };
 
 #endif

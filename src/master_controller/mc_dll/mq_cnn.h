@@ -18,7 +18,7 @@ public:
         bool create_only_mode = true);
     void Stop();
     bool PushCmd(BaseCmd* cmd);
-    bool SendMsg(const char* buf, int size);
+    bool SendMsg(const char* buf, int size, unsigned int priority = 0);
     
 protected:
     // 在该方法中不宜进行耗时操作，更不能阻塞运行。

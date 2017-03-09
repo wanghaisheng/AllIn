@@ -159,9 +159,9 @@ void Recver::Stop()
     MQCnn::Stop();
 }
 
-bool Recver::WriteResp(LPPIPEINST pipe_inst_, char* buf)
+bool Recver::WriteResp(LPPIPEINST pipe_inst_, char* buf, unsigned int priority)
 {
-    return MQCnn::SendMsg(buf, CMD_BUF_SIZE);
+    return MQCnn::SendMsg(buf, CMD_BUF_SIZE, priority);
 
     // 管道连接
     if (cnn_type_ == MC::CT_PIPE) {
@@ -190,7 +190,8 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     RecvMsg msg;
     msg.pipe_inst = NULL;
     strncpy(msg.msg, buf, size);
-    if (cmd >= (char)CT_INIT_MACHINE && cmd <= (char)CT_STOP_RECORD)
+    // filter heart beat cmd
+    if (cmd >= (char)CT_INIT_MACHINE && cmd <= (char)CT_STOP_RECORD && cmd != (char)CT_HEART_BEAT)
         Log::WriteLog(LL_DEBUG, "Recver::OnRecvMQMsg->收到: %s", cmd_des[cmd].c_str());
 
     switch (cmd) {
@@ -2607,7 +2608,7 @@ public:
         std::cout << "GetRFIDNT::Notify->ec: " << ec << std::endl;
 
         cmd_->ret_ = ec;
-        cmd_->rfid_ = atoi(data1.c_str());
+        strcpy(cmd_->rfid_, data1.c_str());
 
         recver_->PushCmd(cmd_);
     }
@@ -2728,7 +2729,7 @@ void Recver::HandleHeart(const RecvMsg* msg)
     memcpy(heart_cmd.xs_.buf_, msg->msg, CMD_BUF_SIZE);
     heart_cmd.Unser();
 
-    bool suc = this->WriteResp(msg->pipe_inst, heart_cmd.xs_.GetBuf());
+    bool suc = this->WriteResp(msg->pipe_inst, heart_cmd.xs_.GetBuf(), 1);
 }
 
 ////////////////// 写转换倍率 /////////////

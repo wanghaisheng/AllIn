@@ -960,16 +960,17 @@ public:
 
 class GetRFIDCmd: public BaseCmd {
 public:
-    GetRFIDCmd(): ret_(MC::EC_SUCC), slot_(0), rfid_(0) {
+    GetRFIDCmd(): ret_(MC::EC_SUCC), slot_(0) {
         ct_ = CT_GET_RFID;
+        memset(rfid_, 0x0, sizeof(rfid_));
     }
 
     virtual void Ser();
     virtual void Unser();
 
 public:
-    int slot_;      // 卡槽号，从1开始
-    int rfid_;      // 对应卡槽号的RFID
+    int slot_;           // 卡槽号，从1开始
+    char rfid_[16];      // 对应卡槽号的RFID, shown hex string
 
     MC::ErrorCode ret_;
 };

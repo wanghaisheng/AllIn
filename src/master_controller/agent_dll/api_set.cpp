@@ -711,8 +711,8 @@ void AsynAPISet::HandleGetRFID(char *chBuf) {
     GetRFIDCmd cmd;
     ParseCmd(&cmd, chBuf);
     Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleGetRFID->cmd: %s, ret: %d",
-                  cmd_des[cmd.ct_].c_str(),
-                  cmd.ret_);
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
 
     GetRFIDNT* nt = (GetRFIDNT*)LookupSendTime(cmd.send_time_);
     if (NULL != nt)
@@ -1705,6 +1705,8 @@ void AsynAPISet::CleanFunc()
 
                 delete it->second->nt;
                 api_maps_.erase(it++);
+
+                break;
             } else {
                 ++it;
             }

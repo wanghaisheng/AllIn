@@ -119,7 +119,8 @@ MASTERCTRL_AGENT_API int ST_UnbindMAC(
 // rfid         --- 对应卡槽号的rfid
 MASTERCTRL_AGENT_API int ST_GetRFID(
     int     slot,
-    int&    rfid);
+    char*   rfid,
+    int     size = 16);
 
 // 准备用印
 // stamp_num        --- 章槽号, 从1开始(deprecated)

@@ -14,23 +14,6 @@
 
 MC::STSealAPI* MC::STSealAPI::inst_ = NULL;
 
-// typedef boost::posix_time::ptime Time;
-// typedef boost::posix_time::time_duration TimeDuration;
-// Time t1(boost::posix_time::microsec_clock::local_time());
-// 
-// Time t2(boost::posix_time::microsec_clock::local_time());
-// 
-// TimeDuration dt = t2 - t1;
-// 
-// //print formatted date
-// std::cout << dt << std::endl;
-// 
-// //number of elapsed miliseconds
-// long msec = dt.total_milliseconds();
-// 
-// //print elapsed seconds (with millisecond precision)
-// std::cout << msec / 1000.0 << std::endl;
-
 //////////////////////////// 获取用印机编号 ///////////////////////////////
 
 class QueryMachEv : public MC::BaseEvent {
@@ -3386,8 +3369,10 @@ public:
     }
 
     virtual void SpecificExecute() {
-        unsigned int rfid;
-        char rfid_str[11] = {0};
+        unsigned int rfid = 0;
+        std::stringstream sstream;
+        std::string rfid_str; 
+        
         MC::ErrorCode ec = exception_;
         if (MC::EC_SUCC != ec)
             goto NT;
@@ -3406,13 +3391,17 @@ public:
         }
 
         rfid = rfids[slot_ - 1];
-        sprintf(rfid_str, "%u", rfid);
+        sstream << std::hex << std::uppercase << rfid;
+        rfid_str = sstream.str();
+
         ec = MC::EC_SUCC;
 
      NT:
         notify_->Notify(ec, rfid_str);
-        Log::WriteLog(LL_DEBUG, "MC::GetRFIDEv::SpecificExecute->获取rfid, ec: %s",
-                      MC::ErrorMsg[ec].c_str());
+        Log::WriteLog(LL_DEBUG, "MC::GetRFIDEv::SpecificExecute->获取rfid, ec: %s, (slot, rfid)=(%d, %s)",
+                      MC::ErrorMsg[ec].c_str(),
+                      slot_,
+                      rfid_str.c_str());
         delete this;
     }
 

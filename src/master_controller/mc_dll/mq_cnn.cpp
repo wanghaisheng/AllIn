@@ -75,11 +75,11 @@ void MQCnn::Stop()
     delete send_mq_;
 }
 
-bool MQCnn::SendMsg(const char* buf, int size)
+bool MQCnn::SendMsg(const char* buf, int size, unsigned int priority)
 {
     try {
         LPTSTR lpvMessage = TEXT((char*)buf);
-        send_mq_->send(lpvMessage, (lstrlen(lpvMessage) + 1) * sizeof(TCHAR), 0);
+        send_mq_->send(lpvMessage, (lstrlen(lpvMessage) + 1) * sizeof(TCHAR), priority);
         return true;
     } catch (boost::interprocess::interprocess_exception &ex) {
         Log::WriteLog(LL_ERROR, "MQCnn::SendMsg->消息队列方式写消息失败, er: %s",

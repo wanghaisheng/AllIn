@@ -30,7 +30,7 @@ public:
 
     void Stop();
 
-    bool WriteResp(LPPIPEINST pipe_inst_, char* buf);
+    bool WriteResp(LPPIPEINST pipe_inst_, char* buf, unsigned int priority = 0);
 
 protected:
     virtual void OnRecvMQMsg(char* buf, int size);

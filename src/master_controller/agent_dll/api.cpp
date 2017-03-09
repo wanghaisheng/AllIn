@@ -12,8 +12,18 @@
 
 AsynAPISet api_agent;
 
+boost::mutex server_mtx;
+bool    server_to_kill = false;
+
 const int SYNC_WAIT_TIME = 10000; // 等待异步通知回调超时时间(毫秒)
 const int SYNC_IMAGE_WAIT = 20000;
+
+void setKillServer(int flag) {
+    if (2 == flag) {
+        boost::lock_guard<boost::mutex> lk(server_mtx);
+        server_to_kill = true;
+    }
+}
 
 // 同步接口, 异步改同步接口, 同步阻塞等异步通知
 
@@ -75,6 +85,7 @@ int ST_QueryMachine(char* sn, int size)
 
     strncpy(sn, derive_nt->sn_.c_str(), 1 + min(size, derive_nt->sn_.size()));
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -131,6 +142,7 @@ int ST_SetMachine(const char* sn)
         ((SetMachNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((SetMachNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -188,6 +200,7 @@ int ST_InitMachine(const std::string& key)
 #endif
 
     int ret = ((InitMaNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -244,6 +257,7 @@ int ST_BindMAC(const char* mac)
         ((BindNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((BindNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -300,6 +314,7 @@ int ST_UnbindMAC(const char* mac)
         ((UnbindNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((UnbindNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -364,6 +379,7 @@ int ST_PrepareStamp(char stamp_num, int timeout, char* task_id, int size)
 
     strncpy(task_id, derive_nt->task_id_.c_str(), 1 + min(size, derive_nt->task_id_.size()));
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -424,6 +440,7 @@ int ST_QueryPaper(int& status)
 
     status = ((PaperNT*)nt)->status_;
     int ret = ((PaperNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -492,6 +509,7 @@ int ST_Snapshot(
 #endif
 
     int ret = ((SnapNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -554,6 +572,7 @@ int ST_MergePhoto(
         ((MergeNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((MergeNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -628,6 +647,7 @@ int ST_SearchSrcImageStampPoint(
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     out_x = derive_nt->x_;
     out_y = derive_nt->y_;
     out_angle = derive_nt->angle_;
@@ -702,6 +722,7 @@ int ST_RecoModelTypeAndAngleAndModelPointByImg(
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     strncpy(model_type, derive_nt->model_.c_str(), 1 + min(model_type_size, derive_nt->model_.size()));
     x = derive_nt->x_;
     y = derive_nt->y_;
@@ -773,6 +794,7 @@ int ST_RecognizeImage(const char* path,
     strncpy(trace_num, derive_nt->trace_num_.c_str(),
         1 + min(max_size, derive_nt->trace_num_.size()));
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -841,6 +863,7 @@ int ST_IdentifyElement(
 
     strncpy(result, derive_nt->re_.c_str(), min(size, derive_nt->re_.size()));
     int ret = ((IdentiNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -908,6 +931,7 @@ int ST_OrdinaryStamp(
         ((OridinaryNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((OridinaryNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -965,6 +989,7 @@ int ST_AutoStamp(const std::string& task,
         ((AutoNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((AutoNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1021,6 +1046,7 @@ int ST_FinishStamp(const char* task)
         ((FinishNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((FinishNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1077,6 +1103,7 @@ int ST_ReleaseStamp(const std::string& machine)
         ((ReleaseNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((ReleaseNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1137,6 +1164,7 @@ int ST_GetError(int err_code, char* err_msg, char* err_resolver, int size)
     strncpy(err_msg, derive_nt->msg_.c_str(), 1 + min(size, derive_nt->msg_.size()));
     strncpy(err_resolver, derive_nt->resolver_.c_str(), 1 + min(size, derive_nt->resolver_.size()));
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1189,6 +1217,7 @@ int ST_Calibrate(int slot)
         ((CaliNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((CaliNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1256,6 +1285,7 @@ int ST_QueryStampers(char* status, int len)
         ((QueryStamNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((QueryStamNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1311,6 +1341,7 @@ int ST_QuerySafe(int& status)
 
     status = ((QuerySafeDoorNT*)nt)->status_;
     int ret = ((QuerySafeDoorNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1363,6 +1394,7 @@ int ST_ControlSafe(int ctrl)
         ((CtrLSafeDoorNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((CtrLSafeDoorNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1415,6 +1447,7 @@ int ST_ControlBeep(int ctrl, int type, int interval)
         ((BeepCtrlNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((BeepCtrlNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1472,6 +1505,7 @@ int ST_QuerySlots(int &num)
 
     num = ((QuerySlNT*)nt)->num_;
     int ret = ((QuerySlNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1528,6 +1562,7 @@ int ST_ControlAlarm(int alarm, int switches)
         ((AlarmNT*)nt)->er_ = MC::EC_TIMEOUT;
 
     int ret = ((AlarmNT*)nt)->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1588,6 +1623,7 @@ int ST_ReadAlarm(int& door, int& vibration)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     door = derive_nt->door_;
     vibration = derive_nt->vibration_;
     return ret;
@@ -1650,6 +1686,7 @@ int ST_QueryMAC(char* mac1, char* mac2, int max_size)
     strncpy(mac2, derive_nt->mac2_.c_str(), 1 + min(max_size, derive_nt->mac2_.size()));
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1705,6 +1742,7 @@ int ST_Lock()
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1758,6 +1796,7 @@ int ST_Unlock()
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1813,6 +1852,7 @@ int ST_QueryLock(int& lock)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     lock = derive_nt->lock_;
     return ret;
 }
@@ -1867,6 +1907,7 @@ int ST_Open()
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1920,6 +1961,7 @@ int ST_Close()
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -1976,6 +2018,7 @@ int ST_QueryCnn(int& cnn)
 
     cnn = derive_nt->cnn_;
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -2029,6 +2072,7 @@ int ST_SetSideDoor(int keep, int timeout)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -2085,6 +2129,7 @@ int ST_GetDevModel(char* model, int size)
 
     strncpy(model, derive_nt->model_.c_str(), 1 + min(size, derive_nt->model_.size()));
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -2138,6 +2183,7 @@ int ST_OpenPaper(int timeout)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -2191,6 +2237,7 @@ int ST_ControlLed(int which, int ctrl, int value)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -2244,6 +2291,7 @@ int ST_CheckParam(int x, int y, int angle)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -2297,6 +2345,7 @@ int ST_OpenCamera(int which)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -2350,6 +2399,7 @@ int ST_CloseCamera(int which)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -2408,6 +2458,7 @@ int ST_QueryCamera(int which, int& status)
 
     status = derive_nt->status_;
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -2461,6 +2512,7 @@ int ST_SetResolution(int which, int x, int y)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -2514,6 +2566,7 @@ int ST_SetDPIValue(int which, int x, int y)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -2567,6 +2620,7 @@ int ST_SetProperty(int which)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -2620,6 +2674,7 @@ int ST_StartRecordVideo(int which, const char* path)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -2673,6 +2728,7 @@ int ST_StopRecordVideo(int which, const char* path)
             derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -2694,7 +2750,7 @@ public:
     }
 #endif
 
-    virtual void Notify(int rfid, int ec) {
+    virtual void Notify(std::string rfid, int ec) {
         rfid_ = rfid;
         er_ = ec;
 #ifdef _XP
@@ -2710,11 +2766,11 @@ public:
 #else
     boost::condition_variable cv_;
 #endif
-    int rfid_;
+    std::string rfid_;
     int er_;
 };
 
-int ST_GetRFID(int slot, int& rfid)
+int ST_GetRFID(int slot, char* rfid, int size)
 {
     GetRFIDNT* nt = new GetrfidNT;
     api_agent.AsynGetRFID(slot, nt);
@@ -2728,7 +2784,8 @@ int ST_GetRFID(int slot, int& rfid)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
-    rfid = derive_nt->rfid_;
+    setKillServer(ret);
+    strncpy(rfid, derive_nt->rfid_.c_str(), 1 + min(size, derive_nt->rfid_.size()));
     return ret;
 }
 
@@ -2784,6 +2841,7 @@ int ST_GetDevStatus(int& code)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     code = derive_nt->code_;
     return ret;
 }
@@ -2842,6 +2900,7 @@ int ST_GetSealCoord(int x_img, int y_img, int& x_dev, int& y_dev)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     x_dev = derive_nt->x_dev_;
     y_dev = derive_nt->y_dev_;
     return ret;
@@ -2913,6 +2972,7 @@ int ST_WriteImageConvRatio(float x, float y)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -2970,6 +3030,7 @@ int ST_ReadImageConvRatio(float& x, float& y)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     x = derive_nt->x_;
     y = derive_nt->y_;
     return ret;
@@ -3025,6 +3086,7 @@ int ST_WriteCalibrationPoint(unsigned short* points, unsigned char len /*= 10*/)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -3098,6 +3160,7 @@ int ST_ReadCalibrationPoint(unsigned short* points, unsigned char len)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     if (0 == ret)
         memcpy(
         points, 
@@ -3158,6 +3221,7 @@ int ST_QueryTop(int& status)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     if (0 == ret)
         status = derive_nt->status_;
 
@@ -3214,6 +3278,7 @@ int ST_EnterMaintain()
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -3267,6 +3332,7 @@ int ST_ExitMaintain()
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -3325,6 +3391,7 @@ int ST_StartPreview(int which, int width, int height, int hwnd)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -3378,6 +3445,7 @@ int ST_StopPreview(int which)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -3431,6 +3499,7 @@ int ST_EnableFactory()
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -3501,6 +3570,7 @@ int ST_Reset()
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -3554,6 +3624,7 @@ int ST_Restart()
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -3610,6 +3681,7 @@ int ST_GetSystemInfo(int& status)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     if (0 == ret)
         status = derive_nt->status_;
     return ret;
@@ -3668,6 +3740,7 @@ int ST_ReadMainStandbySN(char* sn, int len)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     if (0 == ret) 
         strncpy(sn, derive_nt->sn_.c_str(), 1 + min(len, derive_nt->sn_.size()));
     return ret;
@@ -3725,6 +3798,7 @@ int ST_WriteMainStandbySN(const char* sn, int len)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     return ret;
 }
 
@@ -3781,6 +3855,7 @@ int ST_RecognizeQRCode(const char* file, char* qr, const int qr_size)
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     strncpy(qr, derive_nt->qr_.c_str(), 1 + min(qr_size, derive_nt->qr_.size()));
     return ret;
 }
@@ -3805,6 +3880,7 @@ int ST_RecognizeQRCodeByRect(
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     strncpy(qr, derive_nt->qr_.c_str(), 1 + min(qr_size, derive_nt->qr_.size()));
     return ret;
 }
@@ -3865,6 +3941,7 @@ int ST_CalcImageRatio(const char* file, const int dpi, double& ratio_x, double& 
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     ratio_x = derive_nt->ratio_x_;
     ratio_y = derive_nt->ratio_y_;
     return ret;
@@ -3940,6 +4017,7 @@ int ST_Find2Circles(
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     x1 = derive_nt->x1_;
     y1 = derive_nt->y1_;
     radius1 = derive_nt->r1_;
@@ -4050,6 +4128,7 @@ int ST_Find4Circles(
         derive_nt->er_ = MC::EC_TIMEOUT;
 
     int ret = derive_nt->er_;
+    setKillServer(ret);
     x1 = derive_nt->x1_;
     y1 = derive_nt->y1_;
     radius1 = derive_nt->r1_;
