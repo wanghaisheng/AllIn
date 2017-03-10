@@ -228,8 +228,7 @@ int CCommunicateToUSB::send(SendPackage *sendPackage)
 
 	string strLog;
 	char szTmp[200] = {0};
-	for(int i = 0; i < length; ++i)
-	{//
+	for(int i = 0; i < length; ++i)	{
 		sprintf_s(szTmp, sizeof(szTmp), _T("%02X"), pdata[i]) ;
 		strLog += szTmp;
 	}
@@ -522,6 +521,8 @@ UINT __stdcall CCommunicateToUSB::WriteLogThread(LPVOID pParam)
     return 0;
 }
 
+// Return value: 
+//      0 -- - success, otherwise false.
 int CCommunicateToUSB::sendData2Usb(void)
 {
     CLog *plog = CLog::sharedLog();
@@ -540,31 +541,32 @@ int CCommunicateToUSB::sendData2Usb(void)
 
 		return -1;
 	}
-	//设置正在发送标志
-	//TRACE("hWriteHandle：%d\n",(int)hWriteHandle);
 
 	plog->WriteUSBdata("发送", m_param.WriteBuffer+1, 64);
 
-	DataInSending=TRUE;
-	Result=WriteFile(hWriteHandle,
+	DataInSending = TRUE;
+	Result = WriteFile(
+        hWriteHandle,
 		&(m_param.WriteBuffer), 
 		WRITEBUF_LEN,
 		NULL,
 		&WriteOverlapped);
-	//TRACE("hWriteHandle：%d\n",(int)hWriteHandle);
-	if(Result==FALSE)
-	{
-		LastError=GetLastError();
-		if((LastError!=ERROR_IO_PENDING)&&(LastError!=ERROR_SUCCESS))
-		{
-			DataInSending=FALSE;
+    plog->WriteNormalLog("CCommunicateToUSB::sendData2Usb->WriteFile return: %d, lasterr: %d",
+        (int)Result,
+        GetLastError());
+
+    DataInSending = FALSE;
+    // asynchronously write
+	if (Result == FALSE) {
+		LastError = GetLastError();
+        // failure
+		if ((LastError != ERROR_IO_PENDING) && (LastError != ERROR_SUCCESS)) {
+			DataInSending = FALSE;
 			iresult = LastError;
             plog->WriteNormalLog("CCommunicateToUSB::sendData2Usb->WriteFile, err:%d", LastError);
-		}
-	}
-	else
-	{
-		DataInSending=FALSE;
+        }
+	} else {
+		DataInSending = FALSE;
 	}
 
 	return iresult;

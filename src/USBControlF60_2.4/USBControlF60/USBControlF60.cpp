@@ -118,13 +118,14 @@ int FOpenDev(const char *file)//参数无效
 
 int FCloseDev(void)
 {
+    int ret = 0;
     if (NULL != gusbctrl) {
-        return gusbctrl->CloseDev();
+        ret = gusbctrl->CloseDev();
         delete gusbctrl;
         gusbctrl = NULL;
     }
 
-    return 0;
+    return ret;
 }
 
 int FQuitMaintainMode(void)

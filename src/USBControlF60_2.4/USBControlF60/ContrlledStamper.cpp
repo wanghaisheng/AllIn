@@ -2167,7 +2167,9 @@ std::string CContrlledStamper::GetStamperABC(unsigned char index)
     //5. 卡读写(WriteBlock, ReadBlock)
     int ret = SelectStamper(index - 1);
     if (0 != ret) {
-        CLog::sharedLog()->WriteNormalLog("CContrlledStamper::GetStamperABC->卡选择失败, err:%d", ret);
+        CLog::sharedLog()->WriteNormalLog("CContrlledStamper::GetStamperABC->卡选择(%d)失败, err:%d",
+            (int)index,
+            ret);
         return std::string();
     }
 
