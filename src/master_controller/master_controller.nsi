@@ -43,7 +43,7 @@ Section "master_controller (required)"
   
   ; Put files there
   ; File "master_controller.nsi"
-  File /r "C:\\pj\\bin\\w32r\\*"
+  File /r "C:\\pj\\bin\\master_output\\lib\\w32d\\*"
   
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\NSIS_master_controller "Install_Dir" "$INSTDIR"
