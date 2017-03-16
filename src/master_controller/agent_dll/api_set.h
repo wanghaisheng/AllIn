@@ -733,7 +733,8 @@ public:
         const std::string& file,
         Find4CirclesNT* nt);
 
-    int AsynSetStamp(SetStampNT* nt);
+    int AsynSetStamp(
+        SetStampNT* nt);
 
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);

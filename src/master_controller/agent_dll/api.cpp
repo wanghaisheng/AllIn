@@ -1153,22 +1153,19 @@ public:
 
 int ST_GetError(int err_code, char* err_msg, char* err_resolver, int size)
 {
-    GetErrorNT* nt = new GetErrNT;
-    api_agent.AsynGetError(err_code, nt);
+    std::string msg;
+    std::string resolver;
+    if (err_code < 0 || err_code > MC::EC_MAX) {
+        msg = "未定义的错误码";
+        resolver = "重新输入错误码";
+    } else {
+        msg = MC::GetErrMsg((MC::ErrorCode)err_code);
+        resolver = MC::GetErrResolver((MC::ErrorCode)err_code);
+    }
 
-    GetErrNT* derive_nt = (GetErrNT*)nt;
-#ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
-#else
-    if (!((GetErrNT*)nt)->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME)))
-#endif
-        derive_nt->er_ = MC::EC_TIMEOUT;
-
-    strncpy(err_msg, derive_nt->msg_.c_str(), 1 + min(size, derive_nt->msg_.size()));
-    strncpy(err_resolver, derive_nt->resolver_.c_str(), 1 + min(size, derive_nt->resolver_.size()));
-    int ret = derive_nt->er_;
-    setKillServer(ret);
-    return ret;
+    strcpy(err_msg, msg.c_str());
+    strcpy(err_resolver, resolver.c_str());
+    return 0;
 }
 
 /////////////////////////// 校准印章 ///////////////////////////////
