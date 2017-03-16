@@ -4,6 +4,9 @@
 
 ;--------------------------------
 
+!define MUI_PRODUCT "StampTool.exe"
+!define MUI_FILE "StampTool"
+  
 ; The name of the installer
 Name "master_controller"
 
@@ -60,6 +63,9 @@ SectionEnd
 ; Optional section (can be disabled by the user)
 Section "Start Menu Shortcuts"
 
+  ;create desktop shortcut
+  CreateShortCut "$DESKTOP\${MUI_PRODUCT}.lnk" "$INSTDIR\${MUI_FILE}.exe" ""
+  
   CreateDirectory "$SMPROGRAMS\master_controller"
   CreateShortcut "$SMPROGRAMS\master_controller\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortcut "$SMPROGRAMS\master_controller\master_controller (MakeNSISW).lnk" "$INSTDIR\master_controller.nsi" "" "$INSTDIR\master_controller.nsi" 0
@@ -71,6 +77,8 @@ SectionEnd
 ; Uninstaller
 
 Section "Uninstall"
+  
+  Delete "$DESKTOP\${MUI_PRODUCT}.lnk"
   
   ; Remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\master_controller"
@@ -85,6 +93,7 @@ Section "Uninstall"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\master_controller"
+  RMDir /r "$INSTDIR\Data"
   RMDir /r "$INSTDIR\imageformats"
   RMDir /r "$INSTDIR\Log"
   RMDir /r "$INSTDIR\pic"
