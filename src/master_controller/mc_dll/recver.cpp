@@ -402,6 +402,9 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_FIND_4CIRCLES:
         HandleFind4Circles(&msg);
         break;
+    case CT_SET_STAMP:
+        HandleSetStamp(&msg);
+        break;
     default:
         printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
         break;
@@ -3636,4 +3639,44 @@ void Recver::HandleFind4Circles(const RecvMsg* msg)
     MC::STSealAPI::GetInst()->Find4Circles(
         cmd->file_,
         notify);
+}
+
+////////////////// set stamp map /////////////
+
+class SetStampNT : public MC::NotifyResult {
+public:
+    SetStampNT(LPPIPEINST inst, SetStampCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        cmd_->ret_ = ec;
+
+        recver_->PushCmd(cmd_);
+    }
+
+private:
+    SetStampCmd*        cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleSetStamp(const RecvMsg* msg)
+{
+    SetStampCmd* cmd = new (std::nothrow) SetStampCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+
+    MC::NotifyResult* notify = new (std::nothrow) SetStampNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->SetStamp(notify);
 }

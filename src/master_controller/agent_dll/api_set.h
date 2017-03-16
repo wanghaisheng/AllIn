@@ -520,6 +520,13 @@ public:
         int ec) = 0;
 };
 
+class SetStampNT {
+public:
+    virtual ~SetStampNT() {}
+
+    virtual void Notify(int ec) = 0;
+};
+
 class AsynAPISet {
 public:
     AsynAPISet() {
@@ -726,6 +733,8 @@ public:
         const std::string& file,
         Find4CirclesNT* nt);
 
+    int AsynSetStamp(SetStampNT* nt);
+
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);
     
@@ -871,6 +880,8 @@ public:
     void HandleFind2Circles(char* chBuf);
 
     void HandleFind4Circles(char* chBuf);
+
+    void HandleSetStamp(char* chBuf);
 
 public:
     struct NotifySet {

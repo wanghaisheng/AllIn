@@ -923,3 +923,16 @@ void Find4CirclesCmd::Unser()
     xs_ >> file_ >> x1_ >> y1_ >> radius1_ >> x2_ >> y2_ >> radius2_ 
         >> x3_ >> y3_ >> radius3_ >> x4_ >> y4_ >> radius4_ >> ret_;
 }
+
+void SetStampCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << ret_;
+    xs_.Trim();
+}
+
+void SetStampCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> ret_;
+}

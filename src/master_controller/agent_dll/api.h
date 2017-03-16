@@ -180,6 +180,9 @@ MASTERCTRL_AGENT_API int ST_QuerySafe(
 MASTERCTRL_AGENT_API int ST_ControlSafe(
     int ctrl);
 
+// 设置印章映射关系
+MASTERCTRL_AGENT_API int ST_SetStampMap();
+
 // 顶盖门状态查询
 // status        --- 0-关, 1-开
 MASTERCTRL_AGENT_API int ST_QueryTop(

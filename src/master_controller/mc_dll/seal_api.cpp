@@ -4596,3 +4596,49 @@ void MC::STSealAPI::Find4Circles(const std::string& file, NotifyResult* notify)
 
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
+
+///////////////////////////// set stamp map /////////////////////////////////
+
+class SetStampEv : public MC::BaseEvent {
+public:
+    SetStampEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = SetStampMap();
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "SetStampEv->SetStampMap fails, er: %d", ret);
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec);
+        Log::WriteLog(LL_DEBUG, "MC::SetStampMap->设置印章映射关系, ec: %s",
+            MC::ErrorMsg[ec].c_str());
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::SetStamp(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) SetStampEv(
+        "设置印章映射关系",
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}

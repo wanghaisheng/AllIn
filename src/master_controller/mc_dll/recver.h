@@ -180,6 +180,8 @@ private:
 
     void HandleFind4Circles(const RecvMsg* msg);
 
+    void HandleSetStamp(const RecvMsg* msg);
+
 private:
     static MC::SynQueue<const RecvMsg*> recver_queue_;
     static HANDLE                       recv_msg_ev_;

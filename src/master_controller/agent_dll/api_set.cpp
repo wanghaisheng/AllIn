@@ -1716,3 +1716,24 @@ void AsynAPISet::CleanFunc()
             GetTickCount() - life_end);
     }
 }
+
+int AsynAPISet::AsynSetStamp(SetStampNT* nt)
+{
+    SetStampCmd* cmd = new SetStampCmd;
+    InsertNotify(cmd, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleSetStamp(char* chBuf)
+{
+    SetStampCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleSetStamp->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    SetStampNT* nt = (SetStampNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.ret_);
+}

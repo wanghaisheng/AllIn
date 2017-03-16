@@ -283,6 +283,8 @@ public:
         const std::string& file,
         NotifyResult* notify);
 
+    void SetStamp(NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC

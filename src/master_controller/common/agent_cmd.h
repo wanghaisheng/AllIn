@@ -80,6 +80,7 @@ enum CmdType {
     CT_CALCULATE_RATIO,     // 计算图像倍率
     CT_FIND_2CIRCLES,       // 查找2个圆心点坐标
     CT_FIND_4CIRCLES,       // 查找4个圆心点坐标
+    CT_SET_STAMP,           // 设置印章映射关系
 
     // 摄像头接口
     CT_START_PREVIEW,       // 开始预览
@@ -156,6 +157,7 @@ static std::string cmd_des[] =
     "计算图像倍率",
     "查找2个圆心点坐标",
     "查找4个圆心点坐标",
+    "设置印章映射关系",
 
     "开始预览",
     "停止预览",
@@ -1332,6 +1334,19 @@ public:
     int y4_;
     int radius4_;
 
+    MC::ErrorCode ret_;
+};
+
+class SetStampCmd : public BaseCmd {
+public:
+    SetStampCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_SET_STAMP;
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
     MC::ErrorCode ret_;
 };
 
