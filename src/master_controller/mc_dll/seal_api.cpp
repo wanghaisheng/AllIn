@@ -2853,6 +2853,12 @@ public:
             goto NT;
         }
 
+        if (MC::Tool::GetInst()->QueryCam(which_)) {
+            Log::WriteLog(LL_ERROR, "MC::OpenCameraEv->摄像头已打开");
+            ec = MC::EC_CAMERA_OPENED;
+            goto NT;
+        }
+
         int ret = OpenCamera((CAMERAINDEX)which_);
         if (0 != ret) {
             Log::WriteLog(LL_ERROR, "MC::OpenCameraEv->打开摄像头失败, er: %d", ret);

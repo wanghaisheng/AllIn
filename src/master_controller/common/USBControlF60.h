@@ -1,4 +1,4 @@
-#ifndef USBCONTROLF60_API_H
+﻿#ifndef USBCONTROLF60_API_H
 #define USBCONTROLF60_API_H
 
 #include <string>

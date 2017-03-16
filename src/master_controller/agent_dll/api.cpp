@@ -24,6 +24,11 @@ const int SYNC_IMAGE_WAIT = 20000;
 // when flag is euqal to 2, set server_to_kill_ev to signaled.
 void setKillServer(int flag) {
     if (2 == flag) {
+        CloseCameraNT* nt = new CloseCameraNT();
+        api_agent.AsynCloseCamera(0, nt);
+        api_agent.AsynCloseCamera(1, nt);
+        api_agent.AsynCloseCamera(2, nt);
+
         SetEvent(server_to_kill_ev);
     }
 }

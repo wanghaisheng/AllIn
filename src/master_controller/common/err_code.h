@@ -72,6 +72,7 @@ enum ErrorCode {
     EC_CALC_RATIO_FAIL,         // 计算图像倍率失败
     EC_FIND_2CIRCLES_FAIL,      // 查找2个圆心点坐标失败
     EC_FIND_4CIRCLES_FAIL,      // 查找4个圆心点坐标失败
+    EC_CAMERA_OPENED,           // 摄像头已打开
     EC_MAX
 };
 
@@ -141,7 +142,8 @@ static std::string ErrorMsg[] = {
     "识别二维码失败",
     "计算图像倍率失败",
     "查找2个圆心点坐标失败",
-    "查找4个圆心点坐标失败"
+    "查找4个圆心点坐标失败",
+    "摄像头已打开"
 };
 
 static std::string GetErrMsg(enum ErrorCode err)
@@ -215,7 +217,8 @@ static std::string ErrorResolver[] = {
     "识别二维码失败",
     "计算图像倍率失败",
     "查找2个圆心点坐标失败",
-    "查找4个圆心点坐标失败"
+    "查找4个圆心点坐标失败",
+    "先关闭摄像头,再打开"
 };
 
 static std::string GetErrResolver(enum ErrorCode err)
