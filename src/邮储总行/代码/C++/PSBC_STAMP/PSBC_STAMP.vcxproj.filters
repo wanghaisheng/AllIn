@@ -24,13 +24,13 @@
     <ClCompile Include="PSBC.STDZ.Device.STAMP.Device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PSBC_STAMP.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="dllmain_psbc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="parse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="psbc_agent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,22 +47,16 @@
     <ClInclude Include="PSBC.STDZ.Device.STAMP.Device.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SealLog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="USBControlF60.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PSBC_STAMP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RZCamera.h">
+    <ClInclude Include="parse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="parse.h">
+    <ClInclude Include="psbc_agent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

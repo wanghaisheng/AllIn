@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "Resource.h"
 #include "SealLog.h"
-#include "PSBC_STAMP.h"
+#include "psbc_agent.h"
 #include "PSBC.STDZ.Device.STAMP.Device.h"
 
 #ifdef _DEBUG

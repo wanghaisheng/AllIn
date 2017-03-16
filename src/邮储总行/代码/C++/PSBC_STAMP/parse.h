@@ -2,7 +2,7 @@
 #define MASTER_CONTROLLER_PARSE_H_
 
 #include <windows.h>
-#include "PSBC_STAMP.h"
+#include "psbc_agent.h"
 
 class PSBCConfig {
 public:

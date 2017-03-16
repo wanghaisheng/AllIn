@@ -113,7 +113,7 @@
     <ClCompile Include="dllmain_psbc.cpp" />
     <ClCompile Include="parse.cpp" />
     <ClCompile Include="PSBC.STDZ.Device.STAMP.Device.cpp" />
-    <ClCompile Include="PSBC_STAMP.cpp" />
+    <ClCompile Include="psbc_agent.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -123,10 +123,8 @@
     <ClInclude Include="common.h" />
     <ClInclude Include="parse.h" />
     <ClInclude Include="PSBC.STDZ.Device.STAMP.Device.h" />
-    <ClInclude Include="PSBC_STAMP.h" />
+    <ClInclude Include="psbc_agent.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="RZCamera.h" />
-    <ClInclude Include="SealLog.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="USBControlF60.h" />

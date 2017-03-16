@@ -6,38 +6,13 @@
 #include <ctime>
 #include "SealLog.h"
 #include "USBControlF60.h"
-#include "PSBC_STAMP.h"
-#include "ImgProcAndReco.h"
 #include "parse.h"
+#include "psbc_agent.h"
+#include "ImgProcAndReco.h" // locate after psbc_agent.h
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-//
-//TODO: If this DLL is dynamically linked against the MFC DLLs,
-//		any functions exported from this DLL which call into
-//		MFC must have the AFX_MANAGE_STATE macro added at the
-//		very beginning of the function.
-//
-//		For example:
-//
-//		extern "C" BOOL PASCAL EXPORT ExportedFunction()
-//		{
-//			AFX_MANAGE_STATE(AfxGetStaticModuleState());
-//			// normal function body here
-//		}
-//
-//		It is very important that this macro appear in each
-//		function, prior to any calls into MFC.  This means that
-//		it must appear as the first statement within the 
-//		function, even before any object variable declarations
-//		as their constructors may generate calls into the MFC
-//		DLL.
-//
-//		Please see MFC Technical Notes 33 and 58 for additional
-//		details.
-//
 
 #ifdef _DEBUG
 #pragma comment(lib, "ABC.STDZ.Device.STAMP.USBF60APID.lib")
@@ -717,7 +692,7 @@ int PSBCSTDZDeviceSTAMPDeviceApp::ManualStart(
 
     STAMPERPARAM pa;
     memcpy(&pa.seal, &para.rfid, 4);
-    std::srand(std::time(0));
+    std::srand((unsigned int)std::time(0));
     unsigned int serial = std::rand();
     pa.serial_number = serial;
     pa.isPadInk = ink;
@@ -1246,50 +1221,50 @@ int PSBCSTDZDeviceSTAMPDeviceApp::openVideoCap(void)
 }
 
 int PSBCSTDZDeviceSTAMPDeviceApp::setVedioProperties(
-    int brightness,
-    int constrast,
-    int hue,
-    int saturation,
-    int sharpness,
-    int whitebalance,
-    int gain)
+    int _bright,
+    int _contrast,
+    int _hue,
+    int _saturation,
+    int _sharpness,
+    int _whitebalance,
+    int _gain)
 {
     WriteLog(4, "setVedioProperties->IN");
 
     int set_bright = SetParameter(
         PAPERCAMERA, 
-        CAMPARAM::brightness,
-        brightness);
+        brightness,
+        _bright);
 
     int set_con = SetParameter(
         PAPERCAMERA,
-        CAMPARAM::contrast,
-        contrast);
+        contrast,
+        _contrast);
 
     int set_hue = SetParameter(
         PAPERCAMERA,
-        CAMPARAM::hue,
-        hue);
+        hue,
+        _hue);
 
     int set_saturation = SetParameter(
         PAPERCAMERA,
-        CAMPARAM::saturation,
-        saturation);
+        saturation,
+        _saturation);
 
     int set_sharpness = SetParameter(
         PAPERCAMERA,
-        CAMPARAM::sharpness,
-        sharpness);
+        sharpness,
+        _sharpness);
 
     int set_whilebalance = SetParameter(
         PAPERCAMERA,
-        CAMPARAM::whitebalance,
-        whitebalance);
+        whitebalance,
+        _whitebalance);
 
     int set_exposure = SetParameter(
         PAPERCAMERA,
-        CAMPARAM::expouse,
-        gain);
+        expouse,
+        _gain);
 
     return 0 == (set_bright | set_con | set_hue | set_saturation | set_sharpness | 
         set_whilebalance | set_exposure) ? EC_SUC : EC_SET_CAMERA_PARAM_FAIL;
@@ -1515,8 +1490,8 @@ Point* PSBCSTDZDeviceSTAMPDeviceApp::GetSealCoord(int nX, int nY)
     double dRateY = (double)(fabs(float(y2 - y1)) * 1000) / (double)(fabs(float(dmaxy - dminy)) * 1000); // 7.88
     double devX = (double)(fabs(float(x1 - nX)) * 1000) / (double)(dRateX * 1000) + dminx;
     double devY = (double)(fabs(float(y1 - nY)) * 1000) / (double)(dRateY * 1000) + dminy;
-    int x = ceil(devX);
-    int y = ceil(devY);
+    int x = (int)ceil(devX);
+    int y = (int)ceil(devY);
 
     bool bFix = false;
     if (x < 1) {
