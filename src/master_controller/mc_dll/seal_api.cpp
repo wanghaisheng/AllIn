@@ -3214,12 +3214,11 @@ public:
     }
 
     virtual void SpecificExecute() {
-        std::string parent_path;
         MC::ErrorCode ec = exception_;
         if (MC::EC_SUCC != ec)
             goto NT;
 
-        // check parameter
+        // whether parameter is valid
         if (which_ != 0 && which_ != 1 && which_ != 2) {
             ec = MC::EC_INVALID_PARAMETER;
             goto NT;
@@ -3231,36 +3230,7 @@ public:
             goto NT;
         }
 
-        parent_path = path_.substr(0, last_slash + 1);
-        if (FILE_ATTRIBUTE_DIRECTORY != GetFileAttributes(parent_path.c_str())) {
-            Log::WriteLog(LL_ERROR, "MC::RecordVideoEv->不存在目录: \"%s\"", parent_path.c_str());
-            ec = MC::EC_DIRECTORY_NOT_EXIST;
-            goto NT;
-        }
-
-        // start preview before capture video
-        HWND preview_hwnd = ::CreateWindowA(
-            "STATIC",
-            "record", 
-            WS_MINIMIZE,
-            0, 
-            0, 
-            PREVIEW_WIDTH,
-            PREVIEW_HEIGHT,
-            NULL, NULL, NULL, NULL);
-
-        int ret = StartPreview(
-            (CAMERAINDEX)which_,
-            PREVIEW_WIDTH, 
-            PREVIEW_HEIGHT, 
-            preview_hwnd);
-        if (0 != ret) {
-            Log::WriteLog(LL_ERROR, "MC::RecordVideoEv->开启预览失败, er: %d", ret);
-            ec = MC::EC_START_PREVIEW_FAIL;
-            goto NT;
-        }
-
-        ret = StartCaptureVideo((CAMERAINDEX)which_, (char*)path_.c_str());
+        int ret = StartCaptureVideo((CAMERAINDEX)which_, (char*)path_.c_str());
         if (0 != ret) {
             Log::WriteLog(LL_ERROR, "MC::RecordVideoEv->开启录像失败, er: %d, 存放路径: %s",
                 ret,
