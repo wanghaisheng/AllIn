@@ -3851,7 +3851,7 @@ int ST_RecognizeQRCode(const char* file, char* qr, const int qr_size)
 
     RecogQRCodeNt* derive_nt = (RecogQRCodeNt*)nt;
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_IMAGE_WAIT))
 #else
     if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
@@ -3876,7 +3876,7 @@ int ST_RecognizeQRCodeByRect(
 
     RecogQRCodeNt* derive_nt = (RecogQRCodeNt*)nt;
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_IMAGE_WAIT))
 #else
     if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
@@ -3937,7 +3937,7 @@ int ST_CalcImageRatio(const char* file, const int dpi, double& ratio_x, double& 
 
     CalcImageRatioNt* derive_nt = (CalcImageRatioNt*)nt;
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_IMAGE_WAIT))
 #else
     if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
@@ -4013,7 +4013,7 @@ int ST_Find2Circles(
 
     Find2CirNt* derive_nt = (Find2CirNt*)nt;
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_IMAGE_WAIT))
 #else
     if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif
@@ -4124,7 +4124,7 @@ int ST_Find4Circles(
 
     Find4CirNt* derive_nt = (Find4CirNt*)nt;
 #ifdef _XP
-    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_IMAGE_WAIT))
 #else
     if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
 #endif

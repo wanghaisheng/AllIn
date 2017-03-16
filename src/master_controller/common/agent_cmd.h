@@ -18,7 +18,7 @@
 #define SEND_TIME_SIZE      37  // null terminated.
 #define SN_SIZE             30
 #define MAIN_SPARE_SN_SIZE  48
-#define QR_CODE_SIZE        32
+#define QR_CODE_SIZE        260
 #define MAX_STAMPER_NUM     6
 
 enum CmdType {
