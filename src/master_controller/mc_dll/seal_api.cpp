@@ -1818,52 +1818,30 @@ public:
         }
         
         switch (operation_) {
-        case 0: { // 关安全门
-            // 更新章映射
-            ret = SetStampMap();
-            if (0 != ret) {
-                ec = MC::EC_UPDATE_STAMP_FAIL;
-                Log::WriteLog(LL_ERROR, "MC::OperateSafeEv::SpecificExecute->更新章映射失败");
-                goto NT;
-            }
-
-            // 先关电子锁
+        case 0: {
+            // 关电子锁
             ret = FCloseDoorSafe();
             if (0 != ret) {
                 ec = MC::EC_DRIVER_FAIL;
-                Log::WriteLog(LL_ERROR, "MC::OperateSafeEv::SpecificExecute->开电子锁失败");
-                goto NT;
-            }
-
-            // 再退出维护模式
-            ret = FQuitMaintainMode();
-            if (0 != ret) {
-                ec = MC::EC_DRIVER_FAIL;
-                Log::WriteLog(LL_ERROR, "MC::OperateSafeEv::SpecificExecute->退出维护模式失败");
+                Log::WriteLog(LL_ERROR, "MC::OperateSafeEv::SpecificExecute->close电子锁失败, er: %d",
+                    ret);
                 goto NT;
             }
         }
             break;
-        case 1: { // 开安全门
+        case 1: {
             if (doors[1] == 1) {
                 ec = MC::EC_SAFE_OPENED;
                 Log::WriteLog(LL_DEBUG, "MC::OperateSafeEv::SpecificExecute->安全门已打开");
                 goto NT;
             }
 
-            // 先进入维护模式
-            ret = FMaintenanceMode();
-            if (0 != ret) {
-                ec = MC::EC_DRIVER_FAIL;
-                Log::WriteLog(LL_ERROR, "MC::OperateSafeEv::SpecificExecute->进入维护模式失败");
-                goto NT;
-            }
-
-            // 打开电子锁
+            // 开电子锁
             ret = FOpenDoorSafe();
             if (0 != ret) {
                 ec = MC::EC_DRIVER_FAIL;
-                Log::WriteLog(LL_ERROR, "MC::OperateSafeEv::SpecificExecute->打开电子锁失败");
+                Log::WriteLog(LL_ERROR, "MC::OperateSafeEv::SpecificExecute->打开电子锁失败, er:%d",
+                    ret);
                 goto NT;
             }
         }
