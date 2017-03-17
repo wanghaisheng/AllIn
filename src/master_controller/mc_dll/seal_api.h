@@ -285,6 +285,8 @@ public:
 
     void SetStamp(NotifyResult* notify);
 
+    void GetFirwareVersion(NotifyResult* notify);
+
 }; // end class STSealAPI
 
 } // end namespace MC

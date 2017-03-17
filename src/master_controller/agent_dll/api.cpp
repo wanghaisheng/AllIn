@@ -78,7 +78,7 @@ public:
     int er_;
 };
 
-int ST_QueryMachine(char* sn, int size)
+int ST_GetDevModel(char* sn, int size)
 {
     QueryMachineNT* nt = new (std::nothrow) QueryMachNT;
     api_agent.AsynQueryMachine(nt);
@@ -137,7 +137,7 @@ public:
     int er_;
 };
 
-int ST_SetMachine(const char* sn)
+int ST_SetDevModel(const char* sn)
 {
     SetMachineNT* nt = new (std::nothrow) SetMachNT;
     api_agent.AsynSetMachine(sn, nt);
@@ -1117,45 +1117,6 @@ int ST_ReleaseStamp(const std::string& machine)
 
 ///////////////////////////// 获取错误信息 ////////////////////////////////
 
-class GetErrNT: public GetErrorNT {
-public:
-#ifdef _XP
-    GetErrNT() {
-        cv_ = CreateEvent(
-            NULL,
-            TRUE,
-            FALSE,
-            NULL);
-    }
-
-    ~GetErrNT() {
-        CloseHandle(cv_);
-    }
-#endif
-
-    virtual void Notify(int er_code, std::string err_msg, std::string err_resolver, int ec) {
-        er_ = ec;
-        msg_ = err_msg;
-        resolver_ = err_resolver;
-
-#ifdef _XP
-        SetEvent(cv_);
-#else
-        cv_.notify_one();
-#endif
-    }
-
-public:
-#ifdef _XP
-    HANDLE cv_;
-#else
-    boost::condition_variable cv_;
-#endif
-    std::string msg_;
-    std::string resolver_;
-    int er_;
-};
-
 int ST_GetError(int err_code, char* err_msg, char* err_resolver, int size)
 {
     std::string msg;
@@ -2118,25 +2079,25 @@ public:
     std::string model_;
     int er_;
 };
-
-int ST_GetDevModel(char* model, int size)
-{
-    DevModelNT* nt = new GetModelNT;
-    api_agent.AsynQueryModel(nt);
-
-    GetModelNT* derive_nt = (GetModelNT*)nt;
-#ifdef _XP
-        if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
-#else
-        if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
-#endif
-            derive_nt->er_ = MC::EC_TIMEOUT;
-
-    strncpy(model, derive_nt->model_.c_str(), 1 + min(size, derive_nt->model_.size()));
-    int ret = derive_nt->er_;
-    setKillServer(ret);
-    return ret;
-}
+// 
+// int ST_GetDevModel(char* model, int size)
+// {
+//     DevModelNT* nt = new GetModelNT;
+//     api_agent.AsynQueryModel(nt);
+// 
+//     GetModelNT* derive_nt = (GetModelNT*)nt;
+// #ifdef _XP
+//         if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+// #else
+//         if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+// #endif
+//             derive_nt->er_ = MC::EC_TIMEOUT;
+// 
+//     strncpy(model, derive_nt->model_.c_str(), 1 + min(size, derive_nt->model_.size()));
+//     int ret = derive_nt->er_;
+//     setKillServer(ret);
+//     return ret;
+// }
 
 /////////////////////////////// 打开进纸门 /////////////////////////////
 
@@ -4206,6 +4167,66 @@ int ST_SetStampMap()
 
     int ret = derive_nt->er_;
     setKillServer(ret);
+
+    return ret;
+}
+
+/////////////////////////////// get firware version /////////////////////////////
+
+class GetFirwareVersionNt : public GetFirwareNT {
+public:
+#ifdef _XP
+    GetFirwareVersionNt() {
+        cv_ = CreateEvent(
+            NULL,
+            TRUE,
+            FALSE,
+            NULL);
+    }
+
+    ~GetFirwareVersionNt() {
+        CloseHandle(cv_);
+    }
+#endif
+
+    virtual void Notify(std::string version, int ec) {
+        er_ = ec;
+        ver_ = version;
+
+#ifdef _XP
+        SetEvent(cv_);
+#else
+        cv_.notify_one();
+#endif
+    }
+
+public:
+#ifdef _XP
+    HANDLE cv_;
+#else
+    boost::condition_variable cv_;
+#endif
+
+    std::string ver_;
+    int er_;
+};
+
+int ST_GetHardwareVersion(char* version, int len)
+{
+    GetFirwareNT* nt = new GetFirwareVersionNt;
+    api_agent.AsynGetFirware(nt);
+
+    GetFirwareVersionNt* derive_nt = (GetFirwareVersionNt*)nt;
+#ifdef _XP
+    if (WAIT_TIMEOUT == WaitForSingleObject(derive_nt->cv_, SYNC_WAIT_TIME))
+#else
+    if (!(derive_nt->cv_.timed_wait(lk, boost::posix_time::milliseconds(SYNC_WAIT_TIME))))
+#endif
+        derive_nt->er_ = MC::EC_TIMEOUT;
+
+    int ret = derive_nt->er_;
+    setKillServer(ret);
+    strncpy(version, derive_nt->ver_.c_str(), min(len, derive_nt->ver_.size()));
 
     return ret;
 }

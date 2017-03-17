@@ -411,6 +411,9 @@ void MC::Cnn::ReceiveFunc()
         case CT_SET_STAMP:
             asyn_api_->HandleSetStamp(chBuf);
             break;
+        case CT_GET_VERSION:
+            asyn_api_->HandleGetFirware(chBuf);
+            break;
         default:
             printf("AsynAPISet::ReceiverFunc->Unknown cmd: %d", cmd_type);
             break;

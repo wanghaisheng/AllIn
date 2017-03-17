@@ -1737,3 +1737,24 @@ void AsynAPISet::HandleSetStamp(char* chBuf)
     if (NULL != nt)
         nt->Notify(cmd.ret_);
 }
+
+int AsynAPISet::AsynGetFirware(GetFirwareNT* nt)
+{
+    GetFirwareVerCmd* cmd = new GetFirwareVerCmd;
+    InsertNotify(cmd, nt);
+
+    return MC::Cnn::GetInst()->PushCmd(cmd);
+}
+
+void AsynAPISet::HandleGetFirware(char* chBuf)
+{
+    GetFirwareVerCmd cmd;
+    ParseCmd(&cmd, chBuf);
+    Log::WriteLog(LL_DEBUG, "AsynAPISet::HandleGetFirware->cmd: %s, ret: %d",
+        cmd_des[cmd.ct_].c_str(),
+        cmd.ret_);
+
+    GetFirwareNT* nt = (GetFirwareNT*)LookupSendTime(cmd.send_time_);
+    if (NULL != nt)
+        nt->Notify(cmd.version_, cmd.ret_);
+}

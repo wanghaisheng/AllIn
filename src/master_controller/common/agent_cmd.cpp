@@ -936,3 +936,16 @@ void SetStampCmd::Unser()
     BaseCmd::Unser();
     xs_ >> ret_;
 }
+
+void GetFirwareVerCmd::Ser()
+{
+    BaseCmd::Ser();
+    xs_ << version_ << ret_;
+    xs_.Trim();
+}
+
+void GetFirwareVerCmd::Unser()
+{
+    BaseCmd::Unser();
+    xs_ >> version_ >> ret_;
+}

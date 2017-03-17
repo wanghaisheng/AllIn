@@ -20,6 +20,7 @@
 #define MAIN_SPARE_SN_SIZE  48
 #define QR_CODE_SIZE        260
 #define MAX_STAMPER_NUM     6
+#define VERSION_SIZE        255
 
 enum CmdType {
     CT_INIT_MACHINE = 1,    // 初始化
@@ -81,6 +82,7 @@ enum CmdType {
     CT_FIND_2CIRCLES,       // 查找2个圆心点坐标
     CT_FIND_4CIRCLES,       // 查找4个圆心点坐标
     CT_SET_STAMP,           // 设置印章映射关系
+    CT_GET_VERSION,         // 获取硬件版本号
 
     // 摄像头接口
     CT_START_PREVIEW,       // 开始预览
@@ -158,6 +160,7 @@ static std::string cmd_des[] =
     "查找2个圆心点坐标",
     "查找4个圆心点坐标",
     "设置印章映射关系",
+    "获取硬件版本号",
 
     "开始预览",
     "停止预览",
@@ -1347,6 +1350,22 @@ public:
     virtual void Unser();
 
 public:
+    MC::ErrorCode ret_;
+};
+
+class GetFirwareVerCmd : public BaseCmd {
+public:
+    GetFirwareVerCmd() : ret_(MC::EC_SUCC) {
+        ct_ = CT_GET_VERSION;
+        memset(version_, 0x0, sizeof(version_));
+    }
+
+    virtual void Ser();
+    virtual void Unser();
+
+public:
+    char version_[VERSION_SIZE];
+
     MC::ErrorCode ret_;
 };
 

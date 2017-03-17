@@ -51,14 +51,11 @@ MASTERCTRL_AGENT_API int RegisterEventCallBack(EventCallback func);
 
 /////////////////////// 1. 印控机API //////////////////////////////
 
-// 获取系统信息
-// status:
-//      0 主系统
-//      1 备用系统
-//      2 主系统升级模式
-//      3 备用系统升级模式
-MASTERCTRL_AGENT_API int ST_GetSystemInfo(
-    int& status);
+// 打开设备连接
+MASTERCTRL_AGENT_API int ST_Open();
+
+// 关闭设备连接
+MASTERCTRL_AGENT_API int ST_Close();
 
 // 获取印控机与PC连接状态
 // cnn      --- 0: 断开连接
@@ -69,11 +66,21 @@ MASTERCTRL_AGENT_API int ST_GetSystemInfo(
 MASTERCTRL_AGENT_API int ST_QueryCnn(
     int& cnn);
 
-// 打开设备连接
-MASTERCTRL_AGENT_API int ST_Open();
+// 获取系统信息
+// status:
+//      0 主系统
+//      1 备用系统
+//      2 主系统升级模式
+//      3 备用系统升级模式
+MASTERCTRL_AGENT_API int ST_GetSystemInfo(
+    int& status);
 
-// 关闭设备连接
-MASTERCTRL_AGENT_API int ST_Close();
+// 读取硬件版本号字符串, 与实际版本代码做关联如"master_2.41"
+// version       --- 版本号字符串
+// len           --- 最长版本号长度(255个字节)
+MASTERCTRL_AGENT_API int ST_GetHardwareVersion(
+    char* version,
+    int len = 255);
 
 // 获取设备状态
 // 0 ---- "未初始化"
@@ -87,14 +94,27 @@ MASTERCTRL_AGENT_API int ST_Close();
 MASTERCTRL_AGENT_API int ST_GetDevStatus(
     int& code);
 
-// 获取印控仪编号(只针对主板)
-MASTERCTRL_AGENT_API int ST_QueryMachine(
-    char* sn,
+// 设备型号: 同一批印控机的设备型号是一样的, 如'iphone6s plus'
+// 设置和获取设备型号只针对主板
+// 设置设备型号, 最大支持20个字节
+MASTERCTRL_AGENT_API int ST_SetDevModel(
+    const char* model);
+
+// 获取设备型号
+MASTERCTRL_AGENT_API int ST_GetDevModel(
+    char* model,
     int size = 24);
 
-// 设置印控机编号(只针对主板), 最多支持20个字节
-MASTERCTRL_AGENT_API int ST_SetMachine(
-    const char* sn);
+// 设置设备编号（每一台印控机是不一样的）,　主板和备板是相同的编号
+// 写主板/备板编号
+MASTERCTRL_AGENT_API int ST_WriteMainStandbySN(
+    const char*     sn,
+    int             len = 48);
+
+// 获取主板/备板编号
+MASTERCTRL_AGENT_API int ST_ReadMainStandbySN(
+    char*       sn,
+    int         len = 48);
 
 // 查询MAC地址, 一台印控机最多支持绑定2个MAC地址
 // mac1         --- mac地址1
@@ -243,11 +263,6 @@ MASTERCTRL_AGENT_API int ST_SetSideDoor(
     int keep,
     int timeout);
 
-//  获取设备型号
-MASTERCTRL_AGENT_API int ST_GetDevModel(
-    char* model,
-    int size = 22);
-
 // 补光灯控制
 // which    --- 补光灯类型
 //              1 -- 安全门的补光灯; 
@@ -305,16 +320,6 @@ MASTERCTRL_AGENT_API int ST_Reset();
 
 // 重启主板
 MASTERCTRL_AGENT_API int ST_Restart();
-
-// 读主板/备板序列号
-MASTERCTRL_AGENT_API int ST_ReadMainStandbySN(
-    char*       sn, 
-    int         len = 48);
-
-// 写主板/备板序列号
-MASTERCTRL_AGENT_API int ST_WriteMainStandbySN(
-    const char*     sn, 
-    int             len = 48);
 
 /////////////////////// 2. 图像处理API //////////////////////////////
 

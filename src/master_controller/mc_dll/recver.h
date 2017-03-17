@@ -182,6 +182,8 @@ private:
 
     void HandleSetStamp(const RecvMsg* msg);
 
+    void HandleGetFirware(const RecvMsg* msg);
+
 private:
     static MC::SynQueue<const RecvMsg*> recver_queue_;
     static HANDLE                       recv_msg_ev_;

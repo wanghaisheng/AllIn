@@ -405,6 +405,9 @@ void Recver::OnRecvMQMsg(char* buf, int size)
     case CT_SET_STAMP:
         HandleSetStamp(&msg);
         break;
+    case CT_GET_VERSION:
+        HandleGetFirware(&msg);
+        break;
     default:
         printf("Recver::ReceiverFunc->Unknown cmd: %d\n", cmd);
         break;
@@ -3679,4 +3682,45 @@ void Recver::HandleSetStamp(const RecvMsg* msg)
 
     MC::NotifyResult* notify = new (std::nothrow) SetStampNT(msg->pipe_inst, cmd, this);
     MC::STSealAPI::GetInst()->SetStamp(notify);
+}
+
+////////////////// get firware version /////////////
+
+class GetFirwareNT : public MC::NotifyResult {
+public:
+    GetFirwareNT(LPPIPEINST inst, GetFirwareVerCmd* cmd, Recver* recv) :
+        pipe_inst_(inst),
+        cmd_(cmd),
+        recver_(recv)
+    {
+
+    }
+
+    void Notify(
+        MC::ErrorCode ec,
+        std::string data1 = "",
+        std::string data2 = "",
+        std::string ctx1 = "",
+        std::string ctx2 = "")
+    {
+        cmd_->ret_ = ec;
+        strcpy(cmd_->version_, data1.c_str());
+
+        recver_->PushCmd(cmd_);
+    }
+
+private:
+    GetFirwareVerCmd*   cmd_;
+    LPPIPEINST          pipe_inst_;
+    Recver*             recver_;
+};
+
+void Recver::HandleGetFirware(const RecvMsg* msg)
+{
+    GetFirwareVerCmd* cmd = new (std::nothrow) GetFirwareVerCmd;
+    memcpy(cmd->xs_.buf_, msg->msg, CMD_BUF_SIZE);
+    cmd->Unser();
+
+    MC::NotifyResult* notify = new (std::nothrow) GetFirwareNT(msg->pipe_inst, cmd, this);
+    MC::STSealAPI::GetInst()->GetFirwareVersion(notify);
 }

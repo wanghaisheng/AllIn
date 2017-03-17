@@ -429,7 +429,7 @@ void QtDemo::HandleCloseVibrationAlarm()
 void QtDemo::HandleQuerySN()
 {
     char sn[24] = { 0 };
-    int ret = ST_QueryMachine(sn, sizeof(sn));
+    int ret = ST_GetDevModel(sn, sizeof(sn));
     if (0 != ret)
         return Info(QString::fromLocal8Bit("获取设备编号失败, er: ") + QString::number(ret));
 
@@ -443,7 +443,7 @@ void QtDemo::HandleSetSN()
     if (sn.empty())
         return Info(QString::fromLocal8Bit("设备编号为空"));
 
-    int ret = ST_SetMachine(sn.c_str());
+    int ret = ST_SetDevModel(sn.c_str());
     if (0 != ret)
         return Info(QString::fromLocal8Bit("设置设备编号失败, er: ") + QString::number(ret));
 

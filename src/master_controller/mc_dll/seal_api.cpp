@@ -4626,3 +4626,51 @@ void MC::STSealAPI::SetStamp(NotifyResult* notify)
 
     EventCPUCore::GetInstance()->PostEvent(ev);
 }
+
+///////////////////////////// get firware version /////////////////////////////////
+
+class GetFirwareEv : public MC::BaseEvent {
+public:
+    GetFirwareEv(std::string des, MC::NotifyResult* notify) :
+        BaseEvent(des),
+        notify_(notify) {
+
+    }
+
+    virtual void SpecificExecute() {
+        char version[VERSION_SIZE] = { 0 };
+        MC::ErrorCode ec = exception_;
+        if (MC::EC_SUCC != ec)
+            goto NT;
+
+        int ret = GetHardwareVer(version, sizeof(version));
+        if (0 != ret) {
+            Log::WriteLog(LL_ERROR, "GetFirwareEv->GetHardwareVer fails, er: %d", ret);
+            ec = MC::EC_DRIVER_FAIL;
+            goto NT;
+        }
+
+        ec = MC::EC_SUCC;
+
+    NT:
+        notify_->Notify(ec, version);
+        Log::WriteLog(LL_DEBUG, "MC::GetFirwareEv->获取硬件版本号, ec: %s, 硬件版本号: %s",
+            MC::ErrorMsg[ec].c_str(),
+            version);
+        delete this;
+    }
+
+private:
+    MC::NotifyResult*   notify_;
+};
+
+void MC::STSealAPI::GetFirwareVersion(NotifyResult* notify)
+{
+    BaseEvent* ev = new (std::nothrow) GetFirwareEv(
+        "获取硬件版本号",
+        notify);
+    if (NULL == ev)
+        notify->Notify(MC::EC_ALLOCATE_FAILURE);
+
+    EventCPUCore::GetInstance()->PostEvent(ev);
+}

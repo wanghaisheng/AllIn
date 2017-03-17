@@ -527,6 +527,13 @@ public:
     virtual void Notify(int ec) = 0;
 };
 
+class GetFirwareNT {
+public:
+    virtual ~GetFirwareNT() {}
+
+    virtual void Notify(std::string ver, int ec) {}
+};
+
 class AsynAPISet {
 public:
     AsynAPISet() {
@@ -736,6 +743,9 @@ public:
     int AsynSetStamp(
         SetStampNT* nt);
 
+    int AsynGetFirware(
+        GetFirwareNT* nt);
+
 private:
     void AsynErrorNotify(BaseCmd* cmd, enum MC::ErrorCode ec);
     
@@ -883,6 +893,8 @@ public:
     void HandleFind4Circles(char* chBuf);
 
     void HandleSetStamp(char* chBuf);
+
+    void HandleGetFirware(char* chBuf);
 
 public:
     struct NotifySet {
