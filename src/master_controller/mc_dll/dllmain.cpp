@@ -16,6 +16,7 @@ BOOL APIENTRY DllMain(
 {
     switch (ul_reason_for_call) {
     case DLL_PROCESS_ATTACH: {
+        RegisterPlugin();
         int ret = ::F_RegisterDevCallBack(&ConnectCallBack);
         ret = ::FRegisterDevCallBack(&DevMsgCallBack);
         MC::SvrConfig::GetInst()->Parse();
