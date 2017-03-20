@@ -94,41 +94,42 @@ CUSBControlF60::~CUSBControlF60(void)
 // 	return;
 }
 
-static Mutex usbctrl_lock;
-static CContrlledStamper* gusbctrl = NULL;
+
+
+
+
+static CContrlledStamper gusbctrl;// = new CContrlledStamper;
 
 int FRegisterDevCallBack(pfnDevMsgCallBack pfn)
 {
-    if (NULL == gusbctrl)
-        gusbctrl = new CContrlledStamper;
-
-	gusbctrl->RegisterDevCallBack(pfn);
+	gusbctrl.RegisterDevCallBack(pfn);
 	return STF_SUCCESS;
 }
-
 int FOpenDev(const char *file)//参数无效
 {
-    CCtrlUSB *p = CCtrlUSB::sharedCCtrlUSB();
-    string devfile = p->GetDevPath();
+#ifdef _LOG
+	INTERFACE_LOG(FOpenDev);
+#endif
+	CCtrlUSB *p = CCtrlUSB::sharedCCtrlUSB();
 
-    CLock lk(usbctrl_lock);
-    if (NULL == gusbctrl)
-        gusbctrl = new CContrlledStamper;
+	string devfile = p->GetDevPath();
 
-    return gusbctrl->OpenDev(devfile.c_str());
+	int ret = -1;
+	//if (gusbctrl)
+	{		
+		ret = gusbctrl.OpenDev(devfile.c_str());
+	}
+	return ret;
 }
-
 int FCloseDev(void)
 {
-    CLock lk(usbctrl_lock);
-    int ret = 0;
-    if (NULL != gusbctrl) {
-        ret = gusbctrl->CloseDev();
-        delete gusbctrl;
-        gusbctrl = NULL;
-    }
+#ifdef _LOG
+	INTERFACE_LOG(FCloseDev);
+#endif
 
-    return ret;
+	int ret = -1;
+	ret = gusbctrl.CloseDev();
+	return ret;
 }
 
 int FQuitMaintainMode(void)
@@ -139,7 +140,7 @@ int FQuitMaintainMode(void)
 #endif
 
 	int ret = -1;
-	ret = gusbctrl->QuitMaintainMode();
+	ret = gusbctrl.QuitMaintainMode();
 	return ret;
 }
 int FRestart(void)
@@ -148,7 +149,7 @@ int FRestart(void)
 	INTERFACE_LOG(FRestart);
 #endif
 	int ret = -1;
-	ret = gusbctrl->Restart();
+	ret = gusbctrl.Restart();
 	return ret;
 }
 
@@ -158,7 +159,7 @@ int FGetSystemMsg(char *pRtn, int nLen)
 	INTERFACE_LOG(FGetSystemMsg);
 #endif
 	int ret = -1;
-	ret = gusbctrl->GetSystemMsg(pRtn,nLen);
+	ret = gusbctrl.GetSystemMsg(pRtn,nLen);
 	return ret;
 }
 int FGetFirwareVer(OUT char* strVer, int len)
@@ -167,7 +168,7 @@ int FGetFirwareVer(OUT char* strVer, int len)
 	INTERFACE_LOG(_LOG);
 #endif
 	int ret = -1;
-	ret = gusbctrl->GetFirwareVer(strVer, len);
+	ret = gusbctrl.GetFirwareVer(strVer, len);
 	return ret;
 }
 
@@ -221,7 +222,7 @@ int FGetDevStatus(OUT unsigned char* strStatus, int len)
 	INTERFACE_LOG(FGetDevStatus);
 #endif
     int ret = -1;
-    ret = gusbctrl->GetDevStatus(strStatus, len);
+    ret = gusbctrl.GetDevStatus(strStatus, len);
     return ret;
 }
 
@@ -231,7 +232,7 @@ int FMaintenanceMode(void)
 	INTERFACE_LOG(FMaintenanceMode);
 #endif
 	int ret = -1;
-	ret = gusbctrl->MaintenanceMode();
+	ret = gusbctrl.MaintenanceMode();
 	return ret;
 }
 int FGetInfraRedStatus(OUT char* strInfraRed, int len)
@@ -240,7 +241,7 @@ int FGetInfraRedStatus(OUT char* strInfraRed, int len)
 	INTERFACE_LOG(FGetInfraRedStatus);
 #endif
 	int ret = -1;
-	ret = gusbctrl->GetInfraRedStatus(strInfraRed, len);
+	ret = gusbctrl.GetInfraRedStatus(strInfraRed, len);
 	return ret;
 }
 int FGetSealPresent(OUT char* strSealStatus, int len)
@@ -249,7 +250,7 @@ int FGetSealPresent(OUT char* strSealStatus, int len)
 	INTERFACE_LOG(FGetSealPresent);
 #endif
 	int ret = -1;
-	ret = gusbctrl->GetSealPresent(strSealStatus, len);
+	ret = gusbctrl.GetSealPresent(strSealStatus, len);
 	return ret;
 }
 int FGetDoorsPresent(OUT char* strDoorsStatus, int len)
@@ -258,7 +259,7 @@ int FGetDoorsPresent(OUT char* strDoorsStatus, int len)
 	INTERFACE_LOG(FGetDoorsPresent);
 #endif
 	int ret = -1;
-	ret = gusbctrl->GetDoorsPresent(strDoorsStatus, len);
+	ret = gusbctrl.GetDoorsPresent(strDoorsStatus, len);
 	return ret;
 }
 int FOpenDoorPaper()
@@ -267,7 +268,7 @@ int FOpenDoorPaper()
 	INTERFACE_LOG(FOpenDoorPaper);
 #endif
 	int ret = -1;
-	ret = gusbctrl->OpenDoorPaper();
+	ret = gusbctrl.OpenDoorPaper();
 	return ret;
 }
 
@@ -278,7 +279,7 @@ int FOpenDoorSafe(void)
 	INTERFACE_LOG(FOpenDoorSafe);
 #endif
 	int ret = -1;
-	ret = gusbctrl->OpenDoorSafe();
+	ret = gusbctrl.OpenDoorSafe();
 	return ret;
 }
 int FCloseDoorSafe(void)
@@ -287,7 +288,7 @@ int FCloseDoorSafe(void)
 	INTERFACE_LOG(FCloseDoorSafe);
 #endif
 	int ret = -1;
-	ret = gusbctrl->CloseDoorSafe();
+	ret = gusbctrl.CloseDoorSafe();
 	return ret;
 }
 int FLightCtrl(char light, int op)
@@ -296,7 +297,7 @@ int FLightCtrl(char light, int op)
 	INTERFACE_LOG(FLightCtrl);
 #endif
 	int ret = -1;
-	ret = gusbctrl->LinghtCtrl(light, op);
+	ret = gusbctrl.LinghtCtrl(light, op);
 	return ret;
 }
 int FMoveX(unsigned short x_point)
@@ -305,7 +306,7 @@ int FMoveX(unsigned short x_point)
 	INTERFACE_LOG(FMoveX);
 #endif
 	int ret = -1;
-	ret = gusbctrl->MoveX(x_point);
+	ret = gusbctrl.MoveX(x_point);
 	return ret;
 }
 int FMoveY(unsigned short y_point)
@@ -314,7 +315,7 @@ int FMoveY(unsigned short y_point)
 	INTERFACE_LOG(FMoveY);
 #endif
 	int ret = -1;
-	ret = gusbctrl->MoveY(y_point);
+	ret = gusbctrl.MoveY(y_point);
 	return ret;
 }
 int FTurnSeal(unsigned short angle)
@@ -323,7 +324,7 @@ int FTurnSeal(unsigned short angle)
 	INTERFACE_LOG(FTurnSeal);
 #endif
 	int ret = -1;
-	ret = gusbctrl->TurnSeal(angle);
+	ret = gusbctrl.TurnSeal(angle);
 	return ret;
 }
 
@@ -333,7 +334,7 @@ int FStartStamperstrc(STAMPERPARAM *pstamperparam)
 	INTERFACE_LOG(FStartStamperstrc);
 #endif
 	int ret = -1;
-	ret = gusbctrl->StartStamper(pstamperparam);
+	ret = gusbctrl.StartStamper(pstamperparam);
 	return ret;
 }
 
@@ -360,7 +361,7 @@ int FStartStamper(
     stamperparam.type = type;
 
 	int ret = -1;
-	ret = gusbctrl->StartStamper(&stamperparam);
+	ret = gusbctrl.StartStamper(&stamperparam);
 	return ret;
 }
 
@@ -389,7 +390,7 @@ int FStartStamperABC(
     unsigned char type)
 {
     unsigned int rfid = 0;
-    int ret = gusbctrl->GetRFID(abc_id, rfid);
+    int ret = gusbctrl.GetRFID(abc_id, rfid);
     if (0 != ret) {
         CLog::sharedLog()->WriteNormalLog("FStartStamperABC->获取农行电子标签(%s)对应的RFID失败", abc_id);
         return STF_INVALID_STAMPER;
@@ -406,7 +407,7 @@ int FSelectStamper(unsigned int serial, unsigned int seal_id, char	isPadInk)
 	INTERFACE_LOG(FSelectStamper);
 #endif
 	int ret = -1;
-	ret = gusbctrl->SelectStamper(serial, seal_id, isPadInk);
+	ret = gusbctrl.SelectStamper(serial, seal_id, isPadInk);
 	return ret;
 }
 int FCancleStamper(void)
@@ -415,7 +416,7 @@ int FCancleStamper(void)
 	INTERFACE_LOG(FCancleStamper);
 #endif
 	int ret = -1;
-	ret = gusbctrl->CancleStamper();
+	ret = gusbctrl.CancleStamper();
 	return ret;
 }
 int FBeepCtrl(char beep, char interval)
@@ -424,7 +425,7 @@ int FBeepCtrl(char beep, char interval)
 	INTERFACE_LOG(FBeepCtrl);
 #endif
 	int ret = -1;
-	ret = gusbctrl->BeepCtrl(beep, interval);
+	ret = gusbctrl.BeepCtrl(beep, interval);
 	return ret;
 }
 int FLightBrightness(char light, char brightness)
@@ -433,7 +434,7 @@ int FLightBrightness(char light, char brightness)
 	INTERFACE_LOG(FLightBrightness);
 #endif
 	int ret = -1;
-	ret = gusbctrl->LightBrightness(light, brightness);
+	ret = gusbctrl.LightBrightness(light, brightness);
 	return ret;
 }
 int FSealBack(void)
@@ -442,7 +443,7 @@ int FSealBack(void)
 	INTERFACE_LOG(FSealBack);
 #endif
 	int ret = -1;
-	ret = gusbctrl->SealBack();
+	ret = gusbctrl.SealBack();
 	return ret;
 }
 int FInTestMode(void)
@@ -451,7 +452,7 @@ int FInTestMode(void)
 	INTERFACE_LOG(FInTestMode);
 #endif
 	int ret = -1;
-	ret = gusbctrl->InTestMode();
+	ret = gusbctrl.InTestMode();
 	return ret;
 }
 int FOutTestMode(void)
@@ -460,7 +461,7 @@ int FOutTestMode(void)
 	INTERFACE_LOG(FOutTestMode);
 #endif
 	int ret = -1;
-	ret = gusbctrl->OutTestMode();
+	ret = gusbctrl.OutTestMode();
 	return ret;
 }
 
@@ -484,7 +485,7 @@ int GetMacAdress(char num, OUT char* strmac, int len)
 	/*unsigned char str[6] = {0xFC, 0xAA,0x14, 0x90 ,0x69, 0x7B};*/
 	unsigned char str[6] = {0};
 	
-	ret = gusbctrl->GetMacAdress(num, str, sizeof(str));
+	ret = gusbctrl.GetMacAdress(num, str, sizeof(str));
 	char str1[18] = {0};
 
 	char	ddl,ddh;
@@ -602,7 +603,7 @@ int FBindMac(char op, char num, char* strmac, int len)
 // 		CLog* p = CLog::sharedLog();
 // 		p->WriteDebugLog("%2x,%2x,%2x,%2x,%2x,%2x;%d",str[0],str[1],str[2],str[3],str[4],str[5], len);
 
-		ret = gusbctrl->BindMac(op, num, str, sizeof(str));
+		ret = gusbctrl.BindMac(op, num, str, sizeof(str));
 	}
 	return ret;
 }
@@ -635,7 +636,7 @@ int FfirewareUpdate(unsigned char cmd, unsigned char* data, int len)
 	INTERFACE_LOG(FfirewareUpdate);
 #endif
 	int ret = -1;
-	ret = gusbctrl->firewareUpdate(cmd, data, len);
+	ret = gusbctrl.firewareUpdate(cmd, data, len);
 	return ret;
 }
 
@@ -645,7 +646,7 @@ int FDebugLogSwitch(char op)
 	INTERFACE_LOG(FDebugLogSwitch);
 #endif
 	int ret = -1;
-	ret = gusbctrl->DebugLogSwitch(op);
+	ret = gusbctrl.DebugLogSwitch(op);
 	return ret;
 }
 
@@ -655,14 +656,14 @@ int FDebugLogSwitch(char op)
 	INTERFACE_LOG(Calibration);
 #endif
 	 int ret = -1;
-	 ret = gusbctrl->Calibration(points,len);
+	 ret = gusbctrl.Calibration(points,len);
 	 return ret;
  }
 
   int  CalculatePos(double* x1, double* y1, double* x2, double* y2, double* scalex,double*scaley)
  {
 	 int ret = -1;
-	ret = gusbctrl->CalculatePos(x1,y1,x2,y2,scalex,scaley);
+	ret = gusbctrl.CalculatePos(x1,y1,x2,y2,scalex,scaley);
 	return ret;
 
  }
@@ -670,7 +671,7 @@ int FDebugLogSwitch(char op)
    int  CalculatePosition(int stamperPointX,int stanperPointY,char* points,int len)
    {
 	    int ret = -1;
-	ret = gusbctrl->STCalculatePosition(stamperPointX,stanperPointY,points,len);
+	ret = gusbctrl.STCalculatePosition(stamperPointX,stanperPointY,points,len);
 	return ret;
    }
 
@@ -678,7 +679,7 @@ int FDebugLogSwitch(char op)
    {
 
 	   int ret = -1;
-	   ret = gusbctrl->CalibrationMutiple(points,len);
+	   ret = gusbctrl.CalibrationMutiple(points,len);
 	   return ret;
    }
 
@@ -686,14 +687,14 @@ int FDebugLogSwitch(char op)
 int CalibrationEx(char * pStampid,char *points,int len)
 {
     int ret = -1;
-    ret = gusbctrl->CalibrationEx(pStampid, points, len);
+    ret = gusbctrl.CalibrationEx(pStampid, points, len);
     return  ret;
 }
 
 int SetAlarm(char alarm, char operation)
 {
     int ret = -1;
-    ret = gusbctrl->SetAlarm(alarm, operation);
+    ret = gusbctrl.SetAlarm(alarm, operation);
     return  ret;
 }
 
@@ -744,27 +745,27 @@ int SetStampMap()
 
     sum = ~sum;
     memcpy(stamper_table + 48, &sum, sizeof(sum));
-    ret = gusbctrl->SetStampMap(stamper_table, sizeof(stamper_table));
+    ret = gusbctrl.SetStampMap(stamper_table, sizeof(stamper_table));
 	return  ret;
 }
 
  int   GetStampMap(char* mapout,int len)
  {
      int ret = -1;
-     ret = gusbctrl->GetStampMap(mapout, len);
+     ret = gusbctrl.GetStampMap(mapout, len);
      return  ret;
  }
 
  int GetPhsicalRange(char * phsicalOut,int len)
  {
      int ret = -1;
-	 ret =   gusbctrl->GetPhsicalRange(phsicalOut,len);
+	 ret =   gusbctrl.GetPhsicalRange(phsicalOut,len);
      return  ret;
  }
 
  int GetStorageCapacity(unsigned char& version, unsigned short& mem_size)
  {
-     return gusbctrl->GetStorageCapacity(version, mem_size);
+     return gusbctrl.GetStorageCapacity(version, mem_size);
  }
 
  // data    --- 待写入数据, C字符串
@@ -777,63 +778,63 @@ int SetStampMap()
      if (NULL == data || 0 == len)
          return 0;
 
-     return gusbctrl->WriteIntoStamper(offset, data, len);
+     return gusbctrl.WriteIntoStamper(offset, data, len);
  }
 
  int ReadStamperMem(unsigned short offset, unsigned short size,
      unsigned char* data, unsigned char& len)
  {
-     return gusbctrl->ReadStamperMem(offset, size, data, len);
+     return gusbctrl.ReadStamperMem(offset, size, data, len);
  }
 
  int SelectStamper(unsigned char stamper)
  {
-     return gusbctrl->SelectStamper(stamper);
+     return gusbctrl.SelectStamper(stamper);
  }
 
  int GetStamperID(unsigned char stamper, unsigned int& rfid)
  {
-     return gusbctrl->GetStamperID(stamper, rfid);
+     return gusbctrl.GetStamperID(stamper, rfid);
  }
 
  int GetStamper(unsigned int rfid, unsigned char& stamper)
  {
-     return gusbctrl->GetStamper(rfid, stamper);
+     return gusbctrl.GetStamper(rfid, stamper);
  }
 
 int EnterAuthMode()
 {
-    return gusbctrl->EnterAuthMode();
+    return gusbctrl.EnterAuthMode();
 }
 
 int ExitAuthMode()
 {
-     return gusbctrl->ExitAuthMode();
+     return gusbctrl.ExitAuthMode();
 }
 
 int EnableFactoryMode(unsigned char enable)
 {
-    return gusbctrl->EnableFactory(enable);
+    return gusbctrl.EnableFactory(enable);
 }
 
 int VerifyKey(char key_type, const unsigned char* key, unsigned char len)
 {
-    return gusbctrl->VerifyKey(key_type, key, len);
+    return gusbctrl.VerifyKey(key_type, key, len);
 }
 
 int OperateBlock(unsigned char block)
 {
-    return gusbctrl->OperateBlock(block);
+    return gusbctrl.OperateBlock(block);
 }
 
 int ReadBlock(unsigned char block, char* data, unsigned char len)
 {
-    return gusbctrl->ReadBlock(block, data, len);
+    return gusbctrl.ReadBlock(block, data, len);
 }
 
 int WriteBlock(unsigned char block, char* data, unsigned char len)
 {
-    return gusbctrl->WriteBlock(block, data, len);
+    return gusbctrl.WriteBlock(block, data, len);
 }
 
 int WriteMAC(
@@ -1069,7 +1070,7 @@ int CheckStampers()
 
 int ReadAllRFID(unsigned int* rfids, unsigned char len, unsigned char* stampers)
 {
-    return gusbctrl->ReadAllRFID(rfids, len, stampers);
+    return gusbctrl.ReadAllRFID(rfids, len, stampers);
 }
 
 static const Mutex mutex;
@@ -1117,12 +1118,12 @@ int ReadStamperIdentifier(unsigned char* id, unsigned char len)
 
 int ReadAlarmVoltage(unsigned char* voltage)
 {
-    return gusbctrl->ReadAlarmVoltage(voltage);
+    return gusbctrl.ReadAlarmVoltage(voltage);
 }
 
 int Reset()
 {
-    return gusbctrl->Reset();
+    return gusbctrl.Reset();
 }
 
 int Confirm(
@@ -1135,7 +1136,7 @@ int Confirm(
     short w_time,
     unsigned char type)
 {
-    return gusbctrl->Confirm(
+    return gusbctrl.Confirm(
         serial,
         rfid,
         isPadInk,
@@ -1148,50 +1149,50 @@ int Confirm(
 
 int ReadStamp(unsigned char* info, unsigned char len)
 {
-    return gusbctrl->ReadStamp(info, len);
+    return gusbctrl.ReadStamp(info, len);
 }
 
 int ClearStatistic()
 {
-    return gusbctrl->ClearStatistic();
+    return gusbctrl.ClearStatistic();
 }
 
 int ReadBackupSN(unsigned char* sn, unsigned char len)
 {
-    return gusbctrl->ReadBackupSN(sn, len);
+    return gusbctrl.ReadBackupSN(sn, len);
 }
 
 int WriteBackupSN(const unsigned char* sn, unsigned char len)
 {
-    return gusbctrl->WriteBackupSN(sn, len);
+    return gusbctrl.WriteBackupSN(sn, len);
 }
 
 int SetSideDoor(unsigned short keep_open, unsigned short timeout)
 {
-    return gusbctrl->SetSideDoor(keep_open, timeout);
+    return gusbctrl.SetSideDoor(keep_open, timeout);
 }
 
 int SetPaperDoor(unsigned short timeout)
 {
-    return gusbctrl->SetPaperDoor(timeout);
+    return gusbctrl.SetPaperDoor(timeout);
 }
 
 int ReadAlarmStatus(char* door, char* vibration)
 {
-    return gusbctrl->ReadAlarmStatus(door, vibration);
+    return gusbctrl.ReadAlarmStatus(door, vibration);
 }
 
 int GetHardwareVer(char* version, unsigned char len)
 {
-    return gusbctrl->GetHardwareVer(version, len);
+    return gusbctrl.GetHardwareVer(version, len);
 }
 
 int GetABCStamper(unsigned char stamper, char* id, unsigned char len)
 {
-    return gusbctrl->GetABCStamper(stamper, id, len);
+    return gusbctrl.GetABCStamper(stamper, id, len);
 }
 
 int GetABCStamperIndex(const char* abc_id, char* index)
 {
-    return gusbctrl->GetABCIndex(abc_id, *index);
+    return gusbctrl.GetABCIndex(abc_id, *index);
 }
