@@ -94,6 +94,7 @@ CUSBControlF60::~CUSBControlF60(void)
 // 	return;
 }
 
+static Mutex usbctrl_lock;
 static CContrlledStamper* gusbctrl = NULL;
 
 int FRegisterDevCallBack(pfnDevMsgCallBack pfn)
@@ -107,17 +108,19 @@ int FRegisterDevCallBack(pfnDevMsgCallBack pfn)
 
 int FOpenDev(const char *file)//参数无效
 {
+    CCtrlUSB *p = CCtrlUSB::sharedCCtrlUSB();
+    string devfile = p->GetDevPath();
+
+    CLock lk(usbctrl_lock);
     if (NULL == gusbctrl)
         gusbctrl = new CContrlledStamper;
-
-	CCtrlUSB *p = CCtrlUSB::sharedCCtrlUSB();
-	string devfile = p->GetDevPath();
 
     return gusbctrl->OpenDev(devfile.c_str());
 }
 
 int FCloseDev(void)
 {
+    CLock lk(usbctrl_lock);
     int ret = 0;
     if (NULL != gusbctrl) {
         ret = gusbctrl->CloseDev();
