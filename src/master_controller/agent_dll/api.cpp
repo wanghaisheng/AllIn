@@ -1129,8 +1129,8 @@ int ST_GetError(int err_code, char* err_msg, char* err_resolver, int size)
         resolver = MC::GetErrResolver((MC::ErrorCode)err_code);
     }
 
-    strcpy(err_msg, msg.c_str());
-    strcpy(err_resolver, resolver.c_str());
+    strncpy(err_msg, msg.c_str(), min(size, msg.length() + 1));
+    strncpy(err_resolver, resolver.c_str(), min(size, resolver.length() + 1));
     return 0;
 }
 
