@@ -8,6 +8,40 @@
 #include <cstdio>
 #include <stdlib.h>
 
+class FuncTest {
+
+    typedef void(FuncTest::*FuncPtr)(int a);
+
+public:
+    FuncTest() {
+        ptr_vec_.push_back(&FuncTest::test1);
+        ptr_vec_.push_back(&FuncTest::test2);
+        ptr_vec_.push_back(&FuncTest::test3);
+    }
+
+    void print(int which, int x) {
+        FuncPtr ptr = ptr_vec_.at(which - 1);
+        (this->*ptr)(x);
+    }
+
+private:
+    void test1(int x) {
+        std::cout << "test1: " << x << std::endl;
+    }
+
+    void test2(int x) {
+        std::cout << "test2: " << x << std::endl;
+    }
+
+    void test3(int x) {
+        std::cout << "test3: " << x << std::endl;
+    }
+
+private:
+    std::vector<FuncPtr> ptr_vec_;
+};
+
+
 typedef int DWORD;
 enum FontLib {
     image = 0,
@@ -27,6 +61,13 @@ enum CmdType {
 
 void main()
 {
+    FuncTest ft;
+    ft.print(1, 3);
+    ft.print(2, 4);
+    ft.print(3, 5);
+    return;
+
+
     float x = 3.43;
     std::stringstream stream(std::stringstream::in | std::stringstream::out);;
     char x_str[64] = { 0 };
